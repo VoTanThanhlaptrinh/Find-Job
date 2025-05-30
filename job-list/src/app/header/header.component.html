@@ -1,0 +1,57 @@
+<header id="header">
+  <div class="container">
+    <div class="row align-items-center justify-content-between d-flex">
+      <div id="logo">
+        <a href="/"><img src="assets/web_css/img/logo.png" alt="" title="" /></a>
+      </div>
+      <c-navbar id="nav-menu-container" expand="lg">
+        <c-container [fluid]="true">
+          <button [cNavbarToggler]="collapseRef"></button>
+          <div #collapseRef="cCollapse" [navbar]="true" cCollapse>
+            <c-navbar-nav class="nav-menu">
+
+              <c-nav-item class="menu-active">
+                <a cNavLink href="/">Trang chủ</a>
+              </c-nav-item>
+              <c-nav-item>
+                <a cNavLink href="/category">Tìm việc</a>
+              </c-nav-item>
+              <c-nav-item>
+                <a cNavLink href="/blogHome">Blog</a>
+              </c-nav-item>
+              <c-nav-item>
+                <a cNavLink href="/contact">Liên hệ</a>
+              </c-nav-item>
+              <c-nav-item>
+                <a cNavLink href="/about">Thông tin</a>
+              </c-nav-item>
+              <ng-container *ngIf="isLoggedIn">
+                <c-dropdown variant="nav-item" [popper]="false" autoClose="outside">
+                  <c-nav-item>
+                    <a cDropdownToggle cNavLink style="color: aliceblue;">Tài khoản</a>
+                  </c-nav-item>
+                  <ul cDropdownMenu>
+                    <li><button cDropdownItem (click)="goInfor()">Thông tin cá nhân</button></li>
+                    <li><button cDropdownItem (click)="goVerify()">Kích hoạt tài khoản</button></li>
+                    <li><button cDropdownItem (click)="logout()">Đăng xuất</button></li>
+                  </ul>
+                </c-dropdown>
+              </ng-container>
+              <!-- Nếu chưa đăng nhập -->
+              <ng-container *ngIf="!isLoggedIn">
+                <c-nav-item>
+                  <a cNavLink class="ticker-btn" href="/login">Đăng nhập</a>
+                </c-nav-item>
+                <c-nav-item>
+                  <a cNavLink class="ticker-btn" href="/register">Đăng ký</a>
+                </c-nav-item>
+              </ng-container>
+
+
+            </c-navbar-nav>
+          </div>
+        </c-container>
+      </c-navbar>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,299 @@
+<section class="banner-area relative" id="home">
+  <div class="overlay overlay-bg"></div>
+  <div class="container">
+    <div class="row d-flex align-items-center justify-content-center">
+      <div class="about-content col-lg-12">
+        <h1 class="text-white">
+          Job Details
+        </h1>
+        <p class="text-white link-nav">
+          <a routerLink="/">Home</a>
+          <span class="lnr lnr-arrow-right"></span>
+          <a [routerLink]="['/single', this.jobId]">Job Details</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+	<!-- End banner Area -->
+
+	<!-- Start post Area -->
+	<section class="post-area section-gap">
+		<div class="container">
+			<div class="row justify-content-center d-flex">
+				<div class="col-lg-8 post-list" >
+					<div class="single-post d-flex flex-row">
+						<div class="thumb">
+							<img src="assets/web_css/img/post.png" alt="">
+							<ul class="tags">
+								<li>
+									<a href="#">Art</a>
+								</li>
+								<li>
+									<a href="#">Media</a>
+								</li>
+								<li>
+									<a href="#">Design</a>
+								</li>
+							</ul>
+						</div>
+						<div class="details">
+							<div class="title d-flex flex-row justify-content-between">
+								<div class="titles">
+									<a>
+										<h4>{{this.jobDetail.title}}</h4>
+									</a>
+									<h6>Premium Labels Limited</h6>
+								</div>
+								<ul class="btns">
+									<li><a href="#"><span class="lnr lnr-heart"></span></a></li>
+									<li><a [routerLink]="['/apply-cv',this.jobId]">Ứng tuyển</a></li>
+								</ul>
+							</div>
+							<p>
+                                {{this.jobDetail.description}}
+							</p>
+							<h5>Job Nature: <p>
+                                 {{this.jobDetail.time}}
+                            </p>
+							</h5>
+							<p class="address"><span class="lnr lnr-map"></span> {{this.jobDetail.address}} </p>
+							<p class="address"><span class="lnr lnr-database"></span>{{this.jobDetail.salary}} </p>
+						</div>
+					</div>
+					<div class="single-post job-details">
+						<h4 class="single-title">Whom we are looking for</h4>
+
+						<p >
+                            {{this.jobDetail.requireDetails}}
+						</p>
+					</div>
+					<div class="single-post job-experience">
+						<h4 class="single-title">Experience Requirements</h4>
+						<ul>
+							<li>
+								<img src="assets/web_css/img/list.jpg" alt="">
+								<span>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+									incididunt ut labore et dolore magna aliquaut enim ad minim veniam.</span>
+							</li>
+							<li>
+								<img src="assets/web_css/img/list.jpg" alt="">
+								<span>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+									incididunt ut labore et dolore magna aliquaut enim ad minim veniam.</span>
+							</li>
+							<li>
+								<img src="assets/web_css/img/list.jpg" alt="">
+								<span>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+									incididunt ut labore et dolore magna aliquaut enim ad minim veniam.</span>
+							</li>
+							<li>
+								<img src="assets/web_css/img/list.jpg" alt="">
+								<span>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+									incididunt ut labore et dolore magna aliquaut enim ad minim veniam.</span>
+							</li>
+							<li>
+								<img src="assets/web_css/img/list.jpg" alt="">
+								<span>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+									incididunt ut labore et dolore magna aliquaut enim ad minim veniam.</span>
+							</li>
+							<li>
+								<img src="assets/web_css/img/list.jpg" alt="">
+								<span>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+									incididunt ut labore et dolore magna aliquaut enim ad minim veniam.</span>
+							</li>
+						</ul>
+					</div>
+					<div class="single-post job-experience">
+						<h4 class="single-title">Job Features & Overviews</h4>
+						<ul>
+							<li>
+								<img src="assets/web_css/img/list.jpg" alt="">
+								<span>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+									incididunt ut labore et dolore magna aliquaut enim ad minim veniam.</span>
+							</li>
+							<li>
+								<img src="assets/web_css/img/list.jpg" alt="">
+								<span>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+									incididunt ut labore et dolore magna aliquaut enim ad minim veniam.</span>
+							</li>
+							<li>
+								<img src="assets/web_css/img/list.jpg" alt="">
+								<span>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+									incididunt ut labore et dolore magna aliquaut enim ad minim veniam.</span>
+							</li>
+							<li>
+								<img src="assets/web_css/img/list.jpg" alt="">
+								<span>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+									incididunt ut labore et dolore magna aliquaut enim ad minim veniam.</span>
+							</li>
+						</ul>
+					</div>
+					<div class="single-post job-experience">
+						<h4 class="single-title">Education Requirements</h4>
+						<ul>
+							<li>
+								<img src="assets/web_css/img/list.jpg" alt="">
+								<span>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+									incididunt ut labore et dolore magna aliquaut enim ad minim veniam.</span>
+							</li>
+							<li>
+								<img src="assets/web_css/img/list.jpg" alt="">
+								<span>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+									incididunt ut labore et dolore magna aliquaut enim ad minim veniam.</span>
+							</li>
+							<li>
+								<img src="assets/web_css/img/list.jpg" alt="">
+								<span>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+									incididunt ut labore et dolore magna aliquaut enim ad minim veniam.</span>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div class="col-lg-4 sidebar">
+					<div class="single-slidebar">
+						<h4>Jobs by Location</h4>
+						<ul class="cat-list">
+							<li><a class="justify-content-between d-flex" >
+									<p>New York</p><span>37</span>
+								</a></li>
+							<li><a class="justify-content-between d-flex" >
+									<p>Park Montana</p><span>57</span>
+								</a></li>
+							<li><a class="justify-content-between d-flex" >
+									<p>Atlanta</p><span>33</span>
+								</a></li>
+							<li><a class="justify-content-between d-flex" >
+									<p>Arizona</p><span>36</span>
+								</a></li>
+							<li><a class="justify-content-between d-flex" >
+									<p>Florida</p><span>47</span>
+								</a></li>
+							<li><a class="justify-content-between d-flex" >
+									<p>Rocky Beach</p><span>27</span>
+								</a></li>
+							<li><a class="justify-content-between d-flex" >
+									<p>Chicago</p><span>17</span>
+								</a></li>
+						</ul>
+					</div>
+
+					<div class="single-slidebar">
+						<h4>Tuyển dụng được đánh giá cao</h4>
+						<owl-carousel-o [options]="carouselOptions">
+						
+                        @for (relatedJob of relatedJobs; track relatedJob.id) {
+                        <ng-template carouselSlide>
+							<div class="owl-item" style="width: 310px; margin-right: 30px;">
+								<div class="single-rated">
+									<img class="img-fluid" src="assets/web_css/img/r1.png" alt="">
+									<a [routerLink]="['/single', relatedJob.id]">
+										<h4>{{relatedJob.title}}</h4>
+									</a>
+									<h6>Premium Labels Limited</h6>
+									<p>{{relatedJob.description}}</p>
+									<h5>Job Nature: <span>{{relatedJob.type}}</span>
+									</h5>
+									<p class="address"><span class="lnr lnr-map"></span> <span>{{relatedJob.address}}
+										</span>
+
+									</p>
+									<p class="address"><span class="lnr lnr-database"></span> <span>{{relatedJob.salary}}
+										</span>
+									</p>
+								</div>
+							</div>
+							
+                        </ng-template>
+                        }
+                    </owl-carousel-o>
+					</div>
+
+					<div class="single-slidebar">
+						<h4>Jobs by Category</h4>
+						<ul class="cat-list">
+							<li><a class="justify-content-between d-flex" >
+									<p>Technology</p><span>37</span>
+								</a></li>
+							<li><a class="justify-content-between d-flex" >
+									<p>Media & News</p><span>57</span>
+								</a></li>
+							<li><a class="justify-content-between d-flex" >
+									<p>Goverment</p><span>33</span>
+								</a></li>
+							<li><a class="justify-content-between d-flex" >
+									<p>Medical</p><span>36</span>
+								</a></li>
+							<li><a class="justify-content-between d-flex" >
+									<p>Restaurants</p><span>47</span>
+								</a></li>
+							<li><a class="justify-content-between d-flex" >
+									<p>Developer</p><span>27</span>
+								</a></li>
+							<li><a class="justify-content-between d-flex" >
+									<p>Accounting</p><span>17</span>
+								</a></li>
+						</ul>
+					</div>
+
+					<div class="single-slidebar">
+						<h4>Carrer Advice Blog</h4>
+						<div class="blog-list">
+							<div class="single-blog " style="background:#000 url(assets/web_css/img/blog1.jpg);">
+								<a >
+									<h4>Home Audio Recording <br>
+										For Everyone</h4>
+								</a>
+								<div class="meta justify-content-between d-flex">
+									<p>
+										02 Hours ago
+									</p>
+									<p>
+										<span class="lnr lnr-heart"></span>
+										06
+										<span class="lnr lnr-bubble"></span>
+										02
+									</p>
+								</div>
+							</div>
+							<div class="single-blog " style="background:#000 url(assets/web_css/img/blog2.jpg);">
+								<a >
+									<h4>Home Audio Recording <br>
+										For Everyone</h4>
+								</a>
+								<div class="meta justify-content-between d-flex">
+									<p>
+										02 Hours ago
+									</p>
+									<p>
+										<span class="lnr lnr-heart"></span>
+										06
+										<span class="lnr lnr-bubble"></span>
+										02
+									</p>
+								</div>
+							</div>
+							<div class="single-blog " style="background:#000 url(assets/web_css/img/blog1.jpg);">
+								<a >
+									<h4>Home Audio Recording <br>
+										For Everyone</h4>
+								</a>
+								<div class="meta justify-content-between d-flex">
+									<p>
+										02 Hours ago
+									</p>
+									<p>
+										<span class="lnr lnr-heart"></span>
+										06
+										<span class="lnr lnr-bubble"></span>
+										02
+									</p>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</section>

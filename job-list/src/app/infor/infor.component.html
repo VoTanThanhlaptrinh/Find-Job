@@ -1,0 +1,63 @@
+<section class="banner-area relative" id="home">
+    <div class="overlay overlay-bg"></div>
+    <div class="container">
+        <div class="row d-flex align-items-center justify-content-center" style="height: 11vh;">
+            <div class="banner-content col-lg-12">
+            </div>
+        </div>
+    </div>
+</section>
+<div class="container-fluid" >
+    <div class="row d-flex justify-content-center">
+      <!-- Sidebar -->
+      <div class="d-flex flex-column flex-shrink-0 p-3 bg-light col-lg-2" style="height: 100vh;">
+        <a routerLink="/infor" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+          <svg class="bi me-2" width="40" height="32">
+            <use xlink:href="#bootstrap"></use>
+          </svg>
+          <img src="assets/web_css/img/logo.jpg" alt="" class="img-fluid rounded-circle" width="100" height="100">
+        </a>
+        <hr>
+        <ul class="nav nav-pills flex-column mb-auto">
+          <li class="nav-item">
+            <a routerLink="/infor" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link link-dark">
+              <svg class="bi me-2" width="16" height="16">
+                <use xlink:href="#home"></use>
+              </svg>
+              Hồ sơ
+            </a>
+          </li>
+          <li>
+            <a routerLink="/infor/change-password" routerLinkActive="active" class="nav-link link-dark">
+              <svg class="bi me-2" width="16" height="16">
+                <use xlink:href="#speedometer2"></use>
+              </svg>
+              Đổi mật khẩu
+            </a>
+          </li>
+          <li>
+            <a routerLink="/infor/cv" routerLinkActive="active" class="nav-link link-dark">
+              <svg class="bi me-2" width="16" height="16">
+                <use xlink:href="#table"></use>
+              </svg>
+              CV của bạn
+            </a>
+          </li>
+          <li>
+            <a routerLink="/infor/history-apply" routerLinkActive="active" class="nav-link link-dark">
+              <svg class="bi me-2" width="16" height="16">
+                <use xlink:href="#grid"></use>
+              </svg>
+              Job đã ứng tuyển
+            </a>
+          </li>
+        </ul>
+      </div>
+  
+      <!-- Content -->
+      <div id="content" class="ms-sm-auto col-lg-10 p-3">
+        <router-outlet></router-outlet> <!-- Nội dung sẽ thay đổi ở đây -->
+      </div>
+    </div>
+  </div>
+  

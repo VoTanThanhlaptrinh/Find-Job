@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<title>Đổi mật khẩu</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" href="login_css/images/icons/favicon.ico" />
+	<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="login_css/vendor/bootstrap/css/bootstrap.min.css">
+	<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="login_css/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+	<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="login_css/fonts/iconic/css/material-design-iconic-font.min.css">
+	<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="login_css/vendor/animate/animate.css">
+	<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="login_css/vendor/css-hamburgers/hamburgers.min.css">
+	<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="login_css/vendor/animsition/css/animsition.min.css">
+	<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="login_css/vendor/select2/select2.min.css">
+	<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="login_css/vendor/daterangepicker/daterangepicker.css">
+	<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="login_css/css/util.css">
+	<link rel="stylesheet" type="text/css" href="login_css/css/main.css">
+	<!--===============================================================================================-->
+
+	<div th:replace="~{fragments/lib :: css}"></div>
+</head>
+
+<body>
+	<div sec:authorize="isAuthenticated()">
+			<div th:replace="~{fragments/lib :: navigationS}"></div>
+		</div>
+		<div sec:authorize="!isAuthenticated()">
+			<div th:replace="~{fragments/lib :: navigation}"></div>
+		</div>
+			<section class="banner-area relative" id="home">
+					<div class="overlay overlay-bg"></div>
+					<div class="container">
+						<div class="row d-flex align-items-center justify-content-center">
+							<div class="about-content col-lg-12">
+								<h1 class="text-white">
+									Đổi mật khẩu
+								</h1>
+								<p class="text-white link-nav"><a th:href="@{/}">Home </a> <span class="lnr lnr-arrow-right"></span>
+									<a th:href="@{/info}">Đổi mật khẩu</a></p>
+							</div>
+						</div>
+					</div>
+				</section>
+	<main>
+		<!-- login Area Start -->
+		<div class="login-form-area section-padding">
+			<div class="container">
+				<div class="row justify-content-center">
+					<div class="col-xl-6 col-lg-7 col-md-10">
+						<form method="post" th:action="@{/rePass}">
+							<div class="login-form">
+								<!-- Login Heading -->
+								<div class="login-heading">
+									<span>Đổi mật khẩu</span>
+									<!--<p>Nhập thông tin đăng nhập để truy cập</p>-->
+								</div>
+								<!-- Single Input Fields -->
+								<div class="input-box">
+									<div class="single-input-fields">
+										<label>Mật khẩu cũ</label>
+										<input type="password" placeholder="Mật khẩu cũ" name="oldPass" required>
+									</div>
+									<div class="single-input-fields">
+										<label>Mật khẩu mới</label>
+										<input type="password" placeholder="Mật khẩu mới" name="newPass" required>
+									</div>
+									<div class="single-input-fields">
+										<label>Xác nhận mật khẩu</label>
+										<input type="password" placeholder="Xác nhận mật khẩu" name="rePass" required>
+									</div>
+								</div>
+								<!-- form Footer -->
+								<div class="login-footer">
+									<button class="btn login-btn" type="submit">Xác nhận</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- login Area End -->
+	</main>
+	<!--===============================================================================================-->
+	<script src="login_css/vendor/jquery/jquery-3.2.1.min.js"></script>
+	<!--===============================================================================================-->
+	<script src="login_css/vendor/animsition/js/animsition.min.js"></script>
+	<!--===============================================================================================-->
+	<script src="login_css/vendor/bootstrap/js/popper.js"></script>
+	<script src="login_css/vendor/bootstrap/js/bootstrap.min.js"></script>
+	<!--===============================================================================================-->
+	<script src="login_css/vendor/select2/select2.min.js"></script>
+	<!--===============================================================================================-->
+	<script src="login_css/vendor/daterangepicker/moment.min.js"></script>
+	<script src="login_css/vendor/daterangepicker/daterangepicker.js"></script>
+	<!--===============================================================================================-->
+	<script src="login_css/vendor/countdowntime/countdowntime.js"></script>
+	<!--===============================================================================================-->
+	<script src="login_css/js/main.js"></script>
+	<div th:replace="~{fragments/lib :: footer}"></div>
+	<div th:replace="~{fragments/lib :: js}"></div>
+
+</body>
+
+</html>
