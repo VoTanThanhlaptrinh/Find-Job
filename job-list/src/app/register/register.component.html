@@ -1,0 +1,81 @@
+<section class="banner-area relative" id="home">
+    <div class="overlay overlay-bg"></div>
+    <div class="container">
+        <div class="row d-flex align-items-center justify-content-center">
+            <div class="about-content col-lg-12">
+                <h1 class="text-white">
+                    Đăng ký
+                </h1>
+                <p class="text-white link-nav"><a href="/">Home </a> <span class="lnr lnr-arrow-right"></span>
+                    <a href="/register">Đăng ký</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+<main>
+    <!-- Register Area Start -->
+    <div class="register-form-area section-padding">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-6 col-lg-7 col-md-10">
+                    <div class="register-form text-center">
+                        <form method="post" action="/register" id="form" [formGroup]="registerForm"
+                            (ngSubmit)="onRegister()">
+                            <!-- Register Heading -->
+                            <div class="register-heading">
+                                <span>Đăng ký</span>
+                                <p>Tạo tài khoản của bạn</p>
+                            </div>
+                            <!-- Single Input Fields -->
+                            <div class="input-box">
+                                <div class="single-input-fields">
+                                    <label>Tên đầy đủ</label>
+                                    <input type="text" placeholder="Nhập tên đầy đủ" required minlength="3"
+                                        maxlength="254" name="fullName" id="fullName" formControlName="fullName">
+                                        <app-error-field [control]="registerForm.controls['fullName']"
+                                        [errorMessages]="validationMessages.fullName"></app-error-field>
+                                </div>
+                                <div class="single-input-fields">
+                                    <label>Địa chỉ Email</label>
+                                    <input type="email" placeholder="Nhập địa chỉ Email" required id="username"
+                                        maxlength="254" name="username" formControlName="username"
+                                >
+                                    <app-error-field [control]="registerForm.controls['username']"
+                                        [errorMessages]="validationMessages.email"></app-error-field>
+                                </div>
+                                <div class="single-input-fields">
+                                    <label>Mật khẩu</label>
+                                    <input type="password" placeholder="Nhập mật khẩu (Ít nhất 8 ký tự)" required
+                                        formControlName="password" maxlength="254" minlength="8" id="password"
+                                        name="password"
+                                        title="Mật khẩu phải chứa ít nhất 1 chữ cái viết hoa, 1 chữ cái viết thường, 1 số và 1 ký tự đặc biệt.">
+                                        <app-error-field [control]="registerForm.controls['password']" [errorMessages]="validationMessages.password"></app-error-field>
+                                </div>
+                                <div class="single-input-fields">
+                                    <label>Xác nhận mật khẩu</label>
+                                    <input type="password" placeholder="Xác nhận mật khẩu" required minlength="8"
+                                        id="confirm" name="confirm" formControlName="confirmPassword">
+                                        <app-error-field [control]="registerForm.controls['confirmPassword']" [errorMessages]="validationMessages.confirmPassword"></app-error-field>
+                                </div>
+                                <div *ngIf="registerForm.errors?.['mismatch'] && registerForm.get('confirmPassword')?.touched" class="text-danger">
+                                    {{ validationMessages.confirmPassword.mismatch }}
+                                  </div>
+                                  <div *ngIf="formErrors" class="text-danger">
+                                    {{ formErrors }}
+                                  </div>
+                            </div>
+
+                            <!-- form Footer -->
+                            <div class="register-footer">
+                                <p> Bạn đã có tài khoản? <a href="/login"> Đăng nhập</a> ở đây</p>
+                                <button class="btn login-btn">Đăng ký</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Register Area End -->
+</main>

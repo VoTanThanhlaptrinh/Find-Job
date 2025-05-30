@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<!-- Mobile Specific Meta -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<!-- Favicon-->
+	<link rel="shortcut icon" href="web_css/img/fav.png">
+	<!-- Author Meta -->
+	<meta name="author" content="codepixer">
+	<!-- Meta Description -->
+	<meta name="description" content="">
+	<!-- Meta Keyword -->
+	<meta name="keywords" content="">
+	<!-- meta character set -->
+	<meta charset="UTF-8">
+	<!-- Site Title -->
+	<title>Job Listing</title>
+
+	<div th:replace="~{fragments/lib :: js}"></div>
+	<div th:replace="~{fragments/lib :: css}"></div>
+</head>
+
+<body>
+
+	<div sec:authorize="isAuthenticated()">
+			<div th:replace="~{fragments/lib :: navigationS}"></div>
+		</div>
+		<div sec:authorize="!isAuthenticated()">
+			<div th:replace="~{fragments/lib :: navigation}"></div>
+		</div><!-- #header -->
+
+
+	<!-- start banner Area -->
+	<section class="banner-area relative" id="home">
+		<div class="overlay overlay-bg"></div>
+		<div class="container">
+			<div class="row search-page-top d-flex align-items-center justify-content-center">
+				<div class="banner-content col-lg-12">
+					<h1 class="text-white">
+						Kết quả tìm kiếm
+					</h1>
+					<p class="text-white link-nav">
+						<a href="index.html">Trang chủ </a> <span class="lnr lnr-arrow-right"></span> <a
+							href="search.html">
+							tìm việc</a>
+					</p>
+					<form th:action="@{/search}" class="serach-form-area" method="post">
+						<div class="row justify-content-center form-wrap">
+							<div class="col-lg-4 form-cols">
+								<input type="text" class="form-control" name="title"
+									placeholder="Công việc bạn đang tìm là gì?">
+							</div>
+							<div class="col-lg-3 form-cols">
+								<div class="default-select" id="default-selects">
+									<select>
+										<option value="1">Khu vực</option>
+										<option value="2">TP Hồ Chí Minh</option>
+										<option value="3">Hà Nội</option>
+										<option value="4">Đà Nẵng</option>
+										<option value="5">Cần Thơ</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-lg-3 form-cols">
+								<div class="default-select" id="default-selects2">
+									<select>
+										<option value="1">Lĩnh vực</option>
+										<option value="2">Khách sạn</option>
+										<option value="3">Kỹ thuật</option>
+										<option value="4">Quản lý</option>
+										<option value="5">Lập trình</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-lg-2 form-cols">
+								<button type="submit" class="btn btn-info">
+									<span class="lnr lnr-magnifier"></span> Tìm kiếm
+								</button>
+							</div>
+						</div>
+					</form>
+					<p class="text-white"> <span>Tìm kiếm theo tags:</span> Công nghệ, Kinh doanh, Tư vấn, IT Company,
+						Thiết kế, Lập trình</p>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- End banner Area -->
+
+	<!-- Start post Area -->
+	<section class="post-area section-gap">
+		<div class="container">
+			<div class="row justify-content-center d-flex">
+				<section class="post-area section-gap">
+					<div class="container">
+						<div class="row justify-content-center d-flex">
+							<div class="col-lg-8 post-list">
+								<ul class="cat-list">
+									<li><a href="#">Recent</a></li>
+									<li><a href="#">Full Time</a></li>
+									<li><a href="#">Intern</a></li>
+									<li><a href="#">part Time</a></li>
+								</ul>
+								<div class="single-post d-flex flex-row" th:each="job : ${jobs}">
+									<div class="thumb">
+										<img th:src="@{web_css/img/post.png}" alt="">
+										<ul class="tags">
+											<li>
+												<a>Art</a>
+											</li>
+											<li>
+												<a>Media</a>
+											</li>
+											<li>
+												<a>Design</a>
+											</li>
+										</ul>
+									</div>
+									<div class="details">
+										<div class="title d-flex flex-row justify-content-between">
+											<div class="titles">
+												<a th:href="@{/single/{id}(id=${job.id})}">
+													<h4 th:text="${job.title}"></h4>
+												</a>
+												<h6>Premium Labels Limited</h6>
+											</div>
+											<ul class="btns">
+												<li><a href="#"><span class="lnr lnr-heart"></span></a></li>
+												<li><a>Apply</a></li>
+											</ul>
+										</div>
+										<p th:text="${job.description}">
+
+										</p>
+										<h5>
+											<p th:text="${job.time}"></p>
+										</h5>
+										<p class="address"><span class="lnr lnr-map" th:text="${job.address}"></span>
+										</p>
+										<p class="address"><span class="lnr lnr-database"
+												th:text="${job.salary}"></span>
+										</p>
+									</div>
+								</div>
+								<a class="text-uppercase loadmore-btn mx-auto d-block" th:href="@{/category}">Tải thêm
+									việc</a>
+							</div>
+
+							<div th:replace="~{fragments/lib :: sidebar}"></div>
+						</div>
+					</div>
+
+				</section>
+			</div>
+		</div>
+	</section>
+	<!-- End post Area -->
+
+	<!-- Start callto-action Area -->
+	<div th:replace="~{fragments/lib :: join}"></div>
+	<!-- End calto-action Area -->
+
+	<!-- start footer Area -->
+	<div th:replace="~{fragments/lib :: footer}"></div>
+	<!-- End footer Area -->
+
+</body>
+
+</html>

@@ -1,0 +1,441 @@
+<section class="banner-area relative" id="home">
+    <div class="overlay overlay-bg"></div>
+    <div class="container">
+        <div class="row fullscreen d-flex align-items-center justify-content-center">
+            <div class="banner-content col-lg-12">
+                <h1 class="text-white">
+                    <span>1500+</span> Công việc đã được đăng ở tuần trước
+                </h1>
+                <form th:action="@{/search}" class="serach-form-area" method="post">
+                    <div class="row justify-content-center form-wrap">
+                        <div class="col-lg-4 form-cols">
+                            <input type="text" class="form-control" name="title"
+                                placeholder="Công việc bạn đang tìm là gì?">
+                        </div>
+                        <div class="col-lg-3 form-cols">
+                            <div class="default-select" id="default-selects">
+                                <select>
+                                    <option value="1">Khu vực</option>
+                                    <option value="2">TP Hồ Chí Minh</option>
+                                    <option value="3">Hà Nội</option>
+                                    <option value="4">Đà Nẵng</option>
+                                    <option value="5">Cần Thơ</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 form-cols">
+                            <div class="default-select" id="default-selects2">
+                                <select>
+                                    <option value="1">Lĩnh vực</option>
+                                    <option value="2">Khách sạn</option>
+                                    <option value="3">Kỹ thuật</option>
+                                    <option value="4">Quản lý</option>
+                                    <option value="5">Lập trình</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 form-cols">
+                            <button type="submit" class="btn btn-info">
+                                <span class="lnr lnr-magnifier"></span> Tìm kiếm
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <p class="text-white"> <span>Tìm kiếm theo tags:</span> Công nghệ, Kinh doanh, Tư vấn, IT Company,
+                    Thiết kế, Lập trình</p>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Start features Area -->
+<section class="features-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-6">
+                <div class="single-feature">
+                    <h4>Searching</h4>
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipisicing.
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="single-feature">
+                    <h4>Applying</h4>
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipisicing.
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="single-feature">
+                    <h4>Security</h4>
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipisicing.
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="single-feature">
+                    <h4>Notifications</h4>
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipisicing.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- End features Area -->
+
+<!-- Start popular-post Area -->
+<section class="popular-post-area pt-100">
+    <div class="container">
+        <div class="row align-items-center">
+        </div>
+        <owl-carousel-o [options]="carouselOptions">
+            @for (job of jobPosts; track job.id) {
+            <ng-template carouselSlide>
+                <div class="single-popular-post d-flex flex-row">
+                    <div class="thumb">
+                        <img class="img-fluid" [src]="job.image" alt="">
+                        <a class="btns text-uppercase" [routerLink]="['/single', job.id]">view job post</a>
+                    </div>
+                    <div class="details">
+                        <a [routerLink]="['/single', job.id]">
+                            <h4>{{ job.title }}</h4>
+                        </a>
+                        <h6>{{ job.location }}</h6>
+                        <p>{{ job.description }}</p>
+                    </div>
+                </div>
+
+            </ng-template>
+            }
+        </owl-carousel-o>
+    </div>
+</section>
+<!-- End popular-post Area -->
+
+<!-- Start feature-cat Area -->
+<section class="feature-cat-area pt-100" id="category">
+    <div class="container">
+        <div class="row d-flex justify-content-center">
+            <div class="menu-content pb-60 col-lg-10">
+                <div class="title text-center">
+                    <h1 class="mb-10">Danh mục công việc nổi bậc</h1>
+                    <p>Những người cực kỳ yêu thích hệ thống thân thiện với môi trường.</p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <div class="single-fcat">
+                    <a>
+                        <img src="assets/web_css/img/o1.png" alt="">
+                    </a>
+                    <p>Kế toán</p>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <div class="single-fcat">
+                    <a >
+                        <img src="assets/web_css/img/o2.png" alt="">
+                    </a>
+                    <p>Lập trình</p>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <div class="single-fcat">
+                    <a >
+                        <img src="assets/web_css/img/o3.png" alt="">
+                    </a>
+                    <p>Kỹ thuật</p>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <div class="single-fcat">
+                    <a >
+                        <img src="assets/web_css/img/o4.png" alt="">
+                    </a>
+                    <p>Truyền thông</p>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <div class="single-fcat">
+                    <a >
+                        <img src="assets/web_css/img/o5.png" alt="">
+                    </a>
+                    <p>Tư vấn</p>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <div class="single-fcat">
+                    <a >
+                        <img src="assets/web_css/img/o6.png" alt="">
+                    </a>
+                    <p>Quản lý</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- End feature-cat Area -->
+
+<!-- Start post Area -->
+<section class="post-area section-gap">
+    <div class="container">
+        <div class="row justify-content-center d-flex">
+            <div class="col-lg-8 post-list">
+                <ul class="cat-list">
+                    <li><a href="#">Recent</a></li>
+                    <li><a href="#">Full Time</a></li>
+                    <li><a href="#">Intern</a></li>
+                    <li><a href="#">part Time</a></li>
+                </ul>
+                @for (item of jobPosts; track item.id) {
+                
+                <div class="single-post d-flex flex-row">
+                    <div class="thumb">
+                        <img class="img-fluid" src="{{item.image}}" alt="">
+                        <ul class="tags">
+                            <li>
+                                <a>Art</a>
+                            </li>
+                            <li>
+                                <a>Media</a>
+                            </li>
+                            <li>
+                                <a>Design</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="details">
+                        <div class="title d-flex flex-row justify-content-between">
+                            <div class="titles">
+                                
+                                    <a [routerLink]="['/single', item.id]"><h4>{{item.title}}</h4></a>
+                                
+                                <h6>Premium Labels Limited</h6>
+                            </div>
+                            <ul class="btns">
+                                <li><a href="#"><span class="lnr lnr-heart"></span></a></li>
+                                <li><a>Apply</a></li>
+                            </ul>
+                        </div>
+                        <p>{{item.description}}</p>
+                        <h5>
+                            <p>{{item.type}}</p>
+                        </h5>
+                        <p class="address"><span class="lnr lnr-map">{{item.address}}</span> </p>
+                        <p class="address"><span class="lnr lnr-database">{{item.salary}}</span>
+                        </p>
+                    </div>
+                </div>
+                } @empty {
+                <li>There are no items.</li>
+                }
+                <a class="text-uppercase loadmore-btn mx-auto d-block" >Tải thêm việc</a>
+            </div>
+
+            <div class="col-lg-4 sidebar">
+                <div class="single-slidebar">
+                    <h4>Công việc theo vị trí</h4>
+                    <ul class="cat-list">
+                        <li><a class="justify-content-between d-flex" >
+                                <p>Hồ Chí Minh</p><span>37</span>
+                            </a></li>
+                        <li><a class="justify-content-between d-flex" >
+                                <p>Hà Nội</p><span>57</span>
+                            </a></li>
+                        <li><a class="justify-content-between d-flex" >
+                                <p>Đà Nẵng</p><span>33</span>
+                            </a></li>
+                        <li><a class="justify-content-between d-flex" >
+                                <p>Đồng Nai</p><span>36</span>
+                            </a></li>
+                        <li><a class="justify-content-between d-flex" >
+                                <p>Cần Thơ</p><span>47</span>
+                            </a></li>
+                        <li><a class="justify-content-between d-flex" >
+                                <p>Đà Lạt</p><span>27</span>
+                            </a></li>
+                        <li><a class="justify-content-between d-flex" >
+                                <p>Bình Dương</p><span>17</span>
+                            </a></li>
+                    </ul>
+                </div>
+
+                <div class="single-slidebar">
+                    <h4>Tuyển dụng được đánh giá cao</h4>
+                    <owl-carousel-o [options]="carouselOptions">
+                        @for (relatedJob of relatedJobs; track relatedJob.id) {
+                        <ng-template carouselSlide>
+                            <div class="single-rated">
+                                <img class="img-fluid" [src]="relatedJob.image" alt="">
+                                <a [href]="relatedJob.link">
+                                    <h4>{{relatedJob.title}}</h4>
+                                </a>
+                                <h6>Premium Labels Limited</h6>
+                                <p>{{relatedJob.description}}</p>
+                                <h5>Job Nature: <span>{{relatedJob.type}}</span>
+                                </h5>
+                                <p class="address"><span class="lnr lnr-map"></span> <span>{{relatedJob.address}}
+                                    </span>
+
+                                </p>
+                                <p class="address"><span class="lnr lnr-database"></span> <span>{{relatedJob.salary}}
+                                    </span>
+                                </p>
+                                <!-- <a th:href="@{/single/{id}(id=${tjob.id})}" class="btns text-uppercase">Apply job</a> -->
+                            </div>
+                        </ng-template>
+                        }
+                    </owl-carousel-o>
+                </div>
+
+                <div class="single-slidebar">
+                    <h4>Công việc theo lĩnh vực</h4>
+                    <ul class="cat-list">
+                        <li><a class="justify-content-between d-flex" >
+                                <p>Kỹ thuật</p><span>37</span>
+                            </a></li>
+                        <li><a class="justify-content-between d-flex" >
+                                <p>Truyền thông</p><span>57</span>
+                            </a></li>
+                        <li><a class="justify-content-between d-flex" >
+                                <p>Quản lý</p><span>33</span>
+                            </a></li>
+                        <li><a class="justify-content-between d-flex" >
+                                <p>Tư vấn</p><span>36</span>
+                            </a></li>
+                        <li><a class="justify-content-between d-flex" >
+                                <p>Nhà hàng</p><span>47</span>
+                            </a></li>
+                        <li><a class="justify-content-between d-flex" >
+                                <p>Lập trình</p><span>27</span>
+                            </a></li>
+                        <li><a class="justify-content-between d-flex" >
+                                <p>Kế toán</p><span>17</span>
+                            </a></li>
+                    </ul>
+                </div>
+
+                <div class="single-slidebar">
+                    <h4>Bài viết </h4>
+                    <div class="blog-list">
+                        <div class="single-blog " style="background:#000 url(assets/web_css/img/blog1.jpg);">
+                            <a href="/blogHome/blogSingle/3">
+                                <h4>How to Write a Standout Resume</h4>
+                            </a>
+                            <div class="meta justify-content-between d-flex">
+                                <p>2025-02-27 19:29:00</p>
+                                <p>
+                                    <span class="lnr lnr-heart"></span>
+                                    <span>150</span>
+                                    <span class="lnr lnr-bubble"></span>
+                                    02
+                                </p>
+                            </div>
+                        </div>
+                        <div class="single-blog " style="background:#000 url(assets/web_css/img/blog1.jpg);">
+                            <a href="/blogHome/blogSingle/1">
+                                <h4>5 Essential Job Search Tips</h4>
+                            </a>
+                            <div class="meta justify-content-between d-flex">
+                                <p>2025-02-27 19:29:00</p>
+                                <p>
+                                    <span class="lnr lnr-heart"></span>
+                                    <span>120</span>
+                                    <span class="lnr lnr-bubble"></span>
+                                    02
+                                </p>
+                            </div>
+                        </div>
+                        <div class="single-blog " style="background:#000 url(assets/web_css/img/blog1.jpg);">
+                            <a href="/blogHome/blogSingle/2">
+                                <h4>Top Career Trends in 2024</h4>
+                            </a>
+                            <div class="meta justify-content-between d-flex">
+                                <p>2025-02-27 19:29:00</p>
+                                <p>
+                                    <span class="lnr lnr-heart"></span>
+                                    <span>98</span>
+                                    <span class="lnr lnr-bubble"></span>
+                                    02
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+<!-- End post Area -->
+
+
+<!-- Start callto-action Area -->
+<section class="callto-action-area section-gap" id="join">
+    <div class="container">
+        <div class="row d-flex justify-content-center">
+            <div class="menu-content col-lg-9">
+                <div class="title text-center">
+                    <h1 class="mb-10 text-white">Tham gia vào chúng tôi mà không có bất kỳ do dự nào</h1>
+                    <p class="text-white">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                        exercitation.</p>
+                    <a class="primary-btn" href="/login">Tôi là ứng viên</a>
+                    <a class="primary-btn" href="/login">Tôi là nhà tuyển dụng</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- End calto-action Area -->
+
+<!-- Start download Area -->
+<section class="download-area section-gap" id="app">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 download-left">
+                <img class="img-fluid" src="assets/web_css/img/d1.png" alt="">
+            </div>
+            <div class="col-lg-6 download-right">
+                <h1>Tải app Job Listing <br>
+                    ngay hôm nay!</h1>
+                <p class="subs">
+                    Lo lắng tìm việc không còn là vấn đề của bạn nữa. Chỉ cần bạn
+                    hợp tác với chúng tôi những công việc phù hợp với năng lực
+                    , kèm theo đãi ngộ và mức lương tốt đang đợi bạn. Hãy đến với Job Listing.
+                </p>
+                <div class="d-flex flex-row">
+                    <div class="buttons">
+                        <i class="fa fa-apple" aria-hidden="true"></i>
+                        <div class="desc">
+                            <a href="#">
+                                <p>
+                                    <span>Có sẵn</span> <br>
+                                    trên App Store
+                                </p>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="buttons">
+                        <i class="fa fa-android" aria-hidden="true"></i>
+                        <div class="desc">
+                            <a href="#">
+                                <p>
+                                    <span>Có sẵn</span> <br>
+                                    trên Play Store
+                                </p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- End download Area -->

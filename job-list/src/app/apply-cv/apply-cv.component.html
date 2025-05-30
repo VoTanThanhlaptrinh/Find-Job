@@ -1,0 +1,88 @@
+<section class="banner-area relative" id="home">
+  <div class="overlay overlay-bg"></div>
+  <div class="container">
+    <div class="row d-flex align-items-center justify-content-center">
+      <div class="about-content col-lg-12">
+        <h1 class="text-white">
+          Job Details
+        </h1>
+        <p class="text-white link-nav">
+          <a routerLink="/">Home</a>
+          <span class="lnr lnr-arrow-right"></span>
+          <a [routerLink]="['/apply-cv', this.jobId]">Job Details</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+  <section class="post-area section-gap">
+		<div class="container">
+			<div class="row justify-content-center d-flex">
+        	<div class="col-lg-5 single-post">
+					<div class="cv-upload-box">
+            <form enctype="multipart/form-data">
+              <div class="mb-3 text-center">
+                <div class="display-4 mb-2">📁</div>
+                <label for="cvFile" class="form-label fw-bold">Chọn file CV hoặc kéo thả tại đây</label>
+                            <input type="file" name="file" [(ngModel)]="this.selectedFile" #file="ngModel" required />
+              </div>
+              <div class="mb-2 text-center">
+                <p class="text-primary mb-1">Chỉ chấp nhận định dạng: <b>.pdf, .doc, .docx</b></p>
+                <p class="text-primary">Kích thước tối đa: <b>5MB</b></p>
+              </div>
+              <div *ngIf="file?.errors?.['required'] && file.touched" class="alert alert-danger py-2">
+                <b>Vui lòng chọn file trước khi gửi!</b>
+              </div>
+              <div class="mb-3 text-success text-center" *ngIf="selectedFile">
+                <span>Đã chọn: {{ selectedFile.name }}</span>
+              </div>
+              <div class="text-center">
+                <button type="submit" class="btn btn-primary px-4">
+                  Gửi file
+                </button>
+              </div>
+            </form>
+          </div>
+				</div>
+				<div class="col-lg-7 post-list" >
+					<div class="single-post d-flex flex-row">
+						<div class="thumb">
+							<img src="assets/web_css/img/post.png" alt="">
+							<ul class="tags">
+								<li>
+									<a href="#">Art</a>
+								</li>
+								<li>
+									<a href="#">Media</a>
+								</li>
+								<li>
+									<a href="#">Design</a>
+								</li>
+							</ul>
+						</div>
+						<div class="details">
+							<div class="title d-flex flex-row justify-content-between">
+								<div class="titles">
+									<a>
+										<h4>{{this.jobDetail.title}}</h4>
+									</a>
+									<h6>Premium Labels Limited</h6>
+								</div>
+								
+							</div>
+							<p>
+                                {{this.jobDetail.description}}
+							</p>
+							<h5>Job Nature: <p>
+                                 {{this.jobDetail.time}}
+                            </p>
+							</h5>
+							<p class="address"><span class="lnr lnr-map"></span> {{this.jobDetail.address}} </p>
+							<p class="address"><span class="lnr lnr-database"></span>{{this.jobDetail.salary}} </p>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</section>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<!-- Mobile Specific Meta -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<!-- Favicon-->
+	<link rel="shortcut icon" href="web_css/img/fav.png">
+	<!-- Author Meta -->
+	<meta name="author" content="codepixer">
+	<!-- Meta Description -->
+	<meta name="description" content="">
+	<!-- Meta Keyword -->
+	<meta name="keywords" content="">
+	<!-- meta character set -->
+	<meta charset="UTF-8">
+	<!-- Site Title -->
+	<title>Job Listing</title>
+
+	<div th:replace="~{fragments/lib :: js}"></div>
+			<div th:replace="~{fragments/lib :: css}"></div>
+</head>
+
+<body>
+	<div sec:authorize="isAuthenticated()">
+			<div th:replace="~{fragments/lib :: navigationS}"></div>
+		</div>
+		<div sec:authorize="!isAuthenticated()">
+			<div th:replace="~{fragments/lib :: navigation}"></div>
+		</div><!-- #header -->
+
+
+	<!-- start banner Area -->
+	<section class="banner-area relative" id="home">
+		<div class="overlay overlay-bg"></div>
+		<div class="container">
+			<div class="row d-flex align-items-center justify-content-center">
+				<div class="about-content col-lg-12">
+					<h1 class="text-white">
+						Pricing Plan
+					</h1>
+					<p class="text-white link-nav"><a href="index.html">Home </a> <span
+							class="lnr lnr-arrow-right"></span> <a href="price.html"> Pricing Plan</a></p>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- End banner Area -->
+
+	<!-- Start price Area -->
+	<section class="price-area section-gap" id="price">
+		<div class="container">
+			<div class="row d-flex justify-content-center">
+				<div class="menu-content pb-60 col-lg-8">
+					<div class="title text-center">
+						<h1 class="mb-10">Choose the best pricing for you</h1>
+						<p>Who are in extremely love with eco friendly system.</p>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-4">
+					<div class="single-price no-padding">
+						<div class="price-top">
+							<h4>Real basic</h4>
+						</div>
+						<ul class="lists">
+							<li>2.5 GB Space</li>
+							<li>Secure Online Transfer</li>
+							<li>Unlimited Styles</li>
+							<li>Customer Service</li>
+						</ul>
+						<div class="price-bottom">
+							<div class="price-wrap d-flex flex-row justify-content-center">
+								<span class="price">$</span>
+								<h1> 39 </h1><span class="time">Per <br> Month</span>
+							</div>
+							<a href="#" class="primary-btn header-btn">Get Started</a>
+						</div>
+
+					</div>
+				</div>
+				<div class="col-lg-4">
+					<div class="single-price no-padding">
+						<div class="price-top">
+							<h4>Real Standred</h4>
+						</div>
+						<ul class="lists">
+							<li>10 GB Space</li>
+							<li>Secure Online Transfer</li>
+							<li>Unlimited Styles</li>
+							<li>Customer Service</li>
+						</ul>
+						<div class="price-bottom">
+							<div class="price-wrap d-flex flex-row justify-content-center">
+								<span class="price">$</span>
+								<h1> 69 </h1><span class="time">Per <br> Month</span>
+							</div>
+							<a href="#" class="primary-btn header-btn">Get Started</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-4">
+					<div class="single-price no-padding">
+						<div class="price-top">
+							<h4>Real Ultimate</h4>
+						</div>
+						<ul class="lists">
+							<li>Unlimited Space</li>
+							<li>Secure Online Transfer</li>
+							<li>Unlimited Styles</li>
+							<li>Customer Service</li>
+						</ul>
+						<div class="price-bottom">
+							<div class="price-wrap d-flex flex-row justify-content-center">
+								<span class="price">$</span>
+								<h1> 99 </h1><span class="time">Per <br> Month</span>
+							</div>
+							<a href="#" class="primary-btn header-btn">Get Started</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- End price Area -->
+
+	<!-- Start feature Area -->
+	<section class="feature-area">
+		<div class="container-fluid">
+			<div class="row justify-content-center align-items-center">
+				<div class="col-lg-3 feat-img no-padding">
+					<img class="img-fluid" src="web_css/img/pages/f1.jpg" alt="">
+				</div>
+				<div class="col-lg-3 no-padding feat-txt">
+					<h6 class="text-uppercase text-white">Basic & Common Repairs</h6>
+					<h1>Who we are</h1>
+					<p>
+						Computer users and programmers have become so accustomed to using Windows, even for the changing
+						capabilities and the appearances of the graphical.
+					</p>
+				</div>
+				<div class="col-lg-3 feat-img no-padding">
+					<img class="img-fluid" src="web_css/img/pages/f2.jpg" alt="">
+				</div>
+				<div class="col-lg-3 no-padding feat-txt">
+					<h6 class="text-uppercase text-white">Basic & Common Repairs</h6>
+					<h1>What we do</h1>
+					<p>
+						Computer users and programmers have become so accustomed to using Windows, even for the changing
+						capabilities and the appearances of the graphical.
+					</p>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- End feature Area -->
+
+	<!-- Start submit Area -->
+	<section class="submit-area section-gap">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-6">
+					<div class="submit-left">
+						<h4>Submit Your Resume Today</h4>
+						<p>
+							Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt
+							ut labore.
+						</p>
+						<a href="#" class="primary-btn header-btn">Submit Your CV</a>
+					</div>
+				</div>
+				<div class="col-lg-6 ">
+					<div class="submit-right">
+						<h4>Submit a New Job Now!</h4>
+						<p>
+							Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt
+							ut labore.
+						</p>
+						<a href="#" class="primary-btn header-btn">Post a Job</a>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</section>
+	<!-- End submit Area -->
+
+
+	<!-- start footer Area -->
+	<div th:replace="~{fragments/lib :: footer}">
+	<!-- End footer Area -->
+
+	
+</body>
+
+</html>
