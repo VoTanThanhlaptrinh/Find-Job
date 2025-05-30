@@ -3,29 +3,35 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { JobServiceService } from '../services/job-service.service';
 import { AuthService } from '../services/auth.service';
 import { NgIf } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { ToastrService } from 'ngx-toastr';
+import {FormControl, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { take } from 'rxjs';
+import {NotifyMessageService} from '../services/notify-message.service';
+import {response} from 'express';
 
 
 @Component({
   selector: 'app-apply-cv',
-  imports: [RouterModule, FormsModule, NgIf],
+  imports: [RouterModule, FormsModule, NgIf,ReactiveFormsModule],
   templateUrl: './apply-cv.component.html',
   styleUrl: './apply-cv.component.css'
 })
 export class ApplyCvComponent implements OnInit {
-  jobDetail:any
+  job:any
   jobId!: string;
   selectedFile: File | null = null;
+  fileName!: string;
+  formGroup = new FormGroup({
+    file: new FormControl<File | null>(null),
+  })
   constructor(private router:Router,
               private route:ActivatedRoute,
               private jobService: JobServiceService,
               private authService: AuthService,
-              private toastr: ToastrService
-              ) { 
-    
+              private notify: NotifyMessageService
+              ) {
+
   }
+
   ngOnInit(): void {
     this.route.params.pipe(take(1)).subscribe(params => {
       if (!this.authService.isLogin()) {
@@ -40,31 +46,66 @@ export class ApplyCvComponent implements OnInit {
         return;
       }
       this.jobId = params['id'];
-      this.checkApplyJob();
       this.getDetailJob(this.jobId);
     });
   }
-  checkApplyJob() {
-    this.jobService.checkApplyJob(this.jobId).pipe(take(1)).subscribe({
-      next: (response: any) => {
-        if (!response.data) {
-           this.router.navigate(['/']);
-        }
-      },
-      error: (error) => {
-        window.location.href = '/';
-      }
-    });
-  }
+
   getDetailJob(id: string) {
     this.jobService.getDetailJob(id).subscribe({
       next: (response: any) => {
-        this.jobDetail = response.data;
+        this.job= response.data;
+        console.log(this.job)
       },
       error: (error) => {
         console.error('Error fetching job details:', error);
-        window.location.href = '/'; // Redirect to home if error occurs
+        this.router.navigate(['/']); // Redirect to home if error occurs
       }
     });
   }
+  onSelectedFile(event: Event){
+    const inputFile = event.target as HTMLInputElement;
+    if(inputFile.files?.length){
+      this.selectedFile = inputFile.files[0];
+      this.formGroup.patchValue({ file: this.selectedFile});
+
+    }
+  }
+  checkFileExtension(file:File):boolean{
+    const fileName = file.name;
+    const extension = fileName.substring(fileName.lastIndexOf(".")+1);
+    return extension === 'doc' || extension === 'docx' || extension === 'pdf'
+  }
+  submitCV(): void{
+    if(!this.selectedFile){
+      this.notify.showMessage("Thiếu file cv!",'','warning');
+      return;
+    }
+    if(!this.checkFileExtension(this.selectedFile)){
+      this.notify.showMessage("Sai extension !",'','warning');
+      return;
+    }
+    if(this.selectedFile.size > 5 * 1024 * 1024)
+    if(!this.jobId){
+      this.notify.showMessage("file chỉ tối đa 5mb!",'','warning');
+      return;
+    }
+    const formData = new FormData();
+    const file = this.selectedFile;
+    if(file){
+      formData.append('file', file);
+    }
+    formData.append('jobId', this.jobId);
+    this.jobService.applyCV(formData).pipe(take(1)).subscribe({
+      next: (res) => {
+        this.notify.showMessage(res.message,'','success');
+        this.formGroup.reset();
+      },
+      error: (err) => {
+        console.error(err);
+        const msg = err?.error?.message || err?.message || 'Có lỗi xảy ra, vui lòng thử lại!';
+        this.notify.showMessage(msg, '', 'error');
+      }
+    })
+  }
+
 }

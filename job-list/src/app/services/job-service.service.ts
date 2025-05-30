@@ -12,7 +12,7 @@ export class JobServiceService {
   getDetailJob(id: string) :Observable<any> {
     return this.http.get(`http://localhost:8080/api/job/detail/${id}`);
   }
-  checkApplyJob(id: string): Observable<any> {
-    return this.http.get(`http://localhost:8080/api/job/check-apply/${id}`);
+  applyCV(form: FormData): Observable<any>{
+    return this.http.post('http://localhost:8080/api/job/apply',form);
   }
 }

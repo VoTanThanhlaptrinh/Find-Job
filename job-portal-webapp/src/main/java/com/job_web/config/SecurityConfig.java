@@ -1,6 +1,7 @@
 package com.job_web.config;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,13 +35,11 @@ public class SecurityConfig {
 	private final JwtFilter jwtAuthFilter;
 	private UserRepositoryDetailsService userDetailsService;
 	private VerifyRecoveryFillter verifyRecoveryFillter;
-
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		// TODO Auto-generated method stub
-//		,"/api/home/init"
 		return http.cors(c -> c.configurationSource(corsConfigurationSource())).csrf(AbstractHttpConfigurer::disable)
-				.csrf(t -> t.disable()).authorizeHttpRequests(requests -> {
+				.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(requests -> {
 					requests.antMatchers("/api/account/login"
 							, "/api/account/register"
 							,"/error"

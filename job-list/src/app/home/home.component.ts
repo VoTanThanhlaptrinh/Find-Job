@@ -5,6 +5,7 @@ import { HomeService } from '../services/home.service';
 import { Router, RouterModule } from '@angular/router';
 import { NotifyMessageService } from '../services/notify-message.service';
 import { ToastrService } from 'ngx-toastr';
+import {take} from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -43,7 +44,7 @@ export class HomeComponent implements OnInit {
     this.getData();
   }
   getData() {
-    this.homeService.getData().subscribe({
+    this.homeService.getData().pipe(take(1)).subscribe({
       next: (response) => {
         let data = response.data;
         this.jobPosts = data.jobSalary.content.map((item: any) => ({

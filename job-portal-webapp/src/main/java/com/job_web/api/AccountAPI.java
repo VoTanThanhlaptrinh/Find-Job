@@ -90,7 +90,7 @@ public class AccountAPI {
 			res.put("mess", "Email rỗng");
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
 		}
-		if (!userRepository.findByEmail(email).isPresent()) {
+		if (userRepository.findByEmail(email).isEmpty()) {
 			// kiểm tra email có nằm trong hệ thống hay không.
 			res.put("mess", "Không tìm thấy email trong hệ thống");
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);

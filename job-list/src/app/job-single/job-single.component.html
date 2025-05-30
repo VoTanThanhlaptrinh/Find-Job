@@ -22,7 +22,7 @@
 	<section class="post-area section-gap">
 		<div class="container">
 			<div class="row justify-content-center d-flex">
-				<div class="col-lg-8 post-list" >
+				<div class="col-lg-8 post-list" *ngIf="this.jobDetail" >
 					<div class="single-post d-flex flex-row">
 						<div class="thumb">
 							<img src="assets/web_css/img/post.png" alt="">
@@ -54,9 +54,9 @@
 							<p>
                                 {{this.jobDetail.description}}
 							</p>
-							<h5>Job Nature: <p>
-                                 {{this.jobDetail.time}}
-                            </p>
+							<h5>Job Nature: <span>{{this.jobDetail.time}}</span>
+
+
 							</h5>
 							<p class="address"><span class="lnr lnr-map"></span> {{this.jobDetail.address}} </p>
 							<p class="address"><span class="lnr lnr-database"></span>{{this.jobDetail.salary}} </p>
@@ -181,7 +181,7 @@
 					<div class="single-slidebar">
 						<h4>Tuyển dụng được đánh giá cao</h4>
 						<owl-carousel-o [options]="carouselOptions">
-						
+
                         @for (relatedJob of relatedJobs; track relatedJob.id) {
                         <ng-template carouselSlide>
 							<div class="owl-item" style="width: 310px; margin-right: 30px;">
@@ -203,7 +203,7 @@
 									</p>
 								</div>
 							</div>
-							
+
                         </ng-template>
                         }
                     </owl-carousel-o>

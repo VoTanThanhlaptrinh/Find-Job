@@ -3,20 +3,22 @@ import { JobServiceService } from '../services/job-service.service';
 import { ActivatedRoute, Route, Router, RouterModule } from '@angular/router';
 import { CarouselModule } from 'ngx-owl-carousel-o';
 import { HomeService } from '../services/home.service';
+import {take} from 'rxjs';
+import {NgIf} from '@angular/common';
 
 
 @Component({
   selector: 'app-job-single',
-  imports: [CarouselModule, RouterModule],
+  imports: [CarouselModule, RouterModule, NgIf],
   templateUrl: './job-single.component.html',
   styleUrl: './job-single.component.css'
 })
 export class JobSingleComponent implements OnInit {
   jobId!: string
-  jobDetail: any;
+  jobDetail!: any;
   relatedJobs: any;
   constructor(private jobSerivce: JobServiceService,
-    private route: ActivatedRoute, 
+    private route: ActivatedRoute,
     private router: Router,
     private homeService: HomeService
   ) {}
@@ -46,18 +48,18 @@ export class JobSingleComponent implements OnInit {
     this.getRelatedJobs();
   }
   getDetailJob(id: string) {
-    this.jobSerivce.getDetailJob(id).subscribe({
+    this.jobSerivce.getDetailJob(id).pipe(take(1)).subscribe({
       next: (response: any) => {
         this.jobDetail = response.data;
       },
       error: (error) => {
         console.error('Error fetching job details:', error);
-        window.location.href = '/'; // Redirect to home if error occurs
+        this.router.navigate(['/']) // Redirect to home if error occurs
       }
     });
   }
   getRelatedJobs() {
-  this.homeService.getData().subscribe({
+  this.homeService.getData().pipe(take(1)).subscribe({
       next: (response) => {
         let data = response.data;
          this.relatedJobs = data.jobSoon.content.map((item: any) => ({

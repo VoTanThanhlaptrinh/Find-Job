@@ -1,13 +1,12 @@
 package com.job_web.api;
 
+import com.job_web.dto.ApplyDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 import com.job_web.dto.ApiResponse;
 import com.job_web.models.Job;
@@ -15,9 +14,8 @@ import com.job_web.service.JobService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestParam;
 
-
+import java.io.IOException;
 
 
 @RestController
@@ -44,5 +42,13 @@ public class JobAPI {
 		ApiResponse<Boolean> res = jobService.checkExistJob(id);
 		return ResponseEntity.status(res.getStatus()).body(res);
 	}
-	
+
+	@PostMapping(value = "/apply", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ApiResponse<String>> ApplyCV(@ModelAttribute ApplyDTO applyDTO, BindingResult bindingResult) throws IOException {
+		if(bindingResult.hasErrors()) {
+			return ResponseEntity.badRequest().body(new ApiResponse<String>(bindingResult.getAllErrors().getFirst().getDefaultMessage(),null,400));
+		}
+		ApiResponse<String> res = jobService.apply(applyDTO.getJobId(),applyDTO.getFile().getBytes(),applyDTO.getFile().getName());
+		return ResponseEntity.status(res.getStatus()).body(res);
+	}
 }

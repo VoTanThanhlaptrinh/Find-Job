@@ -1,6 +1,8 @@
 package com.job_web.security;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -14,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.job_web.service.JwtService;
@@ -26,12 +29,18 @@ import lombok.RequiredArgsConstructor;
 public class JwtFilter extends OncePerRequestFilter {
 	private final JwtService jwtService;
 	private final UserDetailsService userDetailsService;
-
+	private final AntPathMatcher pathMatcher = new AntPathMatcher();
+	private final List<String> allowedURL = List.of("/api/account/login"
+			, "/api/account/register"
+			,"/error"
+			,"/api/home/init"
+			,"/api/job/detail/**"
+	);
 	@Override
 	protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
 			@NonNull FilterChain filterChain) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		if (request.getServletPath().contains("/api/account")) {
+
+		if(allowURLDefault(request)) {
 			filterChain.doFilter(request, response);
 			return;
 		}
@@ -39,7 +48,7 @@ public class JwtFilter extends OncePerRequestFilter {
 		String jwt;
 		String userEmail;
 		if (authHeader == null || authHeader.trim().isEmpty() || !authHeader.startsWith("Bearer ")) {
-			filterChain.doFilter(request, response);
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "missing token");
 			return;
 		}
 		jwt = authHeader.substring(7);
@@ -58,5 +67,8 @@ public class JwtFilter extends OncePerRequestFilter {
 			}
 		}
 		filterChain.doFilter(request, response);
+	}
+	private boolean allowURLDefault(HttpServletRequest request) {
+		return allowedURL.stream().anyMatch(allowed -> pathMatcher.match(allowed, request.getServletPath()));
 	}
 }

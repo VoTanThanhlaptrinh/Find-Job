@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -44,6 +45,7 @@ public class Job {
 	@JoinColumn(name = "hirer_id")
 	private Hirer hirer;
 	@OneToMany(mappedBy = "job", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+	@JsonIgnore
 	private List<Apply> applies;
 	public Job(double salary, String time, String requireDetails, String address, String description,
 			Instant expiredDate, Instant createDate, Instant modifiedDate, String title) {
@@ -57,7 +59,6 @@ public class Job {
 		this.createDate = createDate;
 		this.modifiedDate = modifiedDate;
 		this.title = title;
-		
 	}
 
 	public void addApplication(Apply apply) {

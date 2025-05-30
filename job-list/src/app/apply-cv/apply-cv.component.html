@@ -4,12 +4,12 @@
     <div class="row d-flex align-items-center justify-content-center">
       <div class="about-content col-lg-12">
         <h1 class="text-white">
-          Job Details
+          Apply Job
         </h1>
         <p class="text-white link-nav">
           <a routerLink="/">Home</a>
           <span class="lnr lnr-arrow-right"></span>
-          <a [routerLink]="['/apply-cv', this.jobId]">Job Details</a>
+          <a [routerLink]="['/apply-cv', this.jobId]">Apply Job</a>
         </p>
       </div>
     </div>
@@ -17,22 +17,20 @@
 </section>
   <section class="post-area section-gap">
 		<div class="container">
-			<div class="row justify-content-center d-flex">
+			<div class="row justify-content-center d-flex" *ngIf="job">
         	<div class="col-lg-5 single-post">
 					<div class="cv-upload-box">
-            <form enctype="multipart/form-data">
+            <form [formGroup]="formGroup" (ngSubmit)="submitCV()" enctype="multipart/form-data">
               <div class="mb-3 text-center">
                 <div class="display-4 mb-2">📁</div>
                 <label for="cvFile" class="form-label fw-bold">Chọn file CV hoặc kéo thả tại đây</label>
-                            <input type="file" name="file" [(ngModel)]="this.selectedFile" #file="ngModel" required />
+                            <input type="file" name="file"  (change)="onSelectedFile($event)" required />
               </div>
               <div class="mb-2 text-center">
                 <p class="text-primary mb-1">Chỉ chấp nhận định dạng: <b>.pdf, .doc, .docx</b></p>
                 <p class="text-primary">Kích thước tối đa: <b>5MB</b></p>
               </div>
-              <div *ngIf="file?.errors?.['required'] && file.touched" class="alert alert-danger py-2">
-                <b>Vui lòng chọn file trước khi gửi!</b>
-              </div>
+
               <div class="mb-3 text-success text-center" *ngIf="selectedFile">
                 <span>Đã chọn: {{ selectedFile.name }}</span>
               </div>
@@ -64,21 +62,21 @@
 							<div class="title d-flex flex-row justify-content-between">
 								<div class="titles">
 									<a>
-										<h4>{{this.jobDetail.title}}</h4>
+										<h4>{{this.job.title}}</h4>
 									</a>
 									<h6>Premium Labels Limited</h6>
 								</div>
-								
+
 							</div>
 							<p>
-                                {{this.jobDetail.description}}
+                                {{this.job.description}}
 							</p>
 							<h5>Job Nature: <p>
-                                 {{this.jobDetail.time}}
+                                 {{this.job.time}}
                             </p>
 							</h5>
-							<p class="address"><span class="lnr lnr-map"></span> {{this.jobDetail.address}} </p>
-							<p class="address"><span class="lnr lnr-database"></span>{{this.jobDetail.salary}} </p>
+							<p class="address"><span class="lnr lnr-map"></span> {{this.job.address}} </p>
+							<p class="address"><span class="lnr lnr-database"></span>{{this.job.salary}} </p>
 						</div>
 					</div>
 				</div>

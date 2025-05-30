@@ -28,5 +28,7 @@ public class CV {
 	private User user;
 	
 	@Lob
-	byte[] data;
+	private byte[] data;
+
+	private String fileName;
 }
