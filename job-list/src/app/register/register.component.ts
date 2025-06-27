@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { FormBuilder, FormGroup, FormsModule, MinLengthValidator, PatternValidator, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -14,7 +14,8 @@ import { take } from 'rxjs';
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit{
+  googleUrl = '';
   registerForm: FormGroup;
   formErrors = null;
   constructor(private auth: AuthService, private router: Router, private fb: FormBuilder) {
@@ -24,6 +25,10 @@ export class RegisterComponent {
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
     }, { validators: this.passwordMatchValidator });
+  }
+
+  ngOnInit(): void {
+    this.auth.getGoogleLoginUrl().subscribe(r => this.googleUrl = r.authURL)
   }
   validationMessages = {
     fullName: {
@@ -47,7 +52,7 @@ export class RegisterComponent {
   passwordMatchValidator(form: FormGroup) {
     const password = form.get('password');
     const confirmPassword = form.get('confirmPassword');
-  
+
     if (password && confirmPassword) {
       if (password.value !== confirmPassword.value) {
         confirmPassword.setErrors({ mismatch: true });
@@ -60,7 +65,7 @@ export class RegisterComponent {
     }
     return null; // luôn trả về null cho FormGroup
   }
-  
+
   onRegister() {
     this.formErrors = null; // reset lỗi
     if (this.registerForm.invalid) {
@@ -77,4 +82,5 @@ export class RegisterComponent {
       }
     });
   }
+
 }

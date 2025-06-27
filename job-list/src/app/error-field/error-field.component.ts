@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { AbstractControl, FormControl, FormGroupDirective } from '@angular/forms';
-import { ValidationPipe } from '../validation.pipe';
+import { ValidationPipe } from '../interceptor/validation.pipe';
 
 @Component({
   selector: 'app-error-field',
@@ -15,5 +15,5 @@ export class ErrorFieldComponent {
   @Input() errorMessages!: Object;
 
   constructor(public formDirective: FormGroupDirective) {}
-  
+
 }

@@ -23,8 +23,8 @@ export class ApplyCvComponent implements OnInit {
               private jobService: JobServiceService,
               private authService: AuthService,
               private toastr: ToastrService
-              ) { 
-    
+              ) {
+
   }
   ngOnInit(): void {
     this.route.params.pipe(take(1)).subscribe(params => {
@@ -66,5 +66,8 @@ export class ApplyCvComponent implements OnInit {
         window.location.href = '/'; // Redirect to home if error occurs
       }
     });
+  }
+  formatMoney(val: number): string {
+    return val.toLocaleString('vi-VN') + '₫';
   }
 }

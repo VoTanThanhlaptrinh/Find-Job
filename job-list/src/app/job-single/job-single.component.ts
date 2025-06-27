@@ -16,7 +16,7 @@ export class JobSingleComponent implements OnInit {
   jobDetail: any;
   relatedJobs: any;
   constructor(private jobSerivce: JobServiceService,
-    private route: ActivatedRoute, 
+    private route: ActivatedRoute,
     private router: Router,
     private homeService: HomeService
   ) {}
@@ -59,8 +59,7 @@ export class JobSingleComponent implements OnInit {
   getRelatedJobs() {
   this.homeService.getData().subscribe({
       next: (response) => {
-        let data = response.data;
-         this.relatedJobs = data.jobSoon.content.map((item: any) => ({
+         this.relatedJobs = response.data.jobSoon.content.map((item: any) => ({
           id: item.id,
           title: item.title,
           address: item.address,
@@ -68,12 +67,15 @@ export class JobSingleComponent implements OnInit {
           link: item.link,
           description: item.description,
           salary: item.salary,
-          type: item.time
+          type: item.time,
         }));
       },
       error: (error) => {
         console.error('Error fetching data:', error);
       }
     })
+  }
+  formatMoney(val: number): string {
+    return val.toLocaleString('vi-VN') + '₫';
   }
 }

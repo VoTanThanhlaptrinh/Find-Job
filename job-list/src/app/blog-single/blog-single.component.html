@@ -7,9 +7,9 @@
                 <h1 class="text-white">
                     Blog Single
                 </h1>
-                <p class="text-white link-nav"><a href="index.html">Home </a> <span
-                        class="lnr lnr-arrow-right"></span> <a href="blog-single.html"> Blog</a> <span
-                        class="lnr lnr-arrow-right"></span> <a href="blog-single.html"> Blog Single</a></p>
+                <p class="text-white link-nav"><a [routerLink]="['/home']" >Home </a> <span
+                        class="lnr lnr-arrow-right"></span> <a [routerLink]="['/blogHome']"> Blog</a> <span
+                        class="lnr lnr-arrow-right"></span> <a [routerLink]="['/blogHome',this.id]"> Blog Single</a></p>
             </div>
         </div>
     </div>
@@ -22,18 +22,12 @@
         <div class="row">
             <div class="col-lg-8 post-list blog-post-list">
                 <div class="single-post">
-                    <img class="img-fluid" src="web_css/img/blog/p1.jpg" alt="">
-                    <ul class="tags">
-                        <li><a href="#">Art</a></li>
-                        <li><a href="#">Technology</a></li>
-                        <li><a href="#">Fashion</a></li>
-                    </ul>
+                    <img class="img-fluid" src="assets/web_css/img/blog/p1.jpg" alt="">
                     <a href="#">
-                        <h1>5 Essential Job Search Tips</h1>
+                        <h1>{{this.blog.title}}</h1>
                     </a>
                     <div class="content-wrap">
-                        <p>Job searching can be challenging, but with the right strategy, you can improve your chances of success. The key is to approach the process methodically and stay organized throughout. Here are five essential tips to help guide you in your job search this year. First, tailor your resume to each job you apply for. It&#39;s critical to match your skills and experience with the requirements listed in the job description. Use keywords from the job posting, and don&#39;t be afraid to customize your resume for every application. A one-size-fits-all resume might be easier, but it won’t impress potential employers. Second, networking is one of the most effective ways to find a job. Attend industry events, reach out to people in your field, and utilize online platforms like LinkedIn. Building relationships with professionals can lead to referrals and job leads that aren&#39;t posted publicly. Third, make sure to leverage online job search platforms like Indeed, LinkedIn, and Glassdoor. Create a profile on these platforms and actively engage with job postings. Many companies rely on these platforms to find new hires, and having a strong presence can increase your chances of being noticed. Fourth, practice for interviews. Interviewing is a skill that improves with practice. Research common interview questions for your field and practice answering them. Focus on highlighting your skills, accomplishments, and experience. Finally, always follow up after an interview. Send a thank-you email to the interviewer to show your appreciation and reinforce your interest in the position. It’s a small gesture that can leave a lasting impression. By implementing these five tips, you can improve your job search strategy and increase your chances of finding the right position.</p>
-
+                            <p>{{this.blog.content}}</p>
                         <blockquote class="generic-blockquote">
                             “Recently, the US Federal government banned online casinos from operating in America by
                             making it illegal to transfer money to them through any US bank or payment system. As a
@@ -41,10 +35,6 @@
                             PlayTech left the United States. Overnight, online casino players found themselves being
                             chased by the Federal government.banking”
                         </blockquote>
-
-
-
-
                     </div>
                     <div class="bottom-meta">
                         <div class="user-details row align-items-center">
@@ -72,7 +62,7 @@
                             <div class="row justify-content-between">
                                 <div class="col-sm-6 nav-left justify-content-start d-flex">
                                     <div class="thumb">
-                                        <img src="web_css/img/blog/prev.jpg" alt="">
+                                        <img src="assets/web_css/img/blog/prev.jpg" alt="">
                                     </div>
                                     <div class="post-details">
                                         <p>Prev Post</p>
@@ -85,7 +75,7 @@
                                         <h4 class="text-uppercase"><a href="#">A Discount Toner</a></h4>
                                     </div>
                                     <div class="thumb">
-                                        <img src="web_css/img/blog/next.jpg" alt="">
+                                        <img src="assets/web_css/img/blog/next.jpg" alt="">
                                     </div>
                                 </div>
                             </div>
@@ -103,7 +93,7 @@
                                     <div class="single-comment justify-content-between d-flex">
                                         <div class="user justify-content-between d-flex">
                                             <div class="thumb">
-                                                <img src="web_css/img/blog/c1.jpg" alt="">
+                                                <img src="assets/web_css/img/blog/c1.jpg" alt="">
                                             </div>
                                             <div class="desc">
                                                 <h5><a href="#">Emilly Blunt</a></h5>
@@ -122,7 +112,7 @@
                                     <div class="single-comment justify-content-between d-flex">
                                         <div class="user justify-content-between d-flex">
                                             <div class="thumb">
-                                                <img src="web_css/img/blog/c2.jpg" alt="">
+                                                <img src="assets/web_css/img/blog/c2.jpg" alt="">
                                             </div>
                                             <div class="desc">
                                                 <h5><a href="#">Emilly Blunt</a></h5>
@@ -141,7 +131,7 @@
                                     <div class="single-comment justify-content-between d-flex">
                                         <div class="user justify-content-between d-flex">
                                             <div class="thumb">
-                                                <img src="web_css/img/blog/c3.jpg" alt="">
+                                                <img src="assets/web_css/img/blog/c3.jpg" alt="">
                                             </div>
                                             <div class="desc">
                                                 <h5><a href="#">Emilly Blunt</a></h5>
@@ -160,7 +150,7 @@
                                     <div class="single-comment justify-content-between d-flex">
                                         <div class="user justify-content-between d-flex">
                                             <div class="thumb">
-                                                <img src="web_css/img/blog/c4.jpg" alt="">
+                                                <img src="assets/web_css/img/blog/c4.jpg" alt="">
                                             </div>
                                             <div class="desc">
                                                 <h5><a href="#">Emilly Blunt</a></h5>
@@ -179,7 +169,7 @@
                                     <div class="single-comment justify-content-between d-flex">
                                         <div class="user justify-content-between d-flex">
                                             <div class="thumb">
-                                                <img src="web_css/img/blog/c5.jpg" alt="">
+                                                <img src="assets/web_css/img/blog/c5.jpg" alt="">
                                             </div>
                                             <div class="desc">
                                                 <h5><a href="#">Emilly Blunt</a></h5>
@@ -240,7 +230,7 @@
                 </div>
 
                 <div class="single-widget protfolio-widget">
-                    <img src="web_css/img/blog/user2.jpg" alt="">
+                    <img src="assets/web_css/img/blog/user2.jpg" alt="">
                     <a href="#">
                         <h4>Adele Gonzalez</h4>
                     </a>
@@ -289,7 +279,7 @@
                     <div class="blog-list ">
                         <div class="single-recent-post d-flex flex-row">
                             <div class="recent-thumb">
-                                <img class="img-fluid" src="web_css/img/blog/r1.jpg" alt="">
+                                <img class="img-fluid" src="assets/web_css/img/blog/r1.jpg" alt="">
                             </div>
                             <div class="recent-details">
                                 <a href="blog-single.html">
@@ -305,7 +295,7 @@
                         </div>
                         <div class="single-recent-post d-flex flex-row">
                             <div class="recent-thumb">
-                                <img class="img-fluid" src="web_css/img/blog/r2.jpg" alt="">
+                                <img class="img-fluid" src="assets/web_css/img/blog/r2.jpg" alt="">
                             </div>
                             <div class="recent-details">
                                 <a href="blog-single.html">
@@ -321,7 +311,7 @@
                         </div>
                         <div class="single-recent-post d-flex flex-row">
                             <div class="recent-thumb">
-                                <img class="img-fluid" src="web_css/img/blog/r3.jpg" alt="">
+                                <img class="img-fluid" src="assets/web_css/img/blog/r3.jpg" alt="">
                             </div>
                             <div class="recent-details">
                                 <a href="blog-single.html">
@@ -337,7 +327,7 @@
                         </div>
                         <div class="single-recent-post d-flex flex-row">
                             <div class="recent-thumb">
-                                <img class="img-fluid" src="web_css/img/blog/r4.jpg" alt="">
+                                <img class="img-fluid" src="assets/web_css/img/blog/r4.jpg" alt="">
                             </div>
                             <div class="recent-details">
                                 <a href="blog-single.html">

@@ -1,4 +1,4 @@
-<section class="banner-area relative" id="home">
+<section class="banner-area relative" id="category">
   <div class="overlay overlay-bg"></div>
   <div class="container">
     <div class="row d-flex align-items-center justify-content-center">
@@ -9,7 +9,7 @@
         <p class="text-white link-nav">
           <a routerLink="/">Home</a>
           <span class="lnr lnr-arrow-right"></span>
-          <a [routerLink]="['/apply-cv', this.jobId]">Job Details</a>
+          <a [routerLink]="['/apply-cv', this.jobId]">Job Apply</a>
         </p>
       </div>
     </div>
@@ -45,42 +45,34 @@
           </div>
 				</div>
 				<div class="col-lg-7 post-list" >
-					<div class="single-post d-flex flex-row">
-						<div class="thumb">
-							<img src="assets/web_css/img/post.png" alt="">
-							<ul class="tags">
-								<li>
-									<a href="#">Art</a>
-								</li>
-								<li>
-									<a href="#">Media</a>
-								</li>
-								<li>
-									<a href="#">Design</a>
-								</li>
-							</ul>
-						</div>
-						<div class="details">
-							<div class="title d-flex flex-row justify-content-between">
-								<div class="titles">
-									<a>
-										<h4>{{this.jobDetail.title}}</h4>
-									</a>
-									<h6>Premium Labels Limited</h6>
-								</div>
-								
-							</div>
-							<p>
-                                {{this.jobDetail.description}}
-							</p>
-							<h5>Job Nature: <p>
-                                 {{this.jobDetail.time}}
-                            </p>
-							</h5>
-							<p class="address"><span class="lnr lnr-map"></span> {{this.jobDetail.address}} </p>
-							<p class="address"><span class="lnr lnr-database"></span>{{this.jobDetail.salary}} </p>
-						</div>
-					</div>
+          <div class="single-post d-flex flex-row">
+            <div class="thumb">
+              <img src="assets/web_css/img/post.png" alt="">
+            </div>
+            <div class="details">
+              <div class="title d-flex flex-row justify-content-between">
+                <div class="titles">
+                  <a>
+                    <h4>{{this.jobDetail.title}}</h4>
+                  </a>
+                </div>
+                <ul class="btns">
+                  <li><a href="#"><span class="lnr lnr-heart"></span></a></li>
+                  <li><a [routerLink]="['/apply-cv',this.jobId]">Ứng tuyển</a></li>
+                </ul>
+              </div>
+              <p>
+                {{this.jobDetail.description}}
+              </p>
+              <p class="info">
+                <span><i class="lnr lnr-map"></i>&nbsp;{{this.jobDetail.address}}</span>
+                <span class="divider"></span>
+                <span><i class="lnr lnr-database"></i>&nbsp;{{this.formatMoney(this.jobDetail.salary)}}</span>
+                <span class="divider"></span>
+                <span>{{this.jobDetail.time}}</span>
+              </p>
+            </div>
+          </div>
 				</div>
 
 			</div>
