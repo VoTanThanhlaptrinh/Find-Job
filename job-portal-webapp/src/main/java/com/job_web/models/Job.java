@@ -43,6 +43,7 @@ public class Job {
 	private String skill;
 	@ManyToOne
 	@JoinColumn(name = "hirer_id")
+	@JsonIgnore
 	private Hirer hirer;
 	@OneToMany(mappedBy = "job", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
 	@JsonIgnore

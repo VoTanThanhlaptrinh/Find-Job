@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 @Entity
@@ -19,13 +20,16 @@ public class Apply {
 
 	@ManyToOne
 	@JoinColumn(name = "job_id", nullable = false)
+	@JsonIgnore
 	private Job job;
 	
 	@ManyToOne
 	@JoinColumn(name = "cv_id", nullable = false)
+	@JsonIgnore
 	private CV cv;
 	
 	@ManyToOne
+	@JsonIgnore
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 }

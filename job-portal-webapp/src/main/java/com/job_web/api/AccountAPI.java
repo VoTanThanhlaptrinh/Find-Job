@@ -12,12 +12,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import com.job_web.dto.*;
+import com.job_web.service.*;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -30,26 +35,16 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.job_web.data.UserRepository;
-import com.job_web.dto.ApiResponse;
-import com.job_web.dto.LoginDTO;
-import com.job_web.dto.MailMessage;
-import com.job_web.dto.RegistationForm;
-import com.job_web.dto.UserInfo;
 import com.job_web.message.MailProducer;
 import com.job_web.models.RefreshToken;
 import com.job_web.models.User;
-import com.job_web.service.IMailService;
-import com.job_web.service.IRefService;
-import com.job_web.service.IVerifyService;
-import com.job_web.service.JwtService;
-import com.job_web.service.RefreshTokenService;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping(path = "/api/account", produces = "application/json")
-@CrossOrigin(origins = "**")
+@CrossOrigin(origins = "http://localhost:4200", allowCredentials="true")
 @Slf4j
 @AllArgsConstructor
 public class AccountAPI {
@@ -61,7 +56,7 @@ public class AccountAPI {
 	private final IVerifyService verifyService;
 
 	private UserRepository userRepository;
-
+	private final AccountService accountService;
 	private JwtService jwtService;
 	private PasswordEncoder encoder;
 	private MailProducer mailProducer;
@@ -150,7 +145,7 @@ public class AccountAPI {
 		return "http://localhost:4200/activate?token=" + token;
 	}
 
-	@PostMapping("/updateUserInfor")
+	@PostMapping("/updateUserInfo")
 	public ResponseEntity<Map<String, String>> patchUpdateUserInfo(@Valid @RequestBody UserInfo userInfo,
 			BindingResult bindingResult, Principal principal) {
 		if (bindingResult.hasErrors()) {
@@ -158,11 +153,6 @@ public class AccountAPI {
 			req.put("message", bindingResult.getAllErrors().get(0).getDefaultMessage());
 			return ResponseEntity.badRequest().body(req);
 		}
-		User user = userRepository.findByEmail(principal.getName()).orElseThrow();
-		user.setAddress(userInfo.getAddress());
-		user.setMobile(userInfo.getMobile());
-		user.setFullName(userInfo.getFullname());
-		userRepository.save(user);
 		return ResponseEntity.ok().build();
 	}
 
@@ -174,12 +164,14 @@ public class AccountAPI {
 		if (authentication.isAuthenticated()) {
 			String accessToken = jwtService.generateToken(login.getUsername());
 			RefreshToken refreshToken = refreshTokenService.createRefreshToken(login.getUsername());
-			Cookie cookie = new Cookie("refreshToken", refreshToken.getToken());
-			cookie.setHttpOnly(true);
-			cookie.setSecure(false);
-			cookie.setPath("/");
-			cookie.setMaxAge((int) Duration.between(Instant.now(), refreshToken.getExpiryDate()).getSeconds());
-			
+			ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken.getToken())
+					.httpOnly(true)
+					.secure(false)
+					.sameSite("Lax")
+					.maxAge(Duration.between(Instant.now(), refreshToken.getExpiryDate()).getSeconds())
+							.build();
+			response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
 			return ResponseEntity.ok().body(new ApiResponse<String>("đăng nhập thành công", accessToken, 200));
 		} else {
 			return ResponseEntity.badRequest().body(new ApiResponse<String>("sai mật khẩu", null, 400));
@@ -233,15 +225,12 @@ public class AccountAPI {
 		return ResponseEntity.ok(new ApiResponse<String>("Kích hoạt tài khoản thành công", null, 200));
 	}
 
-	@GetMapping("/checkLogin/{token}")
-	public ResponseEntity<ApiResponse<Object>> checkLogin(@PathVariable String token) {
-		if (!jwtService.isTokenExpired(token)) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse<>("token hết hạn", null, 401));
+	@GetMapping("/checkLogin")
+	public ResponseEntity<ApiResponse<Object>> checkLogin() {
+		if(SecurityContextHolder.getContext().getAuthentication().isAuthenticated()){
+			return ResponseEntity.ok().build();
 		}
-		final String username = jwtService.extractUsername(token);
-		userRepository.findByEmail(username).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED,
-				"Không tìm thấy username này trong hệ thống"));
-		return ResponseEntity.ok().build();
+		return ResponseEntity.badRequest().build();
 	}
 
 	@GetMapping("/refreshToken")
@@ -256,12 +245,24 @@ public class AccountAPI {
 				Optional<String> accessToken = refreshTokenService.findByToken(token)
 						.map(refreshTokenService::verifyExpiration).map(RefreshToken::getUserInfo)
 						.map(u -> jwtService.generateToken(u.getUsername()));
-				if (accessToken.isEmpty()) {
-					return ResponseEntity.ok(new ApiResponse<String>("success", accessToken.get(), 200));
-				}
-				return ResponseEntity.badRequest().body(new ApiResponse<String>("refresh token invalid", null, 400));
-			}
+                return accessToken.map(s -> ResponseEntity.ok(new ApiResponse<>("success", s, 200)))
+						.orElseGet(() -> ResponseEntity.badRequest()
+								.body(new ApiResponse<>("refresh token invalid", null, 400)));
+            }
 		}
 		return ResponseEntity.badRequest().body(new ApiResponse<String>("refresh not found", null, 400));
 	}
+
+	@GetMapping("/detail")
+	public ResponseEntity<ApiResponse<UserInfo>> getDetails() {
+		ApiResponse<UserInfo> res = accountService.getDetailUser();
+		return ResponseEntity.ok().body(res);
+	}
+
+	@PostMapping("/changePass")
+	public ResponseEntity<ApiResponse<String>> changePass(@RequestBody ChangePassDTO changePassDTO) {
+		ApiResponse<String> res = accountService.changePassword(changePassDTO.getOldPass(), changePassDTO.getNewPass());
+		return ResponseEntity.status(res.getStatus()).body(res);
+	}
+
 }

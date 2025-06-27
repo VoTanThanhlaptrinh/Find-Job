@@ -69,7 +69,7 @@ public class JwtServiceImpl implements JwtService {
 		return Jwts.builder().claims(claims).subject(username)
 				.issuedAt(new Date(System.currentTimeMillis()))// set thời điểm tạo ra
 				// the token will be expired in 10 hours
-				.expiration(new Date(System.currentTimeMillis() + Duration.ofSeconds(jwtExpiration*1000).toMillis())) // token sẽ hết hạn sau jwtExpiration
+				.expiration(new Date(System.currentTimeMillis() + Duration.ofSeconds(jwtExpiration).toMillis())) // token sẽ hết hạn sau jwtExpiration
 				.signWith(getSignInKey()).compact();
 
 	}

@@ -179,78 +179,78 @@ public class Init {
 					});
 					
 					
-					
-					Blog news1 = new Blog(user, "5 Essential Job Search Tips",
-							"Job searching in 2024 requires a well-organized strategy, especially with the competitive job market. "
-									+ "In this article, we discuss five essential tips that can help job seekers improve their chances of success. "
-									+ "We dive deep into how tailoring your resume, networking effectively, and utilizing online platforms like "
-									+ "LinkedIn and Indeed can open doors to opportunities. We also touch on the importance of practicing for interviews "
-									+ "and following up after interviews, which can significantly improve your prospects.",
-							"Job searching can be challenging, but with the right strategy, you can improve your chances of success. "
-									+ "The key is to approach the process methodically and stay organized throughout. Here are five essential tips "
-									+ "to help guide you in your job search this year. "
-									+ "First, tailor your resume to each job you apply for. It's critical to match your skills and experience with the "
-									+ "requirements listed in the job description. Use keywords from the job posting, and don't be afraid to customize "
-									+ "your resume for every application. A one-size-fits-all resume might be easier, but it won’t impress potential employers. "
-									+ "Second, networking is one of the most effective ways to find a job. Attend industry events, reach out to people in your "
-									+ "field, and utilize online platforms like LinkedIn. Building relationships with professionals can lead to referrals and job "
-									+ "leads that aren't posted publicly. Third, make sure to leverage online job search platforms like Indeed, LinkedIn, and Glassdoor. "
-									+ "Create a profile on these platforms and actively engage with job postings. Many companies rely on these platforms to find new hires, "
-									+ "and having a strong presence can increase your chances of being noticed. Fourth, practice for interviews. Interviewing is a skill that "
-									+ "improves with practice. Research common interview questions for your field and practice answering them. Focus on highlighting your skills, "
-									+ "accomplishments, and experience. Finally, always follow up after an interview. Send a thank-you email to the interviewer to show your "
-									+ "appreciation and reinforce your interest in the position. It’s a small gesture that can leave a lasting impression. By implementing "
-									+ "these five tips, you can improve your job search strategy and increase your chances of finding the right position.",
-							120, timestamp, timestamp);
-
-					// News 2: Career Trends for 2024
-					Blog news2 = new Blog(user, "Top Career Trends in 2024",
-							"In 2024, remote work and tech skills are shaping the job market like never before. This article explores "
-									+ "how the global shift towards remote work is benefiting both companies and employees by increasing productivity "
-									+ "and flexibility. Additionally, we highlight the importance of upskilling, as tech skills such as data analysis, "
-									+ "cybersecurity, and AI are in high demand. The rise of the gig economy also offers new opportunities for freelancers "
-									+ "and independent contractors, giving professionals the freedom to manage their careers on their terms.",
-							"As we progress through 2024, several trends are becoming more evident in the job market. One of the major trends is the rise "
-									+ "of remote work. After the COVID-19 pandemic, many companies realized that remote work is not only possible but also often beneficial. "
-									+ "Remote work allows companies to tap into a global talent pool, increase productivity, and reduce overhead costs. For employees, remote work "
-									+ "provides flexibility and a better work-life balance. However, this also means that job seekers need to develop strong remote working skills, such as "
-									+ "self-discipline, time management, and communication via digital platforms. Another significant trend is the increasing demand for tech skills. "
-									+ "With the rapid advancement of technology, roles in data science, artificial intelligence, cybersecurity, and software development are on the rise. "
-									+ "Even for non-tech jobs, having a basic understanding of technology is becoming more and more important. Employers are looking for individuals who "
-									+ "can leverage technology to improve efficiency and innovation. Upskilling in areas like coding, data analysis, and digital marketing can give you a "
-									+ "competitive edge in the job market. Furthermore, the importance of continuous learning is more evident than ever. With the pace at which industries "
-									+ "are evolving, employees need to be adaptable and willing to learn new skills throughout their careers. Platforms like Coursera, Udemy, and LinkedIn "
-									+ "Learning are popular resources for professionals seeking to enhance their skills. Lifelong learning has become a key to staying relevant in the workforce. "
-									+ "Moreover, the gig economy is growing, with more professionals opting for freelance or contract work rather than traditional full-time employment. "
-									+ "This trend offers both freedom and flexibility but requires individuals to be proactive in managing their careers, finances, and benefits. Employers, in turn, "
-									+ "are also hiring more freelancers to fulfill specialized tasks on a project basis. These career trends highlight the shifting dynamics of the modern job market, "
-									+ "and understanding them can help job seekers position themselves for success.",
-							98, timestamp, timestamp);
-
-					// News 3: How to Write a Standout Resume
-					Blog news3 = new Blog(user, "How to Write a Standout Resume",
-							"A standout resume is key to getting noticed by potential employers in 2024. This article outlines the critical steps to "
-									+ "crafting a resume that not only highlights your qualifications but also showcases your unique strengths. We emphasize "
-									+ "the importance of customizing your resume for each job application and focusing on quantifiable achievements. With a well-organized "
-									+ "layout, action verbs, and a strong summary at the top, your resume will catch the eye of recruiters. Proofreading and avoiding "
-									+ "common mistakes are also essential to leave a positive impression.",
-							"Your resume is often the first impression you make on potential employers, so it's essential to create one that stands out. "
-									+ "A well-crafted resume not only highlights your qualifications but also showcases your professionalism. One of the most important aspects "
-									+ "of writing a resume is tailoring it to the job you're applying for. Avoid using a generic resume for every job application. Instead, review "
-									+ "the job description carefully and make sure your resume reflects the specific skills and experience that are required for the role. This can "
-									+ "be as simple as adjusting your job titles, keywords, and bullet points to align with what the employer is looking for. Another key factor is "
-									+ "to focus on accomplishments rather than just job duties. Use action verbs to describe how you added value to your previous positions. For example, "
-									+ "instead of saying 'responsible for managing a team,' say 'led a team of 10 employees, improving productivity by 20% over one year.' These specific, "
-									+ "quantifiable results show employers what you are capable of achieving. Additionally, make sure to include a strong summary at the top of your resume. "
-									+ "This is your chance to provide a brief overview of your professional background and key strengths. It's also important to maintain a clean and organized "
-									+ "layout. A resume that is too cluttered or difficult to read can be a turn-off for recruiters. Stick to a simple design with clear sections for your experience, "
-									+ "skills, and education. Use bullet points to break up information and make it easy to scan. Lastly, proofread your resume carefully. Even a small typo can make "
-									+ "a negative impression. It's a good idea to have someone else review your resume as well, to catch any mistakes you might have missed. By following these guidelines, "
-									+ "you can create a resume that not only gets noticed but also sets you apart from the competition.",
-							150, timestamp, timestamp);
-					newsRepository.save(news1);
-					newsRepository.save(news2);
-					newsRepository.save(news3);
+//
+//					Blog news1 = new Blog(user, "5 Essential Job Search Tips",
+//							"Job searching in 2024 requires a well-organized strategy, especially with the competitive job market. "
+//									+ "In this article, we discuss five essential tips that can help job seekers improve their chances of success. "
+//									+ "We dive deep into how tailoring your resume, networking effectively, and utilizing online platforms like "
+//									+ "LinkedIn and Indeed can open doors to opportunities. We also touch on the importance of practicing for interviews "
+//									+ "and following up after interviews, which can significantly improve your prospects.",
+//							"Job searching can be challenging, but with the right strategy, you can improve your chances of success. "
+//									+ "The key is to approach the process methodically and stay organized throughout. Here are five essential tips "
+//									+ "to help guide you in your job search this year. "
+//									+ "First, tailor your resume to each job you apply for. It's critical to match your skills and experience with the "
+//									+ "requirements listed in the job description. Use keywords from the job posting, and don't be afraid to customize "
+//									+ "your resume for every application. A one-size-fits-all resume might be easier, but it won’t impress potential employers. "
+//									+ "Second, networking is one of the most effective ways to find a job. Attend industry events, reach out to people in your "
+//									+ "field, and utilize online platforms like LinkedIn. Building relationships with professionals can lead to referrals and job "
+//									+ "leads that aren't posted publicly. Third, make sure to leverage online job search platforms like Indeed, LinkedIn, and Glassdoor. "
+//									+ "Create a profile on these platforms and actively engage with job postings. Many companies rely on these platforms to find new hires, "
+//									+ "and having a strong presence can increase your chances of being noticed. Fourth, practice for interviews. Interviewing is a skill that "
+//									+ "improves with practice. Research common interview questions for your field and practice answering them. Focus on highlighting your skills, "
+//									+ "accomplishments, and experience. Finally, always follow up after an interview. Send a thank-you email to the interviewer to show your "
+//									+ "appreciation and reinforce your interest in the position. It’s a small gesture that can leave a lasting impression. By implementing "
+//									+ "these five tips, you can improve your job search strategy and increase your chances of finding the right position.",
+//							120, timestamp, timestamp);
+//
+//					// News 2: Career Trends for 2024
+//					Blog news2 = new Blog(user, "Top Career Trends in 2024",
+//							"In 2024, remote work and tech skills are shaping the job market like never before. This article explores "
+//									+ "how the global shift towards remote work is benefiting both companies and employees by increasing productivity "
+//									+ "and flexibility. Additionally, we highlight the importance of upskilling, as tech skills such as data analysis, "
+//									+ "cybersecurity, and AI are in high demand. The rise of the gig economy also offers new opportunities for freelancers "
+//									+ "and independent contractors, giving professionals the freedom to manage their careers on their terms.",
+//							"As we progress through 2024, several trends are becoming more evident in the job market. One of the major trends is the rise "
+//									+ "of remote work. After the COVID-19 pandemic, many companies realized that remote work is not only possible but also often beneficial. "
+//									+ "Remote work allows companies to tap into a global talent pool, increase productivity, and reduce overhead costs. For employees, remote work "
+//									+ "provides flexibility and a better work-life balance. However, this also means that job seekers need to develop strong remote working skills, such as "
+//									+ "self-discipline, time management, and communication via digital platforms. Another significant trend is the increasing demand for tech skills. "
+//									+ "With the rapid advancement of technology, roles in data science, artificial intelligence, cybersecurity, and software development are on the rise. "
+//									+ "Even for non-tech jobs, having a basic understanding of technology is becoming more and more important. Employers are looking for individuals who "
+//									+ "can leverage technology to improve efficiency and innovation. Upskilling in areas like coding, data analysis, and digital marketing can give you a "
+//									+ "competitive edge in the job market. Furthermore, the importance of continuous learning is more evident than ever. With the pace at which industries "
+//									+ "are evolving, employees need to be adaptable and willing to learn new skills throughout their careers. Platforms like Coursera, Udemy, and LinkedIn "
+//									+ "Learning are popular resources for professionals seeking to enhance their skills. Lifelong learning has become a key to staying relevant in the workforce. "
+//									+ "Moreover, the gig economy is growing, with more professionals opting for freelance or contract work rather than traditional full-time employment. "
+//									+ "This trend offers both freedom and flexibility but requires individuals to be proactive in managing their careers, finances, and benefits. Employers, in turn, "
+//									+ "are also hiring more freelancers to fulfill specialized tasks on a project basis. These career trends highlight the shifting dynamics of the modern job market, "
+//									+ "and understanding them can help job seekers position themselves for success.",
+//							98, timestamp, timestamp);
+//
+//					// News 3: How to Write a Standout Resume
+//					Blog news3 = new Blog(user, "How to Write a Standout Resume",
+//							"A standout resume is key to getting noticed by potential employers in 2024. This article outlines the critical steps to "
+//									+ "crafting a resume that not only highlights your qualifications but also showcases your unique strengths. We emphasize "
+//									+ "the importance of customizing your resume for each job application and focusing on quantifiable achievements. With a well-organized "
+//									+ "layout, action verbs, and a strong summary at the top, your resume will catch the eye of recruiters. Proofreading and avoiding "
+//									+ "common mistakes are also essential to leave a positive impression.",
+//							"Your resume is often the first impression you make on potential employers, so it's essential to create one that stands out. "
+//									+ "A well-crafted resume not only highlights your qualifications but also showcases your professionalism. One of the most important aspects "
+//									+ "of writing a resume is tailoring it to the job you're applying for. Avoid using a generic resume for every job application. Instead, review "
+//									+ "the job description carefully and make sure your resume reflects the specific skills and experience that are required for the role. This can "
+//									+ "be as simple as adjusting your job titles, keywords, and bullet points to align with what the employer is looking for. Another key factor is "
+//									+ "to focus on accomplishments rather than just job duties. Use action verbs to describe how you added value to your previous positions. For example, "
+//									+ "instead of saying 'responsible for managing a team,' say 'led a team of 10 employees, improving productivity by 20% over one year.' These specific, "
+//									+ "quantifiable results show employers what you are capable of achieving. Additionally, make sure to include a strong summary at the top of your resume. "
+//									+ "This is your chance to provide a brief overview of your professional background and key strengths. It's also important to maintain a clean and organized "
+//									+ "layout. A resume that is too cluttered or difficult to read can be a turn-off for recruiters. Stick to a simple design with clear sections for your experience, "
+//									+ "skills, and education. Use bullet points to break up information and make it easy to scan. Lastly, proofread your resume carefully. Even a small typo can make "
+//									+ "a negative impression. It's a good idea to have someone else review your resume as well, to catch any mistakes you might have missed. By following these guidelines, "
+//									+ "you can create a resume that not only gets noticed but also sets you apart from the competition.",
+//							150, timestamp, timestamp);
+//					newsRepository.save(news1);
+//					newsRepository.save(news2);
+//					newsRepository.save(news3);
 				}
 			}
 		};

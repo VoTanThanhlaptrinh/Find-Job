@@ -1,4 +1,6 @@
 package com.job_web.dto;
 
-public class AddressJobCount {
+public interface AddressJobCount {
+     String getAddress();
+     int getCount();
 }
