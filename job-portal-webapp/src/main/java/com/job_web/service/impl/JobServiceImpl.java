@@ -1,10 +1,15 @@
 package com.job_web.service.impl;
 
+import java.util.List;
 import java.util.Optional;
 
+import com.job_web.data.specification.JobSpecifications;
+import com.job_web.dto.AddressJobCount;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.job_web.data.JobRepository;
@@ -17,11 +22,9 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class JobServiceImpl implements JobService {
 	private final JobRepository jobRepository;
-
 	@Override
 	public ApiResponse<Page<Job>> getListJobNewest(int page, int amount) {
 		PageRequest pageable = PageRequest.of(page, amount, Sort.by("createDate").descending());
-
 		return new ApiResponse<Page<Job>>("success", jobRepository.findAll(pageable), 200);
 	}
 
@@ -30,10 +33,8 @@ public class JobServiceImpl implements JobService {
 		try {
 			long jobId = Long.valueOf(id);
 			Optional<Job> job = jobRepository.findById(jobId);
-			if (job.isPresent())
-				return new ApiResponse<Job>("success", job.get(), 200);
-			return new ApiResponse<Job>("Id not found", null, 404);
-		} catch (NumberFormatException e) {
+            return job.map(value -> new ApiResponse<>("success", value, 200)).orElseGet(() -> new ApiResponse<>("Id not found", null, 404));
+        } catch (NumberFormatException e) {
 			return new ApiResponse<Job>("Id is not number", null, 404);
 		}
 	}
@@ -41,7 +42,7 @@ public class JobServiceImpl implements JobService {
 	@Override
 	public ApiResponse<Boolean> checkExistJob(String id) {
 		try {
-			long jobId = Long.valueOf(id);
+			long jobId = Long.parseLong(id);
 			Optional<Job> job = jobRepository.findById(jobId);
 				return new ApiResponse<Boolean>("success", job.isPresent(), 200);
 		} catch (NumberFormatException e) {
@@ -49,4 +50,29 @@ public class JobServiceImpl implements JobService {
 		}
 	}
 
+	@Override
+	public ApiResponse<Integer> getAmount() {
+		return new ApiResponse<>("success", (int) jobRepository.count(), HttpStatus.OK.value());
+	}
+
+	@Override
+	public ApiResponse<List<AddressJobCount>> getAddressJobCount() {
+		return new ApiResponse<>("success",jobRepository.findAddressJobCount(), HttpStatus.OK.value());
+	}
+
+	@Override
+	public ApiResponse<Page<Job>> getListJobByAddress(String address, int page, int amount) {
+		PageRequest pageable = PageRequest.of(page, amount, Sort.by("createDate").descending());
+		 return new ApiResponse<>("success",jobRepository.findByTime(address, pageable), HttpStatus.OK.value());
+	}
+
+	@Override
+	public ApiResponse<Page<Job>> filterBetterSalaryAndHasAddressAndInTimes(final int pageIndex, final int pageSize, final int min,final int max,final List<String> address,final List<String> times) {
+		Specification<Job> spec = Specification.where(JobSpecifications.salaryBetter(min,max)
+		.or(JobSpecifications.inAddress(address))
+						.or(JobSpecifications.inTime(times))
+				);
+		PageRequest pageable = PageRequest.of(pageIndex, pageSize, Sort.by("createDate").descending());
+		return new ApiResponse<>("success",jobRepository.findAll(spec, pageable), HttpStatus.OK.value());
+	}
 }

@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -42,6 +43,7 @@ public class Job {
 	private String skill;
 	@ManyToOne
 	@JoinColumn(name = "hirer_id")
+	@JsonIgnore
 	private Hirer hirer;
 	@OneToMany(mappedBy = "job", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
 	private List<Apply> applies;
