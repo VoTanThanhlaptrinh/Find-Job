@@ -10,9 +10,12 @@ export class JobServiceService {
   constructor(private http: HttpClient) { }
 
   getDetailJob(id: string) :Observable<any> {
-    return this.http.get(`http://localhost:8080/api/job/detail/${id}`);
+    return this.http.get(`http://localhost:8080/api/job/pub/detail/${id}`);
   }
-  applyCV(form: FormData): Observable<any>{
-    return this.http.post('http://localhost:8080/api/job/apply',form);
+  checkApplyJob(id: string): Observable<any> {
+    return this.http.get(`http://localhost:8080/api/job/pub/check-apply/${id}`);
+  }
+  doPostJob(form:any): Observable<any>{
+    return this.http.post('http://localhost:8080/api/job/postJob',form);
   }
 }

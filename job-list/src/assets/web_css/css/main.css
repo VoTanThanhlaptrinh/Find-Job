@@ -4,7 +4,7 @@
 /* Mobile Layout: 320px */
 /* Wide Mobile Layout: 480px */
 /* =================================== */
-/*  Basic Style 
+/*  Basic Style
 /* =================================== */
 ::-moz-selection {
   /* Code for Firefox */
@@ -2231,7 +2231,12 @@ body.mobile-nav-active #mobile-nav-toggle {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-
+.banner-area.relative#home {
+  height: 650px;              /* độ cao banner mong muốn */
+}
+.banner-area.relative#category {
+  height: 500px;              /* độ cao banner mong muốn */
+}
 .primary-btn {
   background-color: #49e4fa;
   line-height: 42px;
@@ -2571,7 +2576,6 @@ body.mobile-nav-active #mobile-nav-toggle {
   width: 100px;
   display: inline-block;
   background-color: #fff;
-  border: 1px solid #eee;
   -webkit-transition: all 0.3s ease 0s;
   -moz-transition: all 0.3s ease 0s;
   -o-transition: all 0.3s ease 0s;
@@ -2604,9 +2608,10 @@ body.mobile-nav-active #mobile-nav-toggle {
 }
 
 .post-list .single-post {
-  padding: 30px;
+  padding: 15px;
   background-color: #f9f9ff;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
+  gap:0.5rem;
 }
 
 .post-list .single-post h6 {
@@ -2776,7 +2781,8 @@ body.mobile-nav-active #mobile-nav-toggle {
 }
 
 .sidebar .single-slidebar .cat-list li {
-  padding: 0px 10px;
+  border: none !important;
+  gap: 5px;
   background-color: #fff;
   -webkit-transition: all 0.3s ease 0s;
   -moz-transition: all 0.3s ease 0s;
@@ -2789,9 +2795,13 @@ body.mobile-nav-active #mobile-nav-toggle {
 }
 
 .sidebar .single-slidebar .cat-list p {
-  margin-bottom: 0;
-}
 
+}
+.sidebar .single-slidebar .cat-list input {
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+}
 .sidebar .single-slidebar .cat-list a {
   color: #777;
   padding: 10px;
@@ -4156,6 +4166,24 @@ body.mobile-nav-active #mobile-nav-toggle {
 .commentform-area .form-control {
   border: none;
   background: #f9f9ff;
+}
+.info {
+  display: inline-flex;
+  align-items: center; /* căn giữa theo chiều dọc */
+  gap: 0.25rem; /* ít khoảng cách hơn */
+}
+.info span {
+  display: inline-flex;
+  align-items: center;
+}
+.info .divider::before {
+  content: "|";
+  margin: 0 0.5rem;
+  color: #999;
+}
+mat-paginator {
+  display: flex !important;
+  justify-content: center !important;
 }
 
 /*

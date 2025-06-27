@@ -1,4 +1,4 @@
-<section class="banner-area relative" id="home">
+<section class="banner-area relative" id="category">
     <div class="overlay overlay-bg"></div>
     <div class="container">
         <div class="row search-page-top d-flex align-items-center justify-content-center">
@@ -13,32 +13,20 @@
                 </p>
                 <form action="/search" class="serach-form-area" method="post"><input type="hidden" name="_csrf" value="a8796626-9959-4983-a98b-652cce4be002"/>
                     <div class="row justify-content-center form-wrap">
-                        <div class="col-lg-4 form-cols">
+                        <div class="col-lg-6 form-cols">
                             <input type="text" class="form-control" name="title"
                                 placeholder="Công việc bạn đang tìm là gì?">
                         </div>
-                        <div class="col-lg-3 form-cols">
+                        <div class="col-lg-4 form-cols">
                             <div class="default-select" id="default-selects">
                                 <select>
-                                    <option value="1">Khu vực</option>
-                                    <option value="2">TP Hồ Chí Minh</option>
-                                    <option value="3">Hà Nội</option>
-                                    <option value="4">Đà Nẵng</option>
-                                    <option value="5">Cần Thơ</option>
+                                  @for (item of addressCount; track item.address) {
+                                      <option value="{{item.address}}">{{item.address}}</option>
+                                  }
                                 </select>
                             </div>
                         </div>
-                        <div class="col-lg-3 form-cols">
-                            <div class="default-select" id="default-selects2">
-                                <select>
-                                    <option value="1">Lĩnh vực</option>
-                                    <option value="2">Khách sạn</option>
-                                    <option value="3">Kỹ thuật</option>
-                                    <option value="4">Quản lý</option>
-                                    <option value="5">Lập trình</option>
-                                </select>
-                            </div>
-                        </div>
+
                         <div class="col-lg-2 form-cols">
                             <button type="submit" class="btn btn-info">
                                 <span class="lnr lnr-magnifier"></span> Tìm kiếm
@@ -56,129 +44,111 @@
 <!-- Start post Area -->
 <section class="post-area section-gap">
     <div class="container">
-
         <div class="row justify-content-center d-flex">
+          <div class="col-lg-4 sidebar">
+            <div class="single-slidebar">
+              <h4>Phân loại công việc theo vị trí</h4>
+              <ul class="list-group cat-list">
+                @for (item of addressCount; track item.address) {
+                  <li class="list-group-item d-flex align-items-center justify-content-between">
+                    <div class="form-check d-flex align-items-center m-0">
+                      <input class="form-check-input" type="checkbox" value="{{item.address}}" (change)="onFilterChange($event)" >
+                      <label class="form-check-label " >{{item.address}}</label>
+                    </div>
+                    <span>{{item.amount}}</span>
+                  </li>
+                }
+              </ul>
+            </div>
+
+            <div class="single-slidebar">
+              <h4>Loại công việc</h4>
+              <ul class="list-group cat-list">
+                @for (job of this.jobTypes; track job.label){
+                  <li class="list-group-item">
+                    <label class="form-switch">
+                      <input type="checkbox" [checked]="job.checked" (change)="onFilterChange($event)">
+                      <span>{{ job.label }}</span>
+                      <span class="slider round"></span>
+                    </label>
+                  </li>
+                }
+
+              </ul>
+            </div>
+
+            <div class="single-slidebar">
+              <h4> Lương </h4>
+              <mat-slider
+                [min]="min"
+                [max]="max"
+                [step]="step"
+                discrete
+                class="my-slider">
+                <input
+                  matSliderStartThumb
+                  [value]="minSalary"
+                  (valueChange)="onMinChange($event)"
+                  (dragEnd)="onMinChange($event.value)"
+                  (change)="onFilterChange($event)"/>
+                <input
+                  matSliderEndThumb
+                  [value]="maxSalary"
+                  (valueChange)="onMaxChange($event)"
+                  (dragEnd)="onMaxChange($event.value)"
+                  (change)="onFilterChange($event)"/>
+              </mat-slider>
+
+              <div class="value-labels">
+                <span>{{ formatMoney(minSalary) }}</span>
+                <span>{{ formatMoney(maxSalary) }}</span>
+              </div>
+
+            </div>
+          </div>
             <div class="col-lg-8 post-list">
                 @for (item of listJobsNewest; track item.id) {
-                
-                <div class="single-post d-flex flex-row">
+                <div class="single-post flex flex-row">
                     <div class="thumb">
                         <img class="img-fluid" src="{{item.image}}" alt="">
-                        <ul class="tags">
-                            <li>
-                                <a>Art</a>
-                            </li>
-                            <li>
-                                <a>Media</a>
-                            </li>
-                            <li>
-                                <a>Design</a>
-                            </li>
-                        </ul>
                     </div>
-                    <div class="details">
+                    <div class="details ms-2">
                         <div class="title d-flex flex-row justify-content-between">
                             <div class="titles">
                                 <a href="{{item.link}}">
-                                    <h4>{{item.title}}</h4>
+                                    <h4>{{item.title}} &nbsp;</h4>
                                 </a>
-                                <h6>Premium Labels Limited</h6>
                             </div>
-                            <ul class="btns">
-                                <li><a href="#"><span class="lnr lnr-heart"></span></a></li>
-                               <li><a href="#">Apply</a></li>
-                            </ul>
                         </div>
                         <p>{{item.description}}</p>
-                        <h5>
-                            <p>{{item.type}}</p>
-                        </h5>
-                        <p class="address"><span class="lnr lnr-map">{{item.address}}</span> </p>
-                        <p class="address"><span class="lnr lnr-database">{{item.salary}}</span>
-                        </p>
+                      <p class="info">
+                        <span><i class="lnr lnr-map"></i>&nbsp;{{item.address}}</span>
+                        <span class="divider"></span>
+                        <span><i class="lnr lnr-database"></i>&nbsp;{{ formatMoney(item.salary)}}</span>
+                        <span class="divider"></span>
+                        <span>{{item.type}}</span>
+                      </p>
                     </div>
                 </div>
                 } @empty {
                 <li>There are no items.</li>
                 }
-               
+              <mat-paginator [length]="this.length"
+                             [pageSize]=" 10"
+                             [pageSizeOptions]="[5, 10, 25]"
+                             [showFirstLastButtons]="true"
+                             [pageIndex]="pageIndex"
+                             (page)="handlePage($event)"
+                             aria-label="Select page">
+              </mat-paginator>
             </div>
-            <div class="col-lg-4 sidebar">
-    <div class="single-slidebar">
-        <h4>Công việc theo vị trí</h4>
-        <ul class="cat-list">
-            <li><a class="justify-content-between d-flex" href="/category">
-                    <p>Hồ Chí Minh</p><span>37</span>
-                </a></li>
-            <li><a class="justify-content-between d-flex" href="/category">
-                    <p>Hà Nội</p><span>57</span>
-                </a></li>
-            <li><a class="justify-content-between d-flex" href="/category">
-                    <p>Đà Nẵng</p><span>33</span>
-                </a></li>
-            <li><a class="justify-content-between d-flex" href="/category">
-                    <p>Đồng Nai</p><span>36</span>
-                </a></li>
-            <li><a class="justify-content-between d-flex" href="/category">
-                    <p>Cần Thơ</p><span>47</span>
-                </a></li>
-            <li><a class="justify-content-between d-flex" href="/category">
-                    <p>Đà Lạt</p><span>27</span>
-                </a></li>
-            <li><a class="justify-content-between d-flex" href="/category">
-                    <p>Bình Dương</p><span>17</span>
-                </a></li>
-        </ul>
-    </div>
-
-    <div class="single-slidebar">
-        <h4>Tuyển dụng được đánh giá cao</h4>
-        <div class="active-relatedjob-carusel">
-            
-        </div>
-    </div>
-
-    <div class="single-slidebar">
-        <h4>Công việc theo lĩnh vực</h4>
-        <ul class="cat-list">
-            <li><a class="justify-content-between d-flex" href="/category">
-                    <p>Kỹ thuật</p><span>37</span>
-                </a></li>
-            <li><a class="justify-content-between d-flex" href="/category">
-                    <p>Truyền thông</p><span>57</span>
-                </a></li>
-            <li><a class="justify-content-between d-flex" href="/category">
-                    <p>Quản lý</p><span>33</span>
-                </a></li>
-            <li><a class="justify-content-between d-flex" href="/category">
-                    <p>Tư vấn</p><span>36</span>
-                </a></li>
-            <li><a class="justify-content-between d-flex" href="/category">
-                    <p>Nhà hàng</p><span>47</span>
-                </a></li>
-            <li><a class="justify-content-between d-flex" href="/category">
-                    <p>Lập trình</p><span>27</span>
-                </a></li>
-            <li><a class="justify-content-between d-flex" href="/category">
-                    <p>Kế toán</p><span>17</span>
-                </a></li>
-        </ul>
-    </div>
-
-    <div class="single-slidebar">
-        <h4>Bài viết </h4>
-        <div class="blog-list">
-            
-        </div>
-    </div>
-</div>
         </div>
     </div>
 </section>
 <!-- End post Area -->
 
 <!-- Start callto-action Area -->
-<section class="callto-action-area section-gap" id="join">
+<section class="callto-action-area section-gap mt-5" id="join">
     <div class="container">
         <div class="row d-flex justify-content-center">
             <div class="menu-content col-lg-9">

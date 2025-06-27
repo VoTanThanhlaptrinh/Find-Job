@@ -36,7 +36,10 @@
               "src/assets/web_css/css/main.css",
               "node_modules/ngx-owl-carousel-o/lib/styles/prebuilt-themes/owl.carousel.css",
               "node_modules/ngx-owl-carousel-o/lib/styles/prebuilt-themes/owl.theme.default.css",
-              "node_modules/ngx-toastr/toastr.css"
+              "node_modules/ngx-toastr/toastr.css",
+              "node_modules/quill/dist/quill.core.css",
+              "node_modules/quill/dist/quill.bubble.css",
+              "node_modules/quill/dist/quill.snow.css"
             ],
             "scripts": [
               "src/assets/web_css/js/vendor/jquery-2.2.4.min.js",

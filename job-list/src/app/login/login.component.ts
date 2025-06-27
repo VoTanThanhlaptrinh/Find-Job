@@ -5,6 +5,7 @@ import { AuthService } from '../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { NotifyMessageService } from '../services/notify-message.service';
 import { take } from 'rxjs';
+import {response} from 'express';
 @Component({
   selector: 'app-login',
   imports: [FormsModule, CommonModule],
@@ -13,13 +14,17 @@ import { take } from 'rxjs';
   styleUrl: './login.component.css'
 })
 export class LoginComponent implements OnInit {
+  googleUrl = '';
   constructor(private loginService: AuthService
     , private router: Router,
       private route: ActivatedRoute,
-      private toastr: NotifyMessageService) {
+      private toastr: NotifyMessageService,
+      private auth: AuthService) {
   }
   ngOnInit(): void {
     this.notify()
+
+    this.googleLoginURL()
   }
   formErrors: boolean = false;
   formErrorMessage: string = '';
@@ -31,10 +36,7 @@ export class LoginComponent implements OnInit {
           let jwtToken = response.data;
           if (jwtToken) {
             localStorage.setItem('jwtToken', jwtToken);
-            this.router.navigate(['']).then(() => {
-              window.location.reload();
-            }
-            );
+            this.router.navigate([''])
           }
         },
         error: (error) => {
@@ -47,6 +49,16 @@ export class LoginComponent implements OnInit {
   notify() {
     this.route.queryParams.pipe(take(1)).subscribe(params => {
       this.toastr.showMessage(params['message'],'' ,params['status'])
+    })
+  }
+  googleLoginURL():void{
+    this.auth.getGoogleLoginUrl().pipe(take(1)).subscribe({
+      next: (response) => {
+        this.googleUrl = response.data
+      },
+      error: (error) => {
+        this.formErrorMessage = error.error.message;
+      }
     })
   }
 }

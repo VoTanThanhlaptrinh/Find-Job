@@ -3,17 +3,19 @@ import { Injectable } from '@angular/core';
 import { Observable, take, tap } from 'rxjs';
 import { NotifyMessageService } from './notify-message.service';
 import { map } from 'rxjs/operators';
+import {Router} from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private url = "http://localhost:8080/api/account/login"
+  token = '';
   constructor(private http: HttpClient
-              ,private toastr: NotifyMessageService) { }
+              ,private toastr: NotifyMessageService
+              ,private router: Router) { }
   login(username: string, password: string): Observable<any>{
     const body = { username, password };
-    return this.http.post<any>(this.url, body);
+    return this.http.post<any>("http://localhost:8080/api/account/login", body, {withCredentials: true});
   }
   isLogin(): boolean {
     let token;
@@ -24,7 +26,7 @@ export class AuthService {
     }
     if(token !== null && token !== undefined){
       console.log(token);
-      this.http.get<any>(`http://localhost:8080/api/account/checkLogin/${token}`).pipe(take(1)).subscribe({
+      this.http.get<any>('http://localhost:8080/api/account/checkLogin', {withCredentials: true} ).pipe(take(1)).subscribe({
       next: (response) => {
         if (response.status === 200) {
           isLogin = true;
@@ -42,7 +44,7 @@ export class AuthService {
     }
     return isLogin;
   }
-  
+
   logout(): void {
     if (typeof window !== 'undefined' && window.localStorage) {
       localStorage.removeItem('jwtToken');
@@ -62,13 +64,24 @@ export class AuthService {
   }
   refreshToken$(): Observable<string> {
     const url = 'http://localhost:8080/api/account/refreshToken';
-    return this.http.get<{ data: string }>(url).pipe(
+    return this.http.get<{ data: string }>(url, {withCredentials: true}).pipe(
       take(1),
       tap((response: { data: string }) => {
         localStorage.setItem('jwtToken', response.data);
       }),
       map((response: { data: string }) => response.data)
     );
+  }
+  getDetails():Observable<any>{
+    return this.http.get('http://localhost:8080/api/account/refreshToken');
+  }
+  getGoogleLoginUrl():Observable<any> {
+    return this.http.get('http://localhost:8080/auth/url/google');
+  }
+  fetchToken(token: string) {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.setItem("jwtToken",token);
+    }
   }
 
 }
