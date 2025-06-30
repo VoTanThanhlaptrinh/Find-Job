@@ -1,0 +1,132 @@
+<!-- HOME -->
+<section class="banner-area relative" id="category">
+  <div class="overlay overlay-bg"></div>
+  <div class="container">
+    <div class="row d-flex align-items-center justify-content-center">
+      <div class="about-content col-lg-12">
+        <h1 class="text-white">
+          Post Job
+        </h1>
+        <p class="text-white link-nav"><a [routerLink]="['/home']">Home </a> <span
+          class="lnr lnr-arrow-right"></span> <a [routerLink]="['/post-job']"> Post Job</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="site-section mt-3">
+  <div class="container">
+    <div class="row align-items-center mb-5">
+      <div class="col-lg-8 mb-4 mb-lg-0">
+        <div class="d-flex align-items-center">
+          <div>
+            <h2>Đăng công việc</h2>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="row">
+          <!-- Có thể thêm nút ở đây nếu cần -->
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-5">
+      <div class="col-lg-12">
+        <form class="p-4 p-md-5 border rounded box-shadow" [formGroup]="this.postJobFG" (ngSubmit)="this.onSubmit()">
+          <h3 class="text-black mb-5 border-bottom pb-2">Chi tiết công việc</h3>
+          <div class="form-group row gx-2">
+            <div class="col-md-6">
+              <label>Tên công việc</label>
+              <input type="text" class="form-control box-shadow" required  name="jobName" formControlName="jobName" placeholder="VD: Nhà thiết kế sản phẩm">
+            </div>
+            <div class="col-md-6">
+              <label>Địa điểm</label>
+              <input type="text" class="form-control box-shadow" name="location"  formControlName="location" placeholder="VD: Hồ Chí Minh">
+            </div>
+          </div>
+
+          <div class="form-group row gx-2">
+            <div class="col-md-4">
+              <label>Loại hình</label>
+              <select class="form-control box-shadow" name="jobType"  formControlName="jobType">
+                <option>Full Time</option>
+                <option>Part Time</option>
+                <option>Freelance</option>
+                <option>Internship</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label>Mức lương (VNĐ)</label>
+              <input type="number" class="form-control box-shadow" required name="salary" formControlName="salary" placeholder="VD: 15.000.000">
+            </div>
+            <div class="col-md-4">
+              <label>Hạn nộp CV</label>
+              <input type="date" class="form-control box-shadow"  required name="deadlineCV" formControlName="deadlineCV">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Mô tả công việc</label>
+            <div class="quill-wrapper">
+              <quill-editor formControlName="jobDescription"></quill-editor>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Yêu cầu công việc</label>
+            <div class="quill-wrapper">
+              <quill-editor formControlName="jobRequirement"></quill-editor>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Kỹ năng yêu cầu</label>
+            <div class="quill-wrapper">
+              <quill-editor formControlName="jobSkill"></quill-editor>
+            </div>
+          </div>
+
+          <h3 class="text-black my-5 border-bottom pb-2">Thông tin công ty</h3>
+          <div class="form-group">
+            <label for="company-website-tw d-block">Tải lên logo công ty</label> <br>
+            <label class="btn btn-primary btn-md btn-file">
+              Chọn tệp<input type="file" hidden name="image" (change)="onFilePicked($event)" required>
+            </label>
+          </div>
+          <div class="form-group">
+            <label for="company-name">Tên công ty</label>
+            <input type="text" class="form-control box-shadow" id="company-name" name="companyName" required formControlName="companyName" placeholder="VD: Công ty ABC">
+          </div>
+
+          <div class="form-group">
+            <label for="job-description">Mô tả công ty (Không bắt buộc)</label>
+            <quill-editor formControlName="companyDescription"></quill-editor>
+          </div>
+
+          <div class="form-group">
+            <label for="company-website">Website (Không bắt buộc)</label>
+            <input type="text" class="form-control box-shadow" id="company-website" placeholder="VD: https://abc.vn" formControlName="compayWebsite">
+          </div>
+          <div class="row align-items-center mt-4">
+            <div class="col-lg-4 ml-auto">
+              <div class="row">
+                <div class="col-6">
+                  <a href="#" class="btn btn-block btn-light btn-md"><span class="icon-open_in_new mr-2"></span>Xem trước</a>
+                </div>
+                <div class="col-6">
+                  <button class="btn btn-block btn-primary btn-md" type="submit">Lưu công việc</button>
+                </div>
+              </div>
+            </div>
+            <div>
+              <span [ngClass]="{'text-success': this.messageType === true, 'text-danger': this.messageType === false}">{{this.message}}</span>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+
+
+  </div>
+</section>
+

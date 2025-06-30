@@ -9,7 +9,18 @@ export class CategoryService {
 
   constructor(private http: HttpClient) { }
 
-  listJobsNewest(): Observable<any>{
-    return this.http.get<any>('http://localhost:8080/api/listJobsNewest',);
+  listJobsNewest(pageIndex:number,pageSize:number): Observable<any>{
+    return this.http.get<any>(`http://localhost:8080/api/job/pub/listJobsNewest/${pageIndex}/${pageSize}`,);
+  }
+
+  getAmount():Observable<any> {
+    return this.http.get<any>(`http://localhost:8080/api/job/pub/getAmount`);
+  }
+
+  getAddressCount() {
+    return this.http.get<any>(`http://localhost:8080/api/job/pub/getAddressCount`);
+  }
+  filterWithAddressTimeSalary(filter:any){
+    return this.http.post<any>(`http://localhost:8080/api/job/pub/filterWithAddressTimeSalary`,filter);
   }
 }

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import {CommonModule, isPlatformBrowser} from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { CarouselModule } from 'ngx-owl-carousel-o';
 import { HomeService } from '../services/home.service';
@@ -72,5 +72,11 @@ export class HomeComponent implements OnInit {
         console.error('Error fetching data:', error);
       }
     })
+  }
+  formatMoney(val: number): string {
+    return val.toLocaleString('vi-VN') + '₫';
+  }
+  trackById(index: number, item: any): any {
+    return item.id;
   }
 }

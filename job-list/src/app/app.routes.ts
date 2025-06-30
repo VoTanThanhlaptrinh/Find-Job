@@ -16,22 +16,30 @@ import { VerifyComponent } from './verify/verify.component';
 import { ActivateComponent } from './activate/activate.component';
 import { JobSingleComponent } from './job-single/job-single.component';
 import { ApplyCvComponent } from './apply-cv/apply-cv.component';
+import {LoginCallbackComponent} from './login-callback/login-callback.component';
+import {PostJobComponent} from './post-job/post-job.component';
+import {ForgotPassComponent} from './forgot-pass/forgot-pass.component';
+import {ResetPassComponent} from './reset-pass/reset-pass.component';
 export const routes: Routes = [
     {path:'', component:HomeComponent},
     {path:'login', component:LoginComponent},
     {path:'register', component:RegisterComponent},
     {path:'about', component:AboutUsComponent},
     {path:'blogHome', component:BlogHomeComponent},
-    {path:'blogSingle', component:BlogSingleComponent},
+    {path:'blogSingle/:id', component:BlogSingleComponent},
     {path:'contact', component:ContactComponent},
     {path:'category', component:CategoryComponent},
     {path:'verify', component:VerifyComponent},
     {path:'activate', component:ActivateComponent},
+    {path:'post-job', component:PostJobComponent},
+    {path:'forgot-pass', component:ForgotPassComponent},
+    {path:'reset-pass/:random', component:ResetPassComponent},
+    {path:'login-callback', component:LoginCallbackComponent},
     {
         path: 'infor',
         component: InforComponent,
         children: [
-          { path: '', component: ProfileComponent }, 
+          { path: '', component: ProfileComponent },
           { path: 'change-password', component: ChangePassComponent },
           { path: 'cv', component: CvUiComponent },
           { path: 'history-apply', component: HistoryApplyComponent }

@@ -1,4 +1,4 @@
-<section class="banner-area relative" id="home">
+<section class="banner-area relative" id="category">
     <div class="overlay overlay-bg"></div>
     <div class="container">
         <div class="row d-flex align-items-center justify-content-center">
@@ -41,18 +41,31 @@
                                 <div class="single-input-fields login-check">
                                     <!--<input type="checkbox" id="fruit1" name="keep-log" required>
                                     <label for="fruit1">Keep me logged in</label>-->
-                                    <a href="forgot" class="f-right">Quên mật khẩu?</a>
+                                    <a [routerLink]="['/forgot-pass']" class="f-right">Quên mật khẩu?</a>
                                 </div>
                             </div>
                             <!-- form Footer -->
                             <div class="login-footer">
-                                <p>Bạn đã có tài khoản? <a href="/register">Đăng ký</a> ở đây</p>
+                                <p>Bạn chưa có tài khoản? <a href="/register">Đăng ký</a> ở đây</p>
                                 <button class="btn login-btn" type="submit" (click)="onLogin()">Đăng nhập</button>
                             </div>
                             <div *ngIf="formErrors" class="text-danger">
-                                {{ formErrorMessage }}
+                              {{ formErrorMessage }}
                             </div>
+                          <div class="social-login mt-5">
+                            <a  class="facebook btn d-flex justify-content-center align-items-center">
+                              <span class="icon-facebook mr-3"></span> Login with Facebook
+                            </a>
+                            <a href="#" class="twitter btn d-flex justify-content-center align-items-center">
+                              <span class="icon-twitter mr-3"></span> Login with  Twitter
+                            </a>
+                            <a [href]="googleUrl" class="google btn d-flex justify-content-center align-items-center">
+                              <span class="icon-google mr-3"></span> Login with  Google
+                            </a>
+                          </div>
+
                         </div>
+
                     </form>
                 </div>
             </div>

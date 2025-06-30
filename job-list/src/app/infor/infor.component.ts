@@ -11,8 +11,8 @@ import { AuthService } from '../services/auth.service';
 export class InforComponent implements OnInit {
   constructor(private auth: AuthService, private router:Router) { }
   ngOnInit(): void {
-    if(!this.auth.isLogin()) {
-     this.router.navigate(['/login']);
-    }
+    // if(!this.auth.isLogin()) {
+    //  this.router.navigate(['/login']);
+    // }
   }
 }

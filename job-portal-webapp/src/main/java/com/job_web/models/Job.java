@@ -4,21 +4,13 @@ import java.time.Instant;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 @Entity
 @Data
@@ -36,17 +28,24 @@ public class Job {
 	@Column(columnDefinition = "text")
 	private String description;
 	private Instant expiredDate;
-	private Instant createDate;
-	private Instant modifiedDate;
 	private String title;
 	@Column(columnDefinition = "text")
 	private String skill;
 	@ManyToOne
 	@JoinColumn(name = "hirer_id")
+	@JsonIgnore
 	private Hirer hirer;
+	@CreatedDate
+	@Column(nullable = false)
+	private Instant createDate;
+	@LastModifiedDate
+	@Column(nullable = true, updatable = true)
+	private Instant modifiedDate;
 	@OneToMany(mappedBy = "job", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
 	@JsonIgnore
 	private List<Apply> applies;
+	@Lob
+	private byte[] logo;
 	public Job(double salary, String time, String requireDetails, String address, String description,
 			Instant expiredDate, Instant createDate, Instant modifiedDate, String title) {
 		super();

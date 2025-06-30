@@ -1,7 +1,7 @@
-<section class="banner-area relative" id="home">
+<section class="banner-area relative" id="category">
   <div class="overlay overlay-bg"></div>
   <div class="container">
-    <div class="row d-flex align-items-center justify-content-center">
+    <div class="row d-flex align-this.jobDetails-center justify-content-center">
       <div class="about-content col-lg-12">
         <h1 class="text-white">
           Job Details
@@ -22,21 +22,10 @@
 	<section class="post-area section-gap">
 		<div class="container">
 			<div class="row justify-content-center d-flex">
-				<div class="col-lg-8 post-list" *ngIf="this.jobDetail" >
+				<div class="col-lg-8 post-list" >
 					<div class="single-post d-flex flex-row">
 						<div class="thumb">
 							<img src="assets/web_css/img/post.png" alt="">
-							<ul class="tags">
-								<li>
-									<a href="#">Art</a>
-								</li>
-								<li>
-									<a href="#">Media</a>
-								</li>
-								<li>
-									<a href="#">Design</a>
-								</li>
-							</ul>
 						</div>
 						<div class="details">
 							<div class="title d-flex flex-row justify-content-between">
@@ -44,7 +33,6 @@
 									<a>
 										<h4>{{this.jobDetail.title}}</h4>
 									</a>
-									<h6>Premium Labels Limited</h6>
 								</div>
 								<ul class="btns">
 									<li><a href="#"><span class="lnr lnr-heart"></span></a></li>
@@ -52,21 +40,22 @@
 								</ul>
 							</div>
 							<p>
-                                {{this.jobDetail.description}}
+                {{this.jobDetail.description}}
 							</p>
-							<h5>Job Nature: <span>{{this.jobDetail.time}}</span>
-
-
-							</h5>
-							<p class="address"><span class="lnr lnr-map"></span> {{this.jobDetail.address}} </p>
-							<p class="address"><span class="lnr lnr-database"></span>{{this.jobDetail.salary}} </p>
+              <p class="info">
+                <span><i class="lnr lnr-map"></i>&nbsp;{{this.jobDetail.address}}</span>
+                <span class="divider"></span>
+                <span><i class="lnr lnr-database"></i>&nbsp;{{this.formatMoney(this.jobDetail.salary)}}</span>
+                <span class="divider"></span>
+                <span>{{this.jobDetail.time}}</span>
+              </p>
 						</div>
 					</div>
+
 					<div class="single-post job-details">
 						<h4 class="single-title">Whom we are looking for</h4>
-
 						<p >
-                            {{this.jobDetail.requireDetails}}
+              {{this.jobDetail.requireDetails}}
 						</p>
 					</div>
 					<div class="single-post job-experience">
@@ -184,7 +173,7 @@
 
                         @for (relatedJob of relatedJobs; track relatedJob.id) {
                         <ng-template carouselSlide>
-							<div class="owl-item" style="width: 310px; margin-right: 30px;">
+							<div class="owl-this.jobDetail" style="width: 310px; margin-right: 30px;">
 								<div class="single-rated">
 									<img class="img-fluid" src="assets/web_css/img/r1.png" alt="">
 									<a [routerLink]="['/single', relatedJob.id]">

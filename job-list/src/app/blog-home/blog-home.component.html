@@ -1,4 +1,4 @@
-<section class="banner-area relative" id="home">
+<section class="banner-area relative" id="category">
     <div class="overlay overlay-bg"></div>
     <div class="container">
         <div class="row d-flex align-items-center justify-content-center">
@@ -6,8 +6,8 @@
                 <h1 class="text-white">
                     Blog Posts
                 </h1>
-                <p class="text-white link-nav"><a href="index.html">Home </a> <span
-                        class="lnr lnr-arrow-right"></span> <a href="blog-home.html"> Blog Posts</a></p>
+                <p class="text-white link-nav"><a [routerLink]="['/home']">Home </a> <span
+                        class="lnr lnr-arrow-right"></span> <a [routerLink]="['/blogHome']"> Blog Posts</a></p>
             </div>
         </div>
     </div>
@@ -19,96 +19,40 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-8 post-list blog-post-list">
+              @for (item of this.blogList; track item.id){
                 <div class="single-post">
-                    <img class="img-fluid" src="assets/web_css/img/blog/p1.jpg" alt="">
-                    <ul class="tags">
-                        <li><a href="#">Art, </a></li>
-                        <li><a href="#">Technology, </a></li>
-                        <li><a href="#">Fashion</a></li>
-                    </ul>
-                    <a href="/blogHome/blogSingle/1">
-                        <h1>5 Essential Job Search Tips</h1>
-                    </a>
-                    <p>Job searching in 2024 requires a well-organized strategy, especially with the competitive job market. In this article, we discuss five essential tips that can help job seekers improve their chances of success. We dive deep into how tailoring your resume, networking effectively, and utilizing online platforms like LinkedIn and Indeed can open doors to opportunities. We also touch on the importance of practicing for interviews and following up after interviews, which can significantly improve your prospects.</p>
-                    <div class="bottom-meta">
-                        <div class="user-details row align-items-center">
-                            <div class="comment-wrap col-lg-6">
-                                <ul>
-                                    <li><a>120</a></li>
-                                    <li><a><span class="lnr lnr-bubble"></span> 06 Comments</a></li>
-                                </ul>
-                            </div>
-                            <div class="social-wrap col-lg-6">
-                                <ul>
-                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-behance"></i></a></li>
-                                </ul>
-                            </div>
-                        </div>
+                  <img class="img-fluid" src="assets/web_css/img/blog/p1.jpg" alt="">
+                  <ul class="tags">
+                    <li><a href="#">Art, </a></li>
+                    <li><a href="#">Technology, </a></li>
+                    <li><a href="#">Fashion</a></li>
+                  </ul>
+                  <a [routerLink]="['/blogSingle',item.id]" >
+                    <h1>{{item.title}}</h1>
+                  </a>
+                  <p>
+                    {{item.description}}
+                  </p>
+                  <div class="bottom-meta">
+                    <div class="user-details row align-items-center">
+                      <div class="comment-wrap col-lg-6">
+                        <ul>
+                          <li><a>{{item.amount}}</a></li>
+                          <li><a><span class="lnr lnr-bubble"></span> 06 Comments</a></li>
+                        </ul>
+                      </div>
+                      <div class="social-wrap col-lg-6">
+                        <ul>
+                          <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                          <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                          <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
+                          <li><a href="#"><i class="fa fa-behance"></i></a></li>
+                        </ul>
+                      </div>
                     </div>
+                  </div>
                 </div>
-                <div class="single-post">
-                    <img class="img-fluid" src="assets/web_css/img/blog/p1.jpg" alt="">
-                    <ul class="tags">
-                        <li><a href="#">Art, </a></li>
-                        <li><a href="#">Technology, </a></li>
-                        <li><a href="#">Fashion</a></li>
-                    </ul>
-                    <a href="/blogHome/blogSingle/2">
-                        <h1>Top Career Trends in 2024</h1>
-                    </a>
-                    <p>In 2024, remote work and tech skills are shaping the job market like never before. This article explores how the global shift towards remote work is benefiting both companies and employees by increasing productivity and flexibility. Additionally, we highlight the importance of upskilling, as tech skills such as data analysis, cybersecurity, and AI are in high demand. The rise of the gig economy also offers new opportunities for freelancers and independent contractors, giving professionals the freedom to manage their careers on their terms.</p>
-                    <div class="bottom-meta">
-                        <div class="user-details row align-items-center">
-                            <div class="comment-wrap col-lg-6">
-                                <ul>
-                                    <li><a>98</a></li>
-                                    <li><a><span class="lnr lnr-bubble"></span> 06 Comments</a></li>
-                                </ul>
-                            </div>
-                            <div class="social-wrap col-lg-6">
-                                <ul>
-                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-behance"></i></a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="single-post">
-                    <img class="img-fluid" src="assets/web_css/img/blog/p1.jpg" alt="">
-                    <ul class="tags">
-                        <li><a href="#">Art, </a></li>
-                        <li><a href="#">Technology, </a></li>
-                        <li><a href="#">Fashion</a></li>
-                    </ul>
-                    <a href="/blogHome/blogSingle/3">
-                        <h1>How to Write a Standout Resume</h1>
-                    </a>
-                    <p>A standout resume is key to getting noticed by potential employers in 2024. This article outlines the critical steps to crafting a resume that not only highlights your qualifications but also showcases your unique strengths. We emphasize the importance of customizing your resume for each job application and focusing on quantifiable achievements. With a well-organized layout, action verbs, and a strong summary at the top, your resume will catch the eye of recruiters. Proofreading and avoiding common mistakes are also essential to leave a positive impression.</p>
-                    <div class="bottom-meta">
-                        <div class="user-details row align-items-center">
-                            <div class="comment-wrap col-lg-6">
-                                <ul>
-                                    <li><a>150</a></li>
-                                    <li><a><span class="lnr lnr-bubble"></span> 06 Comments</a></li>
-                                </ul>
-                            </div>
-                            <div class="social-wrap col-lg-6">
-                                <ul>
-                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-behance"></i></a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+              }
             </div>
             <div class="col-lg-4 sidebar">
                 <div class="single-widget search-widget">

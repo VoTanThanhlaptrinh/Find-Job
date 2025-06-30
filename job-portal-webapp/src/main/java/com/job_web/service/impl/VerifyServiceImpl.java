@@ -2,13 +2,15 @@ package com.job_web.service.impl;
 
 import java.time.Duration;
 
+import lombok.AllArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.job_web.service.IVerifyService;
 
 @Service
-public class VerifyServiceIMP implements IVerifyService {
+@AllArgsConstructor
+public class VerifyServiceImpl implements IVerifyService {
 	/*
 	 * không được khai báo như này vì cơ bản là Redis đã được cấu hình rồi
 	 * nên @autoWired để Spring tìm phương thức khởi tạo cho Redis private final
@@ -18,10 +20,6 @@ public class VerifyServiceIMP implements IVerifyService {
 	 */
 
 	private final RedisTemplate<String, Object> redisTemplate;
-	
-	public VerifyServiceIMP(RedisTemplate<String, Object> redisTemplate) {
-		this.redisTemplate = redisTemplate;
-	}
 
 	@Override
 	public boolean containsKey(String key) {

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { on } from 'node:events';
 import { ActivatedRoute, Router } from '@angular/router';
+import {NotifyMessageService} from '../services/notify-message.service';
 
 @Component({
   selector: 'app-verify',
@@ -10,17 +11,15 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrl: './verify.component.css'
 })
 export class VerifyComponent implements OnInit {
-  constructor(private authService: AuthService, private aRouter: ActivatedRoute, private router: Router) { }
+  constructor(private authService: AuthService
+              , private aRouter: ActivatedRoute
+              , private router: Router
+              ,private notify: NotifyMessageService) { }
   email: string = '';
+
   ngOnInit(): void {
     this.aRouter.queryParams.subscribe(params => {
       this.email = params['email'];
-      console.log(this.email);
-      if (this.email) {
-        this.sendLink(this.email);
-      } else {
-        this.router.navigate(['/login']);
-      }
     });
   }
 
@@ -28,11 +27,10 @@ export class VerifyComponent implements OnInit {
     this.authService.sendLink(email).subscribe(
       {
         next: (res) => {
-          console.info('thanh cong', res);
+          this.notify.showMessage("Gửi thành công",'success');
         },
         error: (err) => {
-          console.error('that bai', err);
-
+          this.notify.showMessage(err?.message,'error');
         }
       }
     );

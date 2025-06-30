@@ -1,4 +1,4 @@
-package com.job_web.api;
+package com.job_web.controller;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +20,7 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/api")
 @AllArgsConstructor
 
-public class HomeAPI {
+public class HomeController {
 	private JobRepository jobRepository;
 	private BlogRepository blogRepository;
 	@GetMapping("/home/init")
@@ -32,10 +32,10 @@ public class HomeAPI {
 		try {
 			 response.put("jobSalary", jobRepository.findAll(jopBySalary));
 			 response.put("jobSoon", jobRepository.findAll(topJobBy));
-			 response.put("blog", blogRepository.findAll(blogByTime));
-			 return ResponseEntity.ok(new ApiResponse<Object>("Load dữ liệu thành công", response, 200));
+//			 response.put("blog", blogRepository.findAll(blogByTime));
+			 return ResponseEntity.ok(new ApiResponse<>("Load dữ liệu thành công", response, 200));
 		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(new ApiResponse<Object>(e.getMessage(), null, 200));
+			return ResponseEntity.badRequest().body(new ApiResponse<>(e.getMessage(), null, 200));
 		}
 	}
 	

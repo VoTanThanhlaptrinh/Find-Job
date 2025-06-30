@@ -1,64 +1,41 @@
 package com.job_web.models;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 @Data
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class Comment {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	private long user_id;
-	private long news_id;
-	private Timestamp createDate;
-	private Timestamp modifiedDate;
-	public Comment(long id, long user_id, long news_id, Timestamp createDate, Timestamp modifiedDate) {
-		super();
-		this.id = id;
-		this.user_id = user_id;
-		this.news_id = news_id;
-		this.createDate = createDate;
-		this.modifiedDate = modifiedDate;
-	}
-	public Comment() {
-		super();
-	}
-	public long getId() {
-		return id;
-	}
-	public void setId(long id) {
-		this.id = id;
-	}
-	public long getUser_id() {
-		return user_id;
-	}
-	public void setUser_id(long user_id) {
-		this.user_id = user_id;
-	}
-	public long getNews_id() {
-		return news_id;
-	}
-	public void setNews_id(long news_id) {
-		this.news_id = news_id;
-	}
-	public Timestamp getCreateDate() {
-		return createDate;
-	}
-	public void setCreateDate(Timestamp createDate) {
-		this.createDate = createDate;
-	}
-	public Timestamp getModifiedDate() {
-		return modifiedDate;
-	}
-	public void setModifiedDate(Timestamp modifiedDate) {
-		this.modifiedDate = modifiedDate;
-	}
-	
+	@ManyToOne
+	@JsonIgnore
+	@JoinColumn(name = "user_id", nullable = false)
+	private User user;
+	@ManyToOne
+	@JsonIgnore
+	@JoinColumn(name = "blog_id", nullable = false)
+	private Blog blog;
+	private String content;
+	private String status;
+	@CreatedDate
+	@Column(nullable = false, updatable = false)
+	private LocalDateTime createDate;
+
+	@LastModifiedDate
+	@Column(insertable = false)
+	private LocalDateTime lastModifiedDate;
+
 }
