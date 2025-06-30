@@ -8,6 +8,7 @@ import { loggerInterceptor } from './interceptor/logger.interceptor';
 import { errorInterceptor } from './interceptor/error.interceptor';
 import { provideToastr } from 'ngx-toastr';
 import {provideQuillConfig, QuillModule} from 'ngx-quill';
+import hljs from 'highlight.js';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -28,7 +29,7 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     provideQuillConfig({
       modules: {
-        syntax: true,
+        syntax: { hljs },
         toolbar: [
           ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
           ['blockquote', 'code-block'],                     // quote & code block

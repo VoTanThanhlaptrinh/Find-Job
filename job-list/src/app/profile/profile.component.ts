@@ -63,8 +63,8 @@ export class ProfileComponent implements OnInit{
        this.user = this.mappingToUserUI(res.data);
       },
       error:(err) =>{
-        console.error(err)
         this.toastr.showMessage('Có lỗi xảy ra!','','error')
+        this.auth.logout();
       }
     })
   }

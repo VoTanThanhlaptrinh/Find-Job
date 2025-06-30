@@ -72,13 +72,11 @@ export class RegisterComponent implements OnInit{
       this.registerForm.markAllAsTouched(); // show ra hết lỗi
       return;
     }
-    this.auth.register(this.registerForm.value).pipe(take(1)).subscribe({
-      next: (response) => {
-        if(response.status === 200) {
-            this.router.navigate(['/verify'], { queryParams: { email: response.data } });
-        }
+    this.auth.register(this.registerForm.value).subscribe({
+      next: res => {
+        this.router.navigate(['/verify'], { queryParams: { email: res.email}});
       }, error: (error) => {
-        this.formErrors = error.error.message;
+        this.formErrors = error;
       }
     });
   }

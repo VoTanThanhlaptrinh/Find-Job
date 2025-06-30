@@ -1,4 +1,4 @@
-package com.job_web.api;
+package com.job_web.controller;
 
 import com.job_web.dto.ApiResponse;
 import com.job_web.dto.BlogDTO;
@@ -14,13 +14,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/blog")
 @CrossOrigin("**")
 @AllArgsConstructor
-public class BlogAPI {
+public class BlogController {
     private final BlogService blogService;
 
     @GetMapping("/pub/blogList/{pageIndex}/{pageSize}")

@@ -1,4 +1,4 @@
-package com.job_web.api;
+package com.job_web.controller;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping(path = "/api/apply", produces = "application/json")
-public class ApplyAPI {
+public class ApplyController {
 	
 	@PostMapping("/submit")
 	public ResponseEntity<Map<String, String>> postSubmitCV(@RequestBody Map<String, Object> req) {

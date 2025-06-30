@@ -1,10 +1,15 @@
 package com.job_web.service.impl;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
+import com.job_web.data.HirerRepository;
+import com.job_web.data.UserRepository;
 import com.job_web.data.specification.JobSpecifications;
 import com.job_web.dto.AddressJobCount;
+import com.job_web.models.Hirer;
+import com.job_web.models.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -22,6 +27,8 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class JobServiceImpl implements JobService {
 	private final JobRepository jobRepository;
+	private final UserRepository userRepository;
+	private final HirerRepository hirerRepository;
 	@Override
 	public ApiResponse<Page<Job>> getListJobNewest(int page, int amount) {
 		PageRequest pageable = PageRequest.of(page, amount, Sort.by("createDate").descending());
@@ -74,5 +81,20 @@ public class JobServiceImpl implements JobService {
 				);
 		PageRequest pageable = PageRequest.of(pageIndex, pageSize, Sort.by("createDate").descending());
 		return new ApiResponse<>("success",jobRepository.findAll(spec, pageable), HttpStatus.OK.value());
+	}
+
+	@Override
+	public ApiResponse<String> saveJob(Job job, Principal principal) {
+		if(principal == null) {
+			return new ApiResponse<>("Chưa đăng nhập", null, HttpStatus.BAD_REQUEST.value());
+		}
+		User user = userRepository.findByEmail(principal.getName()).orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng này"));
+		Hirer hirer = job.getHirer();
+		if(hirer.getUser().getId() != user.getId()) {
+			return new ApiResponse<>("Tài khoản giả mạo", null, HttpStatus.BAD_REQUEST.value());
+		}
+		hirerRepository.save(hirer);
+		jobRepository.save(job);
+		return new ApiResponse<>("Thành công", null, HttpStatus.CREATED.value());
 	}
 }

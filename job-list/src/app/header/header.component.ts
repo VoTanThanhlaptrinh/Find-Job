@@ -1,6 +1,6 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import {ChangeDetectorRef, Component, CUSTOM_ELEMENTS_SCHEMA, NgZone, OnInit} from '@angular/core';
+import {AsyncPipe, CommonModule} from '@angular/common';
+import {Router, RouterLink} from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import {
   CollapseDirective,
@@ -9,17 +9,16 @@ import {
   DropdownItemDirective,
   DropdownMenuDirective,
   DropdownToggleDirective,
-  NavbarBrandDirective,
   NavbarComponent,
   NavbarNavComponent,
   NavbarTogglerDirective,
   NavItemComponent,
   NavLinkDirective
 } from '@coreui/angular';
+import {Observable} from 'rxjs';
 @Component({
   selector: 'app-header',
   imports: [
-    CommonModule,
     NavbarComponent,
     ContainerComponent,
     NavbarTogglerDirective,
@@ -30,30 +29,50 @@ import {
     DropdownToggleDirective,
     NavLinkDirective,
     DropdownMenuDirective,
-    DropdownItemDirective],
+    DropdownItemDirective,
+    CommonModule,
+    RouterLink
+  ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  standalone: true
 })
 export class HeaderComponent implements OnInit {
   isDropdownOpen = false;
-  isLoggedIn  = false;
-  constructor(private auth: AuthService) { }
+  loggedIn: boolean | undefined  = undefined;
+
+  constructor(private auth: AuthService
+              ,private router: Router
+              ,private zone: NgZone,
+  private cd: ChangeDetectorRef) { }
+
+
   ngOnInit(): void {
-    this.isLoggedIn = this.auth.isLogin();
+    this.loggedIn = this.auth.checkLogin();
   }
 
+
   logout(): void {
-    this.auth.logout();
-    window.location.reload();
+    this.auth.logout().subscribe({
+      next: res =>{
+        this.router.navigate(['/']).then(window.location.reload)
+        this.loggedIn = false;
+      },
+      error: err => {
+        this.router.navigate(['/']).then(window.location.reload)
+        this.loggedIn = false;
+      }
+    });
+  }
+
+  toggleDropdown() {
+    this.isDropdownOpen = !this.isDropdownOpen;
   }
   goInfor(): void{
     window.location.href = '/infor';
   }
   goVerify(): void{
     window.location.href = '/verify';
-  }
-  toggleDropdown() {
-    this.isDropdownOpen = !this.isDropdownOpen;
   }
 }

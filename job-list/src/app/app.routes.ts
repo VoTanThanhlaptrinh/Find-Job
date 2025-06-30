@@ -18,6 +18,8 @@ import { JobSingleComponent } from './job-single/job-single.component';
 import { ApplyCvComponent } from './apply-cv/apply-cv.component';
 import {LoginCallbackComponent} from './login-callback/login-callback.component';
 import {PostJobComponent} from './post-job/post-job.component';
+import {ForgotPassComponent} from './forgot-pass/forgot-pass.component';
+import {ResetPassComponent} from './reset-pass/reset-pass.component';
 export const routes: Routes = [
     {path:'', component:HomeComponent},
     {path:'login', component:LoginComponent},
@@ -30,6 +32,8 @@ export const routes: Routes = [
     {path:'verify', component:VerifyComponent},
     {path:'activate', component:ActivateComponent},
     {path:'post-job', component:PostJobComponent},
+    {path:'forgot-pass', component:ForgotPassComponent},
+    {path:'reset-pass/:random', component:ResetPassComponent},
     {path:'login-callback', component:LoginCallbackComponent},
     {
         path: 'infor',

@@ -3,8 +3,10 @@ package com.job_web.config;
 import java.util.List;
 
 import com.job_web.security.CustomOAuth2SuccessHandler;
+import org.springframework.beans.factory.aspectj.ConfigurableObject;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
@@ -18,8 +20,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter;
 import org.springframework.security.web.firewall.DefaultHttpFirewall;
 import org.springframework.security.web.firewall.HttpFirewall;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
@@ -38,30 +42,28 @@ public class SecurityConfig {
 	private UserRepositoryDetailsService userDetailsService;
 	private VerifyRecoveryFillter verifyRecoveryFillter;
 	private CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
+
 	@Bean
-	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		// TODO Auto-generated method stub
-		return http.cors(c -> c.configurationSource(corsConfigurationSource()))
-				.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(requests -> {
-					requests.antMatchers("/api/account/**"
-							,"/error"
-							,"/api/home/init"
-							,"/api/job/pub/**"
-							,"/api/blog/pub/**"
-							,"/auth/**"
-							,"/oauth2"
-							).permitAll();
-					requests.anyRequest().authenticated();
-				}).oauth2Login(httpSecurityOAuth2LoginConfigurer ->{
-					httpSecurityOAuth2LoginConfigurer.successHandler(customOAuth2SuccessHandler);
-				})
-				.headers(headers -> headers.frameOptions().sameOrigin())
-				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+	SecurityFilterChain restChain(HttpSecurity http) throws Exception {
+		http.cors(c -> c.configurationSource(corsConfigurationSource())).csrf(AbstractHttpConfigurer::disable)
+				.csrf(AbstractHttpConfigurer::disable)
+				.authorizeRequests(auth -> auth
+						.antMatchers("/api/account/pub/**"
+								, "/api/job/pub/**"
+								, "/api/blog/pub/**"
+								, "/api/home/init"
+								, "/error"
+								,"/oauth2/**", "/login/oauth2/**", "/auth/**").permitAll()
+						.anyRequest().authenticated()
+				).oauth2Login(o -> o
+						.successHandler(customOAuth2SuccessHandler)
+				)
+				.sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
 				.authenticationProvider(authenticationProvider())
 				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-				.addFilterBefore(verifyRecoveryFillter, UsernamePasswordAuthenticationFilter.class).build();
+				.addFilterBefore(verifyRecoveryFillter, UsernamePasswordAuthenticationFilter.class);
+		return http.build();
 	}
-
 	@Bean
 	UrlBasedCorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration config = new CorsConfiguration();

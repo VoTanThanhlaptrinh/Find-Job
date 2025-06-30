@@ -14,140 +14,119 @@
   </div>
 </section>
 
-<section class="site-section">
+<section class="site-section mt-3">
   <div class="container">
     <div class="row align-items-center mb-5">
       <div class="col-lg-8 mb-4 mb-lg-0">
         <div class="d-flex align-items-center">
           <div>
-            <h2>Post A Job</h2>
+            <h2>Đăng công việc</h2>
           </div>
         </div>
       </div>
       <div class="col-lg-4">
         <div class="row">
-          <div class="col-6">
-            <a href="#" class="btn btn-block btn-light btn-md"><span class="icon-open_in_new mr-2"></span>Preview</a>
-          </div>
-          <div class="col-6">
-            <a class="btn btn-block btn-primary btn-md">Save Job</a>
-          </div>
+          <!-- Có thể thêm nút ở đây nếu cần -->
         </div>
       </div>
     </div>
 
     <div class="row mb-5">
       <div class="col-lg-12">
-        <form class="p-4 p-md-5 border rounded" #jobForm="ngForm">
-          <h3 class="text-black mb-5 border-bottom pb-2">Job Details</h3>
+        <form class="p-4 p-md-5 border rounded box-shadow" [formGroup]="this.postJobFG" (ngSubmit)="this.onSubmit()">
+          <h3 class="text-black mb-5 border-bottom pb-2">Chi tiết công việc</h3>
+          <div class="form-group row gx-2">
+            <div class="col-md-6">
+              <label>Tên công việc</label>
+              <input type="text" class="form-control box-shadow" required  name="jobName" formControlName="jobName" placeholder="VD: Nhà thiết kế sản phẩm">
+            </div>
+            <div class="col-md-6">
+              <label>Địa điểm</label>
+              <input type="text" class="form-control box-shadow" name="location"  formControlName="location" placeholder="VD: Hồ Chí Minh">
+            </div>
+          </div>
+
+          <div class="form-group row gx-2">
+            <div class="col-md-4">
+              <label>Loại hình</label>
+              <select class="form-control box-shadow" name="jobType"  formControlName="jobType">
+                <option>Full Time</option>
+                <option>Part Time</option>
+                <option>Freelance</option>
+                <option>Internship</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label>Mức lương (VNĐ)</label>
+              <input type="number" class="form-control box-shadow" required name="salary" formControlName="salary" placeholder="VD: 15.000.000">
+            </div>
+            <div class="col-md-4">
+              <label>Hạn nộp CV</label>
+              <input type="date" class="form-control box-shadow"  required name="deadlineCV" formControlName="deadlineCV">
+            </div>
+          </div>
 
           <div class="form-group">
-            <label for="company-website-tw d-block">Upload File Details</label> <br>
+            <label>Mô tả công việc</label>
+            <div class="quill-wrapper">
+              <quill-editor formControlName="jobDescription"></quill-editor>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Yêu cầu công việc</label>
+            <div class="quill-wrapper">
+              <quill-editor formControlName="jobRequirement"></quill-editor>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Kỹ năng yêu cầu</label>
+            <div class="quill-wrapper">
+              <quill-editor formControlName="jobSkill"></quill-editor>
+            </div>
+          </div>
+
+          <h3 class="text-black my-5 border-bottom pb-2">Thông tin công ty</h3>
+          <div class="form-group">
+            <label for="company-website-tw d-block">Tải lên logo công ty</label> <br>
             <label class="btn btn-primary btn-md btn-file">
-              File<input type="file" [(ngModel)]="job.file" name="file" >
+              Chọn tệp<input type="file" hidden name="image" (change)="onFilePicked($event)" required>
             </label>
           </div>
-
           <div class="form-group">
-            <label>Job Title</label>
-            <input type="text" class="form-control" required #title="ngModel" [(ngModel)]="job.title" name="title" placeholder="Product Designer">
-            <div><span class="text-danger" *ngIf="title.errors?.['required'] && title.touched">This is required</span></div>
+            <label for="company-name">Tên công ty</label>
+            <input type="text" class="form-control box-shadow" id="company-name" name="companyName" required formControlName="companyName" placeholder="VD: Công ty ABC">
           </div>
 
           <div class="form-group">
-            <label>Salary Range (USD)</label>
-            <div class="d-flex gap-2">
-              <input type="number" class="form-control" min="100" #minSalary="ngModel" [(ngModel)]="job.minSalary" name="minSalary" placeholder="Min (e.g., 100 USD)">
-              <input type="number" class="form-control" max="1500" #maxSalary="ngModel" [(ngModel)]="job.maxSalary" name="maxSalary" placeholder="Max (e.g., 1500 USD)">
+            <label for="job-description">Mô tả công ty (Không bắt buộc)</label>
+            <quill-editor formControlName="companyDescription"></quill-editor>
+          </div>
+
+          <div class="form-group">
+            <label for="company-website">Website (Không bắt buộc)</label>
+            <input type="text" class="form-control box-shadow" id="company-website" placeholder="VD: https://abc.vn" formControlName="compayWebsite">
+          </div>
+          <div class="row align-items-center mt-4">
+            <div class="col-lg-4 ml-auto">
+              <div class="row">
+                <div class="col-6">
+                  <a href="#" class="btn btn-block btn-light btn-md"><span class="icon-open_in_new mr-2"></span>Xem trước</a>
+                </div>
+                <div class="col-6">
+                  <button class="btn btn-block btn-primary btn-md" type="submit">Lưu công việc</button>
+                </div>
+              </div>
             </div>
-            <div><span *ngIf="minSalary.errors?.['required'] && minSalary.touched" class="text-danger">This is required</span></div>
-            <div><span *ngIf="maxSalary.errors?.['required'] && maxSalary.touched" class="text-danger">This is required</span></div>
-            <div><span *ngIf="minSalary.errors?.['min'] && minSalary.touched" class="text-danger">Min salary is 100 USD</span></div>
-            <div><span *ngIf="maxSalary.errors?.['max'] && maxSalary.touched" class="text-danger">Max salary is 1500 USD</span></div>
-            <div><span *ngIf="!this.validSalary() && (minSalary.touched || maxSalary.touched)" class="text-danger">Min salary must less max salary</span></div>
-          </div>
-
-          <div class="form-group">
-            <label>Work Duration (days)</label>
-            <div class="d-flex gap-2">
-              <input type="number" class="form-control" #minDuration="ngModel" [(ngModel)]="job.minDuration" min="5" name="minDuration" required placeholder="Min (e.g., 5)">
-              <input type="number" class="form-control" #maxDuration="ngModel" [(ngModel)]="job.maxDuration" max="30" name="maxDuration" required placeholder="Max (e.g., 30)">
+            <div>
+              <span [ngClass]="{'text-success': this.messageType === true, 'text-danger': this.messageType === false}">{{this.message}}</span>
             </div>
-            <div><span *ngIf="minDuration.errors?.['required'] && minDuration.touched" class="text-danger">This is required</span></div>
-            <div><span *ngIf="maxDuration.errors?.['required'] && maxDuration.touched" class="text-danger">This is required</span></div>
-            <div><span *ngIf="minDuration.errors?.['min'] && minDuration.touched" class="text-danger">Min duration is 5 days</span></div>
-            <div><span *ngIf="maxDuration.errors?.['max'] && maxDuration.touched" class="text-danger">Max duration is 30 days</span></div>
-            <div><span *ngIf="!this.validDuration() && (minDuration.touched || maxDuration.touched)" class="text-danger">Min duration must less max duration</span></div>
-          </div>
-
-          <div class="form-group">
-            <label>Deadline apply</label>
-            <input type="date" class="form-control" #deadline="ngModel" [(ngModel)]="job.deadlineCV" required name="deadlineCV" placeholder="The deadline apply CV to your project">
-            <div><span *ngIf="deadline.errors?.['required'] && deadline.touched" class="text-danger">This is required</span></div>
-            <div><span *ngIf="!this.validDate() && deadline.touched" class="text-danger">The deadline cv must after now</span></div>
-          </div>
-
-          <div class="form-group">
-            <quill-editor>
-              <div above-quill-editor-toolbar>
-                above
-              </div>
-              <div quill-editor-toolbar>
-                <span class="ql-formats">
-                  <button class="ql-bold" [title]="'Bold'"></button>
-                </span>
-                            <span class="ql-formats">
-                  <select class="ql-align" [title]="'Aligment'">
-                    <option selected></option>
-                    <option value="center"></option>
-                    <option value="right"></option>
-                    <option value="justify"></option>
-                  </select>
-                  <select class="ql-align" [title]="'Aligment2'">
-                    <option selected></option>
-                    <option value="center"></option>
-                    <option value="right"></option>
-                    <option value="justify"></option>
-                  </select>
-                </span>
-              </div>
-              <div below-quill-editor-toolbar>
-                            below
-              </div>
-            </quill-editor>
-            <label>Job Description</label>
-            <textarea rows="10" class="form-control" placeholder="Write Job Description!" required #description="ngModel" [(ngModel)]="job.description" name="description"></textarea>
-            <div><span *ngIf="description.errors?.['required'] && description.touched" class="text-danger">This is required</span></div>
-          </div>
-
-          <div class="form-group">
-            <label>Job Requirements</label>
-            <textarea rows="10" class="form-control" #requirement="ngModel" required [(ngModel)]="job.requirement" name="requirement" placeholder="Write Job requirements!"></textarea>
-            <div><span *ngIf="requirement.errors?.['required'] && requirement.touched" class="text-danger">This is required</span></div>
-          </div>
-
-          <div class="form-group">
-            <label for="job-skill">Skill</label>
-            <textarea rows="10" class="form-control" #skill="ngModel" required [(ngModel)]="job.skill" name="skill" placeholder="Write the needed skills!" id="job-skill"></textarea>
-            <div><span *ngIf="skill.errors?.['required'] && skill.touched" class="text-danger">This is required</span></div>
           </div>
         </form>
       </div>
     </div>
 
-    <div class="row align-items-center mb-5">
-      <div class="col-lg-4 ml-auto">
-        <div class="row">
-          <div class="col-6">
-            <a href="#" class="btn btn-block btn-light btn-md"><span class="icon-open_in_new mr-2"></span>Preview</a>
-          </div>
-          <div class="col-6">
-            <button class="btn btn-block btn-primary btn-md" (click)="doPostJob()" [disabled]="jobForm.invalid || !validSalary() || !validDuration() || !validDate()">Save Job</button>
-          </div>
-        </div>
-      </div>
-      <div><span [ngClass]="{'text-success': messageType === 'success', 'text-danger': messageType === 'error'}">{{message}}</span></div>
-    </div>
+
 
   </div>
 </section>
+

@@ -36,7 +36,7 @@ public class MailServiceImp implements IMailService {
 		mailSender.setPort(587);
 
 		mailSender.setUsername("vtthanh32004@gmail.com");
-		mailSender.setPassword("xmnf mwtn odcb knjt");
+		mailSender.setPassword("okvk trsy jdgy afjw");
 
 		Properties props = mailSender.getJavaMailProperties();
 		props.put("mail.transport.protocol", "smtp");

@@ -76,4 +76,7 @@ export class HomeComponent implements OnInit {
   formatMoney(val: number): string {
     return val.toLocaleString('vi-VN') + '₫';
   }
+  trackById(index: number, item: any): any {
+    return item.id;
+  }
 }

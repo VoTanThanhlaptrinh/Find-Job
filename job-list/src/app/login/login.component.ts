@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { NotifyMessageService } from '../services/notify-message.service';
@@ -8,7 +8,7 @@ import { take } from 'rxjs';
 import {response} from 'express';
 @Component({
   selector: 'app-login',
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, RouterLink],
   standalone: true,
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
@@ -23,25 +23,28 @@ export class LoginComponent implements OnInit {
   }
   ngOnInit(): void {
     this.notify()
-
     this.googleLoginURL()
   }
   formErrors: boolean = false;
   formErrorMessage: string = '';
   username = '';
   password = '';
+
   onLogin() {
-    this.loginService.login(this.username, this.password).pipe(take(1)).subscribe({
-        next: (response) => {
-          let jwtToken = response.data;
-          if (jwtToken) {
-            localStorage.setItem('jwtToken', jwtToken);
-            this.router.navigate([''])
-          }
+    const loginRequest = {
+      username: this.username,
+      password: this.password
+    };
+    this.loginService.login(loginRequest).subscribe({
+        next: () => {
+          this.router.navigate(['/']).then(() => {
+            window.location.reload();
+          });
         },
         error: (error) => {
           this.formErrors = true;
-          this.formErrorMessage = error.error.message;
+          console.error(error)
+          this.formErrorMessage = error;
         }
       }
     )
@@ -57,7 +60,8 @@ export class LoginComponent implements OnInit {
         this.googleUrl = response.data
       },
       error: (error) => {
-        this.formErrorMessage = error.error.message;
+        console.error(error)
+        this.formErrorMessage = error;
       }
     })
   }

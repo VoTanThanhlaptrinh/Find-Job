@@ -35,13 +35,14 @@ public class JwtFilter extends OncePerRequestFilter {
 	private final JwtService jwtService;
 	private final UserDetailsService userDetailsService;
 	private final List<String> allowedOrigins = Arrays.asList(
-			"/api/account/.*"
+			"/api/account/pub/.*"
 			,"/error"
 			,"/api/home/init"
 			,"/api/job/pub/.*"
 			,"/api/blog/pub/.*"
-			,"/auth/.*"
-			,"/oauth2/.*"
+			, "/auth/.*",
+			"/oauth2/authorization/.*",
+			"/login/oauth2/code/.*"
 	);
 	@Override
 	protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,

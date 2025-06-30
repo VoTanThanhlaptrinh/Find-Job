@@ -1,4 +1,4 @@
-package com.job_web.api;
+package com.job_web.controller;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +20,7 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/api")
 @AllArgsConstructor
 
-public class HomeAPI {
+public class HomeController {
 	private JobRepository jobRepository;
 	private BlogRepository blogRepository;
 	@GetMapping("/home/init")
