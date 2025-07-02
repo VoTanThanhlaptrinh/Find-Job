@@ -28,7 +28,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 		Optional<User> user = userRepository.findByEmail(username);
 		if (user.isPresent()) {
 			RefreshToken refreshToken = RefreshToken.builder().userInfo(user.get()).token(UUID.randomUUID().toString())
-					.expiryDate(Instant.now().plusMillis(timeLimit)).build();
+					.expiryDate(Instant.now().plusSeconds(timeLimit)).build();
 			return refreshTokenRepository.save(refreshToken);
 		} else {
 			throw new RuntimeException("username not found");

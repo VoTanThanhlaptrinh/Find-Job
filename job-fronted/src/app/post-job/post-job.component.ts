@@ -11,6 +11,7 @@ import {JobServiceService} from '../services/job-service.service';
 import {RouterLink} from '@angular/router';
 import {QuillModule} from 'ngx-quill';
 import {CommonModule} from '@angular/common';
+import {NotifyMessageService} from '../services/notify-message.service';
 @Component({
   selector: 'app-post-job',
   imports: [FormsModule
@@ -33,15 +34,15 @@ export class PostJobComponent {
     jobDescription: new FormControl('', [Validators.required]),
     jobRequirement: new FormControl('', [Validators.required]),
     jobSkill: new FormControl('', [Validators.required]),
-    deadlineCV: new FormControl('', [Validators.required, minDatePlusOne]),
+    deadlineCV: new FormControl<Date|null>(null, [Validators.required, minDatePlusOne]),
     companyName: new FormControl('', [Validators.required]),
     companyDescription: new FormControl(''),
     compayWebsite: new FormControl(''),
     image: new FormControl<File | null>(null, Validators.required)
-
   });
 
-  constructor(private jobService: JobServiceService) {
+  constructor(private jobService: JobServiceService
+              ,private notify: NotifyMessageService) {
   }
   onSubmit() {
     if(this.postJobFG.invalid){
@@ -52,20 +53,22 @@ export class PostJobComponent {
     const formData = new FormData();
     Object.entries(formValue).forEach(([key, val]) => {
       if (val !== null && val !== undefined) {
-        if (val instanceof File) {
-          formData.append(key, val, val.name);
-        } else {
-          formData.append(key, val);
-        }
+          if (val instanceof File) {
+            formData.append(key, val, val.name);
+          }
+          if (val instanceof Date) {
+            formData.append(key,val.toISOString().split('T')[0]);
+          }else{
+            formData.append(key, val);
+          }
       }
     });
     this.jobService.doPostJob(formData).subscribe({
       next: res =>{
         this.messageType = (res.status === 200);
-        this.message = res.message;
+        this.notify.showMessage(res.message,'','success')
       }, error: err => {
-        this.messageType = false;
-        this.message = err?.message
+        this.notify.showMessage(err?.error?.message,'','error')
       }
     })
   }
@@ -75,6 +78,9 @@ export class PostJobComponent {
       // Khi patch file cần thêm opt emitModelToViewChange: false để tránh lỗi DOMException
       this.postJobFG.get('image')?.setValue(file, { emitModelToViewChange: false });
     }
+  }
+  get f() {
+    return this.postJobFG.controls;
   }
 }
 export function minDatePlusOne(control: AbstractControl): ValidationErrors | null {
@@ -90,3 +96,5 @@ export function minDatePlusOne(control: AbstractControl): ValidationErrors | nul
   }
   return null;
 }
+
+

@@ -23,11 +23,11 @@ export class ResetPassComponent implements OnInit{
   formGroup = new FormGroup({
     newPass: new FormControl('', Validators.required)
     ,confirmPass: new FormControl('', Validators.required)
+    ,random: new FormControl('', Validators.required)
   })
   constructor(private route: ActivatedRoute
              ,private authService: AuthService
              ,private router: Router ) {
-
   }
 
   ngOnInit(): void {
@@ -43,14 +43,18 @@ export class ResetPassComponent implements OnInit{
       this.router.navigate(['login'])
       return;
     }
-    if(!this.authService.checkRandom(random)){
-      this.router.navigate(['login'])
-      return;
-    }
-
+    this.authService.checkRandom(random).subscribe({
+      error: err => {
+        this.router.navigate(['login'])
+        return;
+      }
+    });
   }
 
   onSubmit() {
+    this.formGroup.patchValue({
+      random: this.random
+    })
     if(this.formGroup.invalid){
        this.formGroup.markAllAsTouched();
        this.isError = true;

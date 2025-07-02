@@ -64,16 +64,16 @@ public class AccountController {
 //		return ResponseEntity.ok(result);
 //	}
 
-//	@PostMapping("/pri/updateUserInfo")
-//	public ResponseEntity<ApiResponse<String>> patchUpdateUserInfo(@Valid @RequestBody UserInfo userInfo,
-//			BindingResult bindingResult, Principal principal) {
-//		if (bindingResult.hasErrors()) {
-//			Map<String, String> req = new HashMap<>();
-//			req.put("message", bindingResult.getAllErrors().getFirst().getDefaultMessage());
-//			return ResponseEntity.badRequest().body(req);
-//		}
-//		return ResponseEntity.ok().build();
-//	}
+	@PutMapping("/pri/updateUserInfo")
+	public ResponseEntity<ApiResponse<String>> putUpdateUserInfo(@Valid @RequestBody UserInfo userInfo,
+			BindingResult bindingResult, Principal principal) {
+		if (bindingResult.hasErrors()) {
+			return ResponseEntity.badRequest()
+					.body(new ApiResponse<>(bindingResult.getAllErrors().getFirst().getDefaultMessage(), null, 400));
+		}
+		ApiResponse<String> res = accountService.updateInfo(userInfo,principal);
+		return ResponseEntity.status(res.getStatus()).body(res);
+	}
 
 	@PostMapping("/pub/login")
 	public ResponseEntity<ApiResponse<String>> login(@RequestBody LoginDTO login, HttpServletRequest request , HttpServletResponse response, BindingResult bindingResult) {
@@ -117,7 +117,7 @@ public class AccountController {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>("error",null, HttpStatus.BAD_REQUEST.value()));
 	}
 
-	@GetMapping("/pri/refreshToken")
+	@GetMapping("/pub/refreshToken")
 	public ResponseEntity<ApiResponse<String>> getRefreshToken(HttpServletRequest request) {
 		ApiResponse<String> res = accountService.refreshToken(request);
 		return ResponseEntity.status(res.getStatus()).body(res);
@@ -134,9 +134,9 @@ public class AccountController {
 		return ResponseEntity.status(res.getStatus()).body(res);
 	}
 
-	@PostMapping("/pri/changePass")
+	@PutMapping("/pri/changePass")
 	public ResponseEntity<ApiResponse<String>> changePass(@RequestBody ChangePassDTO changePassDTO) {
-		ApiResponse<String> res = accountService.changePassword(changePassDTO.getOldPass(), changePassDTO.getNewPass());
+		ApiResponse<String> res = accountService.changePassword(changePassDTO.getNewPass(), changePassDTO.getOldPass());
 		return ResponseEntity.status(res.getStatus()).body(res);
 	}
 
@@ -161,7 +161,7 @@ public class AccountController {
 		return ResponseEntity.status(res.getStatus()).body(res);
 	}
 
-	@PatchMapping("/pub/reset/")
+	@PatchMapping("/pub/reset")
 	public ResponseEntity<ApiResponse<String>> resetPass(@RequestBody @Valid ResetDTO resetDTO, BindingResult bindingResult) {
 		if (bindingResult.hasErrors()) {
 			return ResponseEntity.badRequest()

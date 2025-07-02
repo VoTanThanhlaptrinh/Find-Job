@@ -181,6 +181,7 @@ public class AccountServiceImpl implements AccountService {
 		ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken.getToken())
 				.httpOnly(true)
 				.secure(false)
+				.path("/")
 				.sameSite("Lax")
 				.maxAge(Duration.between(Instant.now(), refreshToken.getExpiryDate()).getSeconds())
 				.build();
@@ -192,7 +193,7 @@ public class AccountServiceImpl implements AccountService {
 	public ApiResponse<String> refreshToken(HttpServletRequest request) {
 		Cookie[] cookies = request.getCookies();
 		if (cookies == null) {
-			return new ApiResponse<String>("không tìm thấy cookie, đăng nhập lại", null, 400);
+			return new ApiResponse<String>("cookie hết hạn", null, 400);
 		}
 		for (Cookie cookie : cookies) {
 			if ("refreshToken".equals(cookie.getName())) {
@@ -250,6 +251,18 @@ public class AccountServiceImpl implements AccountService {
 			return new ApiResponse<>("Bạn phải xác thực email trước khi dùng cài lại mật khẩu", null, 400);
 		}
 		return new ApiResponse<>("success", null, 200);
+	}
+
+	@Override
+	public ApiResponse<String> updateInfo(UserInfo userInfo, Principal principal) {
+		Optional<User> user = userRepository.findByEmail(principal.getName());
+		if(user.isEmpty()){
+			return new ApiResponse<>("Không tìm thấy user trong hệ thống",null,400);
+		}
+		User userLogin = user.get();
+		userInfo.update(userLogin);
+		userRepository.save(userLogin);
+		return new ApiResponse<>("Cập nhật thành công",null,200);
 	}
 
 	private String createLink(String username) {

@@ -3,6 +3,7 @@ import {FormControl, FormControlName, FormGroup, FormsModule, ReactiveFormsModul
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {AuthService} from '../services/auth.service';
 import {CommonModule} from '@angular/common';
+import {NotifyMessageService} from '../services/notify-message.service';
 
 @Component({
   selector: 'app-forgot-pass',
@@ -24,7 +25,8 @@ export class ForgotPassComponent {
       code: new FormControl('',Validators.required),
     })
   constructor(private authService: AuthService
-              ,private router: Router) {
+              ,private router: Router
+              ,private notify: NotifyMessageService) {
   }
   onSubmit(){
     if(this.formGroup.invalid){
@@ -38,23 +40,20 @@ export class ForgotPassComponent {
             this.router.navigate(['/reset-pass',this.randomVerify])
         },error: err => {
           this.isError = true
-          this.message = err.message
+          this.notify.showMessage(err?.error?.message,'','error')
         }
       });
   }
   getCode(){
       let email = this.formGroup.value.email
       if(email === undefined || email === null || email === ''){
-        this.message = 'Nhập email để lấy mã xác thực'
-        this.isError = true
+        this.notify.showMessage('Nhập email để lấy mã xác thực','','warning')
       }else{
         this.authService.sendCode(email).subscribe({
           next: res =>{
-            this.message = res.message
-            this.isError = false
+            this.notify.showMessage(res.message,'','success')
           },error: err => {
-            this.isError = true
-            this.message = err?.error?.message
+            this.notify.showMessage(err?.error?.message,'','error')
           }
         })
       }

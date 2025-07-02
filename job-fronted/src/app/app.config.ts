@@ -9,6 +9,7 @@ import { errorInterceptor } from './interceptor/error.interceptor';
 import { provideToastr } from 'ngx-toastr';
 import {provideQuillConfig, QuillModule} from 'ngx-quill';
 import hljs from 'highlight.js';
+import {provideNativeDateAdapter} from '@angular/material/core';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -26,6 +27,7 @@ export const appConfig: ApplicationConfig = {
       progressBar: true,
       closeButton: true,
     }),
+    provideNativeDateAdapter(),
     provideAnimations(),
     provideQuillConfig({
       modules: {

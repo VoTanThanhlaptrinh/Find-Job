@@ -13,15 +13,16 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "user_like")
 public class Like {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn( nullable = false)
     private User user;
     @ManyToOne
-    @JoinColumn(name = "blog_id", nullable = false)
+    @JoinColumn(nullable = false)
     private Blog blog;
 
     private String status;

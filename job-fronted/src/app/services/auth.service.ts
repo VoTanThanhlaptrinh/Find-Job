@@ -44,6 +44,7 @@ export class AuthService {
       .pipe(take(1),finalize(() =>{
         if (typeof window !== 'undefined' && window.localStorage) {
           localStorage.removeItem('jwtToken');
+          this.router.navigate(['/login'])
         }
       }));
   }
@@ -70,14 +71,14 @@ export class AuthService {
     const url = `http://localhost:8080/api/account/pub/activate/${token}`;
     return this.http.get(url);
   }
-  refreshToken$(): Observable<string> {
-    const url = 'http://localhost:8080/api/account/pri/refreshToken';
-    return this.http.get<{ data: string }>(url, {withCredentials: true}).pipe(
+  refreshToken$(): Observable<any> {
+    const url = 'http://localhost:8080/api/account/pub/refreshToken';
+    return this.http.get<any>(url, {withCredentials: true}).pipe(
       take(1),
-      tap((response: { data: string }) => {
+      tap((response: any) => {
         localStorage.setItem('jwtToken', response.data);
       }),
-      map((response: { data: string }) => response.data)
+      map((response: any) => response)
     );
   }
   getDetails():Observable<any>{
@@ -106,5 +107,12 @@ export class AuthService {
       .pipe(take(1)
             ,map(res => 200 === res.status)
             ,startWith(false));
+  }
+  updateInfo(value: any) {
+    return this.http.put<any>('http://localhost:8080/api/account/pri/updateUserInfo',value).pipe(take(1));
+  }
+
+  changePass(value:any) {
+    return this.http.put<any>('http://localhost:8080/api/account/pri/changePass',value).pipe(take(1));
   }
 }

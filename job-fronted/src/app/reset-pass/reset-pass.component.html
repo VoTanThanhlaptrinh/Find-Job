@@ -28,7 +28,7 @@
               </div>
               <!-- Single Input Fields -->
               <div class="input-box">
-                <input type="hidden" value="{{random}}">
+                <input type="hidden" formControlName="random" required>
                 <div class="single-input-fields ">
                   <label>Mật khẩu mới</label>
                   <input type="password" placeholder="Mật khẩu mới" name="newPass"
@@ -37,7 +37,7 @@
                 <div class="single-input-fields mt-2">
                   <label>Xác nhận mật khẩu</label>
                   <input type="password" placeholder="Xác nhận mật khẩu" name="confirmPass"
-                         required formControlName="newPass">
+                         required formControlName="confirmPass">
                 </div>
                 <div *ngIf="isError" >
                   <div class="text-danger">

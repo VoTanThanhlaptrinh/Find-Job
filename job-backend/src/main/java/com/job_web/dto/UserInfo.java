@@ -46,7 +46,7 @@ public class UserInfo {
 	public boolean isMobile() {
 		Pattern pattern = Pattern.compile("^\\d{10}$");
 		Matcher matcher = pattern.matcher(mobile);
-		return !matcher.matches();
+		return matcher.matches();
 	}
 
 	public void toUserInfo(User userLogin) {
@@ -54,5 +54,11 @@ public class UserInfo {
 		this.address = userLogin.getAddress();
 		this.mobile = userLogin.getMobile();
 		this.dateOfBirth = userLogin.getDateOfBirth();
+	}
+	public void update(User userLogin) {
+		userLogin.setFullName(fullName);
+		userLogin.setDateOfBirth(dateOfBirth);
+		userLogin.setAddress(address);
+		userLogin.setMobile(mobile);
 	}
 }

@@ -1,0 +1,10 @@
+::ng-deep .dark-theme-datepicker .mat-datepicker-content {
+  background-color: #333;
+  color: #eee;
+}
+::ng-deep .cdk-overlay-container {
+  z-index: 2000 !important;
+}
+calendar-container-background-color{
+  background-color: #b0b0b0
+}

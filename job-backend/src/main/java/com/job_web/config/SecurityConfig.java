@@ -70,7 +70,7 @@ public class SecurityConfig {
 
 		config.setAllowedOrigins(List.of("http://localhost:4200")); // không dùng "*"
 		config.setAllowCredentials(true);
-		config.setAllowedMethods(List.of("GET","POST","OPTIONS"));
+		config.setAllowedMethods(List.of("GET","POST","OPTIONS","PUT", "PATCH", "DELETE"));
 		config.setAllowedHeaders(List.of("Content-Type","Authorization"));
 		config.setExposedHeaders(List.of("Set-Cookie"));
 

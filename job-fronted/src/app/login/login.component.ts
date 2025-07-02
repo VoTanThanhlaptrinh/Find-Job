@@ -22,8 +22,11 @@ export class LoginComponent implements OnInit {
       private auth: AuthService) {
   }
   ngOnInit(): void {
-    this.notify()
-    this.googleLoginURL()
+    this.notify();
+    this.googleLoginURL();
+    if(this.auth.checkLogin()){
+      this.router.navigate(['/'])
+    }
   }
   formErrors: boolean = false;
   formErrorMessage: string = '';

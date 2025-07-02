@@ -9,7 +9,7 @@ import {NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-job-single',
-  imports: [CarouselModule, RouterModule, NgIf],
+  imports: [CarouselModule, RouterModule],
   templateUrl: './job-single.component.html',
   styleUrl: './job-single.component.css'
 })

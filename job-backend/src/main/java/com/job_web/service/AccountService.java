@@ -4,6 +4,7 @@ import com.job_web.dto.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.security.Principal;
 
 public interface AccountService {
@@ -20,4 +21,6 @@ public interface AccountService {
 	ApiResponse<String> logout(HttpServletRequest request, HttpServletResponse response);
 	ApiResponse<String> forgotPassword(ForgotPassDTO forgotPassDTO);
 	ApiResponse<String> checkRandom(String random);
+
+	ApiResponse<String> updateInfo( UserInfo userInfo, Principal principal);
 }
