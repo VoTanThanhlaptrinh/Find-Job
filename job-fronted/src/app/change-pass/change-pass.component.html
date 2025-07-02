@@ -1,0 +1,22 @@
+<div class="card">
+  <h2>Change Password</h2>
+  <form class="password-form" [formGroup]="this.formGroup" (ngSubmit)="onSubmit()">
+    <input type="password" placeholder="Current Password" name="oldPass" formControlName="oldPass" required>
+    <input type="password" placeholder="New Password" name="newPass" formControlName="newPass" required>
+    <input type="password" placeholder="Confirm New Password"  name="confirmPass" formControlName="confirmPass" required>
+  <div class="requirements">
+    <h3>Password requirements</h3>
+    <p>Please follow this guide for a strong password</p>
+    <ul>
+      <li>One special characters</li>
+      <li>Min 6 characters</li>
+      <li>One number (2 are recommended)</li>
+      <li>Change it often</li>
+    </ul>
+  </div>
+
+  <div class="btn-container">
+    <button type="submit" >Update Password</button>
+  </div>
+  </form>
+</div>

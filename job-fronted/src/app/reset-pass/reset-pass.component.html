@@ -1,0 +1,65 @@
+<section class="banner-area relative" id="home">
+  <div class="overlay overlay-bg"></div>
+  <div class="container">
+    <div class="row d-flex align-items-center justify-content-center">
+      <div class="about-content col-lg-12">
+        <h1 class="text-white">
+          Reset mật khẩu
+        </h1>
+        <p class="text-white link-nav"><a [routerLink]="['/']">Home </a> <span class="lnr lnr-arrow-right"></span>
+          <a [routerLink]="['/reset-pass',this.random]">Reset mật khẩu</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+<main>
+  <!-- login Area Start -->
+  <div class="login-form-area section-padding">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-xl-6 col-lg-7 col-md-10">
+          <form [formGroup]="formGroup" (submit)="onSubmit()" >
+            <div class="login-form">
+              <!-- Login Heading -->
+              <div class="login-heading">
+                <span>Reset mật khẩu</span>
+                <p>Nhập mật khẩu mới</p>
+              </div>
+              <!-- Single Input Fields -->
+              <div class="input-box">
+                <input type="hidden" formControlName="random" required>
+                <div class="single-input-fields ">
+                  <label>Mật khẩu mới</label>
+                  <input type="password" placeholder="Mật khẩu mới" name="newPass"
+                         required formControlName="newPass">
+                </div>
+                <div class="single-input-fields mt-2">
+                  <label>Xác nhận mật khẩu</label>
+                  <input type="password" placeholder="Xác nhận mật khẩu" name="confirmPass"
+                         required formControlName="confirmPass">
+                </div>
+                <div *ngIf="isError" >
+                  <div class="text-danger">
+                    {{ message }}
+                  </div>
+                </div>
+                <div *ngIf="!isError" >
+                  <div class="text-success">
+                    {{ message }}
+                  </div>
+                </div>
+              </div>
+              <!-- form Footer -->
+              <div class="login-footer">
+                <button class="btn login-btn" type="submit" > Đổi mật khẩu</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- login Area End -->
+</main>
+

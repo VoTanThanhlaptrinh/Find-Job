@@ -1,0 +1,32 @@
+application:
+  service:
+    impl:
+      secret-key: e5371ce706d5b72fc513bd343def6da6c713be4968cb0cbc5d249e80c064a767688601b664984a28fa1bb5a95d7bb6cf28d86aa8f2d0efbef25239ef095e05e31c7c1d0280985e0228784f6406409d7033c5436bb64e50f27d75ddc11af8a675768592eaa24f01fb6ec7ee900b431dc35c2e95c0906137b0f7f806cd10578b7c000a0e1bf7b01fe2233d0daf56f564d58e84aade3ab67b56266621a03526f4d505376771ef9038d64eeb727b23619c8d2d84d4269c1c8aa4ced6f96da09dc52a5810d891292f3b648f90aeeed0395ff8dd645a2e7919da9bf943aa332872709d5ebf2082458491d9008f6b0fb81df47d300ba8e0e41006736e3c018b6830e6fe
+      expiration: 900000
+      amount: 10
+      timeLimit: 129600
+      subject-verify: "Kích hoạt tài khoản JobList của bạn"
+      email-verify: "Xin chào bạn,Cảm ơn bạn đã đăng ký tài khoản tại JobList. Để hoàn tất quá trình đăng ký, vui lòng nhấn vào liên kết dưới đây để kích hoạt tài khoản: %s . Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email này. Trân trọng, JobList Team."
+      max-attemps: 5
+      time-out-first: 600
+      time-out-second: 86400
+spring:
+  security:
+   oauth2:
+    client:
+     registration:
+       google:
+         client-id: 1003070955467-64uicgdbbbq6vlnhpa3rmukgqeo53a0h.apps.googleusercontent.com
+         client-secret: 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
+         scope:
+           - email
+           - profile
+       facebook:
+         client-id: 1862835147867306
+         client-secret: 776df64d498b035596d3269f58f68942
+         scope:
+           - email
+           - public_profile
+    resource server:
+      jwt:
+        jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
