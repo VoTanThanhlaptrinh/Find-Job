@@ -18,6 +18,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
             take(1),
             switchMap(token => {
               refreshTokenSubject.next(token);
+              localStorage.setItem('jwtToken',token)
               return next(req.clone({
                 setHeaders: { Authorization: `Bearer ${token}` },
                 withCredentials: true
@@ -25,7 +26,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
             }),
             finalize(() => { isRefreshing = false; refreshTokenSubject = new BehaviorSubject<string|null>(null) }),
             catchError(err => {
-              auth.logout();
+              auth.logout().subscribe();
               return throwError(() => err);
             })
           );

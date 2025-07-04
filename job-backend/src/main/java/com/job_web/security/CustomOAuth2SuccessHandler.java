@@ -8,12 +8,15 @@ import com.job_web.models.User;
 import com.job_web.service.JwtService;
 import com.job_web.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.json.GsonJsonParser;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseCookie;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -32,6 +35,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler {
@@ -46,26 +50,27 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         if (user == null) {
             user = new User();
             user.setEmail(Objects.requireNonNull(principal.getAttribute("email")).toString());
+            user.setFullName(Objects.requireNonNull(principal.getAttribute("name")).toString());
             user.setActive(true);
+            user.setRole("USER");
+            user.setEnabled(true);
+            user.setOauth2Enabled(true);
             userRepository.save(user);
         }
+        UsernamePasswordAuthenticationToken  usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+                user.getEmail(), "", principal.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+
         String token = jwtService.generateToken(user.getEmail());
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getEmail());
 
         ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken.getToken())
                 .httpOnly(true)
                 .secure(false)
+                .path("/")
                 .sameSite("Lax")
                 .maxAge(Duration.between(Instant.now(), refreshToken.getExpiryDate()).getSeconds())
                 .build();
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-
-//        String redirectUrl = UriComponentsBuilder
-//                .fromUriString("http://localhost:4200/login-callback")
-//                .queryParam("token", token)
-//                .build().toUriString();
-//        response.setStatus(HttpStatus.OK.value());
-//        response.sendRedirect(redirectUrl);
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());  // cài cookie
         response.setContentType("text/html");
         response.getWriter().write(

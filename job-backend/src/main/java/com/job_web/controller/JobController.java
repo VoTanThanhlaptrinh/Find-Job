@@ -24,7 +24,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/job")
-@CrossOrigin(origins = "**")
 @Slf4j
 @RequiredArgsConstructor
 public class JobController {

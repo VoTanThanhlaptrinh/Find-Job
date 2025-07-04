@@ -1,4 +1,4 @@
-<section class="banner-area relative" id="category">
+<section class="banner-area relative" id="login">
     <div class="overlay overlay-bg"></div>
     <div class="container">
         <div class="row d-flex align-items-center justify-content-center">
@@ -14,62 +14,68 @@
     </div>
 </section>
 <main>
-    <!-- login Area Start -->
-    <div class="login-form-area section-padding">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-xl-6 col-lg-7 col-md-10">
-                    <form>
-                        <div class="login-form">
-                            <!-- Login Heading -->
-                            <div class="login-heading">
-                                <span>Đăng nhập</span>
-                                <p>Nhập thông tin đăng nhập để truy cập</p>
-                            </div>
-                            <!-- Single Input Fields -->
-                            <div class="input-box">
-                                <div class="single-input-fields">
-                                    <label>Tên người dùng hoặc Email</label>
-                                    <input type="text" placeholder="Tên người dùng / Địa chỉ Email" name="username"
-                                        [(ngModel)]="username" required>
-                                </div>
-                                <div class="single-input-fields">
-                                    <label>Mật khẩu</label>
-                                    <input type="password" placeholder="Mật khẩu" name="password" [(ngModel)]="password"
-                                        required>
-                                </div>
-                                <div class="single-input-fields login-check">
-                                    <!--<input type="checkbox" id="fruit1" name="keep-log" required>
-                                    <label for="fruit1">Keep me logged in</label>-->
-                                    <a [routerLink]="['/forgot-pass']" class="f-right">Quên mật khẩu?</a>
-                                </div>
-                            </div>
-                            <!-- form Footer -->
-                            <div class="login-footer">
-                                <p>Bạn chưa có tài khoản? <a href="/register">Đăng ký</a> ở đây</p>
-                                <button class="btn login-btn" type="submit" (click)="onLogin()">Đăng nhập</button>
-                            </div>
-                            <div *ngIf="formErrors" class="text-danger">
-                              {{ formErrorMessage }}
-                            </div>
-                          <div class="social-login mt-5">
-                            <a  class="facebook btn d-flex justify-content-center align-items-center">
-                              <span class="icon-facebook mr-3"></span> Login with Facebook
-                            </a>
-                            <a href="#" class="twitter btn d-flex justify-content-center align-items-center">
-                              <span class="icon-twitter mr-3"></span> Login with  Twitter
-                            </a>
-                            <a [href]="googleUrl" class="google btn d-flex justify-content-center align-items-center">
-                              <span class="icon-google mr-3"></span> Login with  Google
-                            </a>
-                          </div>
-
-                        </div>
-
-                    </form>
+  <!-- login Area Start -->
+  <div class="login-form-area section-padding">
+    <div class="container">
+      <div class="row justify-content-center ">
+          <div class="col-xl-6 col-lg-7 col-md-10 box-shadow">
+            <mat-tab-group (selectedTabChange)="onTabClick($event)">
+            <mat-tab label="Ứng viên">
+              <ng-container *ngTemplateOutlet="loginForm"></ng-container>
+            </mat-tab>
+            <mat-tab label="Nhà tuyển dụng">
+              <ng-container *ngTemplateOutlet="loginForm"></ng-container>
+            </mat-tab>
+            </mat-tab-group>
+            <ng-template #loginForm>
+              <form >
+                <div class="login-form">
+                  <!-- Login Heading -->
+                  <div class="login-heading">
+                    <span>Đăng nhập</span>
+                    @if(role === 'USER'){
+                      <div class="social-login mt-5 flex justify-content-center align-items-center gap-3">
+                        <a class="facebook btn p-3 rounded-circle d-flex justify-content-center align-items-center" href="#">
+                          <i class="fab fa-facebook-f fa-lg"></i>
+                        </a>
+                        <a class="twitter btn p-3 rounded-circle d-flex justify-content-center align-items-center" href="#">
+                          <i class="fab fa-twitter fa-lg"></i>
+                        </a>
+                        <a class="google btn p-3 rounded-circle d-flex justify-content-center align-items-center" [href]="googleUrl">
+                          <i class="fab fa-google fa-lg"></i>
+                        </a>
+                      </div>
+                    }
+                    <p>Nhập thông tin đăng nhập để truy cập</p>
+                  </div>
+                  <div class="input-box">
+                    <div class="single-input-fields">
+                      <label>Tên người dùng hoặc Email</label>
+                      <input type="text" placeholder="Tên người dùng / Địa chỉ Email" name="username"
+                             [(ngModel)]="username" required>
+                    </div>
+                    <div class="single-input-fields">
+                      <label>Mật khẩu</label>
+                      <input type="password" placeholder="Mật khẩu" name="password" [(ngModel)]="password"
+                             required>
+                    </div>
+                    <div class="single-input-fields login-check">
+                      <a [routerLink]="['/forgot-pass']" class="f-right">Quên mật khẩu?</a>
+                    </div>
+                  </div>
+                  <!-- form Footer -->
+                  <div class="login-footer">
+                    <p>Bạn chưa có tài khoản? <a [routerLink]="['/register']">Đăng ký</a> ở đây</p>
+                    <button class="btn login-btn" type="submit" (click)="onLogin()">Đăng nhập</button>
+                  </div>
                 </div>
-            </div>
-        </div>
+
+              </form>
+            </ng-template>
+          </div>
+
+      </div>
     </div>
-    <!-- login Area End -->
+  </div>
+  <!-- login Area End -->
 </main>

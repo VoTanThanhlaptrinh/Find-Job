@@ -57,6 +57,7 @@ public class User implements UserDetails, Principal {
 	private boolean accountLocked;
 	private boolean enabled;
 	private boolean active;
+	private boolean oauth2Enabled;
 	@CreatedDate
 	@Column(nullable = false, updatable = false)
 	private LocalDateTime createDate;

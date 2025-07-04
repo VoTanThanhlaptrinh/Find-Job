@@ -19,7 +19,6 @@ import lombok.AllArgsConstructor;
 @RestController
 @RequestMapping("/api")
 @AllArgsConstructor
-
 public class HomeController {
 	private JobRepository jobRepository;
 	private BlogRepository blogRepository;

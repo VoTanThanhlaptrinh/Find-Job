@@ -4,12 +4,11 @@ import { FormBuilder, FormGroup, FormsModule, MinLengthValidator, PatternValidat
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ErrorFieldComponent } from '../error-field/error-field.component';
-import { table } from 'node:console';
-import { take } from 'rxjs';
+import {MatTab, MatTabChangeEvent, MatTabGroup} from '@angular/material/tabs';
 
 @Component({
   selector: 'app-register',
-  imports: [FormsModule, CommonModule, ErrorFieldComponent, ReactiveFormsModule],
+  imports: [FormsModule, CommonModule, ErrorFieldComponent, ReactiveFormsModule, MatTabGroup, MatTab],
   standalone: true,
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
@@ -18,8 +17,10 @@ export class RegisterComponent implements OnInit{
   googleUrl = '';
   registerForm: FormGroup;
   formErrors = null;
+  role: string = 'user';
   constructor(private auth: AuthService, private router: Router, private fb: FormBuilder) {
     this.registerForm = this.fb.group({
+      role: ['', Validators.required],
       fullName: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(254)]],
       username: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
@@ -52,26 +53,26 @@ export class RegisterComponent implements OnInit{
   passwordMatchValidator(form: FormGroup) {
     const password = form.get('password');
     const confirmPassword = form.get('confirmPassword');
-
     if (password && confirmPassword) {
       if (password.value !== confirmPassword.value) {
         confirmPassword.setErrors({ mismatch: true });
       } else {
-        // Xóa lỗi 'mismatch' nếu khớp
         if (confirmPassword.hasError('mismatch')) {
           confirmPassword.setErrors(null);
         }
       }
     }
-    return null; // luôn trả về null cho FormGroup
+    return null;
   }
-
   onRegister() {
     this.formErrors = null; // reset lỗi
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched(); // show ra hết lỗi
       return;
     }
+    this.registerForm.patchValue({
+      role : this.role
+    })
     this.auth.register(this.registerForm.value).subscribe({
       next: res => {
         this.router.navigate(['/verify'], { queryParams: { email: res.email}});
@@ -81,4 +82,7 @@ export class RegisterComponent implements OnInit{
     });
   }
 
+  onTabChanged($event: MatTabChangeEvent) {
+    this.role = ($event.index === 0 ? 'USER' : 'HIRER')
+  }
 }
