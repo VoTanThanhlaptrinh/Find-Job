@@ -4,12 +4,32 @@ application:
       secret-key: e5371ce706d5b72fc513bd343def6da6c713be4968cb0cbc5d249e80c064a767688601b664984a28fa1bb5a95d7bb6cf28d86aa8f2d0efbef25239ef095e05e31c7c1d0280985e0228784f6406409d7033c5436bb64e50f27d75ddc11af8a675768592eaa24f01fb6ec7ee900b431dc35c2e95c0906137b0f7f806cd10578b7c000a0e1bf7b01fe2233d0daf56f564d58e84aade3ab67b56266621a03526f4d505376771ef9038d64eeb727b23619c8d2d84d4269c1c8aa4ced6f96da09dc52a5810d891292f3b648f90aeeed0395ff8dd645a2e7919da9bf943aa332872709d5ebf2082458491d9008f6b0fb81df47d300ba8e0e41006736e3c018b6830e6fe
       expiration: 900000
       amount: 10
-      timeLimit: 129600
-      subject-verify: "Kích hoạt tài khoản JobList của bạn"
-      email-verify: "Xin chào bạn,Cảm ơn bạn đã đăng ký tài khoản tại JobList. Để hoàn tất quá trình đăng ký, vui lòng nhấn vào liên kết dưới đây để kích hoạt tài khoản: %s . Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email này. Trân trọng, JobList Team."
+      timeLimit: 604800
       max-attemps: 5
       time-out-first: 600
       time-out-second: 86400
+      subject-verify: "Kích hoạt tài khoản JobList của bạn"
+      email-verify: "Xin chào bạn,Cảm ơn bạn đã đăng ký tài khoản tại JobList. Để hoàn tất quá trình đăng ký, vui lòng nhấn vào liên kết dưới đây để kích hoạt tài khoản: %s . Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email này. Trân trọng, JobList Team."
+      subject-oauth2: "Xác thực tài khoản JobList & tạo mật khẩu mới"
+      email-oauth2: |
+        Chào %s,
+
+        Bạn đang đăng nhập vào JobList lần đầu bằng tài khoản mạng xã hội. Vì vậy, hệ thống chưa có mật khẩu.
+        Để bảo vệ tài khoản của bạn, vui lòng xác thực quyền sở hữu email
+        và tạo mật khẩu mới qua liên kết sau:
+
+        %s
+
+        Lưu ý:
+        • Liên kết này có hiệu lực trong 1 giờ.
+        • Nếu bạn không yêu cầu việc này, bạn có thể bỏ qua email này.
+        • Mật khẩu nên bao gồm ít nhất 8 ký tự, gồm chữ hoa, chữ thường và số để bảo mật tốt hơn.
+
+        Nếu bạn gặp sự cố, xin vui lòng liên hệ với bộ phận hỗ trợ tại support@joblist.vn hoặc phản hồi email này.
+
+        Cảm ơn bạn đã sử dụng JobList,
+        Chúc bạn một ngày tốt lành 😊
+        — JobList Team
 spring:
   security:
    oauth2:

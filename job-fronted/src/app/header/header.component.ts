@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, CUSTOM_ELEMENTS_SCHEMA, NgZone, OnInit} from '@angular/core';
-import {AsyncPipe, CommonModule} from '@angular/common';
+import { CommonModule} from '@angular/common';
 import {Router, RouterLink} from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import {
@@ -15,7 +15,6 @@ import {
   NavItemComponent,
   NavLinkDirective
 } from '@coreui/angular';
-import {Observable} from 'rxjs';
 @Component({
   selector: 'app-header',
   imports: [
@@ -31,7 +30,6 @@ import {Observable} from 'rxjs';
     DropdownMenuDirective,
     DropdownItemDirective,
     CommonModule,
-    RouterLink
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
@@ -52,18 +50,8 @@ export class HeaderComponent implements OnInit {
     this.loggedIn = this.auth.checkLogin();
   }
 
-
   logout(): void {
-    this.auth.logout().subscribe({
-      next: res =>{
-        this.router.navigate(['/']).then(window.location.reload)
-        this.loggedIn = false;
-      },
-      error: err => {
-        this.router.navigate(['/']).then(window.location.reload)
-        this.loggedIn = false;
-      }
-    });
+    this.auth.logout().subscribe();
   }
 
   toggleDropdown() {

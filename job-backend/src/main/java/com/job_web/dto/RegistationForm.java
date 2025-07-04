@@ -15,7 +15,8 @@ import lombok.Data;
 @Data
 
 public class RegistationForm {
-	
+	@NotBlank(message = "Bạn phải chọn vai trò của tài khoản đăng nhập")
+	private String role;
 	@NotBlank(message = "Tên đầy đủ không được rỗng")
 	@Size(max = 255, message = "Tên đầy đủ chỉ được tối đa 255 ký tự")
 	private String fullName;
@@ -41,7 +42,7 @@ public class RegistationForm {
 		user.setFullName(fullName);
 		user.setAddress("");
 		user.setMobile("");
-		user.setRole("USER");
+		user.setRole(role);
 		user.setActive(false);
 		user.setEnabled(true);
 		return user;

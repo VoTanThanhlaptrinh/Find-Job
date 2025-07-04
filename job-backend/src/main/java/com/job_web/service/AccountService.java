@@ -23,4 +23,6 @@ public interface AccountService {
 	ApiResponse<String> checkRandom(String random);
 
 	ApiResponse<String> updateInfo( UserInfo userInfo, Principal principal);
+
+	ApiResponse<String> checkOauth2(Principal principal);
 }

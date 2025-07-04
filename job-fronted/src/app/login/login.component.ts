@@ -5,10 +5,12 @@ import { AuthService } from '../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { NotifyMessageService } from '../services/notify-message.service';
 import { take } from 'rxjs';
-import {response} from 'express';
+import {MatIconModule} from '@angular/material/icon';
+import {MatTab, MatTabChangeEvent, MatTabGroup} from '@angular/material/tabs';
+
 @Component({
   selector: 'app-login',
-  imports: [FormsModule, CommonModule, RouterLink],
+  imports: [FormsModule, CommonModule, RouterLink, MatIconModule, MatTabGroup, MatTab],
   standalone: true,
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
@@ -25,16 +27,16 @@ export class LoginComponent implements OnInit {
     this.notify();
     this.googleLoginURL();
     if(this.auth.checkLogin()){
-      this.router.navigate(['/'])
+      this.router.navigate(['/']);
     }
   }
-  formErrors: boolean = false;
-  formErrorMessage: string = '';
   username = '';
   password = '';
+  role: string = 'USER';
 
   onLogin() {
     const loginRequest = {
+      role: this.role,
       username: this.username,
       password: this.password
     };
@@ -45,9 +47,7 @@ export class LoginComponent implements OnInit {
           });
         },
         error: (error) => {
-          this.formErrors = true;
-          console.error(error)
-          this.formErrorMessage = error;
+          this.toastr.showMessage(error || 'Lỗi đăng nhập','','error')
         }
       }
     )
@@ -63,9 +63,12 @@ export class LoginComponent implements OnInit {
         this.googleUrl = response.data
       },
       error: (error) => {
-        console.error(error)
-        this.formErrorMessage = error;
+       console.log(error)
       }
     })
+  }
+
+  onTabClick(event: MatTabChangeEvent) {
+    this.role = event.index === 0 ? 'USER' : 'RECRUITER';
   }
 }

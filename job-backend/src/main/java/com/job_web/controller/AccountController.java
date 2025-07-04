@@ -21,7 +21,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping(path = "/api/account", produces = "application/json")
-@CrossOrigin(origins = "http://localhost:4200", allowCredentials="true")
 @Slf4j
 @RequiredArgsConstructor
 public class AccountController {
@@ -128,7 +127,7 @@ public class AccountController {
 		ApiResponse<UserInfo> res = accountService.getDetailUser(principal);
 		return ResponseEntity.status(res.getStatus()).body(res);
 	}
-	@GetMapping("/pub/logout")
+	@GetMapping("/pri/logout")
 	public ResponseEntity<ApiResponse<String>> logout(HttpServletRequest request, HttpServletResponse response) {
 		ApiResponse<String> res = accountService.logout(request,response);
 		return ResponseEntity.status(res.getStatus()).body(res);
@@ -168,6 +167,15 @@ public class AccountController {
 					.body(new ApiResponse<String>(bindingResult.getAllErrors().getFirst().getDefaultMessage(), null, 400));
 		}
 		ApiResponse<String> res = accountService.resetPassword(resetDTO);
+		return ResponseEntity.status(res.getStatus()).body(res);
+	}
+
+	@GetMapping("/pri/checkOauth2")
+	public ResponseEntity<ApiResponse<String>> checkOauth2(Principal principal) {
+		if(principal == null) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>("Bạn chưa đăng nhập",null, HttpStatus.BAD_REQUEST.value()));
+		}
+		ApiResponse<String> res = accountService.checkOauth2(principal);
 		return ResponseEntity.status(res.getStatus()).body(res);
 	}
 }

@@ -17,12 +17,11 @@ interface RegisterResult{
 
 export class AuthService {
   token = '';
-
+  private loggedIn: boolean = false
   constructor(private http: HttpClient
               ,private notifyMessageService: NotifyMessageService
               ,private router: Router
               ,@Inject(PLATFORM_ID) private _platformId: Object,) {
-    this.checkLogin()
   }
   login(body:any): Observable<any>{
     return this.http.post<any>("http://localhost:8080/api/account/pub/login", body, {withCredentials: true}).pipe(take(1),map(res =>{
@@ -32,19 +31,18 @@ export class AuthService {
         return throwError(() => msg);
     }));
   }
-  checkLogin(): boolean {
-    if(isPlatformBrowser(this._platformId)){
-      return localStorage.getItem('jwtToken') !== null;
+  checkLogin() {
+    if (isPlatformBrowser(this._platformId)) {
+      this.loggedIn = localStorage.getItem('jwtToken') !== null;
     }
-    return false;
+    return this.loggedIn;
   }
   logout() {
-
-    return this.http.get<any>('http://localhost:8080/api/account/pub/logout',{withCredentials: true})
+    return this.http.get<any>('http://localhost:8080/api/account/pri/logout',{withCredentials: true})
       .pipe(take(1),finalize(() =>{
         if (typeof window !== 'undefined' && window.localStorage) {
           localStorage.removeItem('jwtToken');
-          this.router.navigate(['/login'])
+          this.router.navigate(['/login']).then(window.location.reload)
         }
       }));
   }
@@ -73,13 +71,7 @@ export class AuthService {
   }
   refreshToken$(): Observable<any> {
     const url = 'http://localhost:8080/api/account/pub/refreshToken';
-    return this.http.get<any>(url, {withCredentials: true}).pipe(
-      take(1),
-      tap((response: any) => {
-        localStorage.setItem('jwtToken', response.data);
-      }),
-      map((response: any) => response)
-    );
+    return this.http.get<any>(url, {withCredentials: true}).pipe(take(1));
   }
   getDetails():Observable<any>{
     return this.http.get('http://localhost:8080/api/account/pri/detail',{withCredentials: true});
@@ -114,5 +106,9 @@ export class AuthService {
 
   changePass(value:any) {
     return this.http.put<any>('http://localhost:8080/api/account/pri/changePass',value).pipe(take(1));
+  }
+
+  checkOauth2() {
+    return this.http.get<any>('http://localhost:8080/api/account/pri/checkOauth2').pipe(take(1));
   }
 }

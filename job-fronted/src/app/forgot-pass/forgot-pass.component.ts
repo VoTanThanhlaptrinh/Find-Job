@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormControl, FormControlName, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {AuthService} from '../services/auth.service';
@@ -16,7 +16,7 @@ import {NotifyMessageService} from '../services/notify-message.service';
   templateUrl: './forgot-pass.component.html',
   styleUrl: './forgot-pass.component.css'
 })
-export class ForgotPassComponent {
+export class ForgotPassComponent{
     isError : boolean = false
     message: string = ''
     randomVerify: string | undefined = undefined
@@ -28,6 +28,7 @@ export class ForgotPassComponent {
               ,private router: Router
               ,private notify: NotifyMessageService) {
   }
+
   onSubmit(){
     if(this.formGroup.invalid){
       this.formGroup.markAllAsTouched();

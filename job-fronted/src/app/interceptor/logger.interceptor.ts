@@ -10,7 +10,6 @@ export const loggerInterceptor: HttpInterceptorFn = (req, next) => {
   if(isPlatformBrowser(_platformId)){
     jwtToken = localStorage.getItem('jwtToken');
   }
-  console.log('[Logger] Token =', jwtToken, 'for', req.method, req.url);
   if (jwtToken) {
     const clone = req.clone({
       setHeaders: {

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping(path = "/api/apply", produces = "application/json")
 public class ApplyController {
 	

@@ -2237,6 +2237,9 @@ body.mobile-nav-active #mobile-nav-toggle {
 .banner-area.relative#category {
   height: 500px;              /* độ cao banner mong muốn */
 }
+.banner-area.relative#login {
+  height: 300px;              /* độ cao banner mong muốn */
+}
 .primary-btn {
   background-color: #49e4fa;
   line-height: 42px;

@@ -17,7 +17,6 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping(value = "/api/blog")
-@CrossOrigin("**")
 @AllArgsConstructor
 public class BlogController {
     private final BlogService blogService;

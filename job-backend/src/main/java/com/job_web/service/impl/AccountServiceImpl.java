@@ -10,12 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -44,9 +39,13 @@ public class AccountServiceImpl implements AccountService {
 	private final SpamService spamService;
 	private final JwtService jwtService;
 	@Value("${application.service.impl.subject-verify}")
-	private String subject;
+	private String subjectVerify;
+	@Value("${application.service.impl.subject-oauth2}")
+	private String subjectOauth;
 	@Value("${application.service.impl.email-verify}")
-	private String textTemplate;
+	private String textVerify;
+	@Value("${application.service.impl.email-oauth2}")
+	private String textOauth;
 	@Override
 	public boolean checkPassword( String passwordInput, String passwordInstored) {
 		return encoder.matches(passwordInput, passwordInstored);
@@ -95,15 +94,16 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public ApiResponse<String> sendCodeForgotPassword(HttpServletRequest request ,String email) {
 		String ip = getClientIP(request);
+		// kiểm tra email tồn tại hay không
+		if(email == null || email.isEmpty()) {
+			return new ApiResponse<>("email rỗng",null,400);
+		}
 		// kiểm tra spam
 		if(spamService.checkIpSpamEmail(ip)){
 			return new ApiResponse<>(spamService.getMessageEmailSpam(ip),null,400);
 		}
 		spamService.addIpSpamEmail(ip);
-		// kiểm tra email tồn tại hay không
-		if(email == null) {
-			return new ApiResponse<>("email rỗng",null,400);
-		}
+
 		// kiểm tra có tài khoản nào sử dụng email này không
 		if(userRepository.findByEmail(email).isEmpty()) {
 			return new ApiResponse<>("email không tồn tại trong hệ thống",null,400);
@@ -134,15 +134,15 @@ public class AccountServiceImpl implements AccountService {
 		}
 		String link = createLink(email);
 
-		String text = String.format(textTemplate, link);
-		MailMessage mailMessage = new MailMessage(email, subject, text);
+		String text = String.format(textVerify, link);
+		MailMessage mailMessage = new MailMessage(email, subjectVerify, text);
 		try {
 			mailProducer.sendMail(mailMessage);
 		} catch (Exception e) {
 			log.trace(e.getMessage(),e);
 			return new ApiResponse<>("Gửi email thất bại", null, 500);
 		}
-		return null;
+		return new ApiResponse<>("Gửi email thành công", null, 200);
 	}
 
 	@Override
@@ -154,7 +154,7 @@ public class AccountServiceImpl implements AccountService {
 			return new ApiResponse<>("user không tồn tại trong hệ thống",null,400);
 		}
 		if (!jwtService.isTokenValid(token, user.get())) {
-			new ApiResponse<String>("token hết hạn", null, 200);
+			new ApiResponse<String>("token hết hạn", null, 400);
 		}
 		return new ApiResponse<String>("Kích hoạt tài khoản thành công", null, 200);
 	}
@@ -163,9 +163,7 @@ public class AccountServiceImpl implements AccountService {
 	public ApiResponse<String> login(LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response) {
 		String ip = getClientIP(request);
 		if(spamService.checkIpSpamLogin(ip)){
-			if(spamService.checkIpSpamLogin(ip)){
-				return new ApiResponse<>(spamService.getMessageLoginSpam(ip),null,400);
-			}
+			return new ApiResponse<>(spamService.getMessageLoginSpam(ip),null,400);
 		}
 		Optional<User> user = userRepository.findByEmail(loginDTO.getUsername());
 		if(user.isEmpty()){
@@ -174,6 +172,9 @@ public class AccountServiceImpl implements AccountService {
 		if(!encoder.matches(loginDTO.getPassword(), user.get().getPassword())){
 			spamService.addIpSpamLogin(ip);
 			return new ApiResponse<>("sai mật khẩu", null, 400);
+		}
+		if(user.get().getAuthorities().stream().noneMatch(authority -> authority.getAuthority().equals(loginDTO.getRole()))){
+			return new ApiResponse<>("tài khoản này không đủ quyền truy cập", null, 400);
 		}
 		spamService.deleteIpSpamLogin(ip);
 		String accessToken = jwtService.generateToken(loginDTO.getUsername());
@@ -193,7 +194,7 @@ public class AccountServiceImpl implements AccountService {
 	public ApiResponse<String> refreshToken(HttpServletRequest request) {
 		Cookie[] cookies = request.getCookies();
 		if (cookies == null) {
-			return new ApiResponse<String>("cookie hết hạn", null, 400);
+			return new ApiResponse<String>("cookie hết hạn", null, 401);
 		}
 		for (Cookie cookie : cookies) {
 			if ("refreshToken".equals(cookie.getName())) {
@@ -202,10 +203,10 @@ public class AccountServiceImpl implements AccountService {
 						.map(refreshTokenService::verifyExpiration).map(RefreshToken::getUserInfo)
 						.map(u -> jwtService.generateToken(u.getUsername()));
 				return accessToken.map(s -> new ApiResponse<>("success", s, 200))
-						.orElseGet(() -> new ApiResponse<>("phiên bản đăng nhập hết hạn, hãy đăng nhập lại", null, 400));
+						.orElseGet(() -> new ApiResponse<>("phiên bản đăng nhập hết hạn, hãy đăng nhập lại", null, 401));
 			}
 		}
-		return new ApiResponse<String>("không tìm thấy refresh token, đăng nhập lại", null, 400);
+		return new ApiResponse<String>("không tìm thấy refresh token, đăng nhập lại", null, 401);
 	}
 
 	@Override
@@ -265,8 +266,33 @@ public class AccountServiceImpl implements AccountService {
 		return new ApiResponse<>("Cập nhật thành công",null,200);
 	}
 
+	@Override
+	public ApiResponse<String> checkOauth2(Principal principal) {
+		Optional<User> user = userRepository.findByEmail(principal.getName());
+		if(user.isEmpty()){
+			return new ApiResponse<>("Tài khoản này không tồn tại trong hệ thống", principal.getName(), 400);
+		}
+		if(user.get().isOauth2Enabled() && (user.get().getPassword() == null || user.get().getPassword().isEmpty())){
+			String random = UUID.randomUUID().toString();
+			String link = String.format("http://localhost:4200/reset-pass/%s",random);
+
+			String text = String.format(textOauth,principal.getName(), link);
+			MailMessage mailMessage = new MailMessage(principal.getName(), subjectOauth, text);
+			verifyService.add("random:"+random, principal.getName(),60*60);
+			verifyService.add(random, principal.getName(),60*60);
+			try {
+				mailProducer.sendMail(mailMessage);
+			} catch (Exception e) {
+				log.trace(e.getMessage(),e);
+				return new ApiResponse<>("Gửi email thất bại", null, 500);
+			}
+			return new ApiResponse<>("Tài khoản của bạn chưa có mật khẩu, bạn cần xác thực để tạo mới", principal.getName(), 200);
+		}
+		return new ApiResponse<>("không có vấn đề", principal.getName(), 301);
+	}
+
 	private String createLink(String username) {
-		String token = jwtService.generateToken(username+"|activate");
+		String token = jwtService.generateToken(username + "|activate");
 		return "http://localhost:4200/activate?token=" + token;
 	}
 	private String getClientIP(HttpServletRequest request) {

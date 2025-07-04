@@ -25,6 +25,9 @@
               <c-nav-item>
                 <a cNavLink href="/about">Thông tin</a>
               </c-nav-item>
+              <c-nav-item>
+                <a cNavLink href="/post-job">Đăng Công Việc</a>
+              </c-nav-item>
               <ng-container *ngIf="loggedIn === true">
                 <c-dropdown variant="nav-item" [popper]="false" autoClose="outside">
                   <c-nav-item>
@@ -34,7 +37,6 @@
                     <li><button cDropdownItem (click)="goInfor()">Thông tin cá nhân</button></li>
                     <li><button cDropdownItem (click)="goVerify()">Kích hoạt tài khoản</button></li>
                     <li><button cDropdownItem (click)="logout()">Đăng xuất</button></li>
-                    <li><button cDropdownItem [routerLink]="['/post-job']" > Đăng Công Việc</button></li>
                   </ul>
                 </c-dropdown>
               </ng-container>
