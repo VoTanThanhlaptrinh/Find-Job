@@ -20,6 +20,10 @@ import {LoginCallbackComponent} from './login-callback/login-callback.component'
 import {PostJobComponent} from './post-job/post-job.component';
 import {ForgotPassComponent} from './forgot-pass/forgot-pass.component';
 import {ResetPassComponent} from './reset-pass/reset-pass.component';
+import {HirerHomeComponent} from './hirer-home/hirer-home.component';
+import {RoleGuardService} from './services/role-guard.service';
+import {UpdateJobComponent} from './update-job/update-job.component';
+import {CandidateListComponent} from './candidate-list/candidate-list.component';
 export const routes: Routes = [
     {path:'', component:HomeComponent},
     {path:'login', component:LoginComponent},
@@ -45,6 +49,25 @@ export const routes: Routes = [
           { path: 'history-apply', component: HistoryApplyComponent }
         ]
       },
+      {
+        path: 'hirer',
+        component: HirerHomeComponent,
+        canActivate: [RoleGuardService],
+        data: {expectedRole :'HIRER'}
+      },
+      {
+        path: 'update-job',
+        component : UpdateJobComponent,
+        canActivate: [RoleGuardService],
+        data: {expectedRole :'HIRER'}
+      },
+      {
+        path: 'candidate-list',
+        component: CandidateListComponent,
+        canActivate: [RoleGuardService],
+        data: {expectedRole :'HIRER'}
+      }
+      ,
       {path:'single/:id', component:JobSingleComponent},
       {path:'apply-cv/:id', component:ApplyCvComponent},
 ];

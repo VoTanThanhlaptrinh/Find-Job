@@ -5,6 +5,7 @@ import { NotifyMessageService } from './notify-message.service';
 import { map } from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {isPlatformBrowser} from '@angular/common';
+import {JwtHelperService} from '@auth0/angular-jwt';
 
 interface RegisterResult{
   status: boolean
@@ -21,42 +22,90 @@ export class AuthService {
   constructor(private http: HttpClient
               ,private notifyMessageService: NotifyMessageService
               ,private router: Router
+              ,private jwtHelper: JwtHelperService
               ,@Inject(PLATFORM_ID) private _platformId: Object,) {
   }
-  login(body:any): Observable<any>{
-    return this.http.post<any>("http://localhost:8080/api/account/pub/login", body, {withCredentials: true}).pipe(take(1),map(res =>{
-            localStorage.setItem("jwtToken",res.data);
-    }),catchError((err) =>{
+  login(body:any): Observable<any> {
+    if(body.role === 'USER'){
+      return this.http.post<any>("http://localhost:8080/api/account/pub/u/login", body, {withCredentials: true}).pipe(take(1),map(res =>{
+        localStorage.setItem("jwtToken",res.data);
+        window.location.reload()
+      }),catchError((err) =>{
         const msg = err?.error?.message || 'Login failed';
         return throwError(() => msg);
-    }));
-  }
-  checkLogin() {
-    if (isPlatformBrowser(this._platformId)) {
-      this.loggedIn = localStorage.getItem('jwtToken') !== null;
+      }));
+    }else{
+      return this.http.post<any>("http://localhost:8080/api/account/pub/h/login", body, {withCredentials: true}).pipe(take(1),map(res =>{
+        localStorage.setItem("jwtToken",res.data);
+        window.location.reload()
+      }),catchError((err) =>{
+        const msg = err?.error?.message || 'Login failed';
+        return throwError(() => msg);
+      }));
     }
-    return this.loggedIn;
+  }
+  checkUserLogin(): Observable<boolean> {
+    if (isPlatformBrowser(this._platformId)) {
+      this.token = localStorage.getItem('jwtToken') || '';
+    }
+    if (!this.token) {
+      return of(false);
+    }
+    return this.http
+      .get<any>('http://localhost:8080/api/account/pri/u/checkLogin', { withCredentials: true })
+      .pipe(
+        take(1),
+        map((res:any) => res.status === 200),           // nếu thành công trả về true
+        catchError(() => of(false))  // nếu lỗi trả về false
+      );
+  }
+
+  checkHirerLogin(): Observable<boolean> {
+    if (isPlatformBrowser(this._platformId)) {
+      this.token = localStorage.getItem('jwtToken') || '';
+    }
+    if (!this.token) {
+      return of(false);
+    }
+    return this.http
+      .get<any>('http://localhost:8080/api/account/pri/h/checkLogin', { withCredentials: true })
+      .pipe(
+        take(1),
+        map((res:any) => res.status === 200),
+        catchError(() => of(false))
+      );
   }
   logout() {
-    return this.http.get<any>('http://localhost:8080/api/account/pri/logout',{withCredentials: true})
+    return this.http.get<any>('http://localhost:8080/api/account/pub/logout',{withCredentials: true})
       .pipe(take(1),finalize(() =>{
         if (typeof window !== 'undefined' && window.localStorage) {
           localStorage.removeItem('jwtToken');
-          this.router.navigate(['/login']).then(window.location.reload)
+          this.router.navigate(['/login'])
         }
       }));
   }
   register(data: any): Observable<RegisterResult> {
-    return this.http.post<any>('http://localhost:8080/api/account/pub/register', data).pipe(
-      map(res => ({
+    if(data.role === 'USER'){
+      return this.http.post<any>('http://localhost:8080/api/account/pub/u/register', data).pipe(
+        map(res => ({
           status: res.status === 200,
           email: data.email
-      }))
-      , startWith({
+        })),startWith({
+          status: false,
+          email: data.email
+        }),catchError(err => {
+          const msg = err?.error?.message || 'Đăng ký thất bại';
+          return throwError(() => msg);
+        }));
+    }
+    return this.http.post<any>('http://localhost:8080/api/account/pub/h/register', data).pipe(
+      map(res => ({
+        status: res.status === 200,
+        email: data.email
+      })),startWith({
         status: false,
         email: data.email
-      })
-      , catchError(err => {
+      }),catchError(err => {
         const msg = err?.error?.message || 'Đăng ký thất bại';
         return throwError(() => msg);
       }));
@@ -110,5 +159,14 @@ export class AuthService {
 
   checkOauth2() {
     return this.http.get<any>('http://localhost:8080/api/account/pri/checkOauth2').pipe(take(1));
+  }
+  public isAuthenticated(): boolean {
+    const token = localStorage.getItem('jwtToken');
+    return !this.jwtHelper.isTokenExpired(token);
+  }
+
+
+  hasAnyRole(roles: string[], expectedRole: any) {
+    return roles?.includes(expectedRole);
   }
 }

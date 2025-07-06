@@ -1,8 +1,6 @@
 package com.job_web.controller;
 
-import com.job_web.dto.AddressJobCount;
-import com.job_web.dto.JobDTO;
-import com.job_web.dto.JobFilterDTO;
+import com.job_web.dto.*;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -10,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import com.job_web.dto.ApiResponse;
 import com.job_web.models.Job;
 import com.job_web.service.JobService;
 
@@ -65,9 +62,20 @@ public class JobController {
 	@PostMapping(value = "/pri/postJob", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<ApiResponse<String>> post( @Valid @ModelAttribute JobDTO job, BindingResult bindingResult, Principal principal) {
 		if(bindingResult.hasErrors()) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(bindingResult.getAllErrors().getFirst().getDefaultMessage(),null,HttpStatus.BAD_REQUEST.value()));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(),null,HttpStatus.BAD_REQUEST.value()));
 		}
 		ApiResponse<String> res = jobService.saveJob(job.toJob(),principal);
+		return ResponseEntity.status(res.getStatus()).body(res);
+	}
+
+	@GetMapping("/pri/h/hirerJobPost/{pageIndex}/{pageSize}")
+	public ResponseEntity<ApiResponse<Page<JobResponse>>> getHirerJobPost(@PathVariable int pageIndex, @PathVariable int pageSize, Principal principal) {
+		ApiResponse<Page<JobResponse>> res = jobService.getHirerJobPost(pageIndex,pageSize,principal);
+		return ResponseEntity.status(res.getStatus()).body(res);
+	}
+	@GetMapping("/pri/h/countHirerJobPost")
+	public ResponseEntity<ApiResponse<Long>> countHirerJobPost( Principal principal) {
+		ApiResponse<Long> res = jobService.countHirerJobPost(principal);
 		return ResponseEntity.status(res.getStatus()).body(res);
 	}
 }

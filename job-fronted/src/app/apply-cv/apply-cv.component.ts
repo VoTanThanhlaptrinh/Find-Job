@@ -28,7 +28,7 @@ export class ApplyCvComponent implements OnInit {
   }
   ngOnInit(): void {
     this.route.params.pipe(take(1)).subscribe(params => {
-      if(!this.authService.checkLogin()){
+      if(!this.authService.checkUserLogin()){
         this.router.navigate(['/login'], {
           queryParams: {
             message: 'Bạn cần đăng nhập để tiếp tục',

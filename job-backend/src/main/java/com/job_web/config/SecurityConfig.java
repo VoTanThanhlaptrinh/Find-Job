@@ -54,6 +54,8 @@ public class SecurityConfig {
 								, "/api/home/init"
 								, "/error"
 								,"/oauth2/**", "/login/oauth2/**", "/auth/**").permitAll()
+						.antMatchers("/api/account/pri/h/**").hasAnyAuthority("HIRER")
+						.antMatchers("/api/account/pri/u/**").hasAnyAuthority("USER")
 						.anyRequest().authenticated()
 				).oauth2Login(o -> o
 						.successHandler(customOAuth2SuccessHandler)

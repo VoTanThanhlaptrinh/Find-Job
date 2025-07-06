@@ -15,6 +15,8 @@ import {
   NavItemComponent,
   NavLinkDirective
 } from '@coreui/angular';
+import {concatMap, of} from 'rxjs';
+import {map} from 'rxjs/operators';
 @Component({
   selector: 'app-header',
   imports: [
@@ -38,8 +40,9 @@ import {
 })
 export class HeaderComponent implements OnInit {
   isDropdownOpen = false;
-  loggedIn: boolean | undefined  = undefined;
-
+  loggedIn: boolean = false;
+  userLoggedIn: boolean = true;
+  hirerLoggedIn: boolean = false;
   constructor(private auth: AuthService
               ,private router: Router
               ,private zone: NgZone,
@@ -47,11 +50,43 @@ export class HeaderComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.loggedIn = this.auth.checkLogin();
+    this.checkLogin();
+  }
+  checkLogin(){
+    this.auth.checkUserLogin().pipe(
+      concatMap(userOk => {
+        if (userOk) {
+          return of({ role: 'USER', ok: userOk });
+        }
+        return this.auth.checkHirerLogin().pipe(
+          map(hirerOk => ({ role: 'HIRER', ok: hirerOk }))
+        );
+      })
+    ).subscribe({
+      next: value => {
+        this.loggedIn = value.ok;
+        this.userLoggedIn = !(value.role === 'HIRER' && value.ok);
+        this.hirerLoggedIn = value.role === 'HIRER' && value.ok;
+      },
+      error: () => {
+        this.loggedIn = this.hirerLoggedIn = false;
+        this.userLoggedIn = true;
+      }
+    });
+  }
+  logout(): void {
+    this.auth.logout().subscribe({
+      next: () => this.onLogoutComplete(),
+      error: () => this.onLogoutComplete()
+    });
   }
 
-  logout(): void {
-    this.auth.logout().subscribe();
+  private onLogoutComplete(): void {
+    this.hirerLoggedIn = false;
+    this.userLoggedIn = true;
+    this.loggedIn = false;
+    this.cd.detectChanges();
+    this.router.navigate(['/login']);
   }
 
   toggleDropdown() {

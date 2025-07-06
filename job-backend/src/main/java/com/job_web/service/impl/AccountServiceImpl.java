@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -132,7 +133,7 @@ public class AccountServiceImpl implements AccountService {
 		if(user.isEmpty()){
 			return new ApiResponse<>("user không tồn tại trong hệ thống",null,400);
 		}
-		String link = createLink(email);
+		String link = createLink(user.get());
 
 		String text = String.format(textVerify, link);
 		MailMessage mailMessage = new MailMessage(email, subjectVerify, text);
@@ -174,10 +175,10 @@ public class AccountServiceImpl implements AccountService {
 			return new ApiResponse<>("sai mật khẩu", null, 400);
 		}
 		if(user.get().getAuthorities().stream().noneMatch(authority -> authority.getAuthority().equals(loginDTO.getRole()))){
-			return new ApiResponse<>("tài khoản này không đủ quyền truy cập", null, 400);
+			return new ApiResponse<>(String.format("Tài khoản này không đủ quyền %s truy cập",loginDTO.getRole().toUpperCase()), null, 400);
 		}
 		spamService.deleteIpSpamLogin(ip);
-		String accessToken = jwtService.generateToken(loginDTO.getUsername());
+		String accessToken = jwtService.generateToken(user.get());
 		RefreshToken refreshToken = refreshTokenService.createRefreshToken(loginDTO.getUsername());
 		ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken.getToken())
 				.httpOnly(true)
@@ -201,7 +202,7 @@ public class AccountServiceImpl implements AccountService {
 				String token = cookie.getValue();
 				Optional<String> accessToken = refreshTokenService.findByToken(token)
 						.map(refreshTokenService::verifyExpiration).map(RefreshToken::getUserInfo)
-						.map(u -> jwtService.generateToken(u.getUsername()));
+						.map(jwtService::generateToken);
 				return accessToken.map(s -> new ApiResponse<>("success", s, 200))
 						.orElseGet(() -> new ApiResponse<>("phiên bản đăng nhập hết hạn, hãy đăng nhập lại", null, 401));
 			}
@@ -216,11 +217,17 @@ public class AccountServiceImpl implements AccountService {
 			if ("refreshToken".equals(cookie.getName())) {
 				String token = cookie.getValue();
 				refreshTokenService.deleteRefreshToken(token);
+				Cookie c = new Cookie("refreshToken", null);
+				c.setPath("/");         // Phù hợp với cookie gốc
+				c.setHttpOnly(true);
+				c.setSecure(request.isSecure());     // Nếu cookie gốc là secure
+				c.setMaxAge(0);        // Yêu cầu trình duyệt xóa ngay
+				response.addCookie(c);
 				return new ApiResponse<>("success", null, 200);
 			}
 		}
 		response.setHeader("Authorization", "");
-		Cookie cookie = new Cookie("token", null);
+		Cookie cookie = new Cookie("refreshToken", null);
 		cookie.setPath("/");         // Phù hợp với cookie gốc
 		cookie.setHttpOnly(true);
 		cookie.setSecure(request.isSecure());     // Nếu cookie gốc là secure
@@ -291,8 +298,8 @@ public class AccountServiceImpl implements AccountService {
 		return new ApiResponse<>("không có vấn đề", principal.getName(), 301);
 	}
 
-	private String createLink(String username) {
-		String token = jwtService.generateToken(username + "|activate");
+	private String createLink(UserDetails user) {
+		String token = jwtService.generateToken(user.getUsername() + "|activate");
 		return "http://localhost:4200/activate?token=" + token;
 	}
 	private String getClientIP(HttpServletRequest request) {

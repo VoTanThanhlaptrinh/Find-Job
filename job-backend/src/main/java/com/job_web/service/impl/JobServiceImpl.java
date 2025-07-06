@@ -8,6 +8,7 @@ import com.job_web.data.HirerRepository;
 import com.job_web.data.UserRepository;
 import com.job_web.data.specification.JobSpecifications;
 import com.job_web.dto.AddressJobCount;
+import com.job_web.dto.JobResponse;
 import com.job_web.models.Hirer;
 import com.job_web.models.User;
 import org.springframework.data.domain.Page;
@@ -96,5 +97,17 @@ public class JobServiceImpl implements JobService {
 		hirerRepository.save(hirer);
 		jobRepository.save(job);
 		return new ApiResponse<>("Thành công", null, HttpStatus.CREATED.value());
+	}
+
+	@Override
+	public ApiResponse<Page<JobResponse>> getHirerJobPost(int pageIndex, int pageSize, Principal principal) {
+		PageRequest pageable = PageRequest.of(pageIndex, pageSize,Sort.by("create_date").descending());
+		return new ApiResponse<Page<JobResponse>>("success", jobRepository.getJobPostOfHirer(principal.getName(),pageable), 200);
+	}
+
+	@Override
+	public ApiResponse<Long> countHirerJobPost(Principal principal) {
+		long count = jobRepository.getHirerJobCount(principal.getName());
+		return new ApiResponse<>("success", count, HttpStatus.OK.value());
 	}
 }

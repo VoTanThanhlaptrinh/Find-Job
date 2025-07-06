@@ -18,4 +18,13 @@ export class JobServiceService {
   doPostJob(form:any): Observable<any>{
     return this.http.post('http://localhost:8080/api/job/pri/postJob',form, {withCredentials: true}).pipe(take(1));
   }
+
+  getHirerJobPost(pageIndex:number, pageSize:number) {
+    return this.http.get<any>(`http://localhost:8080/api/job/pri/h/hirerJobPost/${pageIndex}/${pageSize}`, {withCredentials: true}).pipe(take(1));
+  }
+
+  countHirerJobPost() {
+    return this.http.get<any>(`http://localhost:8080/api/job/pri/h/countHirerJobPost`, {withCredentials: true}).pipe(take(1));
+
+  }
 }

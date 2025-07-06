@@ -68,28 +68,48 @@ public class AccountController {
 			BindingResult bindingResult, Principal principal) {
 		if (bindingResult.hasErrors()) {
 			return ResponseEntity.badRequest()
-					.body(new ApiResponse<>(bindingResult.getAllErrors().getFirst().getDefaultMessage(), null, 400));
+					.body(new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, 400));
 		}
 		ApiResponse<String> res = accountService.updateInfo(userInfo,principal);
 		return ResponseEntity.status(res.getStatus()).body(res);
 	}
 
-	@PostMapping("/pub/login")
-	public ResponseEntity<ApiResponse<String>> login(@RequestBody LoginDTO login, HttpServletRequest request , HttpServletResponse response, BindingResult bindingResult) {
+	@PostMapping("/pub/u/login")
+	public ResponseEntity<ApiResponse<String>> userLogin(@RequestBody LoginDTO login, HttpServletRequest request , HttpServletResponse response, BindingResult bindingResult) {
 		if (bindingResult.hasErrors()) {
 			return ResponseEntity.badRequest()
-					.body(new ApiResponse<>(bindingResult.getAllErrors().getFirst().getDefaultMessage(), null, 400));
+					.body(new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, 400));
 		}
 		ApiResponse<String> res = accountService.login(login, request, response);
 		return ResponseEntity.status(res.getStatus()).body(res);
 	}
 
-	@PostMapping("/pub/register")
-	public ResponseEntity<ApiResponse<String>> register(@RequestBody @Valid RegistationForm registationForm,
+	@PostMapping("/pub/u/register")
+	public ResponseEntity<ApiResponse<String>> userRegister(@RequestBody @Valid RegistationForm registationForm,
 			BindingResult bindingResult) {
 		if (bindingResult.hasErrors()) {
 			return ResponseEntity.badRequest()
-					.body(new ApiResponse<String>(bindingResult.getAllErrors().getFirst().getDefaultMessage(), null, 400));
+					.body(new ApiResponse<String>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, 400));
+		}
+		ApiResponse<String> res = accountService.register(registationForm);
+		return ResponseEntity.status(res.getStatus()).body(res);
+	}
+	@PostMapping("/pub/h/login")
+	public ResponseEntity<ApiResponse<String>> hirerLogin(@RequestBody LoginDTO login, HttpServletRequest request , HttpServletResponse response, BindingResult bindingResult) {
+		if (bindingResult.hasErrors()) {
+			return ResponseEntity.badRequest()
+					.body(new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, 400));
+		}
+		ApiResponse<String> res = accountService.login(login, request, response);
+		return ResponseEntity.status(res.getStatus()).body(res);
+	}
+
+	@PostMapping("/pub/h/register")
+	public ResponseEntity<ApiResponse<String>> hirerRegister(@RequestBody @Valid RegistationForm registationForm,
+														BindingResult bindingResult) {
+		if (bindingResult.hasErrors()) {
+			return ResponseEntity.badRequest()
+					.body(new ApiResponse<String>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, 400));
 		}
 		ApiResponse<String> res = accountService.register(registationForm);
 		return ResponseEntity.status(res.getStatus()).body(res);
@@ -108,7 +128,7 @@ public class AccountController {
 		return ResponseEntity.status(res.getStatus()).body(res);
 	}
 
-	@GetMapping("/pri/checkLogin")
+	@GetMapping("/pri/u/checkLogin")
 	public ResponseEntity<ApiResponse<Object>> checkLogin(Principal principal) {
 		if(principal != null) {
 			return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>("success",null, HttpStatus.OK.value()));
@@ -127,7 +147,7 @@ public class AccountController {
 		ApiResponse<UserInfo> res = accountService.getDetailUser(principal);
 		return ResponseEntity.status(res.getStatus()).body(res);
 	}
-	@GetMapping("/pri/logout")
+	@GetMapping("/pub/logout")
 	public ResponseEntity<ApiResponse<String>> logout(HttpServletRequest request, HttpServletResponse response) {
 		ApiResponse<String> res = accountService.logout(request,response);
 		return ResponseEntity.status(res.getStatus()).body(res);
@@ -142,7 +162,7 @@ public class AccountController {
 	@PostMapping("/pub/forgotPass")
 	public ResponseEntity<ApiResponse<String>> forgotPass(@RequestBody @Valid ForgotPassDTO forgotPassDTO, BindingResult bindingResult) {
 		if(bindingResult.hasErrors()) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(bindingResult.getAllErrors().getFirst().getDefaultMessage(), null, 400));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, 400));
 		}
 		ApiResponse<String> res = accountService.forgotPassword(forgotPassDTO);
 		return ResponseEntity.status(res.getStatus()).body(res);
@@ -164,7 +184,7 @@ public class AccountController {
 	public ResponseEntity<ApiResponse<String>> resetPass(@RequestBody @Valid ResetDTO resetDTO, BindingResult bindingResult) {
 		if (bindingResult.hasErrors()) {
 			return ResponseEntity.badRequest()
-					.body(new ApiResponse<String>(bindingResult.getAllErrors().getFirst().getDefaultMessage(), null, 400));
+					.body(new ApiResponse<String>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, 400));
 		}
 		ApiResponse<String> res = accountService.resetPassword(resetDTO);
 		return ResponseEntity.status(res.getStatus()).body(res);
@@ -177,5 +197,13 @@ public class AccountController {
 		}
 		ApiResponse<String> res = accountService.checkOauth2(principal);
 		return ResponseEntity.status(res.getStatus()).body(res);
+	}
+
+	@GetMapping("/pri/h/checkLogin")
+	public ResponseEntity<ApiResponse<String>> checkHirerLogin(Principal principal) {
+		if(principal != null) {
+			return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>("success",null, HttpStatus.OK.value()));
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>("error",null, HttpStatus.BAD_REQUEST.value()));
 	}
 }

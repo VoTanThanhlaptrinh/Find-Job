@@ -13,9 +13,16 @@
               <c-nav-item class="menu-active">
                 <a cNavLink href="/">Trang chủ</a>
               </c-nav-item>
-              <c-nav-item>
-                <a cNavLink href="/category">Tìm việc</a>
-              </c-nav-item>
+                <ng-container *ngIf="userLoggedIn">
+                  <c-nav-item>
+                    <a cNavLink href="/category">Tìm việc</a>
+                  </c-nav-item>
+                </ng-container>
+                <ng-container *ngIf="hirerLoggedIn">
+                  <c-nav-item>
+                    <a cNavLink href="/post-job">Đăng Công Việc</a>
+                  </c-nav-item>
+                </ng-container>
               <c-nav-item>
                 <a cNavLink href="/blogHome">Blog</a>
               </c-nav-item>
@@ -25,10 +32,8 @@
               <c-nav-item>
                 <a cNavLink href="/about">Thông tin</a>
               </c-nav-item>
-              <c-nav-item>
-                <a cNavLink href="/post-job">Đăng Công Việc</a>
-              </c-nav-item>
-              <ng-container *ngIf="loggedIn === true">
+
+              <ng-container *ngIf="loggedIn">
                 <c-dropdown variant="nav-item" [popper]="false" autoClose="outside">
                   <c-nav-item>
                     <a cDropdownToggle cNavLink style="color: aliceblue;">Tài khoản</a>
@@ -41,7 +46,7 @@
                 </c-dropdown>
               </ng-container>
               <!-- Nếu chưa đăng nhập -->
-              <ng-container *ngIf="loggedIn === false">
+              <ng-container *ngIf="!loggedIn">
                 <c-nav-item>
                   <a cNavLink class="ticker-btn" href="/login">Đăng nhập</a>
                 </c-nav-item>
