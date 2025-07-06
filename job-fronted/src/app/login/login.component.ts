@@ -4,9 +4,10 @@ import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { NotifyMessageService } from '../services/notify-message.service';
-import { take } from 'rxjs';
+import {concatMap, of, take} from 'rxjs';
 import {MatIconModule} from '@angular/material/icon';
 import {MatTab, MatTabChangeEvent, MatTabGroup} from '@angular/material/tabs';
+import {map} from 'rxjs/operators';
 
 @Component({
   selector: 'app-login',
@@ -17,6 +18,10 @@ import {MatTab, MatTabChangeEvent, MatTabGroup} from '@angular/material/tabs';
 })
 export class LoginComponent implements OnInit {
   googleUrl = '';
+  loggedIn: boolean = false;
+  username = '';
+  password = '';
+  role: string = 'USER';
   constructor(private loginService: AuthService
     , private router: Router,
       private route: ActivatedRoute,
@@ -26,13 +31,33 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     this.notify();
     this.googleLoginURL();
-    if(this.auth.checkLogin()){
-      this.router.navigate(['/']);
-    }
+    this.checkLogin();
   }
-  username = '';
-  password = '';
-  role: string = 'USER';
+  checkLogin(){
+    this.auth.checkUserLogin().pipe(
+      concatMap(userOk => {
+        if (userOk) {
+          return of({ok: userOk});
+        }
+        return this.auth.checkHirerLogin().pipe(
+          map(hirerOk => ({ok: hirerOk}))
+        );
+      })
+    ).subscribe({
+      next: value => {
+        if(value.ok)
+          this.router.navigate(['/']).then(() =>{
+              if (typeof window !== 'undefined') {
+                window.location.reload()
+              }
+          })
+      },
+      error: () => {
+        this.router.navigate(['/login'])
+      }
+    });
+  }
+
 
   onLogin() {
     const loginRequest = {
@@ -41,10 +66,8 @@ export class LoginComponent implements OnInit {
       password: this.password
     };
     this.loginService.login(loginRequest).subscribe({
-        next: () => {
-          this.router.navigate(['/']).then(() => {
-            window.location.reload();
-          });
+        next: (res) => {
+          this.router.navigate(['/']);
         },
         error: (error) => {
           this.toastr.showMessage(error || 'Lỗi đăng nhập','','error')
@@ -69,6 +92,6 @@ export class LoginComponent implements OnInit {
   }
 
   onTabClick(event: MatTabChangeEvent) {
-    this.role = event.index === 0 ? 'USER' : 'RECRUITER';
+    this.role = event.index === 0 ? 'USER' : 'HIRER';
   }
 }

@@ -10,7 +10,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status === 401 || error.status === 403) {
+      if (error.status === 401) {
         if (!isRefreshing) {
           isRefreshing = true;
           refreshTokenSubject.next(null);
@@ -27,6 +27,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
             finalize(() => { isRefreshing = false; refreshTokenSubject = new BehaviorSubject<string|null>(null) }),
             catchError(err => {
               auth.logout().subscribe();
+              window.location.reload();
               return throwError(() => err);
             })
           );

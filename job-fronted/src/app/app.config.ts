@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import {ApplicationConfig, importProvidersFrom, provideZoneChangeDetection} from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
@@ -10,6 +10,7 @@ import { provideToastr } from 'ngx-toastr';
 import {provideQuillConfig, QuillModule} from 'ngx-quill';
 import hljs from 'highlight.js';
 import {provideNativeDateAdapter} from '@angular/material/core';
+import {JwtModule} from '@auth0/angular-jwt';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -20,6 +21,7 @@ export const appConfig: ApplicationConfig = {
       withFetch(),
       withInterceptors([loggerInterceptor, errorInterceptor])
     ),
+    importProvidersFrom(JwtModule.forRoot({})),
     provideToastr({
       timeOut: 3000,
       positionClass: 'toast-top-right',

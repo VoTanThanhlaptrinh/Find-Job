@@ -37,7 +37,7 @@ public class BlogController {
     public ResponseEntity<ApiResponse<String>> postBlog(@RequestBody @Valid BlogDTO blogDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                    new ApiResponse<>(bindingResult.getAllErrors().getFirst().getDefaultMessage()
+                    new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage()
                     ,null,HttpStatus.BAD_REQUEST.value()));
         }
         ApiResponse<String> res = blogService.postBlog(blogDTO);
@@ -53,7 +53,7 @@ public class BlogController {
     public ResponseEntity<ApiResponse<String>> commentBlog(@RequestBody @Valid Comment comment, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                    new ApiResponse<>(bindingResult.getAllErrors().getFirst().getDefaultMessage()
+                    new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage()
                             ,null,HttpStatus.BAD_REQUEST.value()));
         }
         ApiResponse<String> res = blogService.comment(comment);
@@ -64,7 +64,7 @@ public class BlogController {
     public ResponseEntity<ApiResponse<String>> likeBlog(@RequestBody @Valid LikeDTO likeDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                    new ApiResponse<>(bindingResult.getAllErrors().getFirst().getDefaultMessage()
+                    new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage()
                             ,null,HttpStatus.BAD_REQUEST.value()));
         }
         ApiResponse<String> res = blogService.like(likeDTO.getId());
@@ -75,7 +75,7 @@ public class BlogController {
     public ResponseEntity<ApiResponse<String>> unlikeBlog(@RequestBody @Valid LikeDTO likeDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                    new ApiResponse<>(bindingResult.getAllErrors().getFirst().getDefaultMessage()
+                    new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage()
                             ,null,HttpStatus.BAD_REQUEST.value()));
         }
         ApiResponse<String> res = blogService.unlike(likeDTO.getId());

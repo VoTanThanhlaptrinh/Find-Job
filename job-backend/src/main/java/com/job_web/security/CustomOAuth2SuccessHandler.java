@@ -61,7 +61,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
                 user.getEmail(), "", principal.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 
-        String token = jwtService.generateToken(user.getEmail());
+        String token = jwtService.generateToken(user);
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getEmail());
 
         ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken.getToken())
