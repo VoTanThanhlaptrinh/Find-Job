@@ -1,9 +1,12 @@
 package com.job_web.data;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.job_web.dto.AddressJobCount;
 import com.job_web.dto.JobResponse;
+import com.job_web.dto.JobApply;
+import com.job_web.models.Apply;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -52,4 +55,21 @@ public interface JobRepository extends PagingAndSortingRepository<Job, Long>, Jp
 			where u.email = ?1
 						""", nativeQuery = true)
 	long getHirerJobCount(String email);
+
+    @Query(value = """
+            SELECT 		 j.id AS id,
+                         j.title AS title,
+                         j.description AS description,
+                         j.address AS address,
+                         j.salary AS salary,
+                         j.time AS time
+                         from user as u
+                         join apply as a on u.id = a.user_id
+                         join job as j on j.id = a.job_id
+                         where u.email = ?1
+            			 order by a.apply_date desc
+            """, nativeQuery = true)
+    Page<JobApply> listJobUserApplies(String username, Pageable pageable);
+
+
 }

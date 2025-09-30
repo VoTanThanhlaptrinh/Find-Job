@@ -1,11 +1,13 @@
 package com.job_web.service;
 
 import com.job_web.dto.*;
+import com.job_web.models.Job;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.List;
 
 public interface AccountService {
 	boolean checkPassword(String passwordInput, String passwordInstored);
@@ -25,4 +27,5 @@ public interface AccountService {
 	ApiResponse<String> updateInfo( UserInfo userInfo, Principal principal);
 
 	ApiResponse<String> checkOauth2(Principal principal);
+    ApiResponse<List<Job>> listJobUserApplied(Principal principal);
 }

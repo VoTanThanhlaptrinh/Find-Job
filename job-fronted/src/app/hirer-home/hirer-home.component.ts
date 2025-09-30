@@ -10,8 +10,6 @@ import {MatPaginator, PageEvent} from '@angular/material/paginator';
   selector: 'app-hirer-home',
   imports: [
     CarouselModule,
-    NgForOf,
-    NgIf,
     MatPaginator
   ],
   templateUrl: './hirer-home.component.html',

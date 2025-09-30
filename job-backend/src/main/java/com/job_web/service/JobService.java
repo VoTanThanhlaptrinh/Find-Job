@@ -2,10 +2,12 @@ package com.job_web.service;
 
 import com.job_web.dto.AddressJobCount;
 import com.job_web.dto.JobResponse;
+import com.job_web.dto.JobApply;
 import org.springframework.data.domain.Page;
 
 import com.job_web.dto.ApiResponse;
 import com.job_web.models.Job;
+import org.springframework.data.domain.Pageable;
 
 import java.security.Principal;
 import java.util.List;
@@ -28,4 +30,7 @@ public interface JobService {
     ApiResponse<Page<JobResponse>> getHirerJobPost(int pageIndex, int pageSize, Principal principal);
 
 	ApiResponse<Long> countHirerJobPost(Principal principal);
+
+    ApiResponse<Page<JobApply>> listJobUserApplied(Pageable pageable, Principal principal);
+
 }

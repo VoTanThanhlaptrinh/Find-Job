@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit {
   loggedIn: boolean = false;
   username = '';
   password = '';
-  role: string = 'USER';
+  role: string = 'ROLE_USER';
   constructor(private loginService: AuthService
     , private router: Router,
       private route: ActivatedRoute,
@@ -31,33 +31,7 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     this.notify();
     this.googleLoginURL();
-    this.checkLogin();
   }
-  checkLogin(){
-    this.auth.checkUserLogin().pipe(
-      concatMap(userOk => {
-        if (userOk) {
-          return of({ok: userOk});
-        }
-        return this.auth.checkHirerLogin().pipe(
-          map(hirerOk => ({ok: hirerOk}))
-        );
-      })
-    ).subscribe({
-      next: value => {
-        if(value.ok)
-          this.router.navigate(['/']).then(() =>{
-              if (typeof window !== 'undefined') {
-                window.location.reload()
-              }
-          })
-      },
-      error: () => {
-        this.router.navigate(['/login'])
-      }
-    });
-  }
-
 
   onLogin() {
     const loginRequest = {
@@ -66,8 +40,11 @@ export class LoginComponent implements OnInit {
       password: this.password
     };
     this.loginService.login(loginRequest).subscribe({
-        next: (res) => {
-          this.router.navigate(['/']);
+        next: (res: any) => {
+          if(this.role === 'ROLE_USER')
+            this.router.navigate(['/']);
+          if(this.role === 'ROLE_HIRER')
+            this.router.navigate(['/hirer']);
         },
         error: (error) => {
           this.toastr.showMessage(error || 'Lỗi đăng nhập','','error')
@@ -92,6 +69,6 @@ export class LoginComponent implements OnInit {
   }
 
   onTabClick(event: MatTabChangeEvent) {
-    this.role = event.index === 0 ? 'USER' : 'HIRER';
+    this.role = event.index === 0 ? 'ROLE_USER' : 'ROLE_HIRER';
   }
 }

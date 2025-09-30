@@ -3,26 +3,25 @@ import { JobServiceService } from '../services/job-service.service';
 import { ActivatedRoute, Route, Router, RouterModule } from '@angular/router';
 import { CarouselModule } from 'ngx-owl-carousel-o';
 import { HomeService } from '../services/home.service';
-import {take} from 'rxjs';
-import {NgIf} from '@angular/common';
-
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-job-single',
   imports: [CarouselModule, RouterModule],
   templateUrl: './job-single.component.html',
-  styleUrl: './job-single.component.css'
+  styleUrl: './job-single.component.css',
 })
 export class JobSingleComponent implements OnInit {
-  jobId!: string
-  jobDetail!: any;
+  jobId!: string;
+  jobDetail: any;
   relatedJobs: any;
-  constructor(private jobSerivce: JobServiceService,
+  constructor(
+    private jobSerivce: JobServiceService,
     private route: ActivatedRoute,
     private router: Router,
     private homeService: HomeService
   ) {}
-    carouselOptions = {
+  carouselOptions = {
     loop: false,
     rewind: true,
     mouseDrag: true,
@@ -36,46 +35,52 @@ export class JobSingleComponent implements OnInit {
     responsive: {
       0: { items: 1 },
       600: { items: 2 },
-      1000: { items: 3 }
+      1000: { items: 3 },
     },
-    nav: true
+    nav: true,
   };
   ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      this.jobId = params['id']; // Lấy ID từ URL
-       this.getDetailJob(this.jobId);
-    });
     this.getRelatedJobs();
+    this.route.params.subscribe((params) => {
+      this.jobId = params['id']; // Lấy ID từ URL
+      this.getDetailJob(this.jobId);
+    });
   }
   getDetailJob(id: string) {
-    this.jobSerivce.getDetailJob(id).pipe(take(1)).subscribe({
-      next: (response: any) => {
-        this.jobDetail = response.data;
-      },
-      error: (error) => {
-        console.error('Error fetching job details:', error);
-        this.router.navigate(['/']) // Redirect to home if error occurs
-      }
-    });
+    this.jobSerivce
+      .getDetailJob(id)
+      .pipe(take(1))
+      .subscribe({
+        next: (response: any) => {
+          this.jobDetail = response.data;
+        },
+        error: (error) => {
+          console.error('Error fetching job details:', error);
+          this.router.navigate(['/']); // Redirect to home if error occurs
+        },
+      });
   }
   getRelatedJobs() {
-  this.homeService.getData().pipe(take(1)).subscribe({
-      next: (response) => {
-         this.relatedJobs = response.data.jobSoon.content.map((item: any) => ({
-          id: item.id,
-          title: item.title,
-          address: item.address,
-          image: "assets/web_css/img/r1.png",
-          link: item.link,
-          description: item.description,
-          salary: item.salary,
-          type: item.time,
-        }));
-      },
-      error: (error) => {
-        console.error('Error fetching data:', error);
-      }
-    })
+    this.homeService
+      .getData()
+      .pipe(take(1))
+      .subscribe({
+        next: (response) => {
+          this.relatedJobs = response.data.jobSoon.content.map((item: any) => ({
+            id: item.id,
+            title: item.title,
+            address: item.address,
+            image: 'assets/web_css/img/r1.png',
+            link: item.link,
+            description: item.description,
+            salary: item.salary,
+            type: item.time,
+          }));
+        },
+        error: (error) => {
+          console.error('Error fetching data:', error);
+        },
+      });
   }
   formatMoney(val: number): string {
     return val.toLocaleString('vi-VN') + '₫';

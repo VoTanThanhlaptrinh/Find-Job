@@ -3,6 +3,7 @@ package com.job_web.service.impl;
 import com.job_web.data.UserRepository;
 import com.job_web.dto.*;
 import com.job_web.message.MailProducer;
+import com.job_web.models.Job;
 import com.job_web.models.RefreshToken;
 import com.job_web.models.User;
 import com.job_web.service.*;
@@ -20,9 +21,11 @@ import org.springframework.util.StringUtils;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.security.Principal;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -54,6 +57,7 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public ApiResponse<UserInfo> getDetailUser(Principal principal) {
+
 		if(principal == null) {
 			return new ApiResponse<>("Chưa đăng nhập",null,400);
 		}
@@ -188,6 +192,7 @@ public class AccountServiceImpl implements AccountService {
 				.maxAge(Duration.between(Instant.now(), refreshToken.getExpiryDate()).getSeconds())
 				.build();
 		response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+		log.info("login successful");
 		return new ApiResponse<>("đăng nhập thành công", accessToken, 200);
 	}
 
@@ -204,7 +209,7 @@ public class AccountServiceImpl implements AccountService {
 						.map(refreshTokenService::verifyExpiration).map(RefreshToken::getUserInfo)
 						.map(jwtService::generateToken);
 				return accessToken.map(s -> new ApiResponse<>("success", s, 200))
-						.orElseGet(() -> new ApiResponse<>("phiên bản đăng nhập hết hạn, hãy đăng nhập lại", null, 401));
+						.orElseGet(() -> new ApiResponse<>("phiên bản đăng nhập hết hạn, hãy đăng nhập lại", "cookie-expired", 401));
 			}
 		}
 		return new ApiResponse<String>("không tìm thấy refresh token, đăng nhập lại", null, 401);
@@ -213,28 +218,24 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public ApiResponse<String> logout(HttpServletRequest request, HttpServletResponse response) {
 		Cookie[] cookies = request.getCookies();
-		for (Cookie cookie : cookies) {
-			if ("refreshToken".equals(cookie.getName())) {
-				String token = cookie.getValue();
-				refreshTokenService.deleteRefreshToken(token);
-				Cookie c = new Cookie("refreshToken", null);
-				c.setPath("/");         // Phù hợp với cookie gốc
-				c.setHttpOnly(true);
-				c.setSecure(request.isSecure());     // Nếu cookie gốc là secure
-				c.setMaxAge(0);        // Yêu cầu trình duyệt xóa ngay
-				response.addCookie(c);
-				return new ApiResponse<>("success", null, 200);
-			}
-		}
-		response.setHeader("Authorization", "");
-		Cookie cookie = new Cookie("refreshToken", null);
-		cookie.setPath("/");         // Phù hợp với cookie gốc
-		cookie.setHttpOnly(true);
-		cookie.setSecure(request.isSecure());     // Nếu cookie gốc là secure
-		cookie.setMaxAge(0);        // Yêu cầu trình duyệt xóa ngay
-		response.addCookie(cookie);
-		return new ApiResponse<>("Bạn chưa đăng nhập", null, 400);
-	}
+        request.getSession().invalidate();
+        if(cookies != null){
+            for (Cookie cookie : cookies) {
+                if ("refreshToken".equals(cookie.getName())) {
+                    String token = cookie.getValue();
+                    refreshTokenService.deleteRefreshToken(token);
+                    Cookie c = new Cookie("refreshToken", null);
+                    c.setPath("/");         // Phù hợp với cookie gốc
+                    c.setHttpOnly(true);
+                    c.setSecure(request.isSecure());     // Nếu cookie gốc là secure
+                    c.setMaxAge(0);        // Yêu cầu trình duyệt xóa ngay
+                    response.addCookie(c);
+                }
+            }
+        }
+        response.setHeader("Authorization", "");
+        return new ApiResponse<>("logout thành công", null, 200);
+    }
 
 	@Override
 	public ApiResponse<String> forgotPassword(ForgotPassDTO forgotPassDTO) {
@@ -298,7 +299,12 @@ public class AccountServiceImpl implements AccountService {
 		return new ApiResponse<>("không có vấn đề", principal.getName(), 301);
 	}
 
-	private String createLink(UserDetails user) {
+    @Override
+    public ApiResponse<List<Job>> listJobUserApplied(Principal principal) {
+        return null;
+    }
+
+    private String createLink(UserDetails user) {
 		String token = jwtService.generateToken(user.getUsername() + "|activate");
 		return "http://localhost:4200/activate?token=" + token;
 	}

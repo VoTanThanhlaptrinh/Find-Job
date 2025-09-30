@@ -2,6 +2,7 @@ package com.job_web.service.impl;
 
 import java.util.Properties;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.SimpleMailMessage;
@@ -12,13 +13,13 @@ import com.job_web.service.IMailService;
 
 @Configuration
 public class MailServiceImp implements IMailService {
-	private String from;
+	@Value("${spring.mail.username}")
+	private  String from;
+	@Value("${spring.mail.password}")
+	private  String password;
 
-	public MailServiceImp() {
-		from = "vtthanh32004@gmail.com";
-	}
 
-	@Override
+    @Override
 	public void sendMessage(String to, String subject, String text) {
 		// TODO Auto-generated method stub
 		SimpleMailMessage message = new SimpleMailMessage();
@@ -35,8 +36,8 @@ public class MailServiceImp implements IMailService {
 		mailSender.setHost("smtp.gmail.com");
 		mailSender.setPort(587);
 
-		mailSender.setUsername("vtthanh32004@gmail.com");
-		mailSender.setPassword("okvk trsy jdgy afjw");
+		mailSender.setUsername(this.from);
+		mailSender.setPassword(this.password);
 
 		Properties props = mailSender.getJavaMailProperties();
 		props.put("mail.transport.protocol", "smtp");

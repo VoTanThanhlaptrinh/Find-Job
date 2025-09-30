@@ -20,7 +20,7 @@ export class ChangePassComponent implements OnInit{
   ngOnInit(): void {
     this.authService.checkOauth2().subscribe({
       next: res =>{
-        if(res.status === 200)
+        if(!res.data)
           this.router.navigate(['verify'])
       }
     });

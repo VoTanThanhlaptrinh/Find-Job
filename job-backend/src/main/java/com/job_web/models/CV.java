@@ -13,6 +13,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -31,4 +37,11 @@ public class CV {
 	private byte[] data;
 
 	private String fileName;
+
+    @CreatedDate
+    private LocalDateTime createDate;
+
+    @LastModifiedDate
+    private LocalDateTime lastModifyDate;
+
 }

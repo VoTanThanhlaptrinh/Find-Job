@@ -6,8 +6,6 @@ import { ToastrService, IndividualConfig } from 'ngx-toastr';
   providedIn: 'root'
 })
 export class NotifyMessageService {
-
-
   constructor(
     @Inject(PLATFORM_ID) private _platformId: Object,
     private _toastr: ToastrService) {}

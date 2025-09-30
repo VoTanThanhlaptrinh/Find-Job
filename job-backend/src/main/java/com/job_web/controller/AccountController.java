@@ -1,6 +1,8 @@
 package com.job_web.controller;
 
 import java.security.Principal;
+
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import javax.servlet.http.HttpServletRequest;
@@ -8,11 +10,16 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import com.job_web.dto.*;
+
 import com.job_web.service.*;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
+
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -100,6 +107,7 @@ public class AccountController {
 			return ResponseEntity.badRequest()
 					.body(new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, 400));
 		}
+        log.info("Hirer login success");
 		ApiResponse<String> res = accountService.login(login, request, response);
 		return ResponseEntity.status(res.getStatus()).body(res);
 	}
@@ -128,12 +136,14 @@ public class AccountController {
 		return ResponseEntity.status(res.getStatus()).body(res);
 	}
 
-	@GetMapping("/pri/u/checkLogin")
-	public ResponseEntity<ApiResponse<Object>> checkLogin(Principal principal) {
+	@GetMapping("/pri/u/isUser")
+	public ResponseEntity<ApiResponse<Object>> checkUser(Principal principal) {
 		if(principal != null) {
-			return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>("success",null, HttpStatus.OK.value()));
+			log.info("check user login success");
+            log.info(principal.getName());
+			return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>("success",true, HttpStatus.OK.value()));
 		}
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>("error",null, HttpStatus.BAD_REQUEST.value()));
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>("error",false, HttpStatus.BAD_REQUEST.value()));
 	}
 
 	@GetMapping("/pub/refreshToken")
@@ -191,19 +201,23 @@ public class AccountController {
 	}
 
 	@GetMapping("/pri/checkOauth2")
-	public ResponseEntity<ApiResponse<String>> checkOauth2(Principal principal) {
-		if(principal == null) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>("Bạn chưa đăng nhập",null, HttpStatus.BAD_REQUEST.value()));
-		}
-		ApiResponse<String> res = accountService.checkOauth2(principal);
-		return ResponseEntity.status(res.getStatus()).body(res);
+	public ResponseEntity<ApiResponse<Boolean>> checkOauth2(Principal principal) {
+        boolean res = principal != null;
+        String mess = res ? "success" : "Bạn chưa đăng nhập";
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<Boolean>(mess, res, HttpStatus.OK.value()));
 	}
 
-	@GetMapping("/pri/h/checkLogin")
-	public ResponseEntity<ApiResponse<String>> checkHirerLogin(Principal principal) {
-		if(principal != null) {
-			return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>("success",null, HttpStatus.OK.value()));
-		}
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>("error",null, HttpStatus.BAD_REQUEST.value()));
+	@GetMapping("/pri/h/isHirer")
+	public ResponseEntity<ApiResponse<Boolean>> checkHirerLogin(Principal principal) {
+        boolean res = principal != null;
+        String mess = res ? "success" : "Bạn chưa đăng nhập";
+        log.info(String.valueOf(res));
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<Boolean>(mess, res, HttpStatus.OK.value()));
 	}
+    @GetMapping("/pri/checkLogin")
+    public ResponseEntity<ApiResponse<Boolean>> checkLogin(Principal principal){
+        boolean res = principal != null;
+        String mess = res ? "success" : "Bạn chưa đăng nhập";
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<Boolean>(mess, res, HttpStatus.OK.value()));
+    }
 }

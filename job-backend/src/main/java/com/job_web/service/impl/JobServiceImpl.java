@@ -11,8 +11,10 @@ import com.job_web.dto.AddressJobCount;
 import com.job_web.dto.JobResponse;
 import com.job_web.models.Hirer;
 import com.job_web.models.User;
+import com.job_web.dto.JobApply;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -30,6 +32,7 @@ public class JobServiceImpl implements JobService {
 	private final JobRepository jobRepository;
 	private final UserRepository userRepository;
 	private final HirerRepository hirerRepository;
+
 	@Override
 	public ApiResponse<Page<Job>> getListJobNewest(int page, int amount) {
 		PageRequest pageable = PageRequest.of(page, amount, Sort.by("createDate").descending());
@@ -39,7 +42,7 @@ public class JobServiceImpl implements JobService {
 	@Override
 	public ApiResponse<Job> getJobDetailById(String id) {
 		try {
-			long jobId = Long.valueOf(id);
+			long jobId = Long.parseLong(id);
 			Optional<Job> job = jobRepository.findById(jobId);
             return job.map(value -> new ApiResponse<>("success", value, 200)).orElseGet(() -> new ApiResponse<>("Id not found", null, 404));
         } catch (NumberFormatException e) {
@@ -86,9 +89,8 @@ public class JobServiceImpl implements JobService {
 
 	@Override
 	public ApiResponse<String> saveJob(Job job, Principal principal) {
-		if(principal == null) {
-			return new ApiResponse<>("Chưa đăng nhập", null, HttpStatus.BAD_REQUEST.value());
-		}
+        checkPrincipal(principal);
+
 		User user = userRepository.findByEmail(principal.getName()).orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng này"));
 		Hirer hirer = job.getHirer();
 		if(hirer.getUser().getId() != user.getId()) {
@@ -102,7 +104,7 @@ public class JobServiceImpl implements JobService {
 	@Override
 	public ApiResponse<Page<JobResponse>> getHirerJobPost(int pageIndex, int pageSize, Principal principal) {
 		PageRequest pageable = PageRequest.of(pageIndex, pageSize,Sort.by("create_date").descending());
-		return new ApiResponse<Page<JobResponse>>("success", jobRepository.getJobPostOfHirer(principal.getName(),pageable), 200);
+		return new ApiResponse<>("success", jobRepository.getJobPostOfHirer(principal.getName(),pageable), 200);
 	}
 
 	@Override
@@ -110,4 +112,18 @@ public class JobServiceImpl implements JobService {
 		long count = jobRepository.getHirerJobCount(principal.getName());
 		return new ApiResponse<>("success", count, HttpStatus.OK.value());
 	}
+
+
+
+    @Override
+    public ApiResponse<Page<JobApply>> listJobUserApplied(Pageable pageable,Principal principal) {
+        return new ApiResponse<>("success",jobRepository.listJobUserApplies(principal.getName(),pageable),HttpStatus.OK.value());
+    }
+
+
+
+    private void checkPrincipal(Principal principal){
+        if(principal == null)
+            throw new RuntimeException("User chưa đăng nhập");
+    }
 }

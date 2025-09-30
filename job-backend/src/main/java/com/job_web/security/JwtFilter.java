@@ -8,12 +8,15 @@ import java.util.regex.Pattern;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.job_web.service.RefreshTokenService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,6 +39,7 @@ import lombok.RequiredArgsConstructor;
 public class JwtFilter extends OncePerRequestFilter {
 	private final JwtService jwtService;
 	private final UserDetailsService userDetailsService;
+    private final RefreshTokenService refreshTokenService;
 	private final List<String> allowedOrigins = Arrays.asList(
 			"/api/account/pub/.*"
 			,"/error"
@@ -60,6 +64,7 @@ public class JwtFilter extends OncePerRequestFilter {
 		String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 		String jwt;
 		String userEmail;
+        UserDetails userDetails;
 		if (authHeader == null || authHeader.trim().isEmpty() || !authHeader.startsWith("Bearer ")) {
 			filterChain.doFilter(request, response);
 			return;
@@ -68,16 +73,17 @@ public class JwtFilter extends OncePerRequestFilter {
 		try {
 			userEmail = jwtService.extractUsername(jwt);
 			if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-				UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
-				if (jwtService.isTokenValid(jwt, userDetails)) {
-					UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-							userDetails, null, userDetails.getAuthorities());
-					usernamePasswordAuthenticationToken
-							.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-					SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-				}
+				 userDetails = userDetailsService.loadUserByUsername(userEmail);
+                if (jwtService.isTokenValid(jwt, userDetails)) {
+                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
+                    usernamePasswordAuthenticationToken
+                            .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                }
 			}
 		}catch (ExpiredJwtException e) {
+            log.error(e.getMessage());
 			response.setContentType("application/json");
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			response.getWriter().write("{\"message\":\"Expired JWT token\"}");
@@ -85,6 +91,7 @@ public class JwtFilter extends OncePerRequestFilter {
 			response.setHeader("Connection", "close");
 			return;
 		} catch (JwtException e) {
+            log.error(e.getMessage());
 			response.setContentType("application/json");
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			response.getWriter().write("{\"message\":\"Invalid JWT token\"}");

@@ -45,7 +45,20 @@ public class SecurityConfig {
 
 	@Bean
 	SecurityFilterChain restChain(HttpSecurity http) throws Exception {
-		http.cors(c -> c.configurationSource(corsConfigurationSource())).csrf(AbstractHttpConfigurer::disable)
+		http.cors(c -> c.configurationSource(corsConfigurationSource()))
+//                .headers(h -> h
+//                        .contentSecurityPolicy(csp -> csp
+//                                .policyDirectives(
+//                                        "default-src 'self'; " +
+//                                                "connect-src 'self' http://localhost:4200 ws://localhost:4200 http://127.0.0.1:4200 ws://127.0.0.1:4200; " +
+//                                                "img-src 'self' data: blob:; " +
+//                                                "script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:; " +
+//                                                "style-src 'self' 'unsafe-inline'; " +
+//                                                "font-src 'self' data:; " +
+//                                                "object-src 'none'; frame-ancestors 'self'; base-uri 'self';"
+//                                )
+//                        )
+//                )
 				.csrf(AbstractHttpConfigurer::disable)
 				.authorizeRequests(auth -> auth
 						.antMatchers("/api/account/pub/**"
@@ -54,8 +67,8 @@ public class SecurityConfig {
 								, "/api/home/init"
 								, "/error"
 								,"/oauth2/**", "/login/oauth2/**", "/auth/**").permitAll()
-						.antMatchers("/api/account/pri/h/**").hasAnyAuthority("HIRER")
-						.antMatchers("/api/account/pri/u/**").hasAnyAuthority("USER")
+						.antMatchers("/api/account/pri/h/**").hasAuthority("ROLE_HIRER")
+						.antMatchers("/api/account/pri/u/**").hasAuthority("ROLE_USER")
 						.anyRequest().authenticated()
 				).oauth2Login(o -> o
 						.successHandler(customOAuth2SuccessHandler)

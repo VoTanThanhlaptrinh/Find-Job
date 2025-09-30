@@ -52,7 +52,7 @@ export class ProfileComponent implements OnInit{
       },
       error:(err) =>{
         this.toastr.showMessage('Có lỗi xảy ra!','','error')
-        this.auth.logout();
+        // this.auth.logout();
       }
     })
   }

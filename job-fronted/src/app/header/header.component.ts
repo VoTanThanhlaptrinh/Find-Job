@@ -1,6 +1,12 @@
-import {ChangeDetectorRef, Component, CUSTOM_ELEMENTS_SCHEMA, NgZone, OnInit} from '@angular/core';
-import { CommonModule} from '@angular/common';
-import {Router, RouterLink} from '@angular/router';
+import {
+  ChangeDetectorRef,
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  NgZone,
+  OnInit,
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import {
   CollapseDirective,
@@ -13,10 +19,8 @@ import {
   NavbarNavComponent,
   NavbarTogglerDirective,
   NavItemComponent,
-  NavLinkDirective
+  NavLinkDirective,
 } from '@coreui/angular';
-import {concatMap, of} from 'rxjs';
-import {map} from 'rxjs/operators';
 @Component({
   selector: 'app-header',
   imports: [
@@ -36,50 +40,34 @@ import {map} from 'rxjs/operators';
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  standalone: true
+  standalone: true,
 })
 export class HeaderComponent implements OnInit {
   isDropdownOpen = false;
   loggedIn: boolean = false;
-  userLoggedIn: boolean = true;
+  userLoggedIn: boolean = false;
   hirerLoggedIn: boolean = false;
-  constructor(private auth: AuthService
-              ,private router: Router
-              ,private zone: NgZone,
-  private cd: ChangeDetectorRef) { }
-
-
+  constructor(
+    private auth: AuthService,
+    private router: Router,
+    private zone: NgZone,
+    private cd: ChangeDetectorRef
+  ) {}
   ngOnInit(): void {
     this.checkLogin();
   }
-  checkLogin(){
-    this.auth.checkUserLogin().pipe(
-      concatMap(userOk => {
-        if (userOk) {
-          return of({ role: 'USER', ok: userOk });
-        }
-        return this.auth.checkHirerLogin().pipe(
-          map(hirerOk => ({ role: 'HIRER', ok: hirerOk }))
-        );
-      })
-    ).subscribe({
-      next: value => {
-        this.loggedIn = value.ok;
-        this.userLoggedIn = !(value.role === 'HIRER' && value.ok);
-        this.hirerLoggedIn = value.role === 'HIRER' && value.ok;
-      },
-      error: () => {
-        this.loggedIn = this.hirerLoggedIn = false;
-        this.userLoggedIn = true;
-      }
-    });
+  checkLogin() {
+    this.auth.checkLogin().subscribe((value) => (this.loggedIn = value));
+    this.auth
+      .checkUserLogin()
+      .subscribe((value) => (this.userLoggedIn = value));
+    this.auth
+          .checkHirerLogin()
+          .subscribe((value) => (this.hirerLoggedIn = value));
   }
-  logout(): void {
-    this.auth.logout().subscribe({
-      next: () => this.onLogoutComplete(),
-      error: () => this.onLogoutComplete()
-    });
-  }
+    logout(): void {
+      this.auth.logout().subscribe(() => this.onLogoutComplete());
+    }
 
   private onLogoutComplete(): void {
     this.hirerLoggedIn = false;
@@ -92,10 +80,10 @@ export class HeaderComponent implements OnInit {
   toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;
   }
-  goInfor(): void{
+  goInfor(): void {
     window.location.href = '/infor';
   }
-  goVerify(): void{
+  goVerify(): void {
     window.location.href = '/verify';
   }
 }

@@ -21,7 +21,7 @@ export class LoginCallbackComponent implements OnInit {
     const token = this.route.snapshot.queryParamMap.get('token');
     if (token) {
       // Lưu JWT vào localStorage
-      this.auth.fetchToken(token);
+      this.auth.setJwtToken(token);
 
       // Chuyển hướng ở bên client
       if (isPlatformBrowser(this.platformId)) {

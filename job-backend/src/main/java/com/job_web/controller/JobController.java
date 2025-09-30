@@ -1,7 +1,9 @@
 package com.job_web.controller;
 
 import com.job_web.dto.*;
+import com.job_web.dto.JobApply;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -78,4 +80,9 @@ public class JobController {
 		ApiResponse<Long> res = jobService.countHirerJobPost(principal);
 		return ResponseEntity.status(res.getStatus()).body(res);
 	}
+    @GetMapping("/pri/u/listJobUserApplied/{pageIndex}/{pageSize}")
+    public ResponseEntity<ApiResponse<Page<JobApply>>> listJobUserApplied(@PathVariable("pageIndex") int pageIndex, @PathVariable("pageSize") int pageSize,Principal principal){
+        ApiResponse<Page<JobApply>> res = jobService.listJobUserApplied(PageRequest.of(pageIndex,pageSize),principal);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
 }

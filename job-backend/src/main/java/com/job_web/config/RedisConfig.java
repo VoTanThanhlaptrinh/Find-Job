@@ -2,6 +2,7 @@ package com.job_web.config;
 
 import java.time.Duration;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
@@ -14,16 +15,25 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 public class RedisConfig {
+	@Value("${application.config.redis.host-name}")
+	private String hostName;
+	@Value("${application.config.redis.password}")
+	private String password;
+	@Value("${application.config.redis.port}")
+	private int port;
 	@Bean
 	JedisConnectionFactory jedisConnectionFactory() {
 		RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
-		redisStandaloneConfiguration.setHostName("localhost");
-		redisStandaloneConfiguration.setPort(6379);
+//		redisStandaloneConfiguration.setHostName("localhost");
+		redisStandaloneConfiguration.setHostName(hostName);
+		// set password for deploy
+//		redisStandaloneConfiguration.setPassword(password);
+		redisStandaloneConfiguration.setPort(port);
 		redisStandaloneConfiguration.setDatabase(0);
 
 		JedisClientConfigurationBuilder jedisClientConfiguration = JedisClientConfiguration.builder();
 		jedisClientConfiguration.connectTimeout(Duration.ofSeconds(60)); // Connection timeout
-		jedisClientConfiguration.readTimeout(Duration.ofSeconds(1)); // Read timeout
+		jedisClientConfiguration.readTimeout(Duration.ofSeconds(5)); // Read timeout
 
 		return new JedisConnectionFactory(redisStandaloneConfiguration, jedisClientConfiguration.build());
 	}

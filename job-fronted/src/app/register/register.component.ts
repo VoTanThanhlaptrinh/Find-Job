@@ -17,7 +17,7 @@ export class RegisterComponent implements OnInit{
   googleUrl = '';
   registerForm: FormGroup;
   formErrors = null;
-  role: string = 'user';
+  role: string = 'ROLE_USER';
   constructor(private auth: AuthService, private router: Router, private fb: FormBuilder) {
     this.registerForm = this.fb.group({
       role: ['', Validators.required],
@@ -83,6 +83,6 @@ export class RegisterComponent implements OnInit{
   }
 
   onTabChanged($event: MatTabChangeEvent) {
-    this.role = ($event.index === 0 ? 'USER' : 'HIRER')
+    this.role = ($event.index === 0 ? 'ROLE_USER' : 'ROLE_HIRER')
   }
 }

@@ -5,7 +5,7 @@ import { FooterComponent } from './footer/footer.component';
 import { ToastContainerDirective } from 'ngx-toastr';
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, HeaderComponent, FooterComponent,ToastContainerDirective ],
+  imports: [RouterOutlet, HeaderComponent, FooterComponent,ToastContainerDirective],
   standalone:true,
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',

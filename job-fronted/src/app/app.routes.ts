@@ -21,9 +21,10 @@ import {PostJobComponent} from './post-job/post-job.component';
 import {ForgotPassComponent} from './forgot-pass/forgot-pass.component';
 import {ResetPassComponent} from './reset-pass/reset-pass.component';
 import {HirerHomeComponent} from './hirer-home/hirer-home.component';
-import {RoleGuardService} from './services/role-guard.service';
 import {UpdateJobComponent} from './update-job/update-job.component';
 import {CandidateListComponent} from './candidate-list/candidate-list.component';
+import { userLoginGuard } from './guards/user-login.guard';
+import { hirerGuard } from './guards/hirer-guard.guard';
 export const routes: Routes = [
     {path:'', component:HomeComponent},
     {path:'login', component:LoginComponent},
@@ -42,8 +43,9 @@ export const routes: Routes = [
     {
         path: 'infor',
         component: InforComponent,
+        
         children: [
-          { path: '', component: ProfileComponent },
+          { path: '', component: ProfileComponent,canActivate:[userLoginGuard], },
           { path: 'change-password', component: ChangePassComponent },
           { path: 'cv', component: CvUiComponent },
           { path: 'history-apply', component: HistoryApplyComponent }
@@ -52,20 +54,17 @@ export const routes: Routes = [
       {
         path: 'hirer',
         component: HirerHomeComponent,
-        canActivate: [RoleGuardService],
-        data: {expectedRole :'HIRER'}
+        canActivate: [hirerGuard],
       },
       {
         path: 'update-job',
         component : UpdateJobComponent,
-        canActivate: [RoleGuardService],
-        data: {expectedRole :'HIRER'}
+        canActivate: [hirerGuard],
       },
       {
         path: 'candidate-list',
         component: CandidateListComponent,
-        canActivate: [RoleGuardService],
-        data: {expectedRole :'HIRER'}
+        canActivate: [hirerGuard],
       }
       ,
       {path:'single/:id', component:JobSingleComponent},

@@ -8,11 +8,5 @@ import { AuthService } from '../services/auth.service';
   templateUrl: './infor.component.html',
   styleUrl: './infor.component.css'
 })
-export class InforComponent implements OnInit {
-  constructor(private auth: AuthService, private router:Router) { }
-  ngOnInit(): void {
-    if(!(this.auth.checkUserLogin() && this.auth.checkHirerLogin())){
-      this.router.navigate(['/login'])
-    }
-  }
+export class InforComponent {
 }

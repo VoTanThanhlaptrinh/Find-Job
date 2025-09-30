@@ -55,10 +55,10 @@
     <div class="row justify-content-center d-flex">
       <div class="col-lg-8 post-list">
         <!-- Nếu có công việc -->
-        <ng-container *ngIf="jobPosts?.length > 0; else noItems">
+         @if (jobPosts?.length > 0) {
+        <ng-container>
+          @for (item of jobPosts; track $index) {
           <div
-            *ngFor="let item of jobPosts; trackBy: trackById"
-            [id]="item.id"
             class="single-post flex flex-row mb-3">
             <div class="thumb">
               <img class="img-fluid" [src]="item.image">
@@ -82,14 +82,16 @@
               </p>
             </div>
           </div>
-        </ng-container>
-
+          }
+        </ng-container>}
         <!-- Nếu không có công việc -->
-        <ng-template #noItems>
+        @else {
+          <ng-template>
           <div class="alert alert-info text-center">
             Không có công việc nào
           </div>
         </ng-template>
+        }
         <mat-paginator [length]="this.length"
                        [pageSize]=" 10"
                        [pageSizeOptions]="[5, 10, 25]"

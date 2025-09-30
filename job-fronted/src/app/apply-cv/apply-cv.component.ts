@@ -59,6 +59,7 @@ export class ApplyCvComponent implements OnInit {
     this.jobService.getDetailJob(id).subscribe({
       next: (response: any) => {
         this.jobDetail = response.data;
+
       },
       error: (error) => {
         console.error('Error fetching job details:', error);

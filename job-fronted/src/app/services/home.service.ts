@@ -1,15 +1,19 @@
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import {Observable, take} from 'rxjs';
+import { Observable, take } from 'rxjs';
+import { UtilitiesService } from './utilities.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class HomeService {
-
-  constructor(private http: HttpClient) { }
-  private url = "http://localhost:8080/api/home/init"
+  private url :string;
+  constructor(private http: HttpClient,
+              private utilities: UtilitiesService,
+  ) {
+    this.url = utilities.getURLDev()
+  }
   getData(): Observable<any> {
-    return this.http.get<any>(this.url).pipe(take(1)) ;
+    return this.http.get<any>(`${this.url}/home/init`).pipe(take(1));
   }
 }
