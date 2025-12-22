@@ -1,0 +1,29 @@
+.verify-notice {
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    text-align: center;
+  }
+  
+  .verify-notice h2 {
+    font-size: 24px; /* chữ to */
+    margin-bottom: 20px;
+  }
+  
+  .verify-notice p {
+    font-size: 16px;
+    margin: 10px 0;
+  }
+  
+  .verify-notice a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .verify-notice a:hover {
+    text-decoration: underline;
+  }
+  

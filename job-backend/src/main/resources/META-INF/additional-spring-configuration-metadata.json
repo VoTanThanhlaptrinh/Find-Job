@@ -1,0 +1,12 @@
+{"properties": [
+  {
+    "name": "application.service.impl.expiration",
+    "type": "java.lang.String",
+    "description": "A description for 'application.service.impl.expiration'"
+  },
+  {
+    "name": "application.service.impl.secret-key",
+    "type": "java.lang.String",
+    "description": "A description for 'application.service.impl.secret-key'"
+  }
+]}
