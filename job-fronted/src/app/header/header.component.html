@@ -14,8 +14,8 @@
       </div>
       <c-navbar id="nav-menu-container" expand="lg">
         <c-container [fluid]="true">
-          <button [cNavbarToggler]="collapseRef"></button>
-          <div #collapseRef="cCollapse" [navbar]="true" cCollapse>
+          <!-- <button [cNavbarToggler]="collapseRef"></button> -->
+          <!-- <div #collapseRef="cCollapse" [navbar]="true" cCollapse> -->
             <c-navbar-nav class="nav-menu">
               @defer { @if(hirerLoggedIn){
               <ng-container>
@@ -93,7 +93,7 @@
 
               <!-- Nếu chưa đăng nhập -->
             </c-navbar-nav>
-          </div>
+          <!-- </div> -->
         </c-container>
       </c-navbar>
     </div>

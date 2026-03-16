@@ -10,14 +10,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.job_web.service.IVerifyService;
+import com.job_web.service.support.VerificationService;
 
 import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class VerifyRecoveryFillter extends OncePerRequestFilter {
-	private IVerifyService verifyService;
-	public VerifyRecoveryFillter(IVerifyService verifyService) {
+	private VerificationService verifyService;
+	public VerifyRecoveryFillter(VerificationService verifyService) {
 		super();
 		this.verifyService = verifyService;
 	}
@@ -40,3 +40,5 @@ public class VerifyRecoveryFillter extends OncePerRequestFilter {
 	    return !request.getServletPath().startsWith("/recovery");
 	}
 }
+
+

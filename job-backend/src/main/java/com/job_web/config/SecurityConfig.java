@@ -29,7 +29,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.job_web.security.JwtFilter;
 import com.job_web.security.VerifyRecoveryFillter;
-import com.job_web.service.impl.UserRepositoryDetailsService;
+import com.job_web.service.security.impl.UserRepositoryDetailsService;
 
 import lombok.AllArgsConstructor;
 
@@ -113,3 +113,5 @@ public class SecurityConfig {
 		return new DefaultHttpFirewall();
 	}
 }
+
+

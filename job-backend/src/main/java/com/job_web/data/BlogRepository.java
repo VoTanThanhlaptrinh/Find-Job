@@ -13,3 +13,5 @@ public interface BlogRepository extends PagingAndSortingRepository<Blog, Long>, 
 
     List<Blog> id(long id);
 }
+
+

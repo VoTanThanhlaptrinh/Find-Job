@@ -11,3 +11,5 @@ import java.util.Optional;
 public interface LikeRepository extends CrudRepository<Like, Long> {
    Optional<Like> findLikeByUserAndBlog(User user, Blog blog);
 }
+
+

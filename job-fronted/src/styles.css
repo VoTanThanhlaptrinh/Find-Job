@@ -1,8 +1,8 @@
 @import 'quill/dist/quill.core.css';
 @import 'quill/dist/quill.bubble.css';
 @import 'quill/dist/quill.snow.css';
-
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap");
+@import 'tailwindcss';
+/* @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap"); */
 
 .section-bg2 {
   background: #FBFBFB

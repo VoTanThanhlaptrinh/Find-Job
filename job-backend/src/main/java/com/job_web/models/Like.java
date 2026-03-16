@@ -35,3 +35,5 @@ public class Like {
     @Column(insertable = false)
     private LocalDateTime lastModifiedDate;
 }
+
+

@@ -23,9 +23,9 @@ public class Apply {
 	private Job job;
 	
 	@ManyToOne
-	@JoinColumn(name = "cv_id", nullable = false)
+	@JoinColumn(name = "resume_id", nullable = false)
 	@JsonIgnore
-	private CV cv;
+	private Resume resume;
 	
 	@ManyToOne
 	@JsonIgnore
@@ -40,3 +40,5 @@ public class Apply {
     @Column(insertable = false)
     private LocalDateTime lastModifyDate;
 }
+
+

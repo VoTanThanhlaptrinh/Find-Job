@@ -1,6 +1,6 @@
 package com.job_web.data;
 
-import com.job_web.dto.CandidateDTO;
+import com.job_web.dto.application.CandidateDTO;
 import com.job_web.models.Candidate;
 import com.job_web.models.Job;
 import com.job_web.models.User;
@@ -29,13 +29,15 @@ public interface ApplyRepository extends CrudRepository<Apply, Long> {
     @Query(value = """
                  select u.full_name as full_name,
                 		u.email as email,
-                        c.file_name as file_name,
+                        r.file_name as file_name,
                         a.apply_date
                  from apply as a
                  join job as j on a.job_id = j.id
                  join user as u on a.user_id = u.id
-                 join cv as c on a.cv_id = c.id
+                 join resume as r on a.resume_id = r.id
                  where j.id = ?1;
             """, nativeQuery = true)
     Page<CandidateDTO> getAllCandidateAppliedJob(long jobId, Pageable pageable);
 }
+
+

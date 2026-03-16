@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import com.job_web.service.RefreshTokenService;
+import com.job_web.service.security.RefreshTokenService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.job_web.service.JwtService;
+import com.job_web.service.security.JwtService;
 
 import io.micrometer.core.lang.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -97,3 +97,5 @@ public class JwtFilter extends OncePerRequestFilter {
 		filterChain.doFilter(request, response);
 	}
 }
+
+

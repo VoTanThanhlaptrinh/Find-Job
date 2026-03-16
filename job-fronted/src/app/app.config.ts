@@ -6,8 +6,7 @@ import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { loggerInterceptor } from './interceptor/logger.interceptor';
 import { errorInterceptor } from './interceptor/error.interceptor';
-import { provideToastr } from 'ngx-toastr';
-import {provideQuillConfig, QuillModule} from 'ngx-quill';
+import {provideQuillConfig} from 'ngx-quill';
 import hljs from 'highlight.js';
 import {provideNativeDateAdapter} from '@angular/material/core';
 import {JwtModule} from '@auth0/angular-jwt';
@@ -22,13 +21,6 @@ export const appConfig: ApplicationConfig = {
       withInterceptors([loggerInterceptor, errorInterceptor])
     ),
     importProvidersFrom(JwtModule.forRoot({})),
-    provideToastr({
-      timeOut: 3000,
-      positionClass: 'toast-top-right',
-      preventDuplicates: true,
-      progressBar: true,
-      closeButton: true,
-    }),
     provideNativeDateAdapter(),
     provideAnimations(),
     provideQuillConfig({

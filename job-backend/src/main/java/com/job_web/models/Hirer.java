@@ -36,3 +36,5 @@ public class Hirer {
 	@OneToMany(mappedBy = "hirer")
 	private List<Job> jobsPost;
 }
+
+

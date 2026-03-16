@@ -1,15 +1,14 @@
 import {CommonModule, isPlatformBrowser} from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { CarouselModule } from 'ngx-owl-carousel-o';
 import { HomeService } from '../services/home.service';
 import { Router, RouterModule } from '@angular/router';
 import { NotifyMessageService } from '../services/notify-message.service';
-import { ToastrService } from 'ngx-toastr';
+
 import {take} from 'rxjs';
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule, CarouselModule,RouterModule],
+  imports: [CommonModule,RouterModule],
   standalone: true,
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',

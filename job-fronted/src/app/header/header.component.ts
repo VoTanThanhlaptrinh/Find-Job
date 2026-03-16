@@ -8,33 +8,9 @@ import {
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import {
-  CollapseDirective,
-  ContainerComponent,
-  DropdownComponent,
-  DropdownItemDirective,
-  DropdownMenuDirective,
-  DropdownToggleDirective,
-  NavbarComponent,
-  NavbarNavComponent,
-  NavbarTogglerDirective,
-  NavItemComponent,
-  NavLinkDirective,
-} from '@coreui/angular';
 @Component({
   selector: 'app-header',
   imports: [
-    NavbarComponent,
-    ContainerComponent,
-    NavbarTogglerDirective,
-    CollapseDirective,
-    NavbarNavComponent,
-    NavItemComponent,
-    DropdownComponent,
-    DropdownToggleDirective,
-    NavLinkDirective,
-    DropdownMenuDirective,
-    DropdownItemDirective,
     CommonModule,
   ],
   templateUrl: './header.component.html',

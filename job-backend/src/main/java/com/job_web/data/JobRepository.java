@@ -1,12 +1,10 @@
 package com.job_web.data;
 
 import java.util.List;
-import java.util.Optional;
 
-import com.job_web.dto.AddressJobCount;
-import com.job_web.dto.JobResponse;
-import com.job_web.dto.JobApply;
-import com.job_web.models.Apply;
+import com.job_web.dto.job.AddressJobCount;
+import com.job_web.dto.job.JobResponse;
+import com.job_web.dto.job.JobApply;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -74,3 +72,5 @@ public interface JobRepository extends PagingAndSortingRepository<Job, Long>, Jp
 
 
 }
+
+

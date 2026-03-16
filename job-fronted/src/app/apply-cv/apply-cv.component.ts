@@ -4,7 +4,6 @@ import { JobServiceService } from '../services/job-service.service';
 import { AuthService } from '../services/auth.service';
 import { NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ToastrService } from 'ngx-toastr';
 import { take } from 'rxjs';
 
 
@@ -22,7 +21,6 @@ export class ApplyCvComponent implements OnInit {
               private route:ActivatedRoute,
               private jobService: JobServiceService,
               private authService: AuthService,
-              private toastr: ToastrService
               ) {
 
   }
