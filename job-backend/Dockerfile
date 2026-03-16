@@ -1,25 +1,25 @@
-# Stage 1: Build ứng dụng bằng Maven
-FROM maven:3.8.5-openjdk-17 AS build
+# Stage 1: Build ứng dụng bằng Maven với Java 17 (Temurin)
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
 
-# Sao chép file pom.xml và download các dependencies (để tận dụng cache)
+# Sao chép file cấu hình và tải trước dependency để tận dụng cache
 COPY pom.xml .
 RUN mvn dependency:go-offline
 
-# Sao chép toàn bộ code và build file JAR
+# Sao chép code và build file JAR
 COPY src ./src
 RUN mvn clean package -DskipTests
 
-# Stage 2: Chạy ứng dụng với JRE nhẹ
-FROM openjdk:17-jdk-slim
+# Stage 2: Chạy ứng dụng với JRE 17 (Temurin) cực nhẹ cho Production
+FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app
 
-# Sao chép file JAR đã build từ stage trước
+# Sao chép file JAR từ stage build
 COPY --from=build /app/target/*.jar app.jar
 
-# Cấu hình biến môi trường cho Port (Render sẽ cấp phát biến $PORT)
+# Cấu hình Port cho Render
 ENV PORT=8080
 EXPOSE 8080
 
 # Chạy ứng dụng
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Xmx400m", "-jar", "app.jar"]
