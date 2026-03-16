@@ -8,6 +8,7 @@ import com.job_web.models.Job;
 import com.job_web.models.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -78,6 +79,7 @@ public class JobDataSeeder implements CommandLineRunner {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Profile("dev")
     @Override
     public void run(String... args) {
         if (jobRepository.count() > 0) {
@@ -115,7 +117,7 @@ public class JobDataSeeder implements CommandLineRunner {
             user.setEnabled(true);
             user.setActive(true);
             user.setOauth2Enabled(false);
-            user.setCreateDate(userCreatedAt.minusDays(i * 5L));
+            user.setCreateDate(LocalDateTime.now());
             userRepository.save(user);
 
             Hirer hirer = new Hirer();
