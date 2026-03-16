@@ -1,9 +1,9 @@
 package com.job_web.service.application;
 
+import com.job_web.dto.application.ResumeUploadDTO;
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.dto.application.ResumeDTO;
 import com.job_web.dto.application.ResumeDetailDTO;
-import com.job_web.dto.application.ResumeUploadDTO;
 import com.job_web.models.Resume;
 
 import java.security.Principal;

@@ -1,0 +1,450 @@
+<section class="banner-area relative" id="home">
+  <div class="overlay overlay-bg"></div>
+  <div class="container">
+    <div
+      class="row search-page-top d-flex align-items-center justify-content-center"
+    >
+      <div class="banner-content col-lg-12">
+        <h1 class="text-white">
+          <span>1500+</span> Công việc đã được đăng ở tuần trước
+        </h1>
+        <div class="h-10"></div>
+        <app-search-form></app-search-form>
+        <p class="text-white">
+          <span>Tìm kiếm theo tags:</span> Công nghệ, Kinh doanh, Tư vấn, IT
+          Company, Thiết kế, Lập trình
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Start features Area -->
+<section class="features-area">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-3 col-md-6">
+        <div class="single-feature">
+          <h4>Searching</h4>
+          <p>
+            Tìm kiếm thông minh, lọc hàng ngàn công việc phù hợp chỉ trong giây
+            lát.
+          </p>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6">
+        <div class="single-feature">
+          <h4>Applying</h4>
+          <p>
+            Ứng tuyển nhanh chóng với một chạm, kết nối thẳng tới nhà tuyển dụng
+            hàng đầu.
+          </p>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6">
+        <div class="single-feature">
+          <h4>Security</h4>
+          <p>
+            Thông tin cá nhân của bạn luôn được bảo mật tuyệt đối và an toàn.
+          </p>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6">
+        <div class="single-feature">
+          <h4>Notifications</h4>
+          <p>
+            Nhận thông báo việc làm mới nhất và trạng thái hồ sơ theo thời gian
+            thực.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End features Area -->
+
+<!-- Start feature-cat Area -->
+<section class="feature-cat-area pt-100" id="category">
+  <div class="container">
+    <div class="row d-flex justify-content-center">
+      <div class="menu-content pb-60 col-lg-10">
+        <div class="title text-center">
+          <h1 class="mb-10">Danh mục công việc nổi bậc</h1>
+          <p>
+            Những người cực kỳ yêu thích hệ thống thân thiện với môi trường.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-2 col-md-4 col-sm-6">
+        <div class="single-fcat">
+          <a>
+            <img src="assets/web_css/img/o1.png" alt="" />
+          </a>
+          <p>Kế toán</p>
+        </div>
+      </div>
+      <div class="col-lg-2 col-md-4 col-sm-6">
+        <div class="single-fcat">
+          <a>
+            <img src="assets/web_css/img/o2.png" alt="" />
+          </a>
+          <p>Lập trình</p>
+        </div>
+      </div>
+      <div class="col-lg-2 col-md-4 col-sm-6">
+        <div class="single-fcat">
+          <a>
+            <img src="assets/web_css/img/o3.png" alt="" />
+          </a>
+          <p>Kỹ thuật</p>
+        </div>
+      </div>
+      <div class="col-lg-2 col-md-4 col-sm-6">
+        <div class="single-fcat">
+          <a>
+            <img src="assets/web_css/img/o4.png" alt="" />
+          </a>
+          <p>Truyền thông</p>
+        </div>
+      </div>
+      <div class="col-lg-2 col-md-4 col-sm-6">
+        <div class="single-fcat">
+          <a>
+            <img src="assets/web_css/img/o5.png" alt="" />
+          </a>
+          <p>Tư vấn</p>
+        </div>
+      </div>
+      <div class="col-lg-2 col-md-4 col-sm-6">
+        <div class="single-fcat">
+          <a>
+            <img src="assets/web_css/img/o6.png" alt="" />
+          </a>
+          <p>Quản lý</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End feature-cat Area -->
+
+<!-- Start post Area -->
+<section class="post-area section-gap">
+  <div class="container">
+    <div class="row justify-content-center d-flex">
+      <div class="col-lg-8 post-list">
+        <ul class="cat-list">
+          <li><a href="#">Recent</a></li>
+          <li><a href="#">Full Time</a></li>
+          <li><a href="#">Intern</a></li>
+          <li><a href="#">Part Time</a></li>
+        </ul>
+
+        <!-- Nếu có công việc -->
+        <ng-container *ngIf="jobPosts?.length > 0; else noItems">
+          <div
+            *ngFor="let item of jobPosts; trackBy: trackById"
+            [id]="item.id"
+            class="single-post flex flex-row mb-3"
+          >
+            <div class="thumb">
+              <img
+                class="img-fluid"
+                [src]="item.image"
+                alt="{{ item.title }}"
+              />
+            </div>
+            <div class="details ms-2">
+              <div class="title d-flex flex-row justify-content-between">
+                <div class="titles">
+                  <a [href]="item.link">
+                    <h4>{{ item.title }}</h4>
+                  </a>
+                </div>
+              </div>
+              <p>{{ item.description }}</p>
+              <p class="info">
+                <span><i class="lnr lnr-map"></i>&nbsp;{{ item.address }}</span>
+                <span class="divider"></span>
+                <span
+                  ><i class="lnr lnr-database"></i>&nbsp;{{
+                    formatMoney(item.salary)
+                  }}</span
+                >
+                <span class="divider"></span>
+                <span>{{ item.type }}</span>
+              </p>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- Nếu không có công việc -->
+        <ng-template #noItems>
+          <div class="alert alert-info text-center">Không có công việc nào</div>
+        </ng-template>
+
+        <a
+          [routerLink]="['/category']"
+          class="text-uppercase loadmore-btn mx-auto d-block mt-4"
+        >
+          Tải thêm việc
+        </a>
+      </div>
+
+      <div class="col-lg-4 sidebar">
+        <div class="single-slidebar">
+          <h4>Công việc theo vị trí</h4>
+          <ul class="cat-list">
+            <li>
+              <a class="justify-content-between d-flex">
+                <p>Hồ Chí Minh</p>
+                <span>37</span>
+              </a>
+            </li>
+            <li>
+              <a class="justify-content-between d-flex">
+                <p>Hà Nội</p>
+                <span>57</span>
+              </a>
+            </li>
+            <li>
+              <a class="justify-content-between d-flex">
+                <p>Đà Nẵng</p>
+                <span>33</span>
+              </a>
+            </li>
+            <li>
+              <a class="justify-content-between d-flex">
+                <p>Đồng Nai</p>
+                <span>36</span>
+              </a>
+            </li>
+            <li>
+              <a class="justify-content-between d-flex">
+                <p>Cần Thơ</p>
+                <span>47</span>
+              </a>
+            </li>
+            <li>
+              <a class="justify-content-between d-flex">
+                <p>Đà Lạt</p>
+                <span>27</span>
+              </a>
+            </li>
+            <li>
+              <a class="justify-content-between d-flex">
+                <p>Bình Dương</p>
+                <span>17</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="single-slidebar">
+          <h4>Tuyển dụng được đánh giá cao</h4>
+          <!-- <owl-carousel-o [options]="carouselOptions" *ngIf="relatedJobs?.length > 0">
+                    <ng-template
+                      carouselSlide
+                      *ngFor="let relatedJob of relatedJobs; trackBy: trackById"
+                      [id]="relatedJob.id">
+                      <div class="single-rated">
+                        <img class="img-fluid" [src]="relatedJob.image" alt="">
+                        <a [href]="relatedJob.link">
+                          <h4>{{ relatedJob.title }}</h4>
+                        </a>
+                        <p>{{ relatedJob.description }}</p>
+                        <h5>Job Nature: <span>{{ relatedJob.type }}</span></h5>
+                        <p class="address">
+                          <span class="lnr lnr-map"></span> <span>{{ relatedJob.address }}</span>
+                        </p>
+                        <p class="address">
+                          <span class="lnr lnr-database"></span> <span>{{ formatMoney(relatedJob.salary) }}</span>
+                        </p>
+                      </div>
+                    </ng-template>
+                  </owl-carousel-o> -->
+          <ng-template #noCarousel>
+            <p>Không có công việc liên quan để hiển thị.</p>
+          </ng-template>
+        </div>
+
+        <div class="single-slidebar">
+          <h4>Công việc theo lĩnh vực</h4>
+          <ul class="cat-list">
+            <li>
+              <a class="justify-content-between d-flex">
+                <p>Kỹ thuật</p>
+                <span>37</span>
+              </a>
+            </li>
+            <li>
+              <a class="justify-content-between d-flex">
+                <p>Truyền thông</p>
+                <span>57</span>
+              </a>
+            </li>
+            <li>
+              <a class="justify-content-between d-flex">
+                <p>Quản lý</p>
+                <span>33</span>
+              </a>
+            </li>
+            <li>
+              <a class="justify-content-between d-flex">
+                <p>Tư vấn</p>
+                <span>36</span>
+              </a>
+            </li>
+            <li>
+              <a class="justify-content-between d-flex">
+                <p>Nhà hàng</p>
+                <span>47</span>
+              </a>
+            </li>
+            <li>
+              <a class="justify-content-between d-flex">
+                <p>Lập trình</p>
+                <span>27</span>
+              </a>
+            </li>
+            <li>
+              <a class="justify-content-between d-flex">
+                <p>Kế toán</p>
+                <span>17</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="single-slidebar">
+          <h4>Bài viết</h4>
+          <div class="blog-list">
+            <div
+              class="single-blog"
+              style="background: #000 url(assets/web_css/img/blog1.jpg)"
+            >
+              <a href="/blogHome/blogSingle/3">
+                <h4>How to Write a Standout Resume</h4>
+              </a>
+              <div class="meta justify-content-between d-flex">
+                <p>2025-02-27 19:29:00</p>
+                <p>
+                  <span class="lnr lnr-heart"></span>
+                  <span>150</span>
+                  <span class="lnr lnr-bubble"></span>
+                  02
+                </p>
+              </div>
+            </div>
+            <div
+              class="single-blog"
+              style="background: #000 url(assets/web_css/img/blog1.jpg)"
+            >
+              <a href="/blogHome/blogSingle/1">
+                <h4>5 Essential Job Search Tips</h4>
+              </a>
+              <div class="meta justify-content-between d-flex">
+                <p>2025-02-27 19:29:00</p>
+                <p>
+                  <span class="lnr lnr-heart"></span>
+                  <span>120</span>
+                  <span class="lnr lnr-bubble"></span>
+                  02
+                </p>
+              </div>
+            </div>
+            <div
+              class="single-blog"
+              style="background: #000 url(assets/web_css/img/blog1.jpg)"
+            >
+              <a href="/blogHome/blogSingle/2">
+                <h4>Top Career Trends in 2024</h4>
+              </a>
+              <div class="meta justify-content-between d-flex">
+                <p>2025-02-27 19:29:00</p>
+                <p>
+                  <span class="lnr lnr-heart"></span>
+                  <span>98</span>
+                  <span class="lnr lnr-bubble"></span>
+                  02
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End post Area -->
+
+<!-- Start callto-action Area -->
+<section class="callto-action-area section-gap" id="join">
+  <div class="container">
+    <div class="row d-flex justify-content-center">
+      <div class="menu-content col-lg-9">
+        <div class="title text-center">
+          <h1 class="mb-10 text-white">
+            Tham gia vào chúng tôi mà không có bất kỳ do dự nào
+          </h1>
+          <p class="text-white">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+            ad minim veniam, quis nostrud exercitation.
+          </p>
+          <a class="primary-btn" href="/login">Tôi là ứng viên</a>
+          <a class="primary-btn" href="/login">Tôi là nhà tuyển dụng</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End calto-action Area -->
+
+<!-- Start download Area -->
+<section class="download-area section-gap" id="app">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6 download-left">
+        <img class="img-fluid" src="assets/web_css/img/d1.png" alt="" />
+      </div>
+      <div class="col-lg-6 download-right">
+        <h1>
+          Tải app Job Listing <br />
+          ngay hôm nay!
+        </h1>
+        <p class="subs">
+          Lo lắng tìm việc không còn là vấn đề của bạn nữa. Chỉ cần bạn hợp tác
+          với chúng tôi những công việc phù hợp với năng lực , kèm theo đãi ngộ
+          và mức lương tốt đang đợi bạn. Hãy đến với Job Listing.
+        </p>
+        <div class="d-flex flex-row">
+          <div class="buttons">
+            <i class="fa fa-apple" aria-hidden="true"></i>
+            <div class="desc">
+              <a href="#">
+                <p>
+                  <span>Có sẵn</span> <br />
+                  trên App Store
+                </p>
+              </a>
+            </div>
+          </div>
+          <div class="buttons">
+            <i class="fa fa-android" aria-hidden="true"></i>
+            <div class="desc">
+              <a href="#">
+                <p>
+                  <span>Có sẵn</span> <br />
+                  trên Play Store
+                </p>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End download Area -->

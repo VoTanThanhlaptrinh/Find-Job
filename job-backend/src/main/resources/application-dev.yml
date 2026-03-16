@@ -1,0 +1,92 @@
+application:
+  service:
+    impl:
+      gemini:
+        api-key: ${GEMINI_API_KEY}
+      secret-key: ${SECRET_KEY}
+      expiration: 600000
+      amount: 10
+      timeLimit: 604800
+      max-attemps: 5
+      time-out-first: 600
+      time-out-second: 86400
+      subject-verify: "Kích hoạt tài khoản JobList của bạn"
+      email-verify: "Xin chào bạn,Cảm ơn bạn đã đăng ký tài khoản tại JobList. Để hoàn tất quá trình đăng ký, vui lòng nhấn vào liên kết dưới đây để kích hoạt tài khoản: %s . Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email này. Trân trọng, JobList Team."
+      subject-oauth2: "Xác thực tài khoản JobList & tạo mật khẩu mới"
+      email-oauth2: |
+        Chào %s,
+
+        Bạn đang đăng nhập vào JobList lần đầu bằng tài khoản mạng xã hội. Vì vậy, hệ thống chưa có mật khẩu.
+        Để bảo vệ tài khoản của bạn, vui lòng xác thực quyền sở hữu email
+        và tạo mật khẩu mới qua liên kết sau:
+
+        %s
+
+        Lưu ý:
+        • Liên kết này có hiệu lực trong 1 giờ.
+        • Nếu bạn không yêu cầu việc này, bạn có thể bỏ qua email này.
+        • Mật khẩu nên bao gồm ít nhất 8 ký tự, gồm chữ hoa, chữ thường và số để bảo mật tốt hơn.
+
+        Nếu bạn gặp sự cố, xin vui lòng liên hệ với bộ phận hỗ trợ tại support@joblist.vn hoặc phản hồi email này.
+
+        Cảm ơn bạn đã sử dụng JobList,
+        Chúc bạn một ngày tốt lành
+        - JobList Team
+  config:
+    redis:
+      host-name: 127.0.0.1
+      username: default
+      port: 6379
+      password: Thanhdeptrai123
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/job_portal_web?verifyServerCertificate=false&useSSL=true
+    username: root
+    password: Aibietdau123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa: # Đã đưa ra ngoài ngang hàng với datasource
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
+  rabbitmq: # Đã đưa ra ngoài
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+
+  mail: # Đã đưa ra ngoài
+    host: smtp.gmail.com
+    port: 465
+    default-encoding: UTF-8
+    username: vtthanh32004@gmail.com
+    password: ${GMAIL_APP_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+
+  security: # Đã đưa ra ngoài
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
+          facebook:
+            client-id: ${FACEBOOK_CLIENT_ID}
+            client-secret: ${FACEBOOK_CLIENT_SECRET}
+            scope:
+              - email
+              - public_profile
+      resource-server: # Đã sửa từ "resource server" thành "resource-server"
+        jwt:
+          jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs

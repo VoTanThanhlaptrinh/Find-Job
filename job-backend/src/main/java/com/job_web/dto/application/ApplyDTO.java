@@ -1,4 +1,4 @@
-﻿package com.job_web.dto.application;
+package com.job_web.dto.application;
 
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -10,18 +10,12 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApplyDTO {
-    @NotNull(message = "Thiáº¿u job id")
+    @NotNull(message = "Job ID is required.")
     private String jobId;
-    @NotNull(message = "Thiáº¿u resume")
+    @NotNull(message = "Resume file is required.")
     private MultipartFile file;
-    @AssertTrue(message = "KÃ­ch thÆ°á»›c file tá»‘i Ä‘a 5mb")
+    @AssertTrue(message = "Maximum file size is 5 MB.")
     public boolean isValidFileSize() {
         return file != null && file.getSize() <= 5 * 1024 * 1024;
     }
 }
-
-
-
-
-
-

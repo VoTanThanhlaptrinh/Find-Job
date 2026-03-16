@@ -1,4 +1,4 @@
-﻿package com.job_web.dto.application;
+package com.job_web.dto.application;
 
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
@@ -7,10 +7,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class ResumeUploadDTO {
-    @NotNull(message = "Resume khÃ´ng Ä‘Æ°á»£c rá»—ng")
+    @NotNull(message = "Resume file must not be empty.")
     private MultipartFile file;
 
-    @AssertTrue(message = "Chá»‰ cháº¥p nháº­n PDF, DOC hoáº·c DOCX")
+    @AssertTrue(message = "Only PDF, DOC, or DOCX files are allowed.")
     public boolean isValidType() {
         if (file == null) {
             return true;
@@ -30,7 +30,7 @@ public class ResumeUploadDTO {
         return byContentType || byExtension;
     }
 
-    @AssertTrue(message = "Dung lÆ°á»£ng Resume tá»‘i Ä‘a 5MB")
+    @AssertTrue(message = "Maximum resume size is 5 MB.")
     public boolean isValidSize() {
         return file == null || file.getSize() <= 5 * 1024 * 1024;
     }
