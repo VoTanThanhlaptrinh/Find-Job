@@ -1,0 +1,20 @@
+package com.job_web.dto.auth;
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import jakarta.validation.constraints.*;
+
+@Data
+@NoArgsConstructor
+public class ForgotPassDTO {
+    @NotNull(message = "email rỗng")
+    private String email;
+    @NotNull(message = "mã xác thực rỗng")
+    private String code;
+}
+
+
+
+
+

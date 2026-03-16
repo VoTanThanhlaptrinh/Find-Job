@@ -60,3 +60,5 @@ public class Blog {
 		return formatter.format(createDate);
 	}
 }
+
+

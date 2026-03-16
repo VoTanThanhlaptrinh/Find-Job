@@ -10,3 +10,5 @@ import com.job_web.models.RefreshToken;
 public interface RefreshTokenRepository extends CrudRepository<RefreshToken, Long> {
 	Optional<RefreshToken> findByToken(String token);
 }
+
+

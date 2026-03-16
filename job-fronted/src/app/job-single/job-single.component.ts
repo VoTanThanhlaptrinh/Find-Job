@@ -1,15 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, NO_ERRORS_SCHEMA, OnInit } from '@angular/core';
 import { JobServiceService } from '../services/job-service.service';
 import { ActivatedRoute, Route, Router, RouterModule } from '@angular/router';
-import { CarouselModule } from 'ngx-owl-carousel-o';
 import { HomeService } from '../services/home.service';
 import { take } from 'rxjs';
 
 @Component({
   selector: 'app-job-single',
-  imports: [CarouselModule, RouterModule],
+  imports: [RouterModule],
   templateUrl: './job-single.component.html',
   styleUrl: './job-single.component.css',
+  schemas: [NO_ERRORS_SCHEMA]
 })
 export class JobSingleComponent implements OnInit {
   jobId!: string;

@@ -1,7 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {RouterLink} from '@angular/router';
-import {CarouselModule} from 'ngx-owl-carousel-o';
-import {NgForOf, NgIf} from '@angular/common';
 import {JobServiceService} from '../services/job-service.service';
 import {NotifyMessageService} from '../services/notify-message.service';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
@@ -9,7 +6,7 @@ import {MatPaginator, PageEvent} from '@angular/material/paginator';
 @Component({
   selector: 'app-hirer-home',
   imports: [
-    CarouselModule,
+    
     MatPaginator
   ],
   templateUrl: './hirer-home.component.html',

@@ -3,7 +3,7 @@ package com.job_web.message;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
-import com.job_web.dto.MailMessage;
+import com.job_web.dto.message.MailMessage;
 
 import lombok.AllArgsConstructor;
 
@@ -16,3 +16,5 @@ public class MailProducer {
 		rabbitTemplate.convertAndSend("mailExchange", "mailRoutingKey", message);
 	}
 }
+
+

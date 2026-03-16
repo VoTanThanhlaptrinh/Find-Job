@@ -64,7 +64,7 @@ public class User implements UserDetails, Principal {
 	private List<Apply> applies = new LinkedList<>();
 	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<CV> cvs = new ArrayList<>();
+	private List<Resume> resumes = new ArrayList<>();
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -125,3 +125,5 @@ public class User implements UserDetails, Principal {
 		return email;
 	}
 }
+
+

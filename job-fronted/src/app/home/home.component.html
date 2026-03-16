@@ -14,7 +14,7 @@
                         </div>
                         <div class="col-lg-4 form-cols">
                             <div class="default-select" id="default-selects">
-                                <select>
+                                <select title="area">
                                     <option value="1">Khu vực</option>
                                     <option value="2">TP Hồ Chí Minh</option>
                                     <option value="3">Hà Nội</option>
@@ -81,7 +81,7 @@
 <section class="popular-post-area pt-100">
     <div class="container">
       <ng-container *ngIf="jobPosts?.length > 0; else noCarousel">
-        <owl-carousel-o [options]="carouselOptions" >
+        <!-- <owl-carousel-o [options]="carouselOptions" >
           <ng-template carouselSlide
                        *ngFor="let job of jobPosts; trackBy: trackById"
                        [id]="job.id">
@@ -99,7 +99,7 @@
               </div>
             </div>
           </ng-template>
-        </owl-carousel-o>
+        </owl-carousel-o> -->
       </ng-container>
 
           <ng-template #noCarousel>
@@ -261,7 +261,7 @@
 
                 <div class="single-slidebar">
                     <h4>Tuyển dụng được đánh giá cao</h4>
-                  <owl-carousel-o [options]="carouselOptions" *ngIf="relatedJobs?.length > 0">
+                  <!-- <owl-carousel-o [options]="carouselOptions" *ngIf="relatedJobs?.length > 0">
                     <ng-template
                       carouselSlide
                       *ngFor="let relatedJob of relatedJobs; trackBy: trackById"
@@ -281,7 +281,7 @@
                         </p>
                       </div>
                     </ng-template>
-                  </owl-carousel-o>
+                  </owl-carousel-o> -->
                   <ng-template #noCarousel>
                     <p>Không có công việc liên quan để hiển thị.</p>
                   </ng-template>

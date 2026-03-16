@@ -16,3 +16,5 @@ public class JobSpecifications {
         return (root, query, criteriaBuilder) -> root.get("time").in(times);
     }
 }
+
+

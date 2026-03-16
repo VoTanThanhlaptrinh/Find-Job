@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import com.job_web.dto.ApiResponse;
+import com.job_web.dto.common.ApiResponse;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -15,3 +15,5 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.badRequest().body(response);
 	}
 }
+
+
