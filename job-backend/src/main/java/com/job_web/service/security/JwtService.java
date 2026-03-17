@@ -2,20 +2,25 @@ package com.job_web.service.security;
 
 import java.util.function.Function;
 
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import io.jsonwebtoken.Claims;
 
 public interface JwtService {
-	public String generateToken(UserDetails user);
-	public String generateToken(String username);
-	public String extractUsername(String token);
+	 String generateToken(UserDetails user);
+	 String generateToken(String username);
+	 String extractUsername(String token);
 
-	public <T> T extractClaims(String token, Function<Claims, T> claimResolver);
+	 <T> T extractClaims(String token, Function<Claims, T> claimResolver);
 
-	public boolean isTokenValid(String token, UserDetails userDetails);
-	
-	public boolean isTokenExpired(String token);
+	 boolean isTokenValid(String token, UserDetails userDetails);
+	 String extractJTI(String token);
+	 boolean isTokenExpired(String token);
+	 String generateRefreshToken(UserDetails user);
+	String generateRefreshToken(String username, String familyId);
+
+	String extractFamily(String token);
 }
 
 

@@ -12,6 +12,8 @@ import java.util.List;
 public interface ResumeService {
     public ApiResponse<List<ResumeDTO>> getListResumeOfUser(Principal principal);
 
+    public ApiResponse<List<ResumeDTO>> getResumesByUser(String email);
+
     public Resume findById(long id);
 
     public ApiResponse<ResumeDetailDTO> getResumeDetail(long id, Principal principal);
@@ -22,6 +24,4 @@ public interface ResumeService {
 
     public ApiResponse<String> deleteResume(long id, Principal principal);
 }
-
-
 

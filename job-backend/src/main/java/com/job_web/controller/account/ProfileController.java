@@ -56,7 +56,7 @@ public class ProfileController {
     @GetMapping("/pri/h/isHirer")
     public ResponseEntity<ApiResponse<Boolean>> checkHirerLogin(Principal principal) {
         boolean res = principal != null;
-        String mess = res ? "success" : "Báº¡n chÆ°a Ä‘Äƒng nháº­p";
+        String mess = res ? "success" : "";
         log.info(String.valueOf(res));
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(mess, res, HttpStatus.OK.value()));
     }
@@ -64,7 +64,7 @@ public class ProfileController {
     @GetMapping("/pri/checkLogin")
     public ResponseEntity<ApiResponse<Boolean>> checkLogin(Principal principal) {
         boolean res = principal != null;
-        String mess = res ? "success" : "Báº¡n chÆ°a Ä‘Äƒng nháº­p";
+        String mess = res ? "success" : "";
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(mess, res, HttpStatus.OK.value()));
     }
 }

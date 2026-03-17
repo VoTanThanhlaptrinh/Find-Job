@@ -2,21 +2,12 @@ package com.job_web.dto.profile;
 
 import jakarta.validation.constraints.*;
 
-import com.job_web.models.Apply;
-import com.job_web.models.Token;
 import com.job_web.models.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

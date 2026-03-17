@@ -28,12 +28,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @Entity
-
+@Table(indexes = {
+		@Index(name = "mulitIndex1", columnList = "id, email"),})
 public class User implements UserDetails, Principal {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
@@ -57,9 +54,7 @@ public class User implements UserDetails, Principal {
 	@LastModifiedDate
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
-	
-	@OneToMany
-	private List<Token> tokens;
+
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Apply> applies = new LinkedList<>();
 	

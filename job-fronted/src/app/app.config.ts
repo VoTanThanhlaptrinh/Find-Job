@@ -10,6 +10,7 @@ import {provideQuillConfig} from 'ngx-quill';
 import hljs from 'highlight.js';
 import {provideNativeDateAdapter} from '@angular/material/core';
 import {JwtModule} from '@auth0/angular-jwt';
+import { provideHotToastConfig } from '@ngxpert/hot-toast';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -22,6 +23,7 @@ export const appConfig: ApplicationConfig = {
     ),
     importProvidersFrom(JwtModule.forRoot({})),
     provideNativeDateAdapter(),
+    provideHotToastConfig(),
     provideAnimations(),
     provideQuillConfig({
       modules: {
@@ -43,6 +45,6 @@ export const appConfig: ApplicationConfig = {
           ['clean']                                         // xoá định dạng
         ]
       }
-    }),
+    }), provideHotToastConfig(),
   ]
 };

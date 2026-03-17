@@ -1,127 +1,129 @@
-@defer {
-<section class="banner-area relative" id="login">
-  <div class="overlay overlay-bg"></div>
-  <div class="container">
-    <div class="row d-flex align-items-center justify-content-center">
-      <div class="about-content col-lg-12">
-        <h1 class="text-white">Đăng nhập</h1>
-        <p class="text-white link-nav">
-          <a href="/">Home </a> <span class="lnr lnr-arrow-right"></span>
-          <a href="/login">Đăng nhập</a>
-        </p>
-      </div>
-    </div>
+
+<section class="banner-area relative" id="mini">
+  <div class="overlay overlay-bg">
   </div>
 </section>
-<main>
-  <!-- login Area Start -->
-  <div class="login-form-area section-padding">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-xl-6 col-lg-7 col-md-10 box-shadow">
-          <mat-tab-group (selectedTabChange)="onTabClick($event)">
-            <mat-tab label="Ứng viên">
-              <ng-container *ngTemplateOutlet="loginForm"></ng-container>
-            </mat-tab>
-            <mat-tab label="Nhà tuyển dụng">
-              <ng-container *ngTemplateOutlet="loginForm"></ng-container>
-            </mat-tab>
-          </mat-tab-group>
-          <ng-template #loginForm>
-            <form>
-              <div class="login-form">
-                <!-- Login Heading -->
-                <div class="login-heading">
-                  <span>Đăng nhập</span>
-                  @if(role === 'ROLE_USER'){
-                  <div
-                    class="social-login mt-5 flex justify-content-center align-items-center gap-3"
-                  >
-                    <a
-                      class="facebook btn p-3 rounded-circle d-flex justify-content-center align-items-center"
-                      href="#"
-                    >
-                      <i class="fab fa-facebook-f fa-lg"></i>
-                    </a>
-                    <a
-                      class="twitter btn p-3 rounded-circle d-flex justify-content-center align-items-center"
-                      href="#"
-                    >
-                      <i class="fab fa-twitter fa-lg"></i>
-                    </a>
-                    <a
-                      class="google btn p-3 rounded-circle d-flex justify-content-center align-items-center"
-                      [href]="googleUrl"
-                    >
-                      <i class="fab fa-google fa-lg"></i>
-                    </a>
-                  </div>
-                  }
-                  <p>Nhập thông tin đăng nhập để truy cập</p>
-                </div>
-                <div class="input-box">
-                  <div class="single-input-fields">
-                    <label>Tên người dùng hoặc Email</label>
-                    <input
-                      type="text"
-                      placeholder="Tên người dùng / Địa chỉ Email"
-                      name="username"
-                      [(ngModel)]="username"
-                      required
-                      autocomplete="username"
-                    />
-                  </div>
-                  <div class="single-input-fields">
-                    <label>Mật khẩu</label>
-                    <input
-                      type="password"
-                      placeholder="Mật khẩu"
-                      name="password"
-                      [(ngModel)]="password"
-                      autocomplete="current-password"
-                      required
-                    />
-                  </div>
-                  <div class="single-input-fields login-check">
-                    <a [routerLink]="['/forgot-pass']" class="f-right"
-                      >Quên mật khẩu?</a
-                    >
-                  </div>
-                </div>
-                <!-- form Footer -->
-                <div class="login-footer">
-                  <p>
-                    Bạn chưa có tài khoản?
-                    <a [routerLink]="['/register']">Đăng ký</a> ở đây
-                  </p>
-                  <button
-                    class="btn login-btn"
-                    type="submit"
-                    (click)="onLogin()"
-                  >
-                    Đăng nhập
-                  </button>
-                </div>
-              </div>
-            </form>
-          </ng-template>
+<main class="min-h-screen bg-slate-100 py-6 px-2  mx-auto">
+  <section class="mx-auto max-w-5xl rounded-3xl bg-white shadow-xl ring-1 ring-slate-200">
+    <div class="grid md:grid-cols-2">
+      <aside class="hidden lg::flex flex-col justify-between bg-slate-900 p-10 text-white">
+        <div>
+          <p class="text-sm uppercase tracking-[0.2em] text-emerald-300">Job Portal</p>
+          <h1 class="mt-4 text-4xl font-bold text-white">Chào mừng bạn quay lại</h1>
+          <p class="mt-4 text-slate-300">
+            Đăng nhập để quản lý hồ sơ ứng tuyển hoặc tuyển dụng nhanh chóng.
+          </p>
+        </div>
+        <img src="assets/images/gemini_login_image_logo.png" alt="Login Illustration" class="w-full rounded-2xl object-cover">
+      </aside>
+
+      <div class="p-6 md:p-10">
+        <div class="mx-auto max-w-md">
+          <h2 class="text-2xl font-semibold text-slate-800">Đăng nhập</h2>
+          <p class="mt-2 text-sm text-slate-500">Nhập thông tin để tiếp tục sử dụng hệ thống.</p>
+
+          <div class="mt-6 grid grid-cols-2 rounded-xl bg-slate-100 p-1 ">
+            <button
+              type="button"
+              class="rounded-lg px-3 py-2 text-sm font-medium transition text-black"
+              [class.bg-white]="role === 'ROLE_USER'"
+              [class.shadow]="role === 'ROLE_USER'"
+              (click)="switchRole('ROLE_USER')"
+            >
+              Người tìm việc
+            </button>
+            <button
+              type="button"
+              class=" rounded-lg px-3 py-2 text-sm font-medium transition text-black"
+              [class.bg-white]="role === 'ROLE_HIRER'"
+              [class.shadow]="role === 'ROLE_HIRER'"
+              (click)="switchRole('ROLE_HIRER')"
+            >
+              Nhà tuyển dụng
+            </button>
+          </div>
+
+          @if (role === 'ROLE_USER') {
+          <div class="mt-6 flex items-center gap-3">
+            <a
+              [href]="googleUrl"
+              class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            >
+              <i class="fab fa-google"></i>
+              Đăng nhập với Google
+            </a>
+          </div>
+          }
+
+          <form class="mt-6 space-y-5" [formGroup]="loginForm" (ngSubmit)="onLogin()">
+            <div>
+              <label for="username" class="mb-1 block text-sm font-medium text-slate-700">Tên người dùng hoặc Email</label>
+              <input
+                id="username"
+                type="text"
+                class="w-full rounded-xl border px-4 py-3 text-sm outline-none transition"
+                [class.border-red-500]="usernameControl.invalid && (usernameControl.touched || usernameControl.dirty)"
+                [class.border-slate-300]="!(usernameControl.invalid && (usernameControl.touched || usernameControl.dirty))"
+                [class.focus:ring-2]="true"
+                [class.focus:ring-emerald-200]="true"
+                [class.focus:border-emerald-500]="true"
+                placeholder="Tên người dùng / Địa chỉ Email"
+                formControlName="username"
+                autocomplete="username"
+              />
+              @if (usernameControl.hasError('required') && (usernameControl.touched || usernameControl.dirty)) {
+              <p class="mt-1 text-xs text-red-600">Vui lòng nhập tên người dùng hoặc email.</p>
+              }
+              @if (usernameControl.hasError('usernameOrEmail') && (usernameControl.touched || usernameControl.dirty)) {
+              <p class="mt-1 text-xs text-red-600">Định dạng không hợp lệ. Nhập email hoặc username từ 4-30 ký tự.</p>
+              }
+            </div>
+
+            <div>
+              <label for="password" class="mb-1 block text-sm font-medium text-slate-700">Mật khẩu</label>
+              <input
+                id="password"
+                type="password"
+                class="w-full rounded-xl border px-4 py-3 text-sm outline-none transition"
+                [class.border-red-500]="passwordControl.invalid && (passwordControl.touched || passwordControl.dirty)"
+                [class.border-slate-300]="!(passwordControl.invalid && (passwordControl.touched || passwordControl.dirty))"
+                [class.focus:ring-2]="true"
+                [class.focus:ring-emerald-200]="true"
+                [class.focus:border-emerald-500]="true"
+                placeholder="Mật khẩu"
+                formControlName="password"
+                autocomplete="current-password"
+              />
+              @if (passwordControl.hasError('required') && (passwordControl.touched || passwordControl.dirty)) {
+              <p class="mt-1 text-xs text-red-600">Vui lòng nhập mật khẩu.</p>
+              }
+              @if (passwordControl.hasError('minlength') && (passwordControl.touched || passwordControl.dirty)) {
+              <p class="mt-1 text-xs text-red-600">Mật khẩu cần ít nhất 6 ký tự.</p>
+              }
+            </div>
+
+            <div class="flex items-center justify-between text-sm">
+              <a [routerLink]="['/forgot-pass']" class="font-medium text-emerald-700 hover:text-emerald-600">Quên mật khẩu?</a>
+              <p class="text-slate-500">
+                Chưa có tài khoản?
+                <a [routerLink]="['/register']" class="font-semibold text-slate-700 hover:text-slate-900">Đăng ký</a>
+              </p>
+            </div>
+
+            <button
+              class="w-full rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+              type="submit"
+              [disabled]="loginForm.invalid || isSubmitting"
+            >
+              @if (isSubmitting) {
+              Đang đăng nhập...
+              } @else {
+              Đăng nhập
+              }
+            </button>
+          </form>
         </div>
       </div>
     </div>
-  </div>
-  <!-- login Area End -->
+  </section>
 </main>
-} @loading {
-<!-- From Uiverse.io by SouravBandyopadhyay --> 
- <div class="hourglassBackground">
-      <div class="hourglassContainer">
-        <div class="hourglassCurves"></div>
-        <div class="hourglassCapTop"></div>
-        <div class="hourglassGlassTop"></div>
-        <div class="hourglassSand"></div>
-        <div class="hourglassSandStream"></div>
-        <div class="hourglassCapBottom"></div>
-        <div class="hourglassGlass"></div>
-      </div>
-    </div>
-}

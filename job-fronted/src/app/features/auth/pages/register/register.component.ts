@@ -1,88 +1,143 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { AuthService } from '../../../../core/services/auth.service';
-import { FormBuilder, FormGroup, FormsModule, MinLengthValidator, PatternValidator, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { ErrorFieldComponent } from '../../../../shared/components/error-field/error-field.component';
-import {MatTab, MatTabChangeEvent, MatTabGroup} from '@angular/material/tabs';
 
 @Component({
   selector: 'app-register',
-  imports: [FormsModule, CommonModule, ErrorFieldComponent, ReactiveFormsModule, MatTabGroup, MatTab],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   standalone: true,
   templateUrl: './register.component.html',
-  styleUrl: './register.component.css'
+  styleUrl: './register.component.css',
 })
-export class RegisterComponent implements OnInit{
+export class RegisterComponent implements OnInit {
+  private readonly fb = inject(FormBuilder);
   googleUrl = '';
-  registerForm: FormGroup;
-  formErrors = null;
+  formErrors: string | null = null;
+  isSubmitting = false;
   role: string = 'ROLE_USER';
-  constructor(private auth: AuthService, private router: Router, private fb: FormBuilder) {
-    this.registerForm = this.fb.group({
-      role: ['', Validators.required],
-      fullName: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(254)]],
+
+  readonly registerForm = this.fb.nonNullable.group(
+    {
+      fullName: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(3),
+          Validators.maxLength(254),
+          Validators.pattern(/^[\p{L}\s'.-]+$/u),
+        ],
+      ],
       username: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8)]],
+      password: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(8),
+          Validators.maxLength(64),
+          Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,64}$/),
+        ],
+      ],
       confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
-    }, { validators: this.passwordMatchValidator });
+    },
+    { 
+    validators: [this.passwordMatchValidator as ValidatorFn] 
+  }
+  );
+
+  constructor(private auth: AuthService, private router: Router) {
   }
 
   ngOnInit(): void {
-    this.auth.getGoogleLoginUrl().subscribe(r => this.googleUrl = r.authURL)
-  }
-  validationMessages = {
-    fullName: {
-      required: 'Họ và tên không được để trống',
-      minlength: 'Họ và tên phải có ít nhất 3 ký tự',
-    },
-    email: {
-      required: 'Email không được để trống',
-      email: 'Vui lòng nhập địa chỉ email hợp lệ',
-    },
-    password: {
-      required: 'Mật khẩu không được để trống',
-      minlength: 'Mật khẩu phải có ít nhất 8 ký tự',
-    },
-    confirmPassword: {
-      required: 'Xác nhận mật khẩu không được để trống',
-      minlength: 'Xác nhận mật khẩu phải có ít nhất 8 ký tự',
-      mismatch: 'Mật khẩu và xác nhận mật khẩu không khớp',
-    },
-  };
-  passwordMatchValidator(form: FormGroup) {
-    const password = form.get('password');
-    const confirmPassword = form.get('confirmPassword');
-    if (password && confirmPassword) {
-      if (password.value !== confirmPassword.value) {
-        confirmPassword.setErrors({ mismatch: true });
-      } else {
-        if (confirmPassword.hasError('mismatch')) {
-          confirmPassword.setErrors(null);
-        }
-      }
-    }
-    return null;
-  }
-  onRegister() {
-    this.formErrors = null; // reset lỗi
-    if (this.registerForm.invalid) {
-      this.registerForm.markAllAsTouched(); // show ra hết lỗi
-      return;
-    }
-    this.registerForm.patchValue({
-      role : this.role
-    })
-    this.auth.register(this.registerForm.value).subscribe({
-      next: res => {
-        this.router.navigate(['/verify'], { queryParams: { email: res.email}});
-      }, error: (error) => {
-        this.formErrors = error;
-      }
+    this.auth.getGoogleLoginUrl().subscribe((r) => {
+      this.googleUrl = r?.data || r?.authURL || '';
     });
   }
 
-  onTabChanged($event: MatTabChangeEvent) {
-    this.role = ($event.index === 0 ? 'ROLE_USER' : 'ROLE_HIRER')
+  get fullNameControl() {
+    return this.registerForm.controls.fullName;
+  }
+
+  get usernameControl() {
+    return this.registerForm.controls.username;
+  }
+
+  get passwordControl() {
+    return this.registerForm.controls.password;
+  }
+
+  get confirmPasswordControl() {
+    return this.registerForm.controls.confirmPassword;
+  }
+
+  passwordMatchValidator(form: FormGroup): ValidationErrors | null {
+    const password = form.get('password');
+    const confirmPassword = form.get('confirmPassword');
+
+    if (!password || !confirmPassword) {
+      return null;
+    }
+
+    if (password.value !== confirmPassword.value) {
+      confirmPassword.setErrors({ ...(confirmPassword.errors || {}), mismatch: true });
+      return { mismatch: true };
+    }
+
+    if (confirmPassword.hasError('mismatch')) {
+      const errors = { ...(confirmPassword.errors || {}) };
+      delete errors['mismatch'];
+      const hasOtherErrors = Object.keys(errors).length > 0;
+      confirmPassword.setErrors(hasOtherErrors ? errors : null);
+    }
+
+    return null;
+  }
+
+  onRegister() {
+    this.formErrors = null;
+
+    if (this.registerForm.invalid) {
+      this.registerForm.markAllAsTouched();
+      return;
+    }
+
+    this.isSubmitting = true;
+    const payload = {
+      ...this.registerForm.getRawValue(),
+      role: this.role,
+    };
+
+    this.auth.register(payload).subscribe({
+      next: (res) => {
+        this.router.navigate(['/verify'], { queryParams: { email: res.email } });
+      },
+      error: (error) => {
+        this.formErrors = error;
+        this.isSubmitting = false;
+      },
+      complete: () => {
+        this.isSubmitting = false;
+      },
+    });
+  }
+
+  switchRole(role: 'ROLE_USER' | 'ROLE_HIRER') {
+    this.role = role;
+  }
+
+  shouldShowError(control: AbstractControl | null): boolean {
+    if (!control) {
+      return false;
+    }
+    return control.invalid && (control.touched || control.dirty);
   }
 }

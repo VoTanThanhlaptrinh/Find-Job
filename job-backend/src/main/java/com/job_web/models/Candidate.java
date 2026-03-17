@@ -38,6 +38,10 @@ public class Candidate {
 		this.modifiedDate = modifiedDate;
 	}
 
+	public Candidate() {
+
+	}
+
 	public static enum Type {
 		MALE, FEMALE, LGBT;
 	}

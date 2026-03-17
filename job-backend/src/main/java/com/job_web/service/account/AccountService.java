@@ -24,7 +24,7 @@ public interface AccountService {
 	ApiResponse<String> sendLinkActivate(String email);
 	ApiResponse<String> activeAccount(String token);
 	ApiResponse<String> login(LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response);
-	ApiResponse<String> refreshToken(HttpServletRequest request);
+	ApiResponse<String> refreshToken(HttpServletRequest request, HttpServletResponse response);
 	ApiResponse<String> logout(HttpServletRequest request, HttpServletResponse response);
 	ApiResponse<String> forgotPassword(ForgotPassDTO forgotPassDTO);
 	ApiResponse<String> checkRandom(String random);

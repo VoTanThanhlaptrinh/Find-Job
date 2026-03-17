@@ -90,8 +90,8 @@ public class AuthController {
     }
 
     @GetMapping("/pub/refreshToken")
-    public ResponseEntity<ApiResponse<String>> getRefreshToken(HttpServletRequest request) {
-        ApiResponse<String> res = accountService.refreshToken(request);
+    public ResponseEntity<ApiResponse<String>> getRefreshToken(HttpServletRequest request, HttpServletResponse response) {
+        ApiResponse<String> res = accountService.refreshToken(request, response);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
@@ -111,7 +111,7 @@ public class AuthController {
     @GetMapping("/pri/checkOauth2")
     public ResponseEntity<ApiResponse<Boolean>> checkOauth2(java.security.Principal principal) {
         boolean res = principal != null;
-        String mess = res ? "success" : "Báº¡n chÆ°a Ä‘Äƒng nháº­p";
+        String mess = res ? "success" : "";
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(mess, res, HttpStatus.OK.value()));
     }
 }

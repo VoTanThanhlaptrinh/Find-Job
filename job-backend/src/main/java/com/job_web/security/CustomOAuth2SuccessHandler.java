@@ -1,7 +1,6 @@
 package com.job_web.security;
 
 import com.job_web.data.UserRepository;
-import com.job_web.models.RefreshToken;
 import com.job_web.models.User;
 import com.job_web.service.security.JwtService;
 import com.job_web.service.security.RefreshTokenService;
@@ -10,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -33,6 +33,8 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
+    @Value("${app.cookie.secure}")
+    private boolean isSecure;
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         OAuth2AuthenticationToken authenticationToken = (OAuth2AuthenticationToken) authentication;
@@ -53,14 +55,14 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 
         String token = jwtService.generateToken(user);
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getEmail());
+        String refreshToken = refreshTokenService.createRefreshToken(user.getEmail());
 
-        ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken.getToken())
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
-                .secure(false)
+                .secure(isSecure)
                 .path("/")
                 .sameSite("Lax")
-                .maxAge(Duration.between(Instant.now(), refreshToken.getExpiryDate()).getSeconds())
+                .maxAge(Duration.ofDays(7)) // Thiết lập 7 ngày
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());  // cài cookie
         response.setContentType("text/html");

@@ -93,5 +93,9 @@ spring:
         jwt:
           jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
 
+app:
+  cookie:
+    secure: true
+
 server:
   port: ${PORT:8080}
