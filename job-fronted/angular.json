@@ -25,6 +25,7 @@
               "src/assets"
             ],
             "styles": [
+              "@ngxpert/hot-toast/styles.css",
               "src/styles.css",
               "src/assets/web_css/css/bootstrap.css",
               "src/assets/web_css/css/linearicons.css",
@@ -34,7 +35,8 @@
               "node_modules/quill/dist/quill.core.css",
               "node_modules/quill/dist/quill.bubble.css",
               "node_modules/quill/dist/quill.snow.css",
-              "node_modules/keen-slider/keen-slider.min.css"
+              "node_modules/keen-slider/keen-slider.min.css",
+              "node_modules/@ngxpert/hot-toast/src/styles/styles.css"
             ],
             "scripts": [],
             "server": "src/main.server.ts",
@@ -45,6 +47,12 @@
           },
           "configurations": {
             "production": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.production.ts"
+                }
+              ],
               "budgets": [
                 {
                   "type": "initial",
@@ -68,6 +76,12 @@
               "outputHashing": "all"
             },
             "development": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.development.ts"
+                }
+              ],
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
@@ -105,6 +119,7 @@
               }
             ],
             "styles": [
+              "@ngxpert/hot-toast/styles.css",
               "src/styles.css"
             ],
             "scripts": []

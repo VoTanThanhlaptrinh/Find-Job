@@ -4,26 +4,28 @@ import jakarta.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Data
-
+@Getter
+@Setter
 public class Apply {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name = "job_id", nullable = false)
+	@JoinColumn( nullable = false)
 	@JsonIgnore
 	private Job job;
 	
 	@ManyToOne
-	@JoinColumn(name = "resume_id", nullable = false)
+	@JoinColumn(nullable = false)
 	@JsonIgnore
 	private Resume resume;
 	

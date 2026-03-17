@@ -30,6 +30,11 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
+    public ApiResponse<List<ResumeDTO>> getResumesByUser(String email) {
+        return new ApiResponse<>("Not implemented.", null, HttpStatus.NOT_IMPLEMENTED.value());
+    }
+
+    @Override
     public Resume findById(long id) {
         return resumeRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found"));
     }

@@ -28,13 +28,15 @@ public class RedisConfig {
 	private int port;
 	@Value("${application.config.redis.username}")
 	private String username;
-	@Profile("dev")
+
 	@Bean
 	JedisConnectionFactory jedisConnectionFactory() {
 		RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
 		redisStandaloneConfiguration.setHostName(hostName);
-		redisStandaloneConfiguration.setUsername(username);
-		redisStandaloneConfiguration.setPassword(password);
+		if (username != null && !username.isBlank()) {
+			redisStandaloneConfiguration.setUsername(username);
+			redisStandaloneConfiguration.setPassword(password);
+		}
 		redisStandaloneConfiguration.setPort(port);
 		redisStandaloneConfiguration.setDatabase(0);
 

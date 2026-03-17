@@ -1,5 +1,7 @@
 package com.job_web.controller.application;
 
+import com.job_web.dto.application.ResumeDTO;
+import com.job_web.dto.common.ApiResponse;
 import com.job_web.models.Resume;
 import com.job_web.service.application.ResumeService;
 import lombok.RequiredArgsConstructor;
@@ -13,11 +15,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(path = "/api/resume", produces = "application/json")
 @RequiredArgsConstructor
 public class HirerResumeController {
     private final ResumeService resumeService;
+
+    @GetMapping("/pri/h/listByUser/{email}")
+    public ResponseEntity<ApiResponse<List<ResumeDTO>>> listResumesByUser(@PathVariable("email") String email) {
+        ApiResponse<List<ResumeDTO>> res = resumeService.getResumesByUser(email);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
 
     @GetMapping("/pri/h/downloadResume/{id}")
     public ResponseEntity<Resource> downloadResume(@PathVariable("id") long id) {

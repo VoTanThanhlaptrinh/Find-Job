@@ -11,20 +11,13 @@ import com.job_web.service.support.VerificationService;
 @Service
 @AllArgsConstructor
 public class VerifyServiceImpl implements VerificationService {
-	/*
-	 * không được khai báo như này vì cơ bản là Redis đã được cấu hình rồi
-	 * nên @autoWired để Spring tìm phương thức khởi tạo cho Redis private final
-	 * RedisTemplate<String, Object> redisTemplate;
-	 * 
-	 * public VerifyServiceIMP() { redisTemplate = new RedisTemplate<>(); }
-	 */
 
 	private final RedisTemplate<String, Object> redisTemplate;
 
 	@Override
 	public boolean containsKey(String key) {
 		// TODO Auto-generated method stub
-		return redisTemplate.opsForValue().get(key) != null;
+		return redisTemplate.opsForValue().get("recovery:" + key) != null;
 	}
 
 	@Override

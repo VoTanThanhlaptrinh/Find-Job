@@ -14,5 +14,10 @@
       "name": "application.service.impl.amount",
       "type": "java.lang.String",
       "description": "Description for application.service.impl.amount."
-  }
-]}
+    },
+    {
+      "name": "app.cookie.secure",
+      "type": "java.lang.String",
+      "description": "Description for app.cookie.secure."
+    }
+  ]}

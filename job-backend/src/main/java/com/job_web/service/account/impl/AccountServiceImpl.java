@@ -10,10 +10,10 @@ import com.job_web.dto.message.MailMessage;
 import com.job_web.dto.profile.UserInfo;
 import com.job_web.message.MailProducer;
 import com.job_web.models.Job;
-import com.job_web.models.RefreshToken;
 import com.job_web.models.User;
 import com.job_web.service.account.AccountService;
 import com.job_web.service.notification.MailService;
+import com.job_web.service.security.JwtFamilyService;
 import com.job_web.service.security.JwtService;
 import com.job_web.service.security.RefreshTokenService;
 import com.job_web.service.support.ReferenceService;
@@ -26,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -54,6 +55,9 @@ public class AccountServiceImpl implements AccountService {
 	private final RefreshTokenService refreshTokenService;
 	private final SpamService spamService;
 	private final JwtService jwtService;
+	private final JwtFamilyService jwtFamilyService;
+	@Value("${app.cookie.secure}")
+	private boolean isSecure;
 	@Value("${application.service.impl.subject-verify}")
 	private String subjectVerify;
 	@Value("${application.service.impl.subject-oauth2}")
@@ -63,7 +67,7 @@ public class AccountServiceImpl implements AccountService {
 	@Value("${application.service.impl.email-oauth2}")
 	private String textOauth;
 	@Override
-	public boolean checkPassword( String passwordInput, String passwordInstored) {
+	public boolean checkPassword(String passwordInput, String passwordInstored) {
 		return encoder.matches(passwordInput, passwordInstored);
 	}
 
@@ -180,51 +184,58 @@ public class AccountServiceImpl implements AccountService {
 	public ApiResponse<String> login(LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response) {
 		String ip = getClientIP(request);
 		if(spamService.checkIpSpamLogin(ip)){
-			return new ApiResponse<>(spamService.getMessageLoginSpam(ip),null,400);
+			return new ApiResponse<>(spamService.getMessageLoginSpam(ip),null,HttpStatus.TOO_MANY_REQUESTS.value());
 		}
 		Optional<User> user = userRepository.findByEmail(loginDTO.getUsername());
 		if(user.isEmpty()){
-			return new ApiResponse<>("Email không tồn tại trông hệ thống", null, 400);
+			return new ApiResponse<>("Email không tồn tại trông hệ thống", null, HttpStatus.NOT_FOUND.value());
 		}
 		if(!encoder.matches(loginDTO.getPassword(), user.get().getPassword())){
 			spamService.addIpSpamLogin(ip);
-			return new ApiResponse<>("sai mật khẩu", null, 400);
-		}
-		if(user.get().getAuthorities().stream().noneMatch(authority -> authority.getAuthority().equals(loginDTO.getRole()))){
-			return new ApiResponse<>(String.format("Tài khoản này không đủ quyền %s truy cập",loginDTO.getRole().toUpperCase()), null, 400);
+			return new ApiResponse<>("sai mật khẩu", null, HttpStatus.BAD_REQUEST.value());
 		}
 		spamService.deleteIpSpamLogin(ip);
 		String accessToken = jwtService.generateToken(user.get());
-		RefreshToken refreshToken = refreshTokenService.createRefreshToken(loginDTO.getUsername());
-		ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken.getToken())
+		String refreshToken = refreshTokenService.createRefreshToken(loginDTO.getUsername());
+		ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
 				.httpOnly(true)
-				.secure(false)
+				.secure(isSecure)
 				.path("/")
 				.sameSite("Lax")
-				.maxAge(Duration.between(Instant.now(), refreshToken.getExpiryDate()).getSeconds())
+				.maxAge(Duration.ofDays(7).getSeconds())
 				.build();
 		response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-		log.info("login successful");
-		return new ApiResponse<>("đăng nhập thành công", accessToken, 200);
+		return new ApiResponse<>("đăng nhập thành công", accessToken, HttpStatus.OK.value());
 	}
 
 	@Override
-	public ApiResponse<String> refreshToken(HttpServletRequest request) {
+	public ApiResponse<String> refreshToken(HttpServletRequest request, HttpServletResponse response) {
 		Cookie[] cookies = request.getCookies();
 		if (cookies == null) {
-			return new ApiResponse<String>("cookie hết hạn", null, 401);
+			return new ApiResponse<String>("cookie hết hạn", null, HttpStatus.BAD_REQUEST.value());
 		}
 		for (Cookie cookie : cookies) {
 			if ("refreshToken".equals(cookie.getName())) {
 				String token = cookie.getValue();
-				Optional<String> accessToken = refreshTokenService.findByToken(token)
-						.map(refreshTokenService::verifyExpiration).map(RefreshToken::getUserInfo)
-						.map(jwtService::generateToken);
-				return accessToken.map(s -> new ApiResponse<>("success", s, 200))
-						.orElseGet(() -> new ApiResponse<>("phiên bản đăng nhập hết hạn, hãy đăng nhập lại", "cookie-expired", 401));
+				if(refreshTokenService.isValid(token)) {
+					String username = jwtService.extractUsername(token);
+					String accessToken = jwtService.generateToken(username);
+					String refreshToken = refreshTokenService.reGenerateRefreshToken(token);
+					ResponseCookie c = ResponseCookie.from("refreshToken", refreshToken)
+							.httpOnly(true)
+							.secure(isSecure)
+							.path("/")
+							.sameSite("Lax")
+							.maxAge(Duration.ofDays(7).getSeconds())
+							.build();
+					response.addHeader(HttpHeaders.SET_COOKIE, c.toString());
+					return new ApiResponse<>("success", accessToken, HttpStatus.OK.value());
+				}else{
+					new ApiResponse<>("phiên bản đăng nhập hết hạn, hãy đăng nhập lại", "cookie-expired", HttpStatus.NOT_FOUND.value());
+				}
 			}
 		}
-		return new ApiResponse<String>("không tìm thấy refresh token, đăng nhập lại", null, 401);
+		return new ApiResponse<String>("không tìm thấy refresh token, đăng nhập lại", null, HttpStatus.NOT_FOUND.value());
 	}
 
 	@Override

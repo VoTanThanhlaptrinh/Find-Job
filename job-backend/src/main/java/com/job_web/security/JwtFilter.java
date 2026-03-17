@@ -80,7 +80,7 @@ public class JwtFilter extends OncePerRequestFilter {
 		}catch (ExpiredJwtException e) {
             log.error(e.getMessage());
 			response.setContentType("application/json");
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			response.getWriter().write("{\"message\":\"Expired JWT token\"}");
 			response.getWriter().flush();
 			response.setHeader("Connection", "close");
@@ -88,7 +88,7 @@ public class JwtFilter extends OncePerRequestFilter {
 		} catch (JwtException e) {
             log.error(e.getMessage());
 			response.setContentType("application/json");
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			response.getWriter().write("{\"message\":\"Invalid JWT token\"}");
 			response.getWriter().flush();
 			response.setHeader("Connection", "close");

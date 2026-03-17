@@ -4,12 +4,13 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.job_web.service.security.JwtFamilyService;
+import com.job_web.service.security.JwtService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import com.job_web.data.RefreshTokenRepository;
 import com.job_web.data.UserRepository;
-import com.job_web.models.RefreshToken;
 import com.job_web.models.User;
 import com.job_web.service.security.RefreshTokenService;
 
@@ -18,43 +19,53 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Service
 public class RefreshTokenServiceImpl implements RefreshTokenService {
-	private final RefreshTokenRepository refreshTokenRepository;
 	private final UserRepository userRepository;
-	
+	private final JwtService jwtService;
+	private final JwtFamilyService jwtFamilyService;
 	@Value("${application.service.impl.timeLimit}")
 	private long timeLimit;
 	@Override
-	public RefreshToken createRefreshToken(String username) {
+	public String createRefreshToken(String username) {
 		Optional<User> user = userRepository.findByEmail(username);
 		if (user.isPresent()) {
-			RefreshToken refreshToken = RefreshToken.builder().userInfo(user.get()).token(UUID.randomUUID().toString())
-					.expiryDate(Instant.now().plusSeconds(timeLimit)).build();
-			return refreshTokenRepository.save(refreshToken);
+			jwtService.generateRefreshToken(user.get());
+			return null;
 		} else {
 			throw new RuntimeException("username not found");
 		}
 	}
 
 	@Override
-	public Optional<RefreshToken> findByToken(String token) {
-		return refreshTokenRepository.findByToken(token);
-	}
-
-	@Override
-	public RefreshToken verifyExpiration(RefreshToken token) {
-		if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
-			refreshTokenRepository.delete(token);
-			throw new RuntimeException(token.getToken() + " Refresh token is expired. Please make a new login..!");
+	public boolean isValid(String token) {
+		try {
+			String jti = jwtService.extractJTI(token);
+			String familyId = jwtService.extractFamily(token);
+			return familyId != null && jwtFamilyService.getFamilyJti(familyId).equals(jti);
+		} catch (Exception e) {
+			return false;
 		}
-		return token;
 	}
 
 	@Override
 	public void deleteRefreshToken(String token) {
-		Optional<RefreshToken> refreshToken = refreshTokenRepository.findByToken(token);
-        refreshToken.ifPresent(refreshTokenRepository::delete);
+		try {
+			String familyId = jwtService.extractFamily(token);
+			jwtFamilyService.deleteFamily(familyId);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
+	@Override
+	public String reGenerateRefreshToken(String token) {
+		try {
+			String familyId = jwtService.extractFamily(token);
+			String username = jwtService.extractUsername(token);
+			return jwtService.generateRefreshToken(username,familyId);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 }
 
 

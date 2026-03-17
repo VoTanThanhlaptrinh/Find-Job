@@ -1,14 +1,16 @@
 package com.job_web.service.security.impl;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.crypto.SecretKey;
 
+import com.job_web.models.User;
+import com.job_web.service.security.JwtFamilyService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -21,12 +23,13 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
 @Service
+@RequiredArgsConstructor
 public class JwtServiceImpl implements JwtService {
 	@Value("${application.service.impl.secret-key}")
 	private String secretkey;
 	@Value("${application.service.impl.expiration}")
 	private long jwtExpiration;
-
+	private final JwtFamilyService jwtFamilyService;
 	public String generateToken(UserDetails userDetails) {
 		HashMap<String, Object> claims = new HashMap<>();
 		List<String> roles = userDetails.getAuthorities()
@@ -53,10 +56,40 @@ public class JwtServiceImpl implements JwtService {
 		final String username = extractUsername(token);
 		return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
 	}
+
+	@Override
+	public String extractJTI(String token) {
+		return extractClaims(token, Claims::getId);
+	}
+
 	@Override
 	public boolean isTokenExpired(String token) {
 		// TODO Auto-generated method stub
 		return extractExpiration(token).before(new Date());
+	}
+
+	@Override
+	public String generateRefreshToken(UserDetails user) {
+		String familyId = UUID.randomUUID().toString();
+		return helpGenerateRefreshToken(user.getUsername(), familyId);
+	}
+
+	@Override
+	public String generateRefreshToken(String username, String familyId) {
+		return helpGenerateRefreshToken(username, familyId);
+	}
+
+	private String helpGenerateRefreshToken(String username, String familyId){
+		HashMap<String, Object> claims = new HashMap<>();
+		claims.put("familyId", familyId);
+		String token = gerenateToken(claims, username);
+		jwtFamilyService.saveFamilyJti(familyId,extractJTI(token));
+		return token;
+	}
+
+	@Override
+	public String extractFamily(String token) {
+		return extractAllClaims(token).get("familyId").toString();
 	}
 
 	private Date extractExpiration(String token) {
@@ -78,6 +111,7 @@ public class JwtServiceImpl implements JwtService {
 		// TODO Auto-generated method stub
 		return Jwts.builder().claims(claims).subject(username)
 				.issuedAt(new Date(System.currentTimeMillis()))// set thời điểm tạo ra
+				.id(UUID.randomUUID().toString())
 				.expiration(new Date(System.currentTimeMillis()+ jwtExpiration))
 				.signWith(getSignInKey()).compact();
 	}

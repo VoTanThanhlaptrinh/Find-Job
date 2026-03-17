@@ -57,3 +57,48 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+## Standard for Environment and Local Variables (Angular)
+
+This project now uses a centralized API URL strategy so you do not need to edit service files when backend URLs change.
+
+### 1. Environment files
+
+- `src/environments/environment.ts`: base config entry point.
+- `src/environments/environment.development.ts`: local/dev config.
+- `src/environments/environment.production.ts`: production config.
+
+Configured values:
+
+- `apiBaseUrl`: the backend base URL used by frontend services.
+- `allowLocalApiOverride`: allows overriding URL from browser local storage.
+
+### 2. Build/serve behavior
+
+- Development uses `environment.development.ts`.
+- Production build uses `environment.production.ts`.
+
+Angular file replacement is configured in `angular.json`, so no manual code edits are needed when switching environment.
+
+### 3. Local override without code change
+
+If you want to temporarily test another backend URL on your machine:
+
+```js
+localStorage.setItem('job-list.apiBaseUrl', 'https://your-backend-domain.com/api');
+location.reload();
+```
+
+To remove override:
+
+```js
+localStorage.removeItem('job-list.apiBaseUrl');
+location.reload();
+```
+
+### 4. Team convention
+
+- Never hardcode API URL inside feature services.
+- Always get API base URL through `UtilitiesService`.
+- Keep `environment.production.ts` pointing to deployed backend URL.
+- Use local storage override only for temporary local testing.

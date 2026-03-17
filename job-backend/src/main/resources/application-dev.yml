@@ -35,7 +35,7 @@ application:
   config:
     redis:
       host-name: 127.0.0.1
-      username: default
+      username:
       port: 6379
       password: Thanhdeptrai123
 
@@ -62,7 +62,7 @@ spring:
     host: smtp.gmail.com
     port: 465
     default-encoding: UTF-8
-    username: vtthanh32004@gmail.com
+    username: ${GMAIL_USERNAME}
     password: ${GMAIL_APP_PASSWORD}
     properties:
       mail:
@@ -90,3 +90,7 @@ spring:
       resource-server: # Đã sửa từ "resource server" thành "resource-server"
         jwt:
           jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
+
+app:
+  cookie:
+    secure: false
