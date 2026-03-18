@@ -14,6 +14,7 @@ import { filter } from 'rxjs/operators';
 export class AppComponent {
   title = 'job-list';
   showHeader = true;
+  showFooter = true;
 
   private readonly hiddenHeaderRoutes = new Set([
     '/login',
@@ -23,6 +24,8 @@ export class AppComponent {
     '/activate',
     '/login-callback',
   ]);
+
+  private readonly hiddenLayoutPrefixes = ['/recruiter/'];
 
   constructor(private router: Router) {
     this.updateHeaderVisibility(this.router.url);
@@ -37,7 +40,9 @@ export class AppComponent {
 
   private updateHeaderVisibility(url: string): void {
     const path = this.normalizePath(url);
-    this.showHeader = !this.isHiddenHeaderRoute(path);
+    const isHidden = this.isHiddenHeaderRoute(path);
+    this.showHeader = !isHidden;
+    this.showFooter = !isHidden;
   }
 
   private isHiddenHeaderRoute(path: string): boolean {
@@ -45,7 +50,11 @@ export class AppComponent {
       return true;
     }
 
-    return path.startsWith('/reset-pass/');
+    if (path.startsWith('/reset-pass/')) {
+      return true;
+    }
+
+    return this.hiddenLayoutPrefixes.some((prefix) => path.startsWith(prefix));
   }
 
   private normalizePath(url: string): string {

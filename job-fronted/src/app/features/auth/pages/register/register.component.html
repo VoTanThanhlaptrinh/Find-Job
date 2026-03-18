@@ -23,32 +23,7 @@
           <h2 class="text-2xl font-semibold text-slate-800">Đăng ký tài khoản</h2>
           <p class="mt-2 text-sm text-slate-500">Điền đầy đủ thông tin để tiếp tục.</p>
 
-          <div class="mt-6 grid grid-cols-2 rounded-xl bg-slate-100 p-1">
-            <button
-              type="button"
-              class="rounded-lg px-3 py-2 text-sm font-medium transition"
-              [class.bg-white]="role === 'ROLE_USER'"
-              [class.text-slate-900]="role === 'ROLE_USER'"
-              [class.shadow]="role === 'ROLE_USER'"
-              [class.text-slate-500]="role !== 'ROLE_USER'"
-              (click)="switchRole('ROLE_USER')"
-            >
-              Người tìm việc
-            </button>
-            <button
-              type="button"
-              class="rounded-lg px-3 py-2 text-sm font-medium transition"
-              [class.bg-white]="role === 'ROLE_HIRER'"
-              [class.text-slate-900]="role === 'ROLE_HIRER'"
-              [class.shadow]="role === 'ROLE_HIRER'"
-              [class.text-slate-500]="role !== 'ROLE_HIRER'"
-              (click)="switchRole('ROLE_HIRER')"
-            >
-              Nhà tuyển dụng
-            </button>
-          </div>
-
-          @if (role === 'ROLE_USER' && googleUrl) {
+          @if (googleUrl) {
           <a
             [href]="googleUrl"
             class="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50"

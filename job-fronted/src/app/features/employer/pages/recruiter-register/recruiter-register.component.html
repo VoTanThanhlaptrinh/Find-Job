@@ -1,0 +1,98 @@
+<div class="relative min-h-screen overflow-hidden bg-slate-900 px-4 py-8 sm:px-6 lg:px-8">
+  <div class="absolute -left-16 top-20 h-72 w-72 rounded-full bg-cyan-400/30 blur-3xl"></div>
+  <div class="absolute -bottom-20 right-4 h-80 w-80 rounded-full bg-blue-500/25 blur-3xl"></div>
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.16),transparent_55%)]"></div>
+
+  <div class="relative mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-6xl items-center justify-center">
+    <div class="grid w-full gap-8 lg:grid-cols-[460px_1fr]">
+      <section class="mx-auto w-full max-w-md rounded-[30px] border border-white/40 bg-white/90 p-6 shadow-2xl backdrop-blur-md sm:max-w-lg sm:p-8">
+        <div class="mb-6 flex items-center justify-center gap-2 text-slate-900">
+          <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white">RP</span>
+          <div>
+            <p class="text-sm font-bold tracking-wide">RECRUITER</p>
+            <p class="text-sm font-semibold">PORTAL</p>
+          </div>
+        </div>
+
+        <h1 class="text-center text-3xl font-semibold tracking-tight text-slate-900">Tạo Tài khoản Nhà tuyển dụng</h1>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="mt-6 space-y-3">
+          <input
+            type="text"
+            formControlName="fullName"
+            placeholder="Họ và Tên"
+            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500"
+          />
+          <input
+            type="text"
+            formControlName="companyName"
+            placeholder="Tên Công ty"
+            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500"
+          />
+          <input
+            type="email"
+            formControlName="email"
+            placeholder="Email Công việc"
+            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500"
+          />
+          <input
+            type="tel"
+            formControlName="phone"
+            placeholder="Số điện thoại"
+            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500"
+          />
+          <input
+            type="password"
+            formControlName="password"
+            placeholder="Mật khẩu"
+            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500"
+          />
+          <input
+            type="password"
+            formControlName="confirmPassword"
+            placeholder="Xác nhận mật khẩu"
+            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500"
+          />
+
+          @if (isPasswordMismatch && (form.controls.confirmPassword.touched || form.controls.confirmPassword.dirty)) {
+            <p class="text-xs text-rose-600">Mật khẩu xác nhận chưa khớp.</p>
+          }
+
+          <label class="mt-2 inline-flex items-start gap-2 text-sm text-slate-700">
+            <input type="checkbox" formControlName="agreeTerms" class="mt-1 h-4 w-4 rounded border-slate-300 text-blue-600" />
+            Đồng ý với
+            <a href="#" class="font-semibold text-blue-600 hover:text-blue-700">Điều khoản</a>
+            và
+            <a href="#" class="font-semibold text-blue-600 hover:text-blue-700">Chính sách</a>
+          </label>
+
+          @if (form.controls.agreeTerms.touched && form.controls.agreeTerms.invalid) {
+            <p class="text-xs text-rose-600">Bạn cần đồng ý điều khoản để tiếp tục.</p>
+          }
+
+          <button
+            type="submit"
+            class="mt-1 w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold tracking-wide text-white transition hover:bg-blue-700"
+          >
+            ĐĂNG KÝ
+          </button>
+        </form>
+
+        <p class="mt-5 text-center text-sm text-slate-600">
+          Đã có tài khoản?
+          <a [routerLink]="['/recruiter/login']" class="font-semibold text-blue-600 hover:text-blue-700">Đăng nhập</a>
+        </p>
+      </section>
+
+      <section class="hidden lg:flex items-center justify-center">
+        <div class="max-w-xl rounded-4xl border border-white/30 bg-white/10 p-8 text-white backdrop-blur-md">
+          <h2 class="text-4xl font-semibold leading-tight">Xây dựng đội ngũ mạnh bằng dữ liệu tuyển dụng rõ ràng.</h2>
+          <p class="mt-5 text-sm leading-7 text-slate-200">
+            Tạo tài khoản nhà tuyển dụng và quản lý toàn bộ quy trình đăng tin, sàng lọc ứng viên,
+            theo dõi phỏng vấn trên cùng một dashboard.
+          </p>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
