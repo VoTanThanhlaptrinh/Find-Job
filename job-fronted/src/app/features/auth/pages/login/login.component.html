@@ -22,28 +22,6 @@
           <h2 class="text-2xl font-semibold text-slate-800">Đăng nhập</h2>
           <p class="mt-2 text-sm text-slate-500">Nhập thông tin để tiếp tục sử dụng hệ thống.</p>
 
-          <div class="mt-6 grid grid-cols-2 rounded-xl bg-slate-100 p-1 ">
-            <button
-              type="button"
-              class="rounded-lg px-3 py-2 text-sm font-medium transition text-black"
-              [class.bg-white]="role === 'ROLE_USER'"
-              [class.shadow]="role === 'ROLE_USER'"
-              (click)="switchRole('ROLE_USER')"
-            >
-              Người tìm việc
-            </button>
-            <button
-              type="button"
-              class=" rounded-lg px-3 py-2 text-sm font-medium transition text-black"
-              [class.bg-white]="role === 'ROLE_HIRER'"
-              [class.shadow]="role === 'ROLE_HIRER'"
-              (click)="switchRole('ROLE_HIRER')"
-            >
-              Nhà tuyển dụng
-            </button>
-          </div>
-
-          @if (role === 'ROLE_USER') {
           <div class="mt-6 flex items-center gap-3">
             <a
               [href]="googleUrl"
@@ -53,7 +31,6 @@
               Đăng nhập với Google
             </a>
           </div>
-          }
 
           <form class="mt-6 space-y-5" [formGroup]="loginForm" (ngSubmit)="onLogin()">
             <div>

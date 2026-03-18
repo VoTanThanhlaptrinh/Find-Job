@@ -44,7 +44,6 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
-
   jpa: # Đã đưa ra ngoài ngang hàng với datasource
     hibernate:
       ddl-auto: update
@@ -52,14 +51,14 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
-
-  rabbitmq: # Đã đưa ra ngoài ngang hàng với datasource
+  rabbitmq:
     host: ${RABBIT_HOST}
-    port: ${RABBIT_PORT}
+    port: ${RABBIT_PORT} # Mặc định là 5671 cho SSL
     username: ${RABBIT_USER}
     password: ${RABBIT_PASSWORD}
-    virtual-host: /
-
+    virtual-host: ${RABBIT_USER} # Thay đổi theo vhost của bạn
+    ssl:
+      enabled: true
   mail: # Đã đưa ra ngoài ngang hàng với datasource
     host: smtp.gmail.com
     port: 465

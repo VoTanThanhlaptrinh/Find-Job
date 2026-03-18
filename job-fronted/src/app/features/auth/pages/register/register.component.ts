@@ -24,7 +24,6 @@ export class RegisterComponent implements OnInit {
   googleUrl = '';
   formErrors: string | null = null;
   isSubmitting = false;
-  role: string = 'ROLE_USER';
 
   readonly registerForm = this.fb.nonNullable.group(
     {
@@ -111,10 +110,7 @@ export class RegisterComponent implements OnInit {
     }
 
     this.isSubmitting = true;
-    const payload = {
-      ...this.registerForm.getRawValue(),
-      role: this.role,
-    };
+    const payload = this.registerForm.getRawValue();
 
     this.auth.register(payload).subscribe({
       next: (res) => {
@@ -128,10 +124,6 @@ export class RegisterComponent implements OnInit {
         this.isSubmitting = false;
       },
     });
-  }
-
-  switchRole(role: 'ROLE_USER' | 'ROLE_HIRER') {
-    this.role = role;
   }
 
   shouldShowError(control: AbstractControl | null): boolean {

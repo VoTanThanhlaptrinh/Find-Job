@@ -22,4 +22,4 @@ ENV PORT=8080
 EXPOSE 8080
 
 # Chạy ứng dụng
-ENTRYPOINT ["java", "-Xmx400m", "-jar", "app.jar"]
+ENTRYPOINT ["sh", "-c", "java -Xmx400m -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE:-dev} -jar app.jar"]

@@ -1,0 +1,38 @@
+:host {
+  display: block;
+}
+
+.chart-bar {
+  animation: grow-up 700ms ease both;
+  transform-origin: bottom;
+}
+
+.menu-icon {
+  width: 100%;
+  border-radius: 12px;
+  padding: 10px 0;
+  font-size: 18px;
+  line-height: 1;
+  transition: background-color 150ms ease, transform 150ms ease;
+}
+
+.menu-icon:hover {
+  background-color: #f1f5f9;
+  transform: translateY(-1px);
+}
+
+.menu-icon.is-active {
+  background-color: #1d4ed8;
+  color: white;
+}
+
+@keyframes grow-up {
+  from {
+    transform: scaleY(0.2);
+    opacity: 0.4;
+  }
+  to {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}

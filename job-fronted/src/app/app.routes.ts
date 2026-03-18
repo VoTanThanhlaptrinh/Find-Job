@@ -25,8 +25,14 @@ import {UpdateJobComponent} from './features/employer/pages/update-job/update-jo
 import {CandidateListComponent} from './features/employer/pages/candidate-list/candidate-list.component';
 import { userLoginGuard } from './core/guards/user-login.guard';
 import { hirerGuard } from './core/guards/hirer-guard.guard';
+import { RecruiterLoginComponent } from './features/employer/pages/recruiter-login/recruiter-login.component';
+import { RecruiterRegisterComponent } from './features/employer/pages/recruiter-register/recruiter-register.component';
+import { RecruiterDashboardComponent } from './features/employer/pages/recruiter-dashboard/recruiter-dashboard.component';
 export const routes: Routes = [
     {path:'', component:HomeComponent},
+  {path:'recruiter/login', component:RecruiterLoginComponent},
+  {path:'recruiter/register', component:RecruiterRegisterComponent},
+  {path:'recruiter/dashboard', component:RecruiterDashboardComponent},
     {path:'login', component:LoginComponent},
     {path:'register', component:RegisterComponent},
     {path:'about', component:AboutUsComponent},

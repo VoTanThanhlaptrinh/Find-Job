@@ -23,7 +23,6 @@ export class LoginComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   googleUrl = '';
   isSubmitting = false;
-  role: string = 'ROLE_USER';
 
   readonly loginForm = this.fb.nonNullable.group({
     username: ['', [Validators.required, this.usernameOrEmailValidator]],
@@ -53,18 +52,12 @@ export class LoginComponent implements OnInit {
     this.isSubmitting = true;
     const { username, password } = this.loginForm.getRawValue();
     const loginRequest = {
-      role: this.role,
       username,
       password,
     };
     this.loginService.login(loginRequest).subscribe({
       next: () => {
-        if (this.role === 'ROLE_USER') {
-          this.router.navigate(['/']);
-        }
-        if (this.role === 'ROLE_HIRER') {
-          this.router.navigate(['/hirer']);
-        }
+        this.router.navigate(['/']);
       },
       error: (error) => {
         this.toastr.showMessage(error || 'Lỗi đăng nhập', '', 'error');
@@ -87,10 +80,6 @@ export class LoginComponent implements OnInit {
         this.googleUrl = response.data;
       }
     });
-  }
-
-  switchRole(role: 'ROLE_USER' | 'ROLE_HIRER') {
-    this.role = role;
   }
 
   get usernameControl() {
