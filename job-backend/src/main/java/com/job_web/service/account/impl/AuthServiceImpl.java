@@ -60,7 +60,7 @@ public class AuthServiceImpl implements AuthService {
         User user = registationForm.toUser(encoder);
         userRepository.saveAndFlush(user);
         sendLinkActivate(user.getUsername());
-        return new ApiResponse<>("Táº¡o user thÃ nh cÃ´ng. Chuáº©n bá»‹ sang bÆ°á»›c xÃ¡c nháº­n tÃ i khoáº£n",
+        return new ApiResponse<>("Tạo user thành công. Chuẩn bị sang bước xác nhận tài khoản",
                 user.getUsername(), HttpStatus.OK.value());
     }
 
@@ -68,7 +68,7 @@ public class AuthServiceImpl implements AuthService {
     public ApiResponse<String> sendLinkActivate(String email) {
         Optional<User> user = userRepository.findByEmail(email);
         if (user.isEmpty()) {
-            return new ApiResponse<>("user khÃ´ng tá»“n táº¡i trong há»‡ thá»‘ng", null, HttpStatus.BAD_REQUEST.value());
+            return new ApiResponse<>("user không tồn tại trong hệ thống", null, HttpStatus.BAD_REQUEST.value());
         }
         String link = createLink(user.get());
 
@@ -78,9 +78,9 @@ public class AuthServiceImpl implements AuthService {
             mailProducer.sendMail(mailMessage);
         } catch (Exception e) {
             log.trace(e.getMessage(), e);
-            return new ApiResponse<>("Gá»­i email tháº¥t báº¡i", null, HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return new ApiResponse<>("Gửi email thất bại", null, HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
-        return new ApiResponse<>("Gá»­i email thÃ nh cÃ´ng", null, HttpStatus.OK.value());
+        return new ApiResponse<>("Gửi email thành công", null, HttpStatus.OK.value());
     }
 
     @Override
@@ -89,12 +89,12 @@ public class AuthServiceImpl implements AuthService {
         String[] values = StringUtils.delimitedListToStringArray(activate, "|");
         Optional<User> user = userRepository.findByEmail(values[0]);
         if (user.isEmpty()) {
-            return new ApiResponse<>("user khÃ´ng tá»“n táº¡i trong há»‡ thá»‘ng", null, HttpStatus.BAD_REQUEST.value());
+            return new ApiResponse<>("user không tồn tại trong hệ thống", null, HttpStatus.BAD_REQUEST.value());
         }
         if (!jwtService.isTokenValid(token, user.get())) {
-            return new ApiResponse<>("token háº¿t háº¡n", null, HttpStatus.BAD_REQUEST.value());
+            return new ApiResponse<>("token hết hạn", null, HttpStatus.BAD_REQUEST.value());
         }
-        return new ApiResponse<>("KÃ­ch hoáº¡t tÃ i khoáº£n thÃ nh cÃ´ng", null, HttpStatus.OK.value());
+        return new ApiResponse<>("Kích hoạt tài khoản thành công", null, HttpStatus.OK.value());
     }
 
     @Override
@@ -105,11 +105,11 @@ public class AuthServiceImpl implements AuthService {
         }
         Optional<User> user = userRepository.findByEmail(loginDTO.getUsername());
         if (user.isEmpty()) {
-            return new ApiResponse<>("Email khÃ´ng tá»“n táº¡i trÃ´ng há»‡ thá»‘ng", null, HttpStatus.NOT_FOUND.value());
+            return new ApiResponse<>("Email không tồn tại trong hệ thống", null, HttpStatus.NOT_FOUND.value());
         }
         if (!encoder.matches(loginDTO.getPassword(), user.get().getPassword())) {
             spamService.addIpSpamLogin(ip);
-            return new ApiResponse<>("sai máº­t kháº©u", null, HttpStatus.BAD_REQUEST.value());
+            return new ApiResponse<>("sai mật khẩu", null, HttpStatus.BAD_REQUEST.value());
         }
         spamService.deleteIpSpamLogin(ip);
         String accessToken = jwtService.generateToken(user.get());
@@ -122,14 +122,14 @@ public class AuthServiceImpl implements AuthService {
                 .maxAge(Duration.ofDays(7).getSeconds())
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-        return new ApiResponse<>("Ä‘Äƒng nháº­p thÃ nh cÃ´ng", accessToken, HttpStatus.OK.value());
+        return new ApiResponse<>("đăng nhập thành công", accessToken, HttpStatus.OK.value());
     }
 
     @Override
     public ApiResponse<String> refreshToken(HttpServletRequest request, HttpServletResponse response) {
         Cookie[] cookies = request.getCookies();
         if (cookies == null) {
-            return new ApiResponse<>("cookie háº¿t háº¡n", null, HttpStatus.BAD_REQUEST.value());
+            return new ApiResponse<>("cookie hết hạn", null, HttpStatus.BAD_REQUEST.value());
         }
         for (Cookie cookie : cookies) {
             if (!"refreshToken".equals(cookie.getName())) {
@@ -150,10 +150,10 @@ public class AuthServiceImpl implements AuthService {
                 response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
                 return new ApiResponse<>("success", accessToken, HttpStatus.OK.value());
             }
-            return new ApiResponse<>("phiÃªn báº£n Ä‘Äƒng nháº­p háº¿t háº¡n, hÃ£y Ä‘Äƒng nháº­p láº¡i",
+            return new ApiResponse<>("phiên bản đăng nhập hết hạn, hãy đăng nhập lại",
                     "cookie-expired", HttpStatus.NOT_FOUND.value());
         }
-        return new ApiResponse<>("khÃ´ng tÃ¬m tháº¥y refresh token, Ä‘Äƒng nháº­p láº¡i", null, HttpStatus.NOT_FOUND.value());
+        return new ApiResponse<>("không tìm thấy refresh token, đăng nhập lại", null, HttpStatus.NOT_FOUND.value());
     }
 
     @Override
@@ -176,14 +176,14 @@ public class AuthServiceImpl implements AuthService {
             }
         }
         response.setHeader("Authorization", "");
-        return new ApiResponse<>("logout thÃ nh cÃ´ng", null, HttpStatus.OK.value());
+        return new ApiResponse<>("logout thành công", null, HttpStatus.OK.value());
     }
 
     @Override
     public ApiResponse<String> sendCodeForgotPassword(HttpServletRequest request, String email) {
         String ip = getClientIP(request);
         if (email == null || email.isEmpty()) {
-            return new ApiResponse<>("email rá»—ng", null, HttpStatus.BAD_REQUEST.value());
+            return new ApiResponse<>("email rỗng", null, HttpStatus.BAD_REQUEST.value());
         }
         if (spamService.checkIpSpamEmail(ip)) {
             return new ApiResponse<>(spamService.getMessageEmailSpam(ip), null, HttpStatus.BAD_REQUEST.value());
@@ -191,23 +191,23 @@ public class AuthServiceImpl implements AuthService {
         spamService.addIpSpamEmail(ip);
 
         if (userRepository.findByEmail(email).isEmpty()) {
-            return new ApiResponse<>("email khÃ´ng tá»“n táº¡i trong há»‡ thá»‘ng", null, HttpStatus.BAD_REQUEST.value());
+            return new ApiResponse<>("email không tồn tại trong hệ thống", null, HttpStatus.BAD_REQUEST.value());
         }
         String refCode = refService.getRef(6).toUpperCase();
-        MailMessage mailMessage = new MailMessage(email, "MÃ£ xÃ¡c thá»±c quÃªn máº­t kháº©u", "MÃ£ xÃ¡c thá»±c cá»§a báº¡n lÃ : " + refCode);
+        MailMessage mailMessage = new MailMessage(email, "Mã xác thực quên mật khẩu", "Mã xác thực của bạn là: " + refCode);
         mailProducer.sendMail(mailMessage);
 
         verifyService.add("ref-email:" + email, refCode, 60 * 5);
-        return new ApiResponse<>("ChÃºng tÃ´i Ä‘Ã£ gá»­i mÃ£ xÃ¡c thá»±c vÃ o email cá»§a báº¡n", null, HttpStatus.OK.value());
+        return new ApiResponse<>("Chúng tôi đã gửi mã xác thực vào email của bạn", null, HttpStatus.OK.value());
     }
 
     @Override
     public ApiResponse<String> forgotPassword(ForgotPassDTO forgotPassDTO) {
         if (!verifyService.containsKey("ref-email:" + forgotPassDTO.getEmail())) {
-            return new ApiResponse<>("MÃ£ xÃ¡c thá»±c háº¿t háº¡n", null, HttpStatus.BAD_REQUEST.value());
+            return new ApiResponse<>("Mã xác thực hết hạn", null, HttpStatus.BAD_REQUEST.value());
         }
         if (!verifyService.getValue("ref-email:" + forgotPassDTO.getEmail()).equals(forgotPassDTO.getCode())) {
-            return new ApiResponse<>("MÃ£ xÃ¡c thá»±c khÃ´ng khá»›p", null, HttpStatus.BAD_REQUEST.value());
+            return new ApiResponse<>("Mã xác thực không khớp", null, HttpStatus.BAD_REQUEST.value());
         }
         String random = UUID.randomUUID().toString();
         verifyService.add("random:" + random, forgotPassDTO.getEmail(), 5 * 60);
@@ -218,10 +218,10 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public ApiResponse<String> checkRandom(String random) {
         if (!StringUtils.hasText(random)) {
-            return new ApiResponse<>("MÃ£ xÃ¡c thá»±c khÃ´ng tá»“n táº¡i", null, HttpStatus.BAD_REQUEST.value());
+            return new ApiResponse<>("Mã xác thực không tồn tại", null, HttpStatus.BAD_REQUEST.value());
         }
         if (!verifyService.containsKey("random:" + random)) {
-            return new ApiResponse<>("Báº¡n pháº£i xÃ¡c thá»±c email trÆ°á»›c khi dÃ¹ng cÃ i láº¡i máº­t kháº©u",
+            return new ApiResponse<>("Bạn phải xác thực email trước khi dùng cài lại mật khẩu",
                     null, HttpStatus.BAD_REQUEST.value());
         }
         return new ApiResponse<>("success", null, HttpStatus.OK.value());
@@ -230,7 +230,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public ApiResponse<String> resetPassword(ResetDTO resetDTO) {
         if (!verifyService.containsKey("random:" + resetDTO.getRandom())) {
-            return new ApiResponse<>("MÃ£ xÃ¡c thá»±c Ä‘Ã£ háº¿t háº¡n", null, HttpStatus.BAD_REQUEST.value());
+            return new ApiResponse<>("Mã xác thực đã hết hạn", null, HttpStatus.BAD_REQUEST.value());
         }
         String email = verifyService.getValue(resetDTO.getRandom()).toString();
         Optional<User> user = userRepository.findByEmail(email);
@@ -242,13 +242,13 @@ public class AuthServiceImpl implements AuthService {
             verifyService.delete(resetDTO.getRandom());
             return new ApiResponse<>("success", null, HttpStatus.OK.value());
         }
-        return new ApiResponse<>("XÃ¡c thá»±c tháº¥t báº¡i", null, HttpStatus.BAD_REQUEST.value());
+        return new ApiResponse<>("Xác thực thất bại", null, HttpStatus.BAD_REQUEST.value());
     }
 
     @Override
     public ApiResponse<String> checkLogin(Principal principal) {
         if (principal == null) {
-            return new ApiResponse<>("fail", "", HttpStatus.BAD_REQUEST.value());
+            return new ApiResponse<>("fail", "", HttpStatus.UNAUTHORIZED.value());
         }
         return new ApiResponse<>("success", principal.getName(), HttpStatus.OK.value());
     }

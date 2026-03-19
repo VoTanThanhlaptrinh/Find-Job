@@ -38,7 +38,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public ApiResponse<UserInfo> getDetailUser(Principal principal) {
         if (principal == null) {
-            return new ApiResponse<>("ChÆ°a Ä‘Äƒng nháº­p", null, HttpStatus.BAD_REQUEST.value());
+            return new ApiResponse<>("Chưa đăng nhập", null, HttpStatus.BAD_REQUEST.value());
         }
         User userLogin = userRepository.findByEmail(principal.getName()).orElseThrow(RuntimeException::new);
         UserInfo userInfo = new UserInfo();
@@ -50,7 +50,7 @@ public class AccountServiceImpl implements AccountService {
     public ApiResponse<String> changePassword(String newPassword, String oldPassword) {
         User userLogin = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (!encoder.matches(oldPassword, userLogin.getPassword())) {
-            return new ApiResponse<>("password hiá»‡n táº¡i khÃ´ng khá»›p", null, HttpStatus.BAD_REQUEST.value());
+            return new ApiResponse<>("password hiện tại không khớp", null, HttpStatus.BAD_REQUEST.value());
         }
         userLogin.setPassword(encoder.encode(newPassword));
         userRepository.save(userLogin);
@@ -61,22 +61,22 @@ public class AccountServiceImpl implements AccountService {
     public ApiResponse<String> updateInfo(UserInfo userInfo, Principal principal) {
         Optional<User> user = userRepository.findByEmail(principal.getName());
         if (user.isEmpty()) {
-            return new ApiResponse<>("KhÃ´ng tÃ¬m tháº¥y user trong há»‡ thá»‘ng", null, HttpStatus.BAD_REQUEST.value());
+            return new ApiResponse<>("Không tìm thấy user trong hệ thống", null, HttpStatus.BAD_REQUEST.value());
         }
         User userLogin = user.get();
         userInfo.update(userLogin);
         userRepository.save(userLogin);
-        return new ApiResponse<>("Cáº­p nháº­t thÃ nh cÃ´ng", null, HttpStatus.OK.value());
+        return new ApiResponse<>("Cập nhật thành công", null, HttpStatus.OK.value());
     }
 
     @Override
     public ApiResponse<String> checkOauth2(Principal principal) {
         if (principal == null) {
-            return new ApiResponse<>("Báº¡n chÆ°a Ä‘Äƒng nháº­p", null, HttpStatus.UNAUTHORIZED.value());
+            return new ApiResponse<>("Bạn chưa đăng nhập", null, HttpStatus.UNAUTHORIZED.value());
         }
         Optional<User> user = userRepository.findByEmail(principal.getName());
         if (user.isEmpty()) {
-            return new ApiResponse<>("TÃ i khoáº£n nÃ y khÃ´ng tá»“n táº¡i trong há»‡ thá»‘ng",
+            return new ApiResponse<>("Tài khoản này không tồn tại trong hệ thống",
                     principal.getName(), HttpStatus.BAD_REQUEST.value());
         }
         if (user.get().isOauth2Enabled() && (user.get().getPassword() == null || user.get().getPassword().isEmpty())) {
@@ -91,11 +91,11 @@ public class AccountServiceImpl implements AccountService {
                 mailProducer.sendMail(mailMessage);
             } catch (Exception e) {
                 log.trace(e.getMessage(), e);
-                return new ApiResponse<>("Gá»­i email tháº¥t báº¡i", null, HttpStatus.INTERNAL_SERVER_ERROR.value());
+                return new ApiResponse<>("Gửi email thất bại", null, HttpStatus.INTERNAL_SERVER_ERROR.value());
             }
-            return new ApiResponse<>("TÃ i khoáº£n cá»§a báº¡n chÆ°a cÃ³ máº­t kháº©u, báº¡n cáº§n xÃ¡c thá»±c Ä‘á»ƒ táº¡o má»›i",
+            return new ApiResponse<>("Tài khoản của bạn chưa có mật khẩu, bạn cần xác thực để tạo mới",
                     principal.getName(), HttpStatus.OK.value());
         }
-        return new ApiResponse<>("khÃ´ng cÃ³ váº¥n Ä‘á»", principal.getName(), 301);
+        return new ApiResponse<>("không có vấn đề", principal.getName(), 301);
     }
 }

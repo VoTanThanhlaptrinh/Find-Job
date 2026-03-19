@@ -33,7 +33,6 @@ interface PreviousCvOption {
 export class ApplyCvComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   applyCvForm: ApplyCvFormGroup;
-  jobDetail: any;
   jobId!: number;
   selectedFile: File | null = null;
   isDragging = false;
@@ -63,9 +62,10 @@ export class ApplyCvComponent implements OnInit {
       this.jobId = params['id'];
     });
   }
-  checkApplyJob() {
+
+  checkApplyJob(): void {
     this.jobService.checkApplyJob(this.jobId).pipe(take(1)).subscribe({
-      next: (response: any) => {
+      next: (response) => {
         if (!response.data) {
           this.router.navigate(['/']);
         }

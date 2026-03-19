@@ -1,5 +1,6 @@
 package com.job_web.controller.account;
 
+import java.security.Principal;
 import java.util.concurrent.CompletableFuture;
 
 import com.job_web.dto.auth.ForgotPassDTO;
@@ -67,7 +68,7 @@ public class AuthController {
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @GetMapping("/refresh-token")
+    @GetMapping("/refreshToken")
     public ResponseEntity<ApiResponse<String>> refreshToken(HttpServletRequest request, HttpServletResponse response) {
         ApiResponse<String> res = authService.refreshToken(request, response);
         return ResponseEntity.status(res.getStatus()).body(res);
@@ -87,7 +88,7 @@ public class AuthController {
     }
 
     @GetMapping("/status")
-    public ResponseEntity<ApiResponse<String>> checkLogin(java.security.Principal principal) {
+    public ResponseEntity<ApiResponse<String>> checkLogin(Principal principal) {
         ApiResponse<String> res = authService.checkLogin(principal);
         return ResponseEntity.status(res.getStatus()).body(res);
     }

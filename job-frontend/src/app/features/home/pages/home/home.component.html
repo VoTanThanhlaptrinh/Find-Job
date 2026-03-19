@@ -142,9 +142,9 @@
         </ul>
 
         <!-- Nếu có công việc -->
-        @if (jobPosts?.length > 0) {
+        @if (jobPosts.length > 0) {
           @for (item of jobPosts; track trackById($index, item)) {
-            <app-job-card [job]="item"></app-job-card>
+            <app-job-card [job]="item" image="assets/web_css/img/post.png" detailRoute="/single"></app-job-card>
           }
         } @else {
           <div class="alert alert-info text-center">Không có công việc nào</div>

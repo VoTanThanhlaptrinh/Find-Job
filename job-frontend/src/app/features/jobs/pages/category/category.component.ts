@@ -1,13 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { CategoryService } from '../../services/category.service';
-import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
-import {take} from 'rxjs';
-import {FormsModule} from '@angular/forms';
-import {NgxSliderModule} from '@angular-slider/ngx-slider';
-import {MatSlider, MatSliderRangeThumb} from '@angular/material/slider';
-import { SearchFormComponent } from '../../../../shared/components/search-form/search-form.component';
-import { JobCardComponent } from '../../../../shared/components/job-card/job-card.component';
+import { FormsModule } from '@angular/forms';
+import { NgxSliderModule } from '@angular-slider/ngx-slider';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatSlider, MatSliderRangeThumb } from '@angular/material/slider';
+import { take } from 'rxjs';
 import { CallToActionComponent } from '../../../../shared/components/call-to-action/call-to-action.component';
+import { JobCardComponent } from '../../../../shared/components/job-card/job-card.component';
+import { SearchFormComponent } from '../../../../shared/components/search-form/search-form.component';
+import {
+  AddressCountViewModel,
+  JobFilterPayload,
+} from '../../../../shared/models/jobs/job-api-response.model';
+import { JobCardModel } from '../../../../shared/models/jobs/job-card.model';
+import { CategoryService } from '../../services/category.service';
 
 @Component({
   selector: 'app-category',
@@ -19,18 +24,19 @@ import { CallToActionComponent } from '../../../../shared/components/call-to-act
     MatSliderRangeThumb,
     SearchFormComponent,
     JobCardComponent,
-    CallToActionComponent
-],
+    CallToActionComponent,
+  ],
   standalone: true,
   templateUrl: './category.component.html',
-  styleUrl: './category.component.css'
+  styleUrl: './category.component.css',
 })
 export class CategoryComponent implements OnInit {
-  listJobsNewest : any;
-  addressCount: any;
-  pageIndex: number = 0;
-  pageSize: number = 10;
-  length : number = 0;
+  listJobsNewest: JobCardModel[] = [];
+  addressCount: AddressCountViewModel[] = [];
+
+  pageIndex = 0;
+  pageSize = 10;
+  length = 0;
   min = 0;
   max = 100000000;
   step = 500000;
@@ -38,149 +44,123 @@ export class CategoryComponent implements OnInit {
 
   minSalary = 5000000;
   maxSalary = 50000000;
-  selectedAddresses: Set<string> = new Set<string>();
-  selectedTypes: Set<string> = new Set<string>();
+  selectedAddresses = new Set<string>();
+  selectedTypes = new Set<string>();
   jobTypes = [
-    { label: 'Toàn thời gian (Full time)', checked: false },
-    { label: 'Bán thời gian (Part time)', checked: false },
-    { label: 'Tự do (Freelance)', checked: false },
-    { label: 'Thực tập (Internship)', checked: false },
+    { label: 'Full time', checked: false },
+    { label: 'Part time', checked: false },
+    { label: 'Freelance', checked: false },
+    { label: 'Internship', checked: false },
   ];
 
-  constructor(private category: CategoryService) { }
+  constructor(private category: CategoryService) {}
+
   ngOnInit(): void {
-    this.getListJobsNewest(this.pageIndex,this.pageSize);
+    this.getListJobsNewest(this.pageIndex, this.pageSize);
     this.getAmount();
     this.getAddressCount();
   }
-  getListJobsNewest(pageIndex:number, pageSize:number) {
+
+  getListJobsNewest(pageIndex: number, pageSize: number): void {
     this.category.listJobsNewest(pageIndex, pageSize).subscribe({
       next: (res) => {
-        this.listJobsNewest = res.data.content.map((item: any) => ({
-            id: item.id,
-            title: item.title,
-            address: item.address,
-            image: "assets/web_css/img/post.png",
-            link: item.link,
-            description: item.description,
-            salary: item.salary,
-            type: item.time
-          }));
+        this.listJobsNewest = res.data.content;
       },
       error: (error) => {
         console.error('Error fetching jobs:', error);
-      }
+      },
     });
   }
-  getAmount(){
-    this.category.getAmount().pipe(take(1)).subscribe(
-      {next :(response) =>{
-          this.length  = response.data;
-        },
-        error: (error) => {
-          console.error('Error fetching jobs:', error);
-        }
-      }
-    );
+
+  getAmount(): void {
+    this.category.getAmount().pipe(take(1)).subscribe({
+      next: (response) => {
+        this.length = response.data;
+      },
+      error: (error) => {
+        console.error('Error fetching jobs:', error);
+      },
+    });
   }
 
-  handlePage($event: PageEvent) {
-    this.getListJobsNewest($event.pageIndex,$event.pageSize);
+  handlePage(event: PageEvent): void {
+    this.getListJobsNewest(event.pageIndex, event.pageSize);
   }
-  getAddressCount(){
+
+  getAddressCount(): void {
     this.category.getAddressCount().subscribe({
       next: (res) => {
-        this.addressCount = res.data.map((item: any) => ({
-          amount: item.count,
-          address: item.address,
-        }));
+        this.addressCount = res.data;
       },
       error: (error) => {
         console.error('Error fetching jobs:', error);
-      }
+      },
     });
   }
-  formatMoney(val: number): string {
-    return val.toLocaleString('vi-VN') + '₫';
+
+  formatMoney(value: number): string {
+    return `${value.toLocaleString('vi-VN')} VND`;
   }
 
-  onMinChange(value: number) {
+  onMinChange(value: number): void {
     this.minSalary = Math.min(value, this.maxSalary - this.minGap);
-    const filter = {
-      pageIndex: this.pageIndex,
-      pageSize: this.pageSize,
-      min: this.minSalary,
-      max: this.maxSalary,
-      address: Array.from(this.selectedAddresses),
-      times: Array.from(this.selectedTypes)
-    };
-    this.searchWithFilters(filter);
+    this.searchWithFilters(this.buildFilterPayload());
   }
 
-  onMaxChange(value: number) {
+  onMaxChange(value: number): void {
     this.maxSalary = Math.max(value, this.minSalary + this.minGap);
-    const filter = {
-      pageIndex: this.pageIndex,
-      pageSize: this.pageSize,
-      min: this.minSalary,
-      max: this.maxSalary,
-      address: Array.from(this.selectedAddresses),
-      times: Array.from(this.selectedTypes)
-    };
-    this.searchWithFilters(filter);
+    this.searchWithFilters(this.buildFilterPayload());
   }
 
-  onFilterChange($event: Event) {
-    const input = $event.target as HTMLInputElement;
+  onFilterChange(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+
+    if (!input) {
+      return;
+    }
+
     const value = input.value;
     const checked = input.checked;
 
-    // Xử lý cho địa chỉ
-    if (this.addressCount.find((a: { address: string; }) => a.address === value)) {
+    if (this.addressCount.some((item) => item.address === value)) {
       if (checked) {
         this.selectedAddresses.add(value);
       } else {
-         this.selectedAddresses.delete(value);
+        this.selectedAddresses.delete(value);
       }
     }
 
-    // Xử lý cho loại công việc
-    if (this.jobTypes.find(j => j.label === value)) {
+    if (this.jobTypes.some((item) => item.label === value)) {
       if (checked) {
         this.selectedTypes.add(value);
       } else {
-        this.selectedTypes.delete( value);
+        this.selectedTypes.delete(value);
       }
     }
+
     this.pageIndex = 0;
-    const filter = {
+    this.searchWithFilters(this.buildFilterPayload());
+  }
+
+  private buildFilterPayload(): JobFilterPayload {
+    return {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize,
       min: this.minSalary,
       max: this.maxSalary,
       address: Array.from(this.selectedAddresses),
-      times: Array.from(this.selectedTypes)
+      times: Array.from(this.selectedTypes),
     };
-    this.searchWithFilters(filter);
   }
 
-  private searchWithFilters(filter: any) {
+  private searchWithFilters(filter: JobFilterPayload): void {
     this.category.filterWithAddressTimeSalary(filter).subscribe({
       next: (res) => {
-        this.listJobsNewest = res.data.content.map((item: any) => ({
-          id: item.id,
-          title: item.title,
-          address: item.address,
-          image: "assets/web_css/img/post.png",
-          link: item.link,
-          description: item.description,
-          salary: item.salary,
-          type: item.time
-        }));
+        this.listJobsNewest = res.data.content;
       },
       error: (error) => {
         console.error('Error fetching jobs:', error);
-      }
+      },
     });
   }
 }

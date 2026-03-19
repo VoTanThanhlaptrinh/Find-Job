@@ -13,45 +13,45 @@ export class BlogService {
   }
   blogList(pageIndex: number, pageSize: number): Observable<any> {
     return this.http.get<any>(
-      `${this.url}/blog/pub/blogList/${pageIndex}/${pageSize}`
+      `${this.url}/blogs/page/${pageIndex}/${pageSize}`
     );
   }
 
   commentList(pageIndex: number, pageSize: number): Observable<any> {
     return this.http.get<any>(
-      `${this.url}/blog/pub/commentList/${pageIndex}/${pageSize}`
+      `${this.url}/blogs/comments/${pageIndex}/${pageSize}`
     );
   }
 
   postBlog(blog: any) {
     return this.http.post<any>(
-      `${this.url}/blog/pri/postBlog`,
+      `${this.url}/blogs`,
       blog,
       { withCredentials: true }
     );
   }
   blogDetail(blogId: bigint) {
     return this.http.get<any>(
-      `${this.url}/blog/pub/blogDetail/${blogId}`
+      `${this.url}/blogs/${blogId}`
     );
   }
   like(blogId: bigint) {
     return this.http.post<any>(
-      `${this.url}/blog/pri/like`,
+      `${this.url}/blogs/like`,
       blogId,
       { withCredentials: true }
     );
   }
   unlike(blogId: bigint) {
     return this.http.post<any>(
-      `${this.url}/blog/pri/unlike`,
+      `${this.url}/blogs/unlike`,
       blogId,
       { withCredentials: true }
     );
   }
   comment(comment: any) {
     return this.http.post<any>(
-      `${this.url}/blog/pri/comment`,
+      `${this.url}/blogs/comment`,
       comment,
       { withCredentials: true }
     );

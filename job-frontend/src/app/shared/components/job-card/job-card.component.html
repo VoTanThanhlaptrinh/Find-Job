@@ -1,11 +1,11 @@
 <div [id]="job.id" class="single-post flex flex-row mb-3">
   <div class="thumb">
-    <img title="img" class="img-fluid" [src]="job.image" [alt]="job.title" />
+    <img title="img" class="img-fluid" [src]="image" [alt]="job.title" />
   </div>
   <div class="details ms-2">
     <div class="title d-flex flex-row justify-content-between">
       <div class="titles">
-        <a [href]="job.link">
+        <a [routerLink]="[detailRoute, job.id]">
           <h4>{{ job.title }}</h4>
         </a>
       </div>
@@ -16,7 +16,7 @@
       <span class="divider"></span>
       <span><i class="lnr lnr-database"></i>&nbsp;{{ formatMoney(job.salary) }}</span>
       <span class="divider"></span>
-      <span>{{ job.type }}</span>
+      <span>{{ job.time }}</span>
     </p>
   </div>
 </div>

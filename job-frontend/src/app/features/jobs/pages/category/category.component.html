@@ -87,7 +87,7 @@
           </div>
             <div class="col-lg-8 post-list">
                 @for (item of listJobsNewest; track item.id) {
-              <app-job-card [job]="item"></app-job-card>
+              <app-job-card [job]="item" image="assets/web_css/img/post.png" detailRoute="/single"></app-job-card>
                 } @empty {
                 <li>There are no items.</li>
                 }

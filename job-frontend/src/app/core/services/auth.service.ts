@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { computed, Injectable, signal } from '@angular/core';
 import {
   catchError,
+  finalize,
   Observable,
   of,
   startWith,
@@ -26,21 +27,33 @@ export class AuthService {
   url = '';
   loginClick = signal(false);
   registerClick = signal(false);
+  private readonly loggedIn = signal(false);
+  private pageAccessTrackingInitialized = false;
+  private loginStatusRequestInFlight = false;
 
   username = signal('');
   public isLoginClicked = computed(() => this.loginClick());
   public isRegisterClicked = computed(() => this.registerClick());
-  private loggedIn: boolean = false;
+  public isLoggedIn = computed(() => this.loggedIn());
   constructor(
     private http: HttpClient,
     private router: Router,
     private tokenService: TokenService,
     private utilities: UtilitiesService
   ) {
-    this.url = this.utilities.getURLDev()
+    this.url = this.utilities.getURLDev();
+    this.checkPageAccess();
   }
 
   checkPageAccess() {
+    if (this.pageAccessTrackingInitialized) {
+      return;
+    }
+
+    this.pageAccessTrackingInitialized = true;
+    this.loginClick.set(this.router.url === '/login');
+    this.registerClick.set(this.router.url === '/register');
+
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event) => {
@@ -48,8 +61,7 @@ export class AuthService {
         const url = navigationEvent.urlAfterRedirects;
         this.loginClick.set(url === '/login');
         this.registerClick.set(url === '/register');
-      }
-      ).unsubscribe();
+      });
   }
 
   login(body: any) {
@@ -61,6 +73,7 @@ export class AuthService {
         take(1),
         map((res) => {
           this.tokenService.setToken(res.data);
+          this.setLoggedIn(true);
         })
       ).subscribe();
   }
@@ -73,7 +86,8 @@ export class AuthService {
         take(1),
         map((res) => {
           this.tokenService.setToken(res.data);
-          this.router.navigate(['/hirer']).then(() => window.location.reload());
+          this.setLoggedIn(true);
+          this.router.navigate(['/hirer']);
         }),
         catchError((err) => {
           const msg = err?.error?.message || 'Login failed';
@@ -103,6 +117,35 @@ export class AuthService {
     const url = `${this.url}/auth/refreshToken`;
     return this.http.get<any>(url, { withCredentials: true });
   }
+  checkLoginStatus(): void {
+    if (this.loginStatusRequestInFlight) {
+      return;
+    }
+
+    this.loginStatusRequestInFlight = true;
+    this.http.get<ApiResponse<string>>(`${this.url}/auth/status`, { withCredentials: true }).pipe(
+      take(1),
+      map((res) => Boolean(res.data)),
+      catchError(() => of(false)),
+      finalize(() => {
+        this.loginStatusRequestInFlight = false;
+      })
+    ).subscribe((isLoggedIn) => {
+      this.loggedIn.set(isLoggedIn);
+    });
+  }
+  logout(): void {
+    this.http
+      .get<any>(`${this.url}/auth/logout`, { withCredentials: true })
+      .pipe(
+        take(1),
+        finalize(() => {
+          this.router.navigate(['/login']);
+          this.tokenService.clearToken();
+          this.loggedIn.set(false);
+        })
+      ).subscribe();
+  }
   forgotPass(form: any): Observable<any> {
     return this.http
       .post(`${this.url}/auth/forgotPassword`, form)
@@ -114,14 +157,10 @@ export class AuthService {
   hasAnyRole(roles: string[], expectedRole: any) {
     return roles?.includes(expectedRole);
   }
+  setLoggedIn(value: boolean): void {
+    this.loggedIn.set(value);
+  }
   isLogin(): boolean {
-    this.http.get<ApiResponse<string>>(`${this.url}/auth/checkLogin`, { withCredentials: true }).pipe(
-      take(1),
-      map(res => res.data),
-      catchError(() => of(false))
-    ).subscribe((result) => {
-      this.loggedIn = (result && this.tokenService.getTokenSubject() === result) ? true : false;
-    });
-    return this.loggedIn;
+    return this.loggedIn();
   }
 }

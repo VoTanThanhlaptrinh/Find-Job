@@ -55,13 +55,13 @@
     <div class="row justify-content-center d-flex">
       <div class="col-lg-8 post-list">
         <!-- Nếu có công việc -->
-         @if (jobPosts?.length > 0) {
+         @if (jobPosts.length > 0) {
         <ng-container>
           @for (item of jobPosts; track $index) {
-          <div
+            <div
             class="single-post flex flex-row mb-3">
             <div class="thumb">
-              <img title="image-item" class="img-fluid" [src]="item.image">
+              <img title="image-item" class="img-fluid" src="assets/web_css/img/post.png">
             </div>
             <div class="details ms-2">
               <div class="title d-flex flex-row justify-content-between">

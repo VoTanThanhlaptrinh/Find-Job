@@ -33,9 +33,6 @@ export class LoginComponent implements OnInit {
   constructor(
     private loginService: AuthService,
     private accountService: AccountService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private toastr: NotifyMessageService
   ) {
   }
 

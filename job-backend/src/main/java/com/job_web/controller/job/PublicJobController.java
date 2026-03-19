@@ -4,11 +4,12 @@ import java.util.List;
 
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.dto.job.AddressJobCount;
+import com.job_web.dto.job.JobCardView;
+import com.job_web.dto.job.JobDetailView;
 import com.job_web.dto.job.JobFilterDTO;
-import com.job_web.models.Job;
+import com.job_web.dto.job.PagedPayload;
 import com.job_web.service.job.JobService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,8 +25,8 @@ public class PublicJobController {
     private final JobService jobService;
 
     @GetMapping("/newest/{pageIndex}/{pageSize}")
-    public ResponseEntity<ApiResponse<Page<Job>>> getListJobNewest(@PathVariable int pageIndex, @PathVariable int pageSize) {
-        ApiResponse<Page<Job>> res = jobService.getListJobNewest(pageIndex, pageSize);
+    public ResponseEntity<ApiResponse<PagedPayload<JobCardView>>> getListJobNewest(@PathVariable int pageIndex, @PathVariable int pageSize) {
+        ApiResponse<PagedPayload<JobCardView>> res = jobService.getListJobNewest(pageIndex, pageSize);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
@@ -35,15 +36,15 @@ public class PublicJobController {
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @GetMapping("/address-count")
+    @GetMapping("/addressCount")
     public ResponseEntity<ApiResponse<List<AddressJobCount>>> getAddressCount() {
         ApiResponse<List<AddressJobCount>> res = jobService.getAddressJobCount();
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
     @PostMapping("/filter")
-    public ResponseEntity<ApiResponse<Page<Job>>> filterWithAddressTimeSalary(@RequestBody JobFilterDTO jobFilterDTO) {
-        ApiResponse<Page<Job>> res = jobService.filterBetterSalaryAndHasAddressAndInTimes(
+    public ResponseEntity<ApiResponse<PagedPayload<JobCardView>>> filterWithAddressTimeSalary(@RequestBody JobFilterDTO jobFilterDTO) {
+        ApiResponse<PagedPayload<JobCardView>> res = jobService.filterBetterSalaryAndHasAddressAndInTimes(
                 jobFilterDTO.getPageIndex(),
                 jobFilterDTO.getPageSize(),
                 jobFilterDTO.getMin(),
@@ -54,8 +55,8 @@ public class PublicJobController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Job>> getJobDetail(@PathVariable String id) {
-        ApiResponse<Job> res = jobService.getJobDetailById(id);
+    public ResponseEntity<ApiResponse<JobDetailView>> getJobDetail(@PathVariable String id) {
+        ApiResponse<JobDetailView> res = jobService.getJobDetailById(id);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 

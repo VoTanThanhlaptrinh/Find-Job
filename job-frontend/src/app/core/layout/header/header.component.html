@@ -9,19 +9,17 @@
   <div class="container">
     <div class="flex justify-between items-center">
       <div id="logo">
-        <a href="/"
-          ><img src="assets/web_css/img/logo.png" alt="" title=""
-        /></a>
+        <a href="/"><img src="assets/web_css/img/logo.png" alt="" title="" /></a>
       </div>
       <c-navbar id="nav-menu-container" expand="lg">
-        <c-container [fluid]="true">
+        <c-container>
           <c-navbar-nav class="nav-menu">
             <ng-container>
               <c-nav-item class="menu-active">
-                <a cNavLink href="/">Trang chủ</a>
+                <a cNavLink href="/">Trang chu</a>
               </c-nav-item>
               <c-nav-item>
-                <a cNavLink href="/category">Tìm việc</a>
+                <a cNavLink href="/category">Tim viec</a>
               </c-nav-item>
             </ng-container>
 
@@ -29,12 +27,12 @@
               <a cNavLink href="/blogHome">Blog</a>
             </c-nav-item>
             <c-nav-item>
-              <a cNavLink href="/contact">Liên hệ</a>
+              <a cNavLink href="/contact">Lien he</a>
             </c-nav-item>
             <c-nav-item>
-              <a cNavLink href="/about">Thông tin</a>
+              <a cNavLink href="/about">Thong tin</a>
             </c-nav-item>
-            @if (isLogin()) {
+            @if (isLoggedIn) {
               <ng-container>
                 <c-dropdown
                   variant="nav-item"
@@ -42,60 +40,54 @@
                   autoClose="outside"
                 >
                   <c-nav-item>
-                    <a cDropdownToggle cNavLink style="color: aliceblue"
-                      >Tài khoản</a
-                    >
+                    <a cDropdownToggle cNavLink style="color: aliceblue">Tai khoan</a>
                   </c-nav-item>
                   <ul cDropdownMenu>
                     <li>
                       <button cDropdownItem (click)="goInfor()">
-                        Thông tin cá nhân
+                        Thong tin ca nhan
                       </button>
                     </li>
                     <li>
                       <button cDropdownItem (click)="goVerify()">
-                        Kích hoạt tài khoản
+                        Kich hoat tai khoan
                       </button>
                     </li>
                     <li>
                       <button cDropdownItem (click)="logout()">
-                        Đăng xuất
+                        Dang xuat
                       </button>
                     </li>
                   </ul>
                 </c-dropdown>
               </ng-container>
             } @else {
-              <ng-container
-                class="flex flex-row justify-between w-full gap-x-2"
-              >
-                @if (isPageLogin()) {
+              <ng-container class="flex flex-row justify-between w-full gap-x-2">
+                @if (isLoginPage) {
                   <c-nav-item
                     class="bg-white rounded-lg border-blue-900 border-2! px-4 py-2 mr-2"
                   >
-                    <a cNavLink href="/login" class="text-black!">Đăng nhập</a>
+                    <a cNavLink href="/login" class="text-black!">Dang nhap</a>
                   </c-nav-item>
                 } @else {
                   <c-nav-item class="rounded-lg bg-blue-500 px-4 py-2 mr-2">
-                    <a cNavLink href="/login">Đăng nhập</a>
+                    <a cNavLink href="/login">Dang nhap</a>
                   </c-nav-item>
                 }
-                @if (isPageRegister()) {
+                @if (isRegisterPage) {
                   <c-nav-item
                     class="bg-white rounded-lg border-blue-900 border-2! px-4 py-2"
                   >
-                    <a cNavLink href="/register" class="text-black!">Đăng ký</a>
+                    <a cNavLink href="/register" class="text-black!">Dang ky</a>
                   </c-nav-item>
                 } @else {
                   <c-nav-item class="rounded-lg bg-blue-500 px-4 py-2">
-                    <a cNavLink href="/register">Đăng ký</a>
+                    <a cNavLink href="/register">Dang ky</a>
                   </c-nav-item>
                 }
               </ng-container>
             }
-            <!-- Nếu chưa đăng nhập -->
           </c-navbar-nav>
-          <!-- </div> -->
         </c-container>
       </c-navbar>
     </div>

@@ -59,7 +59,7 @@ public class SecurityConfig {
                                 "/api/auth/status",
                                 "/api/home/init",
                                 "/error",
-                                "/oauth2/**", "/login/oauth2/**", "/auth/**").permitAll()
+                                "/oauth2/**", "/login/oauth2/**", "/auth/status").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/jobs/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/jobs/filter").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/blogs/**").permitAll()

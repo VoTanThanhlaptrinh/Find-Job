@@ -4,6 +4,7 @@ import { catchError, finalize, map, Observable, of, startWith, take } from 'rxjs
 import { Router } from '@angular/router';
 import { TokenService } from './token.service';
 import { UtilitiesService } from './utilities.service';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -15,21 +16,10 @@ export class AccountService {
     private http: HttpClient,
     private router: Router,
     private tokenService: TokenService,
-    private utilities: UtilitiesService
+    private utilities: UtilitiesService,
+    private auth: AuthService
   ) {
     this.url = this.utilities.getURLDev();
-  }
-
-  logout(): void {
-    this.http
-      .get<any>(`${this.url}/account/logout`, { withCredentials: true })
-      .pipe(
-        take(1),
-        finalize(() => {
-          this.router.navigate(['/login']);
-          this.tokenService.clearToken();
-        })
-      ).subscribe();
   }
 
   activate(token: string): Observable<any> {
@@ -37,7 +27,7 @@ export class AccountService {
   }
 
   getGoogleLoginUrl(): Observable<any> {
-    return this.http.get(`${this.url}/account/url/google`);
+    return this.http.get(`${this.url}/auth/google/url`);
   }
 
   sendCode(email: string): Observable<any> {
