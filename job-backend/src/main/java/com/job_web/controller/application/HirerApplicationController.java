@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(path = "/api/apply", produces = "application/json")
+@RequestMapping(path = "/api/hirer/applications", produces = "application/json")
 @RequiredArgsConstructor
 public class HirerApplicationController {
     private final ApplyService applyService;
 
-    @GetMapping("/pri/h/getAllCandidateAppliedJob/{pageIndex}/{pageSize}/{jobId}")
+    @GetMapping("/jobs/{jobId}/candidates/{pageIndex}/{pageSize}")
     public ResponseEntity<ApiResponse<Page<CandidateDTO>>> getAllCandidateAppliedJob(@PathVariable("pageIndex") int pageIndex,
                                                                                      @PathVariable("pageSize") int pageSize,
                                                                                      @PathVariable("jobId") long jobId) {

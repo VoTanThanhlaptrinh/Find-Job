@@ -18,18 +18,18 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/api/resume", produces = "application/json")
+@RequestMapping(path = "/api/hirer/resumes", produces = "application/json")
 @RequiredArgsConstructor
 public class HirerResumeController {
     private final ResumeService resumeService;
 
-    @GetMapping("/pri/h/listByUser/{email}")
+    @GetMapping("/users/{email}")
     public ResponseEntity<ApiResponse<List<ResumeDTO>>> listResumesByUser(@PathVariable("email") String email) {
         ApiResponse<List<ResumeDTO>> res = resumeService.getResumesByUser(email);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @GetMapping("/pri/h/downloadResume/{id}")
+    @GetMapping("/{id}/download")
     public ResponseEntity<Resource> downloadResume(@PathVariable("id") long id) {
         Resume resume = resumeService.findById(id);
         if (resume == null) {

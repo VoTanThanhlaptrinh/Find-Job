@@ -1,5 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { AuthService } from '../../../../core/services/auth.service';
+import { AccountService } from '../../../../core/services/account.service';
 import {
   AbstractControl,
   FormBuilder,
@@ -53,11 +54,15 @@ export class RegisterComponent implements OnInit {
   }
   );
 
-  constructor(private auth: AuthService, private router: Router) {
+  constructor(
+    private auth: AuthService,
+    private accountService: AccountService,
+    private router: Router
+  ) {
   }
 
   ngOnInit(): void {
-    this.auth.getGoogleLoginUrl().subscribe((r) => {
+    this.accountService.getGoogleLoginUrl().subscribe((r) => {
       this.googleUrl = r?.data || r?.authURL || '';
     });
   }

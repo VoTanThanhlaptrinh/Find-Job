@@ -1,17 +1,14 @@
 import {Component, OnInit} from '@angular/core';
-import {NgIf} from "@angular/common";
-import {FormControl, FormControlName, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {ActivatedRoute, Router, RouterLink} from '@angular/router';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {ActivatedRoute, Router} from '@angular/router';
 import {AuthService} from '../../../../core/services/auth.service';
-import {map} from 'rxjs/operators';
+import {AccountService} from '../../../../core/services/account.service';
 import {take} from 'rxjs';
 
 @Component({
   selector: 'app-reset-pass',
   imports: [
-    NgIf,
     ReactiveFormsModule,
-    RouterLink
   ],
   templateUrl: './reset-pass.component.html',
   styleUrl: './reset-pass.component.css'
@@ -27,6 +24,7 @@ export class ResetPassComponent implements OnInit{
   })
   constructor(private route: ActivatedRoute
              ,private authService: AuthService
+             ,private accountService: AccountService
              ,private router: Router ) {
   }
 
@@ -43,7 +41,7 @@ export class ResetPassComponent implements OnInit{
       this.router.navigate(['login'])
       return;
     }
-    this.authService.checkRandom(random).subscribe({
+    this.accountService.checkRandom(random).subscribe({
       error: err => {
         this.router.navigate(['login'])
         return;

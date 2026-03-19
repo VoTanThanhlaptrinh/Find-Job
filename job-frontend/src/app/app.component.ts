@@ -3,6 +3,7 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './core/layout/header/header.component';
 import { FooterComponent } from './core/layout/footer/footer.component';
 import { filter } from 'rxjs/operators';
+import { LayoutVisibilityService } from './core/services/layout-visibility.service';
 
 @Component({
   selector: 'app-root',
@@ -16,18 +17,10 @@ export class AppComponent {
   showHeader = true;
   showFooter = true;
 
-  private readonly hiddenHeaderRoutes = new Set([
-    '/login',
-    '/register',
-    '/forgot-pass',
-    '/verify',
-    '/activate',
-    '/login-callback',
-  ]);
-
-  private readonly hiddenLayoutPrefixes = ['/recruiter/'];
-
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private layoutVisibilityService: LayoutVisibilityService
+  ) {
     this.updateHeaderVisibility(this.router.url);
 
     this.router.events
@@ -39,25 +32,8 @@ export class AppComponent {
   }
 
   private updateHeaderVisibility(url: string): void {
-    const path = this.normalizePath(url);
-    const isHidden = this.isHiddenHeaderRoute(path);
-    this.showHeader = !isHidden;
-    this.showFooter = !isHidden;
-  }
-
-  private isHiddenHeaderRoute(path: string): boolean {
-    if (this.hiddenHeaderRoutes.has(path)) {
-      return true;
-    }
-
-    if (path.startsWith('/reset-pass/')) {
-      return true;
-    }
-
-    return this.hiddenLayoutPrefixes.some((prefix) => path.startsWith(prefix));
-  }
-
-  private normalizePath(url: string): string {
-    return (url || '/').split('?')[0].split('#')[0];
+    const layoutVisibility = this.layoutVisibilityService.getLayoutVisibility(url);
+    this.showHeader = layoutVisibility.showHeader;
+    this.showFooter = layoutVisibility.showFooter;
   }
 }

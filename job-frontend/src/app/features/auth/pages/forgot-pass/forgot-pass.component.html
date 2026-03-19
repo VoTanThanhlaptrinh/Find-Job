@@ -39,16 +39,15 @@
                   <input title="code" type="text" placeholder="" name="code"
                          required formControlName="code">
                 </div>
-                <div *ngIf="isError" >
+                @if (isError) {
                   <div class="text-danger">
                     {{ message }}
                   </div>
-                </div>
-                <div *ngIf="!isError" >
+                } @else {
                   <div class="text-success">
                     {{ message }}
                   </div>
-                </div>
+                }
               </div>
               <!-- form Footer -->
               <div class="login-footer">

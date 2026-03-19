@@ -22,24 +22,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/api/blog")
+@RequestMapping(value = "/api/blogs")
 @AllArgsConstructor
 public class BlogController {
     private final BlogService blogService;
 
-    @GetMapping("/pub/blogList/{pageIndex}/{pageSize}")
+    @GetMapping("/page/{pageIndex}/{pageSize}")
     public ResponseEntity<ApiResponse<Page<Blog>>> getListOfBlogs(@PathVariable int pageIndex, @PathVariable int pageSize) {
         ApiResponse<Page<Blog>> res = blogService.getBlogs(pageIndex, pageSize);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @GetMapping("/pub/commentList/{pageIndex}/{pageSize}")
+    @GetMapping("/comments/{pageIndex}/{pageSize}")
     public ResponseEntity<ApiResponse<Page<Comment>>> getListOfComments(@PathVariable int pageIndex, @PathVariable int pageSize) {
         ApiResponse<Page<Comment>> res = blogService.getComments(pageIndex, pageSize);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @PostMapping("/pri/postBlog")
+    @PostMapping
     public ResponseEntity<ApiResponse<String>> postBlog(@RequestBody @Valid BlogDTO blogDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
@@ -49,7 +49,7 @@ public class BlogController {
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @PutMapping("/pri/update/{blogId}")
+    @PutMapping("/{blogId}")
     public ResponseEntity<ApiResponse<String>> updateBlog(@PathVariable long blogId,
                                                           @RequestBody @Valid BlogDTO blogDTO,
                                                           BindingResult bindingResult) {
@@ -61,19 +61,19 @@ public class BlogController {
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @DeleteMapping("/pri/delete/{blogId}")
+    @DeleteMapping("/{blogId}")
     public ResponseEntity<ApiResponse<String>> deleteBlog(@PathVariable long blogId) {
         ApiResponse<String> res = blogService.deleteBlog(blogId);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @GetMapping("/pub/blogDetail/{blogId}")
+    @GetMapping("/{blogId}")
     public ResponseEntity<ApiResponse<Blog>> getBlogDetail(@PathVariable final long blogId) {
         ApiResponse<Blog> res = blogService.getBlogById(blogId);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @PostMapping("/pri/comment")
+    @PostMapping("/comments")
     public ResponseEntity<ApiResponse<String>> commentBlog(@RequestBody @Valid Comment comment, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
@@ -83,7 +83,7 @@ public class BlogController {
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @PostMapping("/pri/like")
+    @PostMapping("/likes")
     public ResponseEntity<ApiResponse<String>> likeBlog(@RequestBody @Valid LikeDTO likeDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
@@ -93,7 +93,7 @@ public class BlogController {
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @PostMapping("/pri/unlike")
+    @PostMapping("/likes/remove")
     public ResponseEntity<ApiResponse<String>> unlikeBlog(@RequestBody @Valid LikeDTO likeDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(

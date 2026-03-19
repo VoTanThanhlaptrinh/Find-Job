@@ -1,0 +1,22 @@
+<div [id]="job.id" class="single-post flex flex-row mb-3">
+  <div class="thumb">
+    <img title="img" class="img-fluid" [src]="job.image" [alt]="job.title" />
+  </div>
+  <div class="details ms-2">
+    <div class="title d-flex flex-row justify-content-between">
+      <div class="titles">
+        <a [href]="job.link">
+          <h4>{{ job.title }}</h4>
+        </a>
+      </div>
+    </div>
+    <p>{{ job.description }}</p>
+    <p class="info">
+      <span><i class="lnr lnr-map"></i>&nbsp;{{ job.address }}</span>
+      <span class="divider"></span>
+      <span><i class="lnr lnr-database"></i>&nbsp;{{ formatMoney(job.salary) }}</span>
+      <span class="divider"></span>
+      <span>{{ job.type }}</span>
+    </p>
+  </div>
+</div>

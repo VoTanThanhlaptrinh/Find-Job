@@ -3,9 +3,11 @@ import { CategoryService } from '../../services/category.service';
 import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import {take} from 'rxjs';
 import {FormsModule} from '@angular/forms';
-import {NgxSliderModule, Options} from '@angular-slider/ngx-slider';
+import {NgxSliderModule} from '@angular-slider/ngx-slider';
 import {MatSlider, MatSliderRangeThumb} from '@angular/material/slider';
 import { SearchFormComponent } from '../../../../shared/components/search-form/search-form.component';
+import { JobCardComponent } from '../../../../shared/components/job-card/job-card.component';
+import { CallToActionComponent } from '../../../../shared/components/call-to-action/call-to-action.component';
 
 @Component({
   selector: 'app-category',
@@ -15,7 +17,9 @@ import { SearchFormComponent } from '../../../../shared/components/search-form/s
     NgxSliderModule,
     MatSlider,
     MatSliderRangeThumb,
-    SearchFormComponent
+    SearchFormComponent,
+    JobCardComponent,
+    CallToActionComponent
 ],
   standalone: true,
   templateUrl: './category.component.html',

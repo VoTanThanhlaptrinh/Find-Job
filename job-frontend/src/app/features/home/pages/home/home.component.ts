@@ -1,4 +1,4 @@
-import {CommonModule, isPlatformBrowser} from '@angular/common';
+import {CommonModule} from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { HomeService } from '../../services/home.service';
 import { Router, RouterModule } from '@angular/router';
@@ -6,10 +6,13 @@ import { NotifyMessageService } from '../../../../core/services/notify-message.s
 
 import {take} from 'rxjs';
 import { SearchFormComponent } from '../../../../shared/components/search-form/search-form.component';
+import { JobCardComponent } from '../../../../shared/components/job-card/job-card.component';
+import { CallToActionComponent } from '../../../../shared/components/call-to-action/call-to-action.component';
+import { DownloadAreaComponent } from '../../../../shared/components/download-area/download-area.component';
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule,RouterModule, SearchFormComponent],
+  imports: [CommonModule,RouterModule, SearchFormComponent, JobCardComponent, CallToActionComponent, DownloadAreaComponent],
   standalone: true,
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
@@ -53,9 +56,6 @@ export class HomeComponent implements OnInit {
         console.error('Error fetching data:', error);
       }
     })
-  }
-  formatMoney(val: number): string {
-    return val.toLocaleString('vi-VN') + '₫';
   }
   trackById(index: number, item: any): any {
     return item.id;

@@ -1,31 +1,30 @@
-import {HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
-import {BehaviorSubject, catchError, filter, finalize, switchMap, take, throwError} from 'rxjs';
+import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import { catchError, throwError } from 'rxjs';
 import { inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
+import { AccountService } from '../services/account.service';
+import { TokenService } from '../services/token.service';
+import { NotifyMessageService } from '../services/notify-message.service';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
+  const accountService = inject(AccountService);
+  const tokenService = inject(TokenService);
+  const notifyMessageService = inject(NotifyMessageService);
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      if(error.status === 401  && error.error.data === 'cookie-expired'){
-          auth.logout().subscribe();
-          return throwError(() => error);
-      }
       if (error.status === 401) {
-          return auth.refreshToken$().pipe(
-            switchMap(token => {
-              auth.setJwtToken(token);
-              return next(req.clone({
-                setHeaders: { Authorization: `Bearer ${token}` },
-                withCredentials: true
-              }));
-            }),
-            catchError(err => {
-              auth.logout().subscribe();
-              return throwError(() => err);
-            })
-          );
+        auth.refreshToken$().subscribe({
+          next: (token) => {
+            tokenService.setToken(token);
+          },
+          error: (err) => {
+            notifyMessageService.error(err.error.message);
+            accountService.logout();
+          }
+        })
       }
+      notifyMessageService.error(error.error.message || 'An error occurred');
       return throwError(() => error);
     })
   );

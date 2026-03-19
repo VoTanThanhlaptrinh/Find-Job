@@ -2,10 +2,12 @@ package com.job_web.controller.account;
 
 import java.util.concurrent.CompletableFuture;
 
+import com.job_web.dto.auth.ForgotPassDTO;
 import com.job_web.dto.auth.LoginDTO;
 import com.job_web.dto.auth.RegistationForm;
+import com.job_web.dto.auth.ResetDTO;
 import com.job_web.dto.common.ApiResponse;
-import com.job_web.service.account.AccountService;
+import com.job_web.service.account.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -23,95 +25,105 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
-@RequestMapping(path = "/api/account", produces = "application/json")
+@RequestMapping(path = "/api/auth", produces = "application/json")
 @RequiredArgsConstructor
 public class AuthController {
-    private final AccountService accountService;
+    private final AuthService authService;
 
-    @PostMapping("/pub/u/login")
-    public ResponseEntity<ApiResponse<String>> userLogin(@RequestBody LoginDTO login,
-                                                         HttpServletRequest request,
-                                                         HttpServletResponse response,
-                                                         BindingResult bindingResult) {
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<String>> login(@RequestBody @Valid LoginDTO login,
+                                                     HttpServletRequest request,
+                                                     HttpServletResponse response,
+                                                     BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest()
                     .body(new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, 400));
         }
-        ApiResponse<String> res = accountService.login(login, request, response);
+        ApiResponse<String> res = authService.login(login, request, response);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @PostMapping("/pub/u/register")
-    public ResponseEntity<ApiResponse<String>> userRegister(@RequestBody @Valid RegistationForm registationForm,
-                                                            BindingResult bindingResult) {
+    @PostMapping("/register")
+    public ResponseEntity<ApiResponse<String>> register(@RequestBody @Valid RegistationForm registationForm,
+                                                        BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest()
                     .body(new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, 400));
         }
-        ApiResponse<String> res = accountService.register(registationForm);
-        return ResponseEntity.status(res.getStatus()).body(res);
-    }
-
-    @PostMapping("/pub/h/login")
-    public ResponseEntity<ApiResponse<String>> hirerLogin(@RequestBody LoginDTO login,
-                                                          HttpServletRequest request,
-                                                          HttpServletResponse response,
-                                                          BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest()
-                    .body(new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, 400));
-        }
-        ApiResponse<String> res = accountService.login(login, request, response);
-        return ResponseEntity.status(res.getStatus()).body(res);
-    }
-
-    @PostMapping("/pub/h/register")
-    public ResponseEntity<ApiResponse<String>> hirerRegister(@RequestBody @Valid RegistationForm registationForm,
-                                                             BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest()
-                    .body(new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, 400));
-        }
-        ApiResponse<String> res = accountService.register(registationForm);
+        ApiResponse<String> res = authService.register(registationForm);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
     @Async
-    @GetMapping("/pri/sendLink/{email}")
-    public CompletableFuture<ResponseEntity<ApiResponse<String>>> getLinkVerify(@PathVariable String email) {
-        ApiResponse<String> res = accountService.sendLinkActivate(email);
+    @GetMapping("/activation-links/{email}")
+    public CompletableFuture<ResponseEntity<ApiResponse<String>>> sendActivationLink(@PathVariable String email) {
+        ApiResponse<String> res = authService.sendLinkActivate(email);
         return CompletableFuture.completedFuture(ResponseEntity.status(res.getStatus()).body(res));
     }
 
-    @GetMapping("/pub/activate/{token}")
+    @GetMapping("/activate/{token}")
     public ResponseEntity<ApiResponse<String>> activateAccount(@PathVariable String token) {
-        ApiResponse<String> res = accountService.activeAccount(token);
+        ApiResponse<String> res = authService.activeAccount(token);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @GetMapping("/pub/refreshToken")
-    public ResponseEntity<ApiResponse<String>> getRefreshToken(HttpServletRequest request, HttpServletResponse response) {
-        ApiResponse<String> res = accountService.refreshToken(request, response);
+    @GetMapping("/refresh-token")
+    public ResponseEntity<ApiResponse<String>> refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        ApiResponse<String> res = authService.refreshToken(request, response);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @GetMapping("/pub/logout")
+    @GetMapping("/logout")
     public ResponseEntity<ApiResponse<String>> logout(HttpServletRequest request, HttpServletResponse response) {
-        ApiResponse<String> res = accountService.logout(request, response);
+        ApiResponse<String> res = authService.logout(request, response);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @GetMapping("/pub/url/google")
+    @GetMapping("/google/url")
     public ResponseEntity<ApiResponse<String>> googleUrl(HttpServletRequest req) {
         String base = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         String url = base + "/oauth2/authorization/google";
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>("success", url, HttpStatus.OK.value()));
     }
 
-    @GetMapping("/pri/checkOauth2")
-    public ResponseEntity<ApiResponse<Boolean>> checkOauth2(java.security.Principal principal) {
-        boolean res = principal != null;
-        String mess = res ? "success" : "";
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(mess, res, HttpStatus.OK.value()));
+    @GetMapping("/status")
+    public ResponseEntity<ApiResponse<String>> checkLogin(java.security.Principal principal) {
+        ApiResponse<String> res = authService.checkLogin(principal);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    @GetMapping("/password/code/{email}")
+    public ResponseEntity<ApiResponse<String>> sendForgotPasswordCode(@PathVariable String email,
+                                                                      HttpServletRequest request) {
+        ApiResponse<String> res = authService.sendCodeForgotPassword(request, email);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    @PostMapping("/password/forgot")
+    public ResponseEntity<ApiResponse<String>> forgotPassword(@RequestBody @Valid ForgotPassDTO forgotPassDTO,
+                                                              BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, 400));
+        }
+        ApiResponse<String> res = authService.forgotPassword(forgotPassDTO);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    @GetMapping("/password/check-random/{random}")
+    public ResponseEntity<ApiResponse<String>> checkRandom(@PathVariable String random) {
+        ApiResponse<String> res = authService.checkRandom(random);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    @org.springframework.web.bind.annotation.PatchMapping("/password/reset")
+    public ResponseEntity<ApiResponse<String>> resetPassword(@RequestBody @Valid ResetDTO resetDTO,
+                                                             BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, 400));
+        }
+        ApiResponse<String> res = authService.resetPassword(resetDTO);
+        return ResponseEntity.status(res.getStatus()).body(res);
     }
 }

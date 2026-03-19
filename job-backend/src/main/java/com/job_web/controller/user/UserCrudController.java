@@ -20,12 +20,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(path = "/api/user", produces = "application/json")
+@RequestMapping(path = "/api/users", produces = "application/json")
 @RequiredArgsConstructor
 public class UserCrudController {
     private final UserCrudService userCrudService;
 
-    @PostMapping("/pri/create")
+    @PostMapping
     public ResponseEntity<ApiResponse<String>> create(@Valid @RequestBody UserCrudDTO userDTO,
                                                       BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -36,20 +36,20 @@ public class UserCrudController {
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @GetMapping("/pri/detail/{id}")
-    public ResponseEntity<ApiResponse<UserResponseDTO>> detail(@PathVariable("id") long id) {
-        ApiResponse<UserResponseDTO> res = userCrudService.getUserById(id);
-        return ResponseEntity.status(res.getStatus()).body(res);
-    }
-
-    @GetMapping("/pri/list/{pageIndex}/{pageSize}")
+    @GetMapping("/page/{pageIndex}/{pageSize}")
     public ResponseEntity<ApiResponse<Page<UserResponseDTO>>> list(@PathVariable("pageIndex") int pageIndex,
                                                                    @PathVariable("pageSize") int pageSize) {
         ApiResponse<Page<UserResponseDTO>> res = userCrudService.getUsers(pageIndex, pageSize);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @PutMapping("/pri/update/{id}")
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<UserResponseDTO>> detail(@PathVariable("id") long id) {
+        ApiResponse<UserResponseDTO> res = userCrudService.getUserById(id);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<String>> update(@PathVariable("id") long id,
                                                       @Valid @RequestBody UserCrudDTO userDTO,
                                                       BindingResult bindingResult) {
@@ -61,7 +61,7 @@ public class UserCrudController {
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @DeleteMapping("/pri/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<String>> delete(@PathVariable("id") long id) {
         ApiResponse<String> res = userCrudService.deleteUser(id);
         return ResponseEntity.status(res.getStatus()).body(res);

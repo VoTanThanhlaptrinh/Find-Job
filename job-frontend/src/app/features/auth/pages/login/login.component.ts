@@ -8,9 +8,10 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
+import { AccountService } from '../../../../core/services/account.service';
 import { CommonModule } from '@angular/common';
 import { NotifyMessageService } from '../../../../core/services/notify-message.service';
-import { take } from 'rxjs';
+
 
 @Component({
   selector: 'app-login',
@@ -31,15 +32,14 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private loginService: AuthService,
+    private accountService: AccountService,
     private router: Router,
     private route: ActivatedRoute,
-    private toastr: NotifyMessageService,
-    private auth: AuthService
+    private toastr: NotifyMessageService
   ) {
   }
 
   ngOnInit(): void {
-    this.notify();
     this.googleLoginURL();
   }
 
@@ -55,27 +55,11 @@ export class LoginComponent implements OnInit {
       username,
       password,
     };
-    this.loginService.login(loginRequest).subscribe({
-      next: () => {
-        this.router.navigate(['/']);
-      },
-      error: (error) => {
-        this.toastr.showMessage(error || 'Lỗi đăng nhập', '', 'error');
-      },
-      complete: () => {
-        this.isSubmitting = false;
-      },
-    });
-  }
-
-  notify() {
-    this.route.queryParams.pipe(take(1)).subscribe((params) => {
-      this.toastr.showMessage(params['message'], '', params['status']);
-    });
+    this.loginService.login(loginRequest);
   }
 
   googleLoginURL(): void {
-    this.auth.getGoogleLoginUrl().subscribe({
+    this.accountService.getGoogleLoginUrl().subscribe({
       next: (response) => {
         this.googleUrl = response.data;
       }

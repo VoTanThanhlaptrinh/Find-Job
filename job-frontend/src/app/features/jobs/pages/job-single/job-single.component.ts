@@ -1,6 +1,6 @@
 import { Component, NO_ERRORS_SCHEMA, OnInit } from '@angular/core';
 import { JobServiceService } from '../../services/job-service.service';
-import { ActivatedRoute, Route, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HomeService } from '../../../home/services/home.service';
 import { take } from 'rxjs';
 

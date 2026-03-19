@@ -2,6 +2,7 @@ package com.job_web.controller.account;
 
 import java.security.Principal;
 
+import com.job_web.dto.auth.ChangePassDTO;
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.dto.profile.UserInfo;
 import com.job_web.service.account.AccountService;
@@ -21,13 +22,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/api/account", produces = "application/json")
 @RequiredArgsConstructor
 @Slf4j
-public class ProfileController {
+public class AccountController {
     private final AccountService accountService;
 
-    @PutMapping("/pri/updateUserInfo")
-    public ResponseEntity<ApiResponse<String>> putUpdateUserInfo(@Valid @RequestBody UserInfo userInfo,
-                                                                 BindingResult bindingResult,
-                                                                 Principal principal) {
+    @PutMapping("/profile")
+    public ResponseEntity<ApiResponse<String>> updateProfile(@Valid @RequestBody UserInfo userInfo,
+                                                             BindingResult bindingResult,
+                                                             Principal principal) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest()
                     .body(new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, 400));
@@ -36,13 +37,19 @@ public class ProfileController {
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @GetMapping("/pri/detail")
-    public ResponseEntity<ApiResponse<UserInfo>> getDetails(Principal principal) {
+    @GetMapping("/profile")
+    public ResponseEntity<ApiResponse<UserInfo>> getProfile(Principal principal) {
         ApiResponse<UserInfo> res = accountService.getDetailUser(principal);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @GetMapping("/pri/u/isUser")
+    @PutMapping("/password")
+    public ResponseEntity<ApiResponse<String>> changePassword(@RequestBody ChangePassDTO changePassDTO) {
+        ApiResponse<String> res = accountService.changePassword(changePassDTO.getNewPass(), changePassDTO.getOldPass());
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    @GetMapping("/roles/user")
     public ResponseEntity<ApiResponse<Object>> checkUser(Principal principal) {
         if (principal != null) {
             log.info("check user login success");
@@ -53,7 +60,7 @@ public class ProfileController {
                 .body(new ApiResponse<>("error", false, HttpStatus.BAD_REQUEST.value()));
     }
 
-    @GetMapping("/pri/h/isHirer")
+    @GetMapping("/roles/hirer")
     public ResponseEntity<ApiResponse<Boolean>> checkHirerLogin(Principal principal) {
         boolean res = principal != null;
         String mess = res ? "success" : "";
@@ -61,10 +68,9 @@ public class ProfileController {
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(mess, res, HttpStatus.OK.value()));
     }
 
-    @GetMapping("/pri/checkLogin")
-    public ResponseEntity<ApiResponse<Boolean>> checkLogin(Principal principal) {
-        boolean res = principal != null;
-        String mess = res ? "success" : "";
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(mess, res, HttpStatus.OK.value()));
+    @GetMapping("/oauth2")
+    public ResponseEntity<ApiResponse<String>> checkOauth2(Principal principal) {
+        ApiResponse<String> res = accountService.checkOauth2(principal);
+        return ResponseEntity.status(res.getStatus()).body(res);
     }
 }

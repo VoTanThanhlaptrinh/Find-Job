@@ -50,9 +50,11 @@
                   class="mt-3 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-blue-500 focus:outline-none"
                   [disabled]="!isMode('existing')"
                 >
-                  <option *ngFor="let cv of previousCvOptions" [value]="cv.id">
-                    {{ cv.label }}
-                  </option>
+                  @for (cv of previousCvOptions; track cv.id) {
+                    <option [value]="cv.id">
+                      {{ cv.label }}
+                    </option>
+                  }
                 </select>
               </div>
             </label>
@@ -109,7 +111,7 @@
                     class="mt-3 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700"
                   >
                     Đã chọn:
-                    <span class="font-semibold">{{ selectedFile?.name }}</span>
+                    <span class="font-semibold">{{ selectedFile.name || 'Không có file nào được chọn' }}</span>
                     ({{ selectedFileSizeLabel }})
                   </p>
                 }

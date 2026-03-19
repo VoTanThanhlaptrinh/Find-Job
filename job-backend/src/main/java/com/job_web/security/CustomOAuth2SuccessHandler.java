@@ -2,6 +2,7 @@ package com.job_web.security;
 
 import com.job_web.data.UserRepository;
 import com.job_web.models.User;
+import com.job_web.service.security.JwtFamilyService;
 import com.job_web.service.security.JwtService;
 import com.job_web.service.security.RefreshTokenService;
 import jakarta.servlet.ServletException;
@@ -56,7 +57,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
         String token = jwtService.generateToken(user);
         String refreshToken = refreshTokenService.createRefreshToken(user.getEmail());
-
+        System.out.println(refreshToken);
         ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
                 .secure(isSecure)

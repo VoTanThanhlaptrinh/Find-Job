@@ -7,8 +7,10 @@ import {
   OnInit,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { AccountService } from '../../services/account.service';
+
 @Component({
   selector: 'app-header',
   imports: [
@@ -21,37 +23,21 @@ import { AuthService } from '../../services/auth.service';
 })
 export class HeaderComponent implements OnInit {
   isDropdownOpen = false;
-  loggedIn: boolean = false;
-  userLoggedIn: boolean = false;
-  hirerLoggedIn: boolean = false;
   constructor(
     private auth: AuthService,
+    private accountService: AccountService,
     private router: Router,
     private zone: NgZone,
     private cd: ChangeDetectorRef
-  ) {}
-  ngOnInit(): void {
-    this.checkLogin();
-  }
-  checkLogin() {
-    this.auth.checkLogin().subscribe((value) => (this.loggedIn = value));
-    this.auth
-      .checkUserLogin()
-      .subscribe((value) => (this.userLoggedIn = value));
-    this.auth
-          .checkHirerLogin()
-          .subscribe((value) => (this.hirerLoggedIn = value));
-  }
-    logout(): void {
-      this.auth.logout().subscribe(() => this.onLogoutComplete());
-    }
+  ) {
 
-  private onLogoutComplete(): void {
-    this.hirerLoggedIn = false;
-    this.userLoggedIn = true;
-    this.loggedIn = false;
-    this.cd.detectChanges();
-    this.router.navigate(['/login']);
+  }
+  ngOnInit(): void {
+    this.isLogin();
+  }
+
+  logout(): void {
+    this.accountService.logout();
   }
 
   toggleDropdown() {
@@ -70,5 +56,14 @@ export class HeaderComponent implements OnInit {
   onWindowScroll() {
     // Nếu cuộn xuống quá 50px thì đổi thành true, ngược lại là false
     this.isScrolled = window.scrollY > 50;
+  }
+  isPageLogin(): boolean {
+    return this.auth.isLoginClicked();
+  }
+  isPageRegister(): boolean {
+    return this.auth.isRegisterClicked();
+  }
+  isLogin(): boolean {
+    return this.auth.isLogin();
   }
 }

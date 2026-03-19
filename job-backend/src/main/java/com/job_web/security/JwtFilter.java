@@ -36,11 +36,19 @@ public class JwtFilter extends OncePerRequestFilter {
 	private final UserDetailsService userDetailsService;
     private final RefreshTokenService refreshTokenService;
 	private final List<String> allowedOrigins = Arrays.asList(
-			"/api/account/pub/.*"
+			"/api/auth/login"
+			,"/api/auth/register"
+			,"/api/auth/activation-links/.*"
+			,"/api/auth/activate/.*"
+			,"/api/auth/refresh-token"
+			,"/api/auth/logout"
+			,"/api/auth/google/.*"
+			,"/api/auth/password/.*"
+			,"/api/auth/status"
 			,"/error"
 			,"/api/home/init"
-			,"/api/job/pub/.*"
-			,"/api/blog/pub/.*"
+			,"/api/jobs/.*"
+			,"/api/blogs/.*"
 			, "/auth/.*",
 			"/oauth2/authorization/.*",
 			"/login/oauth2/code/.*"
@@ -80,7 +88,7 @@ public class JwtFilter extends OncePerRequestFilter {
 		}catch (ExpiredJwtException e) {
             log.error(e.getMessage());
 			response.setContentType("application/json");
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			response.getWriter().write("{\"message\":\"Expired JWT token\"}");
 			response.getWriter().flush();
 			response.setHeader("Connection", "close");

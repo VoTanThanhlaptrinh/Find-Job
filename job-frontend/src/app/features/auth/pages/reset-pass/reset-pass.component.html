@@ -1,52 +1,64 @@
 <section class="banner-area relative" id="mini">
   <div class="overlay overlay-bg"></div>
-<main>
-  <!-- login Area Start -->
-  <div class="login-form-area section-padding">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-xl-6 col-lg-7 col-md-10">
-          <form [formGroup]="formGroup" (submit)="onSubmit()" >
-            <div class="login-form">
-              <!-- Login Heading -->
-              <div class="login-heading">
-                <span>Reset mật khẩu</span>
-                <p>Nhập mật khẩu mới</p>
-              </div>
-              <!-- Single Input Fields -->
-              <div class="input-box">
-                <input type="hidden" formControlName="random" required>
-                <div class="single-input-fields ">
-                  <label>Mật khẩu mới</label>
-                  <input type="password" placeholder="Mật khẩu mới" name="newPass"
-                         required formControlName="newPass">
+  <main>
+    <!-- login Area Start -->
+    <div class="login-form-area section-padding">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-xl-6 col-lg-7 col-md-10">
+            <form [formGroup]="formGroup" (submit)="onSubmit()">
+              <div class="login-form">
+                <!-- Login Heading -->
+                <div class="login-heading">
+                  <span>Reset mật khẩu</span>
+                  <p>Nhập mật khẩu mới</p>
                 </div>
-                <div class="single-input-fields mt-2">
-                  <label>Xác nhận mật khẩu</label>
-                  <input type="password" placeholder="Xác nhận mật khẩu" name="confirmPass"
-                         required formControlName="confirmPass">
-                </div>
-                <div *ngIf="isError" >
-                  <div class="text-danger">
-                    {{ message }}
+                <!-- Single Input Fields -->
+                <div class="input-box">
+                  <input type="hidden" formControlName="random" required />
+                  <div class="single-input-fields">
+                    <label>Mật khẩu mới</label>
+                    <input
+                      type="password"
+                      placeholder="Mật khẩu mới"
+                      name="newPass"
+                      required
+                      formControlName="newPass"
+                    />
                   </div>
-                </div>
-                <div *ngIf="!isError" >
-                  <div class="text-success">
-                    {{ message }}
+                  <div class="single-input-fields mt-2">
+                    <label>Xác nhận mật khẩu</label>
+                    <input
+                      type="password"
+                      placeholder="Xác nhận mật khẩu"
+                      name="confirmPass"
+                      required
+                      formControlName="confirmPass"
+                    />
                   </div>
+                  @if (isError) {
+                    <div class="text-danger">
+                      {{ message }}
+                    </div>
+                  }
+                  @if (!isError) {
+                    <div class="text-success">
+                      {{ message }}
+                    </div>
+                  }
+                </div>
+                <!-- form Footer -->
+                <div class="login-footer">
+                  <button class="btn login-btn" type="submit">
+                    Đổi mật khẩu
+                  </button>
                 </div>
               </div>
-              <!-- form Footer -->
-              <div class="login-footer">
-                <button class="btn login-btn" type="submit" > Đổi mật khẩu</button>
-              </div>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <!-- login Area End -->
-</main>
-
+    <!-- login Area End -->
+  </main>
+</section>

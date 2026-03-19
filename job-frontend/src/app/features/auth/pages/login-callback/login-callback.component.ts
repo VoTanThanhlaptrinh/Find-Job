@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService } from '../../../../core/services/auth.service';
 import { isPlatformBrowser } from '@angular/common';
+import { TokenService } from '../../../../core/services/token.service';
 
 @Component({
   selector: 'app-login-callback',
@@ -12,7 +12,7 @@ export class LoginCallbackComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private auth: AuthService,
+    private tokenService: TokenService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
@@ -21,7 +21,7 @@ export class LoginCallbackComponent implements OnInit {
     const token = this.route.snapshot.queryParamMap.get('token');
     if (token) {
       // Lưu JWT vào localStorage
-      this.auth.setJwtToken(token);
+      this.tokenService.setToken(token);
 
       // Chuyển hướng ở bên client
       if (isPlatformBrowser(this.platformId)) {

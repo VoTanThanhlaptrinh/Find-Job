@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { of } from 'rxjs';
 import { AuthService } from '../../../../core/services/auth.service';
+import { AccountService } from '../../../../core/services/account.service';
 import { NotifyMessageService } from '../../../../core/services/notify-message.service';
 
 import { LoginComponent } from './login.component';
@@ -11,10 +12,13 @@ describe('LoginComponent', () => {
   let fixture: ComponentFixture<LoginComponent>;
 
   const authServiceMock = {
+    login: jasmine.createSpy('login').and.returnValue(of({ data: {} })),
+  };
+
+  const accountServiceMock = {
     getGoogleLoginUrl: jasmine
       .createSpy('getGoogleLoginUrl')
       .and.returnValue(of({ data: 'https://accounts.google.com' })),
-    login: jasmine.createSpy('login').and.returnValue(of({ data: {} })),
   };
 
   const routerMock = {
@@ -30,6 +34,7 @@ describe('LoginComponent', () => {
       imports: [LoginComponent],
       providers: [
         { provide: AuthService, useValue: authServiceMock },
+        { provide: AccountService, useValue: accountServiceMock },
         { provide: Router, useValue: routerMock },
         { provide: NotifyMessageService, useValue: notifyMock },
         {

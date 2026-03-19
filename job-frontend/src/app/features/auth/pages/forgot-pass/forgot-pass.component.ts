@@ -1,7 +1,8 @@
-import {Component, OnInit} from '@angular/core';
-import {FormControl, FormControlName, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {ActivatedRoute, Router, RouterLink} from '@angular/router';
+import {Component} from '@angular/core';
+import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {Router, RouterLink} from '@angular/router';
 import {AuthService} from '../../../../core/services/auth.service';
+import {AccountService} from '../../../../core/services/account.service';
 import {CommonModule} from '@angular/common';
 import {NotifyMessageService} from '../../../../core/services/notify-message.service';
 
@@ -25,6 +26,7 @@ export class ForgotPassComponent{
       code: new FormControl('',Validators.required),
     })
   constructor(private authService: AuthService
+              ,private accountService: AccountService
               ,private router: Router
               ,private notify: NotifyMessageService) {
   }
@@ -50,7 +52,7 @@ export class ForgotPassComponent{
       if(email === undefined || email === null || email === ''){
         this.notify.showMessage('Nhập email để lấy mã xác thực','','warning')
       }else{
-        this.authService.sendCode(email).subscribe({
+        this.accountService.sendCode(email).subscribe({
           next: res =>{
             this.notify.showMessage(res.message,'','success')
           },error: err => {
