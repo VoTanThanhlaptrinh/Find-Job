@@ -1,31 +1,29 @@
-import {HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
-import {BehaviorSubject, catchError, filter, finalize, switchMap, take, throwError} from 'rxjs';
+import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import { catchError, throwError } from 'rxjs';
 import { inject } from '@angular/core';
-import { AuthService } from '../services/auth.service';
+import { NotifyMessageService } from '../services/notify-message.service';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
-  const auth = inject(AuthService);
+  const notifyMessageService = inject(NotifyMessageService);
+  const isStatusRequest = req.url.includes('/auth/status');
+  const iRefreshsRequest = req.url.includes('/auth/refreshToken');
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      if(error.status === 401  && error.error.data === 'cookie-expired'){
-          auth.logout().subscribe();
-          return throwError(() => error);
+      if (!isStatusRequest) {
+        const message =
+          error?.error?.message ||
+          error?.message ||
+          'An error occurred';
+        notifyMessageService.error(message);
       }
-      if (error.status === 401) {
-          return auth.refreshToken$().pipe(
-            switchMap(token => {
-              auth.setJwtToken(token);
-              return next(req.clone({
-                setHeaders: { Authorization: `Bearer ${token}` },
-                withCredentials: true
-              }));
-            }),
-            catchError(err => {
-              auth.logout().subscribe();
-              return throwError(() => err);
-            })
-          );
+      if (!iRefreshsRequest) {
+        const message =
+          error?.error?.message ||
+          error?.message ||
+          'An error occurred';
+        notifyMessageService.error(message);
       }
+
       return throwError(() => error);
     })
   );

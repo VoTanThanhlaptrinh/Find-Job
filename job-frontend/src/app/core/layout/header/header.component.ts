@@ -1,74 +1,54 @@
 import {
-  ChangeDetectorRef,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
-  NgZone,
-  OnInit,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { AccountService } from '../../services/account.service';
+
 @Component({
   selector: 'app-header',
-  imports: [
-    CommonModule,
-  ],
+  imports: [CommonModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   standalone: true,
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent {
   isDropdownOpen = false;
-  loggedIn: boolean = false;
-  userLoggedIn: boolean = false;
-  hirerLoggedIn: boolean = false;
+  isScrolled = false;
+
   constructor(
-    private auth: AuthService,
-    private router: Router,
-    private zone: NgZone,
-    private cd: ChangeDetectorRef
+    private auth: AuthService
   ) {}
-  ngOnInit(): void {
-    this.checkLogin();
-  }
-  checkLogin() {
-    this.auth.checkLogin().subscribe((value) => (this.loggedIn = value));
-    this.auth
-      .checkUserLogin()
-      .subscribe((value) => (this.userLoggedIn = value));
-    this.auth
-          .checkHirerLogin()
-          .subscribe((value) => (this.hirerLoggedIn = value));
-  }
-    logout(): void {
-      this.auth.logout().subscribe(() => this.onLogoutComplete());
-    }
 
-  private onLogoutComplete(): void {
-    this.hirerLoggedIn = false;
-    this.userLoggedIn = true;
-    this.loggedIn = false;
-    this.cd.detectChanges();
-    this.router.navigate(['/login']);
+  logout(): void {
+    this.auth.logout();
   }
 
-  toggleDropdown() {
-    this.isDropdownOpen = !this.isDropdownOpen;
-  }
   goInfor(): void {
     window.location.href = '/infor';
   }
+
   goVerify(): void {
     window.location.href = '/verify';
   }
-  isScrolled: boolean = false;
 
-  // Lắng nghe sự kiện scroll trên toàn window
   @HostListener('window:scroll', [])
-  onWindowScroll() {
-    // Nếu cuộn xuống quá 50px thì đổi thành true, ngược lại là false
+  onWindowScroll(): void {
     this.isScrolled = window.scrollY > 50;
+  }
+
+  get isLoginPage(): boolean {
+    return this.auth.isLoginClicked();
+  }
+
+  get isRegisterPage(): boolean {
+    return this.auth.isRegisterClicked();
+  }
+
+  get isLoggedIn(): boolean {
+    return this.auth.isLoggedIn();
   }
 }

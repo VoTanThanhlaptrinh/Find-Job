@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { of } from 'rxjs';
 import { AuthService } from '../../../../core/services/auth.service';
+import { AccountService } from '../../../../core/services/account.service';
 
 import { RegisterComponent } from './register.component';
 
@@ -10,12 +11,15 @@ describe('RegisterComponent', () => {
   let fixture: ComponentFixture<RegisterComponent>;
 
   const authServiceMock = {
-    getGoogleLoginUrl: jasmine
-      .createSpy('getGoogleLoginUrl')
-      .and.returnValue(of({ data: 'https://accounts.google.com' })),
     register: jasmine
       .createSpy('register')
       .and.returnValue(of({ email: 'test@example.com' })),
+  };
+
+  const accountServiceMock = {
+    getGoogleLoginUrl: jasmine
+      .createSpy('getGoogleLoginUrl')
+      .and.returnValue(of({ data: 'https://accounts.google.com' })),
   };
 
   const routerMock = {
@@ -27,6 +31,7 @@ describe('RegisterComponent', () => {
       imports: [RegisterComponent],
       providers: [
         { provide: AuthService, useValue: authServiceMock },
+        { provide: AccountService, useValue: accountServiceMock },
         { provide: Router, useValue: routerMock },
       ],
     })

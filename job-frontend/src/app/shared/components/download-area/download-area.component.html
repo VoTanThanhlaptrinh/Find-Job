@@ -1,0 +1,42 @@
+<section class="download-area section-gap" [id]="sectionId">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6 download-left">
+        <img title="img" class="img-fluid" [src]="imageSrc" [alt]="imageAlt" />
+      </div>
+      <div class="col-lg-6 download-right">
+        <h1>
+          {{ title }} <br />
+          {{ subtitle }}
+        </h1>
+        <p class="subs">
+          {{ description }}
+        </p>
+        <div class="d-flex flex-row">
+          <div class="buttons">
+            <i class="fa fa-apple" aria-hidden="true"></i>
+            <div class="desc">
+              <a [href]="appStoreHref">
+                <p>
+                  <span>Có sẵn</span> <br />
+                  trên App Store
+                </p>
+              </a>
+            </div>
+          </div>
+          <div class="buttons">
+            <i class="fa fa-android" aria-hidden="true"></i>
+            <div class="desc">
+              <a [href]="playStoreHref">
+                <p>
+                  <span>Có sẵn</span> <br />
+                  trên Play Store
+                </p>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

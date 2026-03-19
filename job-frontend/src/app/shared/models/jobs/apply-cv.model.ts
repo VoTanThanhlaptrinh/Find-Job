@@ -1,3 +1,5 @@
+import { ApiResponse } from '../api-response.model';
+
 export interface ApplyCvWithExistingRequest {
   jobId: number;
   existingCvId: number;
@@ -16,24 +18,6 @@ export type ApplyCvRequest =
   | ApplyCvWithExistingRequest
   | ApplyCvWithUploadRequest;
 
-export interface ApplyCvWithExistingResponse {
-  applyType: 'existing';
-  applicationId: string;
-  jobId: string;
-  existingCvId: number;
-  status: string;
-  submittedAt: string;
-}
-
-export interface ApplyCvWithUploadResponse {
-  applyType: 'upload';
-  applicationId: string;
-  jobId: string;
-  uploadedCvUrl: string;
-  status: string;
-  submittedAt: string;
-}
-
-export type ApplyCvResponse =
-  | ApplyCvWithExistingResponse
-  | ApplyCvWithUploadResponse;
+export type ApplyCvWithExistingResponse = ApiResponse<string | null>;
+export type ApplyCvWithUploadResponse = ApiResponse<string | null>;
+export type ApplyCvResponse = ApiResponse<string | null>;

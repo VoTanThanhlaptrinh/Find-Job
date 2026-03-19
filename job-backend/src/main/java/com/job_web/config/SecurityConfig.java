@@ -6,7 +6,7 @@ import com.job_web.security.CustomOAuth2SuccessHandler;
 import org.springframework.beans.factory.aspectj.ConfigurableObject;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
@@ -38,80 +38,81 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class SecurityConfig {
 
-	private final JwtFilter jwtAuthFilter;
-	private UserRepositoryDetailsService userDetailsService;
-	private VerifyRecoveryFillter verifyRecoveryFillter;
-	private CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
+    private final JwtFilter jwtAuthFilter;
+    private UserRepositoryDetailsService userDetailsService;
+    private VerifyRecoveryFillter verifyRecoveryFillter;
+    private CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
 
-	@Bean
-	SecurityFilterChain restChain(HttpSecurity http) throws Exception {
-		http.cors(c -> c.configurationSource(corsConfigurationSource()))
-//                .headers(h -> h
-//                        .contentSecurityPolicy(csp -> csp
-//                                .policyDirectives(
-//                                        "default-src 'self'; " +
-//                                                "connect-src 'self' http://localhost:4200 ws://localhost:4200 http://127.0.0.1:4200 ws://127.0.0.1:4200; " +
-//                                                "img-src 'self' data: blob:; " +
-//                                                "script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:; " +
-//                                                "style-src 'self' 'unsafe-inline'; " +
-//                                                "font-src 'self' data:; " +
-//                                                "object-src 'none'; frame-ancestors 'self'; base-uri 'self';"
-//                                )
-//                        )
-//                )
-				.csrf(AbstractHttpConfigurer::disable)
-				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/api/account/pub/**"
-								, "/api/job/pub/**"
-								, "/api/blog/pub/**"
-								, "/api/home/init"
-								, "/error"
-								,"/oauth2/**", "/login/oauth2/**", "/auth/**").permitAll()
-						.requestMatchers("/api/account/pri/h/**").hasAuthority("ROLE_HIRER")
-						.requestMatchers("/api/account/pri/u/**").hasAuthority("ROLE_USER")
-						.anyRequest().authenticated()
-				).oauth2Login(o -> o
-						.successHandler(customOAuth2SuccessHandler)
-				)
-				.sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
-				.authenticationProvider(authenticationProvider())
-				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-				.addFilterBefore(verifyRecoveryFillter, UsernamePasswordAuthenticationFilter.class);
-		return http.build();
-	}
-	@Bean
-	UrlBasedCorsConfigurationSource corsConfigurationSource() {
-		CorsConfiguration config = new CorsConfiguration();
+    @Bean
+    SecurityFilterChain restChain(HttpSecurity http) throws Exception {
+        http.cors(c -> c.configurationSource(corsConfigurationSource()))
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/auth/login",
+                                "/api/auth/register",
+                                "/api/auth/activation-links/**",
+                                "/api/auth/activate/**",
+                                "/api/auth/refresh-token",
+                                "/api/auth/logout",
+                                "/api/auth/google/**",
+                                "/api/auth/password/**",
+                                "/api/auth/status",
+                                "/api/home/init",
+                                "/error",
+                                "/oauth2/**", "/login/oauth2/**", "/auth/status").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/jobs/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/jobs/filter").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/blogs/**").permitAll()
+                        .requestMatchers("/api/hirer/**").hasAuthority("ROLE_HIRER")
+                        .requestMatchers("/api/user/**").hasAuthority("ROLE_USER")
+                        .requestMatchers("/api/account/roles/hirer").hasAuthority("ROLE_HIRER")
+                        .requestMatchers("/api/account/roles/user").hasAuthority("ROLE_USER")
+                        .requestMatchers("/api/account/**", "/api/blogs/**", "/api/users/**").authenticated()
+                        .anyRequest().permitAll()
+                ).addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(verifyRecoveryFillter, UsernamePasswordAuthenticationFilter.class)
+                .oauth2Login(o -> o
+                        .successHandler(customOAuth2SuccessHandler)
+                )
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                .authenticationProvider(authenticationProvider());
 
-		config.setAllowedOrigins(List.of("http://localhost:4200")); // không dùng "*"
-		config.setAllowCredentials(true);
-		config.setAllowedMethods(List.of("GET","POST","OPTIONS","PUT", "PATCH", "DELETE"));
-		config.setAllowedHeaders(List.of("Content-Type","Authorization"));
-		config.setExposedHeaders(List.of("Set-Cookie"));
+        return http.build();
+    }
 
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", config);
-		return source;
-	}
+    @Bean
+    UrlBasedCorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
 
-	@Bean
-	AuthenticationProvider authenticationProvider() {
-		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-		authenticationProvider.setPasswordEncoder(encode());
-		authenticationProvider.setUserDetailsService(userDetailsService);
-		return authenticationProvider;
-	}
+        config.setAllowedOrigins(List.of("http://localhost:4200")); // không dùng "*"
+        config.setAllowCredentials(true);
+        config.setAllowedMethods(List.of("GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"));
+        config.setAllowedHeaders(List.of("Content-Type", "Authorization"));
+        config.setExposedHeaders(List.of("Set-Cookie"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
+
+    @Bean
+    AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setPasswordEncoder(encode());
+        authenticationProvider.setUserDetailsService(userDetailsService);
+        return authenticationProvider;
+    }
 
 
-	@Bean
-	BCryptPasswordEncoder encode() {
-		return new BCryptPasswordEncoder();
-	}
+    @Bean
+    BCryptPasswordEncoder encode() {
+        return new BCryptPasswordEncoder();
+    }
 
-	@Bean
-	HttpFirewall defaultHttpFirewall() {
-		return new DefaultHttpFirewall();
-	}
+    @Bean
+    HttpFirewall defaultHttpFirewall() {
+        return new DefaultHttpFirewall();
+    }
 }
 
 

@@ -1,26 +1,39 @@
 import { Component, NO_ERRORS_SCHEMA, OnInit } from '@angular/core';
-import { JobServiceService } from '../../services/job-service.service';
-import { ActivatedRoute, Route, Router, RouterModule } from '@angular/router';
-import { HomeService } from '../../../home/services/home.service';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { take } from 'rxjs';
+import { HomeService } from '../../../home/services/home.service';
+import { JobDetailViewModel } from '../../../../shared/models/jobs/job-api-response.model';
+import { JobCardModel } from '../../../../shared/models/jobs/job-card.model';
+import { JobServiceService } from '../../services/job-service.service';
 
 @Component({
   selector: 'app-job-single',
   imports: [RouterModule],
   templateUrl: './job-single.component.html',
   styleUrl: './job-single.component.css',
-  schemas: [NO_ERRORS_SCHEMA]
+  schemas: [NO_ERRORS_SCHEMA],
 })
 export class JobSingleComponent implements OnInit {
   jobId!: string;
-  jobDetail: any;
-  relatedJobs: any;
+  jobDetail: JobDetailViewModel = {
+    id: '',
+    title: '',
+    address: '',
+    description: '',
+    salary: 0,
+    time: '',
+    requireDetails: '',
+    skill: '',
+    expiredDate: '',
+  };
+  relatedJobs: JobCardModel[] = [];
+
   constructor(
     private jobSerivce: JobServiceService,
     private route: ActivatedRoute,
-    private router: Router,
     private homeService: HomeService
   ) {}
+
   carouselOptions = {
     loop: false,
     rewind: true,
@@ -39,19 +52,21 @@ export class JobSingleComponent implements OnInit {
     },
     nav: true,
   };
+
   ngOnInit(): void {
     this.getRelatedJobs();
     this.route.params.subscribe((params) => {
-      this.jobId = params['id']; // Lấy ID từ URL
+      this.jobId = params['id'];
       this.getDetailJob(this.jobId);
     });
   }
-  getDetailJob(id: string) {
+
+  getDetailJob(id: string): void {
     this.jobSerivce
       .getDetailJob(id)
       .pipe(take(1))
       .subscribe({
-        next: (response: any) => {
+        next: (response) => {
           this.jobDetail = response.data;
         },
         error: (error) => {
@@ -59,29 +74,22 @@ export class JobSingleComponent implements OnInit {
         },
       });
   }
-  getRelatedJobs() {
+
+  getRelatedJobs(): void {
     this.homeService
       .getData()
       .pipe(take(1))
       .subscribe({
         next: (response) => {
-          this.relatedJobs = response.data.jobSoon.content.map((item: any) => ({
-            id: item.id,
-            title: item.title,
-            address: item.address,
-            image: 'assets/web_css/img/r1.png',
-            link: item.link,
-            description: item.description,
-            salary: item.salary,
-            type: item.time,
-          }));
+          this.relatedJobs = response.data.jobSoon.content;
         },
         error: (error) => {
           console.error('Error fetching data:', error);
         },
       });
   }
-  formatMoney(val: number): string {
-    return val.toLocaleString('vi-VN') + '₫';
+
+  formatMoney(value: number): string {
+    return `${value.toLocaleString('vi-VN')} VND`;
   }
 }

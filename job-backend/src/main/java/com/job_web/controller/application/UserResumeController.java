@@ -23,24 +23,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(path = "/api/resume", produces = "application/json")
+@RequestMapping(path = "/api/user/resumes", produces = "application/json")
 @RequiredArgsConstructor
 public class UserResumeController {
     private final ResumeService resumeService;
 
-    @GetMapping("/pri/u/listResumeOfUser")
+    @GetMapping
     public ResponseEntity<ApiResponse<List<ResumeDTO>>> getListResumeOfUser(Principal principal) {
         ApiResponse<List<ResumeDTO>> res = resumeService.getListResumeOfUser(principal);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @GetMapping("/pri/u/detail/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<ResumeDetailDTO>> getResumeDetail(@PathVariable("id") long id, Principal principal) {
         ApiResponse<ResumeDetailDTO> res = resumeService.getResumeDetail(id, principal);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @PostMapping(value = "/pri/u/upload", consumes = "multipart/form-data")
+    @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<ApiResponse<String>> uploadResume(@Valid @ModelAttribute ResumeUploadDTO resumeUploadDTO,
                                                             BindingResult bindingResult,
                                                             Principal principal) {
@@ -52,7 +52,7 @@ public class UserResumeController {
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @PutMapping(value = "/pri/u/update/{id}", consumes = "multipart/form-data")
+    @PutMapping(value = "/{id}", consumes = "multipart/form-data")
     public ResponseEntity<ApiResponse<String>> updateResume(@PathVariable("id") long id,
                                                             @Valid @ModelAttribute ResumeUploadDTO resumeUploadDTO,
                                                             BindingResult bindingResult,
@@ -65,7 +65,7 @@ public class UserResumeController {
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @DeleteMapping("/pri/u/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<String>> deleteResume(@PathVariable("id") long id, Principal principal) {
         ApiResponse<String> res = resumeService.deleteResume(id, principal);
         return ResponseEntity.status(res.getStatus()).body(res);

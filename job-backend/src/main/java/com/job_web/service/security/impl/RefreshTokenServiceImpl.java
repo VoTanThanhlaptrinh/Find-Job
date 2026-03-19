@@ -28,8 +28,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 	public String createRefreshToken(String username) {
 		Optional<User> user = userRepository.findByEmail(username);
 		if (user.isPresent()) {
-			jwtService.generateRefreshToken(user.get());
-			return null;
+			return jwtService.generateRefreshToken(user.get());
 		} else {
 			throw new RuntimeException("username not found");
 		}

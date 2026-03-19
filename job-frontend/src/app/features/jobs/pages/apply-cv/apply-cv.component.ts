@@ -1,7 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { JobServiceService } from '../../services/job-service.service';
-import { AuthService } from '../../../../core/services/auth.service';
 
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { take } from 'rxjs';
@@ -34,7 +33,6 @@ interface PreviousCvOption {
 export class ApplyCvComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   applyCvForm: ApplyCvFormGroup;
-  jobDetail: any;
   jobId!: number;
   selectedFile: File | null = null;
   isDragging = false;
@@ -47,8 +45,7 @@ export class ApplyCvComponent implements OnInit {
 
   constructor(private router: Router,
     private route: ActivatedRoute,
-    private jobService: JobServiceService,
-    private authService: AuthService
+    private jobService: JobServiceService
   ) {
     this.applyCvForm = this.fb.nonNullable.group({
       cvMode: this.fb.nonNullable.control<CvMode>('existing', Validators.required),
@@ -65,9 +62,10 @@ export class ApplyCvComponent implements OnInit {
       this.jobId = params['id'];
     });
   }
-  checkApplyJob() {
+
+  checkApplyJob(): void {
     this.jobService.checkApplyJob(this.jobId).pipe(take(1)).subscribe({
-      next: (response: any) => {
+      next: (response) => {
         if (!response.data) {
           this.router.navigate(['/']);
         }

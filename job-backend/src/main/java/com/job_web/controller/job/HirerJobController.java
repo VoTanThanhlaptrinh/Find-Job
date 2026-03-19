@@ -3,12 +3,12 @@ package com.job_web.controller.job;
 import java.security.Principal;
 
 import com.job_web.dto.common.ApiResponse;
+import com.job_web.dto.job.HirerJobPostView;
 import com.job_web.dto.job.JobDTO;
-import com.job_web.dto.job.JobResponse;
+import com.job_web.dto.job.PagedPayload;
 import com.job_web.service.job.JobService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,12 +23,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(path = "/api/job", produces = "application/json")
+@RequestMapping(path = "/api/hirer/jobs", produces = "application/json")
 @RequiredArgsConstructor
 public class HirerJobController {
     private final JobService jobService;
 
-    @PostMapping(value = "/pri/postJob", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<String>> post(@Valid @ModelAttribute JobDTO job,
                                                     BindingResult bindingResult,
                                                     Principal principal) {
@@ -40,7 +40,7 @@ public class HirerJobController {
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @PutMapping(value = "/pri/h/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<String>> update(@PathVariable("id") long id,
                                                       @Valid @ModelAttribute JobDTO job,
                                                       BindingResult bindingResult,
@@ -53,21 +53,21 @@ public class HirerJobController {
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @DeleteMapping("/pri/h/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<String>> delete(@PathVariable("id") long id, Principal principal) {
         ApiResponse<String> res = jobService.deleteJob(id, principal);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @GetMapping("/pri/h/hirerJobPost/{pageIndex}/{pageSize}")
-    public ResponseEntity<ApiResponse<Page<JobResponse>>> getHirerJobPost(@PathVariable int pageIndex,
-                                                                          @PathVariable int pageSize,
-                                                                          Principal principal) {
-        ApiResponse<Page<JobResponse>> res = jobService.getHirerJobPost(pageIndex, pageSize, principal);
+    @GetMapping("/posted/{pageIndex}/{pageSize}")
+    public ResponseEntity<ApiResponse<PagedPayload<HirerJobPostView>>> getHirerJobPost(@PathVariable int pageIndex,
+                                                                                        @PathVariable int pageSize,
+                                                                                        Principal principal) {
+        ApiResponse<PagedPayload<HirerJobPostView>> res = jobService.getHirerJobPost(pageIndex, pageSize, principal);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @GetMapping("/pri/h/countHirerJobPost")
+    @GetMapping("/posted/count")
     public ResponseEntity<ApiResponse<Long>> countHirerJobPost(Principal principal) {
         ApiResponse<Long> res = jobService.countHirerJobPost(principal);
         return ResponseEntity.status(res.getStatus()).body(res);

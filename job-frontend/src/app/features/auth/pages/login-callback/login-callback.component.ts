@@ -1,7 +1,8 @@
-import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
-import { isPlatformBrowser } from '@angular/common';
+import { TokenService } from '../../../../core/services/token.service';
 
 @Component({
   selector: 'app-login-callback',
@@ -12,28 +13,24 @@ export class LoginCallbackComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private auth: AuthService,
-    @Inject(PLATFORM_ID) private platformId: Object
+    private tokenService: TokenService,
+    private authService: AuthService,
+    @Inject(PLATFORM_ID) private platformId: object
   ) {}
 
   ngOnInit(): void {
-    // Lấy token ngay khi component khởi tạo
     const token = this.route.snapshot.queryParamMap.get('token');
-    if (token) {
-      // Lưu JWT vào localStorage
-      this.auth.setJwtToken(token);
 
-      // Chuyển hướng ở bên client
-      if (isPlatformBrowser(this.platformId)) {
-        // Chuyển về homepage hoặc trang trước login
-        this.router.navigateByUrl('/').then(() => {
-          // Reload trang để các service và interceptor mới hoạt động
-          window.location.reload();
-        });
-      }
-    } else {
-      // Nếu không có token, chuyển về trang login
+    if (!token) {
       this.router.navigate(['/login']);
+      return;
+    }
+
+    this.tokenService.setToken(token);
+    this.authService.setLoggedIn(true);
+
+    if (isPlatformBrowser(this.platformId)) {
+      this.router.navigateByUrl('/');
     }
   }
 }

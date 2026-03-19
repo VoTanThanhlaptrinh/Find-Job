@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {AuthService} from '../../../../core/services/auth.service';
+import {AccountService} from '../../../../core/services/account.service';
 import {NotifyMessageService} from '../../../../core/services/notify-message.service';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
@@ -12,15 +12,15 @@ import {Router} from '@angular/router';
   standalone:true
 })
 export class ChangePassComponent implements OnInit{
-  constructor(private authService: AuthService,
+  constructor(private accountService: AccountService,
               private notify: NotifyMessageService,
               private router: Router) {
   }
 
   ngOnInit(): void {
-    this.authService.checkOauth2().subscribe({
+    this.accountService.checkOauth2().subscribe({
       next: res =>{
-        if(!res.data)
+        if(!res)
           this.router.navigate(['verify'])
       }
     });
@@ -41,7 +41,7 @@ export class ChangePassComponent implements OnInit{
     console.log('Form value:', this.formGroup.value);
     console.log('Form valid:', this.formGroup.valid);
 
-    this.authService.changePass(this.formGroup.value).subscribe({
+    this.accountService.changePass(this.formGroup.value).subscribe({
       next: res =>{
         this.notify.showMessage('Thay đổi mật khẩu thành công','','success');
         this.formGroup.reset();

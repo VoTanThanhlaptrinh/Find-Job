@@ -87,28 +87,7 @@
           </div>
             <div class="col-lg-8 post-list">
                 @for (item of listJobsNewest; track item.id) {
-                <div class="single-post flex flex-row">
-                    <div class="thumb">
-                        <img class="img-fluid" src="{{item.image}}" alt="">
-                    </div>
-                    <div class="details ms-2">
-                        <div class="title d-flex flex-row justify-content-between">
-                            <div class="titles">
-                                <a href="{{item.link}}">
-                                    <h4>{{item.title}} &nbsp;</h4>
-                                </a>
-                            </div>
-                        </div>
-                        <p>{{item.description}}</p>
-                      <p class="info">
-                        <span><i class="lnr lnr-map"></i>&nbsp;{{item.address}}</span>
-                        <span class="divider"></span>
-                        <span><i class="lnr lnr-database"></i>&nbsp;{{ formatMoney(item.salary)}}</span>
-                        <span class="divider"></span>
-                        <span>{{item.type}}</span>
-                      </p>
-                    </div>
-                </div>
+              <app-job-card [job]="item" image="assets/web_css/img/post.png" detailRoute="/single"></app-job-card>
                 } @empty {
                 <li>There are no items.</li>
                 }
@@ -127,20 +106,5 @@
 <!-- End post Area -->
 
 <!-- Start callto-action Area -->
-<section class="callto-action-area section-gap mt-5" id="join">
-    <div class="container">
-        <div class="row d-flex justify-content-center">
-            <div class="menu-content col-lg-9">
-                <div class="title text-center">
-                    <h1 class="mb-10 text-white">Tham gia vào chúng tôi mà không có bất kỳ do dự nào</h1>
-                    <p class="text-white">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-                        exercitation.</p>
-                    <a class="primary-btn" href="/login">Tôi là ứng viên</a>
-                    <a class="primary-btn" href="/login">Tôi là nhà tuyển dụng</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+<app-call-to-action [withTopMargin]="true"></app-call-to-action>
 <!-- End calto-action Area -->

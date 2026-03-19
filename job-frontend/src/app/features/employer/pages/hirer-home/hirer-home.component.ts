@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {JobServiceService} from '../../../jobs/services/job-service.service';
 import {NotifyMessageService} from '../../../../core/services/notify-message.service';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
+import { HirerJobViewModel } from '../../../../shared/models/jobs/job-api-response.model';
 
 @Component({
   selector: 'app-hirer-home',
@@ -13,7 +14,7 @@ import {MatPaginator, PageEvent} from '@angular/material/paginator';
   styleUrl: './hirer-home.component.css'
 })
 export class HirerHomeComponent implements OnInit{
-  jobPosts: any;
+  jobPosts: HirerJobViewModel[] = [];
   pageIndex: number = 0;
   pageSize: number = 10;
   length : number = 0;
@@ -33,7 +34,7 @@ export class HirerHomeComponent implements OnInit{
       }
     })
   }
-  trackById(index: number, item: any): any {
+  trackById(index: number, item: HirerJobViewModel): string | number {
     return item.id;
   }
   formatMoney(val: number): string {

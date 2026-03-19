@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../../../../core/services/auth.service';
+import { AccountService } from '../../../../core/services/account.service';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -9,11 +9,11 @@ import { ActivatedRoute } from '@angular/router';
   styleUrl: './activate.component.css'
 })
 export class ActivateComponent implements OnInit {
-  constructor(private auth: AuthService, private activateRoute: ActivatedRoute) { }
+  constructor(private accountService: AccountService, private activateRoute: ActivatedRoute) { }
   message: string = "";
   ngOnInit(): void {
     let token = this.activateRoute.snapshot.queryParams['token'];
-    this.auth.activate(token).subscribe({
+    this.accountService.activate(token).subscribe({
       next: (res) => {
         this.message = "✔️ Xác thực thành công"
       },

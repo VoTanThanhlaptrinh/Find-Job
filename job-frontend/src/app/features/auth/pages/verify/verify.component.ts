@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../../../../core/services/auth.service';
-import { on } from 'node:events';
+import { AccountService } from '../../../../core/services/account.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import {NotifyMessageService} from '../../../../core/services/notify-message.service';
 
@@ -11,7 +10,7 @@ import {NotifyMessageService} from '../../../../core/services/notify-message.ser
   styleUrl: './verify.component.css'
 })
 export class VerifyComponent implements OnInit {
-  constructor(private authService: AuthService
+  constructor(private accountService: AccountService
               , private aRouter: ActivatedRoute
               , private router: Router
               ,private notify: NotifyMessageService) { }
@@ -24,7 +23,7 @@ export class VerifyComponent implements OnInit {
   }
 
   sendLink(email: string) {
-    this.authService.sendLink(email).subscribe(
+    this.accountService.sendLink(email).subscribe(
       {
         next: (res) => {
           this.notify.showMessage("Gửi thành công",'success');

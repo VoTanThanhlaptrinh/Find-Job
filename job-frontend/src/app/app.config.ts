@@ -1,4 +1,4 @@
-import {ApplicationConfig, CSP_NONCE, importProvidersFrom, provideZoneChangeDetection} from '@angular/core';
+import {ApplicationConfig, importProvidersFrom, provideZoneChangeDetection} from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
@@ -6,6 +6,7 @@ import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { loggerInterceptor } from './core/interceptors/logger.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
+import { refreshTokenInterceptor } from './core/interceptors/refresh-token.interceptor';
 import {provideQuillConfig} from 'ngx-quill';
 import hljs from 'highlight.js';
 import {provideNativeDateAdapter} from '@angular/material/core';
@@ -19,7 +20,7 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(),
     provideHttpClient(
       withFetch(),
-      withInterceptors([loggerInterceptor, errorInterceptor])
+      withInterceptors([loggerInterceptor, errorInterceptor, refreshTokenInterceptor])
     ),
     importProvidersFrom(JwtModule.forRoot({})),
     provideNativeDateAdapter(),

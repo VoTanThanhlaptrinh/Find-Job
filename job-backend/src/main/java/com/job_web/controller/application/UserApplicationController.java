@@ -21,15 +21,17 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping(path = "/api/user", produces = "application/json")
 @RequiredArgsConstructor
 public class UserApplicationController {
     private final ApplyService applyService;
     private final JobService jobService;
 
-    @PostMapping(path = "/api/apply/pri/u/submit-existing", produces = "application/json")
+    @PostMapping("/applications/submit-existing")
     public ResponseEntity<ApiResponse<String>> applyWithExistingCv(@Valid @RequestBody ApplyCvWithExistingRequest request,
                                                                    BindingResult bindingResult,
                                                                    Principal principal) {
@@ -41,7 +43,7 @@ public class UserApplicationController {
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @PostMapping(value = "/api/apply/pri/u/submit-upload", consumes = "multipart/form-data", produces = "application/json")
+    @PostMapping(value = "/applications/submit-upload", consumes = "multipart/form-data")
     public ResponseEntity<ApiResponse<String>> applyWithUploadCv(@Valid @ModelAttribute ApplyCvWithUploadRequest request,
                                                                  BindingResult bindingResult,
                                                                  Principal principal) throws IOException {
@@ -53,13 +55,13 @@ public class UserApplicationController {
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @GetMapping(path = "/api/apply/pri/u/hasApplied/{jobId}", produces = "application/json")
+    @GetMapping("/applications/jobs/{jobId}/status")
     public ResponseEntity<ApiResponse<Boolean>> hasApplied(@PathVariable("jobId") long jobId, Principal principal) {
         ApiResponse<Boolean> res = applyService.hasApplied(principal, jobId);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @GetMapping(path = "/api/job/pri/u/listJobUserApplied/{pageIndex}/{pageSize}", produces = "application/json")
+    @GetMapping("/jobs/applied/{pageIndex}/{pageSize}")
     public ResponseEntity<ApiResponse<Page<JobApply>>> listJobUserApplied(@PathVariable("pageIndex") int pageIndex,
                                                                           @PathVariable("pageSize") int pageSize,
                                                                           Principal principal) {

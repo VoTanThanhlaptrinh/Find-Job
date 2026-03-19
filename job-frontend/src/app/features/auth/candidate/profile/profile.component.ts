@@ -1,11 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {AuthService} from '../../../../core/services/auth.service';
+import {UserService} from '../../../../core/services/user.service';
 import {take} from 'rxjs';
 import {NotifyMessageService} from '../../../../core/services/notify-message.service';
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
-import {MatFormField, MatHint, MatInput, MatSuffix} from '@angular/material/input';
+import {MatFormField, MatInput, MatSuffix} from '@angular/material/input';
 import {MatNativeDateModule} from '@angular/material/core';
 
   interface userUI{
@@ -27,7 +27,7 @@ export class ProfileComponent implements OnInit{
       mobile: new FormControl('', [Validators.required, Validators.minLength(10)]),
       dateOfBirth: new FormControl<Date | null>(null, Validators.required)
     })
-  constructor(private auth: AuthService
+  constructor(private userService: UserService
               ,private toastr: NotifyMessageService ) {
   }
   ngOnInit(): void {
@@ -40,7 +40,7 @@ export class ProfileComponent implements OnInit{
     mobile: '',
   };
   getDetails(){
-    this.auth.getDetails().pipe(take(1)).subscribe({
+    this.userService.getDetails().pipe(take(1)).subscribe({
       next: (res) =>{
        this.user = res.data;
        this.formGroup.patchValue({
@@ -61,7 +61,7 @@ export class ProfileComponent implements OnInit{
       this.formGroup.markAllAsTouched();
       return;
     }
-    this.auth.updateInfo(this.formGroup.value).subscribe({
+    this.userService.updateInfo(this.formGroup.value).subscribe({
       next: res =>{
         this.toastr.showMessage(res.message,'','success')
       },error: err =>{
