@@ -97,4 +97,4 @@ app:
     secure: true
 
 server:
-  port: ${PORT:8080}
+  port: 8080

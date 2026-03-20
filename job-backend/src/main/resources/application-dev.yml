@@ -94,3 +94,6 @@ spring:
 app:
   cookie:
     secure: false
+
+server:
+  port: 8080
