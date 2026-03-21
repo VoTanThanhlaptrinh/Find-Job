@@ -1,8 +1,8 @@
-<div [id]="job.id" class="single-post flex flex-row mb-3">
+<div [id]="job.id" class="flex flex-row items-center border shadow-md rounded-xl m-1 py-2 px-4 gap-x-2">
   <div class="thumb">
-    <img title="img" class="img-fluid" [src]="image" [alt]="job.title" />
+    <img title="img" class="img-fluid my-auto" [src]="image" [alt]="job.title" />
   </div>
-  <div class="details ms-2">
+  <div class="details">
     <div class="title d-flex flex-row justify-content-between">
       <div class="titles">
         <a [routerLink]="[detailRoute, job.id]">

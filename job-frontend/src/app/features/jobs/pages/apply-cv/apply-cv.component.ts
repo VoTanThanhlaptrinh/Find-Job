@@ -10,6 +10,8 @@ import {
   ApplyCvWithExistingRequest,
   ApplyCvWithUploadRequest
 } from '../../../../shared/models/jobs/apply-cv.model';
+import { ResumeReviewInput } from '../../../../shared/models/jobs/resume-review-input.model';
+import { ResumeReviewComponent } from '../../../../shared/components/resume-review/resume-review.component';
 
 type CvMode = 'existing' | 'upload';
 type ApplyCvFormGroup = FormGroup<{
@@ -19,14 +21,10 @@ type ApplyCvFormGroup = FormGroup<{
   coverLetter: FormControl<string>;
 }>;
 
-interface PreviousCvOption {
-  id: number;
-  label: string;
-}
-
 @Component({
   selector: 'app-apply-cv',
-  imports: [RouterModule, ReactiveFormsModule],
+  standalone: true,
+  imports: [RouterModule, ReactiveFormsModule, ResumeReviewComponent],
   templateUrl: './apply-cv.component.html',
   styleUrl: './apply-cv.component.css'
 })
@@ -38,9 +36,17 @@ export class ApplyCvComponent implements OnInit {
   isDragging = false;
   readonly maxFileSize = 5 * 1024 * 1024;
   readonly acceptedExtensions = '.pdf,.doc,.docx';
-  readonly previousCvOptions: PreviousCvOption[] = [
-    { id: 1, label: 'CV Backend Developer - Applied at Frontend Developer' },
-    { id: 2, label: 'CV Fullstack Developer - Applied at Software Engineer' }
+  readonly previousCvOptions: ResumeReviewInput[] = [
+    {
+      id: 1,
+      fileName: 'Nguyen_2023_Revised.pdf',
+      createDate: '2023-10-12T09:15:00'
+    },
+    {
+      id: 2,
+      fileName: 'Tran_Resume_Final.docx',
+      createDate: '2024-01-08T15:40:00'
+    }
   ];
 
   constructor(private router: Router,
@@ -151,6 +157,11 @@ export class ApplyCvComponent implements OnInit {
 
     const sizeInMb = this.selectedFile.size / (1024 * 1024);
     return `${sizeInMb.toFixed(2)} MB`;
+  }
+
+  get selectedExistingCv(): ResumeReviewInput | null {
+    const selectedId = this.applyCvForm.controls.existingCvId.value;
+    return this.previousCvOptions.find(cv => cv.id === selectedId) ?? this.previousCvOptions[0] ?? null;
   }
 
   onSubmit(): void {

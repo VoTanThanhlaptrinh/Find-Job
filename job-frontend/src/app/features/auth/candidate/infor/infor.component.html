@@ -1,56 +1,38 @@
 <section class="banner-area relative" id="mini">
   <div class="overlay overlay-bg"></div>
 </section>
-<div class="container-fluid" >
-    <div class="row d-flex justify-content-center">
-      <!-- Sidebar -->
-      <div class="d-flex flex-column shrink-0 p-3 bg-light col-lg-2 h-screen">
-        <a routerLink="/infor" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
-          <svg class="bi me-2" width="40" height="32">
-            <use xlink:href="#bootstrap"></use>
-          </svg>
-          <img src="assets/web_css/img/logo.jpg" alt="" class="img-fluid rounded-circle" width="100" height="100">
-        </a>
-        <hr>
-        <ul class="nav nav-pills flex-column mb-auto">
-          <li class="nav-item">
-            <a routerLink="/infor" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link link-dark">
-              <svg class="bi me-2" width="16" height="16">
-                <use xlink:href="#home"></use>
-              </svg>
-              Hồ sơ
-            </a>
-          </li>
-          <li>
-            <a routerLink="/infor/change-password" routerLinkActive="active" class="nav-link link-dark">
-              <svg class="bi me-2" width="16" height="16">
-                <use xlink:href="#speedometer2"></use>
-              </svg>
-              Đổi mật khẩu
-            </a>
-          </li>
-          <li>
-            <a routerLink="/infor/cv" routerLinkActive="active" class="nav-link link-dark">
-              <svg class="bi me-2" width="16" height="16">
-                <use xlink:href="#table"></use>
-              </svg>
-              CV của bạn
-            </a>
-          </li>
-          <li>
-            <a routerLink="/infor/history-apply" routerLinkActive="active" class="nav-link link-dark">
-              <svg class="bi me-2" width="16" height="16">
-                <use xlink:href="#grid"></use>
-              </svg>
-              Job đã ứng tuyển
-            </a>
-          </li>
-        </ul>
+<div class="relative h-screen my-2">
+  <div class="flex w-full max-w-7xl mx-auto h-full gap-4">
+    <div
+      class="hidden lg:flex flex-col bg-white gap-y-3 items-center max-w-77 shadow-md rounded-lg border px-2"
+    >
+      <div class="flex flex-col items-center gap-3">
+        <img
+          [src]="userAvatar"
+          alt="User avatar"
+          title="User avatar"
+          class="h-20 w-20 rounded-full border border-slate-300 object-cover mt-2"
+        />
+        <h3 class="text-sm font-semibold text-slate-900">{{ userName }}</h3>
       </div>
-
-      <!-- Content -->
-      <div id="content" class="ms-sm-auto col-lg-10 p-3">
-        <router-outlet></router-outlet> <!-- Nội dung sẽ thay đổi ở đây -->
-      </div>
+      <div class="bg-gray-400 h-0.5 w-70 border px-2"></div>
+      <nav class="flex-1 space-y-1 overflow-y-auto">
+        @for (item of menuItems; track item.route) {
+          <a
+            [routerLink]="item.route"
+            routerLinkActive="text-slate-50 bg-gray-800 shadow-md border"
+            [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
+            class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition"
+            (click)="isOpen = false"
+          >
+            <i [class]="item.icon"></i>
+            <span>{{ item.name }}</span>
+          </a>
+        }
+      </nav>
     </div>
+    <section class="min-w-0 flex-1 w-full border-slate-200 bg-white p-3 shadow-md rounded-lg border">
+      <router-outlet></router-outlet>
+    </section>
   </div>
+</div>

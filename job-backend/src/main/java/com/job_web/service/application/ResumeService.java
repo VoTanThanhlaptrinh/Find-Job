@@ -4,13 +4,14 @@ import com.job_web.dto.application.ResumeUploadDTO;
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.dto.application.ResumeDTO;
 import com.job_web.dto.application.ResumeDetailDTO;
+import com.job_web.dto.application.ResumeView;
 import com.job_web.models.Resume;
 
 import java.security.Principal;
 import java.util.List;
 
 public interface ResumeService {
-    public ApiResponse<List<ResumeDTO>> getListResumeOfUser(Principal principal);
+    public ApiResponse<List<ResumeView>> getListResumeOfUser(Principal principal);
 
     public ApiResponse<List<ResumeDTO>> getResumesByUser(String email);
 

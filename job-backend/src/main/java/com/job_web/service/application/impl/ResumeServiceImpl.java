@@ -6,10 +6,13 @@ import com.job_web.dto.application.ResumeDTO;
 import com.job_web.dto.application.ResumeDetailDTO;
 import com.job_web.dto.application.ResumeUploadDTO;
 import com.job_web.dto.common.ApiResponse;
+import com.job_web.dto.application.ResumeView;
 import com.job_web.models.Resume;
 import com.job_web.models.User;
 import com.job_web.service.application.ResumeService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -23,10 +26,18 @@ public class ResumeServiceImpl implements ResumeService {
     private final ResumeRepository resumeRepository;
     private final UserRepository userRepository;
     @Override
-    public ApiResponse<List<ResumeDTO>> getListResumeOfUser(Principal principal) {
-        List<ResumeDTO> res = resumeRepository.findAllByUser(principal.getName());
-        String message = res.isEmpty() ? "The user has not uploaded any resumes yet." : "success";
-        return new ApiResponse<>(message,res, HttpStatus.OK.value());
+    public ApiResponse<List<ResumeView>> getListResumeOfUser(Principal principal) {
+        User user = new User();
+        user.setEmail(principal.getName());
+        Resume resume = new Resume();
+        resume.setUser(user);
+        Example<Resume> example = Example.of(resume);
+        var resumes = resumeRepository.findBy(example, query ->
+                query.as(ResumeView.class)
+                        .sortBy(Sort.by("createDate").descending())
+                        .all());
+        String message = resumes.isEmpty() ? "The user has not uploaded any resumes yet." : "success";
+        return new ApiResponse<>(message,resumes, HttpStatus.OK.value());
     }
 
     @Override

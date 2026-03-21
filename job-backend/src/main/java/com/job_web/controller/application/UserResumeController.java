@@ -6,6 +6,7 @@ import java.util.List;
 import com.job_web.dto.application.ResumeDetailDTO;
 import com.job_web.dto.application.ResumeDTO;
 import com.job_web.dto.application.ResumeUploadDTO;
+import com.job_web.dto.application.ResumeView;
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.service.application.ResumeService;
 import jakarta.validation.Valid;
@@ -29,8 +30,8 @@ public class UserResumeController {
     private final ResumeService resumeService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<ResumeDTO>>> getListResumeOfUser(Principal principal) {
-        ApiResponse<List<ResumeDTO>> res = resumeService.getListResumeOfUser(principal);
+    public ResponseEntity<ApiResponse<List<ResumeView>>> getListResumeOfUser(Principal principal) {
+        ApiResponse<List<ResumeView>> res = resumeService.getListResumeOfUser(principal);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
