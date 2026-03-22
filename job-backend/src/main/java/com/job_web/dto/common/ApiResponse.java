@@ -1,17 +1,19 @@
 package com.job_web.dto.common;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+public record ApiResponse<T>(
+        String message,
+        T data,
+        int status
+) {
+    public String getMessage() {
+        return message;
+    }
 
-@Data
-@AllArgsConstructor
-public class ApiResponse<T> {
-	private String message;
-	private T data;
-	private int status;
+    public T getData() {
+        return data;
+    }
+
+    public int getStatus() {
+        return status;
+    }
 }
-
-
-
-
-

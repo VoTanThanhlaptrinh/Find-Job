@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import jakarta.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.SQLRestriction;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,7 +17,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class Comment {
+@SQLRestriction("status <> 'DELETED'")
+public class Comment extends StatusEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
@@ -29,7 +31,6 @@ public class Comment {
 	@JoinColumn(name = "blog_id", nullable = false)
 	private Blog blog;
 	private String content;
-	private String status;
 	@CreatedDate
 	@Column(nullable = false, updatable = false)
 	private LocalDateTime createDate;

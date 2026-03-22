@@ -70,7 +70,11 @@ public class UserCrudServiceImpl implements UserCrudService {
         if (userOpt.isEmpty()) {
             return new ApiResponse<>("Không tìm thấy user", null, HttpStatus.NOT_FOUND.value());
         }
-        userRepository.delete(userOpt.get());
+        User user = userOpt.get();
+        user.markDeleted();
+        user.setActive(false);
+        user.setEnabled(false);
+        userRepository.save(user);
         return new ApiResponse<>("Thành công", null, HttpStatus.OK.value());
     }
 

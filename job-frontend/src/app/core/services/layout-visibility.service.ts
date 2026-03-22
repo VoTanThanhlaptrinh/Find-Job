@@ -10,11 +10,6 @@ export interface LayoutVisibility {
 })
 export class LayoutVisibilityService {
   private readonly hiddenHeaderRoutes = new Set([
-    '/login',
-    '/register',
-    '/forgot-pass',
-    '/verify',
-    '/activate',
     '/login-callback',
   ]);
 

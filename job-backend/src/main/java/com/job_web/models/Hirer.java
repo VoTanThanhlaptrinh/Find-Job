@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -15,7 +16,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Hirer {
+@SQLRestriction("status <> 'DELETED'")
+public class Hirer extends StatusEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
@@ -31,10 +33,15 @@ public class Hirer {
 	@Column(nullable = false)
 	private Instant createDate;
 	@LastModifiedDate
-	@Column(nullable = true, updatable = true)
+	@Column(updatable = true)
 	private Instant modifiedDate;
-	@OneToMany(mappedBy = "hirer")
+	@OneToMany(mappedBy = "hirer", fetch = FetchType.LAZY)
 	private List<Job> jobsPost;
+	@OneToMany(targetEntity = Address.class, fetch = FetchType.LAZY)
+	List<Address> addresses;
+	public boolean isExistAddress(Address address){
+		return addresses.stream().anyMatch(a -> a.getId().equals(address.getId()));
+	}
 }
 
 

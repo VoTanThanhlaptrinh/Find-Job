@@ -11,6 +11,7 @@ import java.util.List;
 import jakarta.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.SQLRestriction;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,7 +22,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Blog {
+@SQLRestriction("status <> 'DELETED'")
+public class Blog extends StatusEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;

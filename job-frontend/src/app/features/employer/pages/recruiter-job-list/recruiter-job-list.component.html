@@ -1,0 +1,40 @@
+<section class="jobs-page">
+  <header class="jobs-head">
+    <div>
+      <h1>Danh sách công việc đăng tải</h1>
+      <p>Quản lý các tin tuyển dụng đã đăng từ một nơi duy nhất.</p>
+    </div>
+
+    <a class="post-link" routerLink="/recruiter/dashboard/jobs/post-job">Đăng tải công việc</a>
+  </header>
+
+  <article class="jobs-table-wrap">
+    <table class="jobs-table">
+      <thead>
+      <tr>
+        <th>Vị trí</th>
+        <th>Địa điểm</th>
+        <th>Trạng thái</th>
+        <th>Ứng viên</th>
+      </tr>
+      </thead>
+      <tbody>
+        @for (job of jobs; track job.title) {
+          <tr>
+            <td>{{ job.title }}</td>
+            <td>{{ job.location }}</td>
+            <td>
+              <span class="status" [class.pause]="job.status === 'Tạm dừng'">{{ job.status }}</span>
+            </td>
+            <td>{{ job.applied }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </article>
+
+  <article class="empty-white">
+    <h2>Khu vực nội dung bổ sung</h2>
+    <div class="white-box"></div>
+  </article>
+</section>

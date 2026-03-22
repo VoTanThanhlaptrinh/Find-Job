@@ -41,9 +41,7 @@ public class AccountServiceImpl implements AccountService {
             return new ApiResponse<>("Chưa đăng nhập", null, HttpStatus.BAD_REQUEST.value());
         }
         User userLogin = userRepository.findByEmail(principal.getName()).orElseThrow(RuntimeException::new);
-        UserInfo userInfo = new UserInfo();
-        userInfo.toUserInfo(userLogin);
-        return new ApiResponse<>("success", userInfo, HttpStatus.OK.value());
+        return new ApiResponse<>("success", UserInfo.fromUser(userLogin), HttpStatus.OK.value());
     }
 
     @Override

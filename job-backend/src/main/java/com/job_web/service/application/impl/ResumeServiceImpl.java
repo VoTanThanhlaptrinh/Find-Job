@@ -124,7 +124,8 @@ public class ResumeServiceImpl implements ResumeService {
         if (cv.getUser() == null || !principal.getName().equals(cv.getUser().getEmail())) {
             return new ApiResponse<>("You do not have permission to delete this resume.", null, HttpStatus.FORBIDDEN.value());
         }
-        resumeRepository.delete(cv);
+        cv.markDeleted();
+        resumeRepository.save(cv);
         return new ApiResponse<>("success", null, HttpStatus.OK.value());
     }
 }

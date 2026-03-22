@@ -3,22 +3,18 @@ package com.job_web.dto.blog;
 import com.job_web.models.Blog;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
-public class BlogDTO {
-    @NotBlank(message = "Tiêu đề không được rỗng")
-    @Size(max = 255, message = "Tiêu đề tối đa 255 ký tự")
-    private String title;
+public record BlogDTO(
+        @NotBlank(message = "TiÃªu Ä‘á» khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        @Size(max = 255, message = "TiÃªu Ä‘á» tá»‘i Ä‘a 255 kÃ½ tá»±")
+        String title,
 
-    @NotBlank(message = "Mô tả không được rỗng")
-    private String description;
+        @NotBlank(message = "MÃ´ táº£ khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        String description,
 
-    @NotBlank(message = "Nội dung không được rỗng")
-    private String content;
-
+        @NotBlank(message = "Ná»™i dung khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        String content
+) {
     public Blog toBlog() {
         Blog blog = new Blog();
         applyTo(blog);
@@ -30,9 +26,16 @@ public class BlogDTO {
         blog.setDescription(description);
         blog.setContent(content);
     }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getContent() {
+        return content;
+    }
 }
-
-
-
-
-

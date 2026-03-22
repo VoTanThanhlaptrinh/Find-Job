@@ -2,6 +2,8 @@
 application:
   service:
     impl:
+      deepseek:
+        api-key: ${DEEP_SEEK_API_KEY}
       gemini:
         api-key: ${GEMINI_API_KEY}
       secret-key: ${SECRET_KEY}

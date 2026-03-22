@@ -17,7 +17,6 @@ import { ActivateComponent } from './features/auth/pages/activate/activate.compo
 import { JobSingleComponent } from './features/jobs/pages/job-single/job-single.component';
 import { ApplyCvComponent } from './features/jobs/pages/apply-cv/apply-cv.component';
 import { LoginCallbackComponent } from './features/auth/pages/login-callback/login-callback.component';
-import { PostJobComponent } from './features/employer/pages/post-job/post-job.component';
 import { ForgotPassComponent } from './features/auth/pages/forgot-pass/forgot-pass.component';
 import { ResetPassComponent } from './features/auth/pages/reset-pass/reset-pass.component';
 import { HirerHomeComponent } from './features/employer/pages/hirer-home/hirer-home.component';
@@ -27,12 +26,12 @@ import { userLoginGuard } from './core/guards/user-login.guard';
 import { hirerGuard } from './core/guards/hirer-guard.guard';
 import { RecruiterLoginComponent } from './features/employer/pages/recruiter-login/recruiter-login.component';
 import { RecruiterRegisterComponent } from './features/employer/pages/recruiter-register/recruiter-register.component';
-import { RecruiterDashboardComponent } from './features/employer/pages/recruiter-dashboard/recruiter-dashboard.component';
+import { recruiterDashboardRoutes } from './features/employer/pages/recruiter-dashboard/recruiter-dashboard.routes';
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'recruiter/login', component: RecruiterLoginComponent },
   { path: 'recruiter/register', component: RecruiterRegisterComponent },
-  { path: 'recruiter/dashboard', component: RecruiterDashboardComponent },
+  ...recruiterDashboardRoutes,
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'about', component: AboutUsComponent },
@@ -42,7 +41,7 @@ export const routes: Routes = [
   { path: 'category', component: CategoryComponent },
   { path: 'verify', component: VerifyComponent },
   { path: 'activate', component: ActivateComponent },
-  { path: 'post-job', component: PostJobComponent },
+  { path: 'post-job', redirectTo: 'recruiter/dashboard/jobs/post-job', pathMatch: 'full' },
   { path: 'forgot-pass', component: ForgotPassComponent },
   { path: 'reset-pass/:random', component: ResetPassComponent },
   { path: 'login-callback', component: LoginCallbackComponent },

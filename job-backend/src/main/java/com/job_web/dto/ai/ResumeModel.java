@@ -1,43 +1,41 @@
 package com.job_web.dto.ai;
 
 import dev.langchain4j.model.output.structured.Description;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.List;
-@Getter
-@Setter
-public class ResumeModel {
-    public String fullName;
-    public String email;
-    public String phone;
-    @Description("Danh sách các kỹ năng cứng như Java, Spring Boot, SQL...")
-    public List<String> technicalSkills;
-    public List<WorkExperience> workHistory;
-    public List<Certificate> certificates;
-    public String education;
-    @Description("Bản tóm tắt chuyên nghiệp về năng lực và định hướng của ứng viên, dùng cho tìm kiếm ngữ nghĩa.")
-    public String summary;
+
+public record ResumeModel(
+        String fullName,
+        String email,
+        String phone,
+        @Description("Danh sÃ¡ch cÃ¡c ká»¹ nÄƒng cá»©ng nhÆ° Java, Spring Boot, SQL...")
+        List<String> technicalSkills,
+        List<WorkExperience> workHistory,
+        List<Certificate> certificates,
+        String education,
+        @Description("Báº£n tÃ³m táº¯t chuyÃªn nghiá»‡p vá» nÄƒng lá»±c vÃ  Ä‘á»‹nh hÆ°á»›ng cá»§a á»©ng viÃªn, dÃ¹ng cho tÃ¬m kiáº¿m ngá»¯ nghÄ©a.")
+        String summary
+) {
 }
-@Getter
-@Setter
-class WorkExperience {
-    public String company;
-    public String position;
-    public String duration;
-    public String description;
+
+record WorkExperience(
+        String company,
+        String position,
+        String duration,
+        String description
+) {
 }
-@Getter
-@Setter
-class Certificate {
-    public String name;
-    @Description("Xếp loại, điểm số hoặc đơn vị cấp chứng chỉ")
-    public String value;
+
+record Certificate(
+        String name,
+        @Description("Xáº¿p loáº¡i, Ä‘iá»ƒm sá»‘ hoáº·c Ä‘Æ¡n vá»‹ cáº¥p chá»©ng chá»‰")
+        String value
+) {
 }
-@Getter
-@Setter
-class ResumeEmbeddingRequest {
-    private Long userId;     // ID người dùng từ hệ thống
-    private Long cvId;       // ID bản CV cụ thể (để handle việc 1 user có nhiều CV)
-    private ResumeModel data; // Nội dung chuyên môn đã parse xong
+
+record ResumeEmbeddingRequest(
+        Long userId,
+        Long cvId,
+        ResumeModel data
+) {
 }

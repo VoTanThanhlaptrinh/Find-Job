@@ -7,6 +7,7 @@ import java.util.List;
 import jakarta.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.SQLRestriction;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -16,7 +17,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 @Data
 @Table(name = "job")
 @NoArgsConstructor
-public class Job {
+@SQLRestriction("status <> 'DELETED'")
+public class Job extends StatusEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
@@ -24,7 +26,6 @@ public class Job {
 	private String time;
 	@Column(columnDefinition = "text")
 	private String requireDetails;
-	private String address;
 	@Column(columnDefinition = "text")
 	private String description;
 	private Instant expiredDate;
@@ -44,9 +45,14 @@ public class Job {
 	@OneToMany(mappedBy = "job", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
 	@JsonIgnore
 	private List<Apply> applies;
+	@Column(columnDefinition = "text")
+	private String moreDetail;
+	@ManyToOne
+	@JoinColumn(name = "address_id")
+	private Address address;
 	@Lob
 	private byte[] logo;
-	public Job(double salary, String time, String requireDetails, String address, String description,
+	public Job(double salary, String time, String requireDetails, Address address, String description,
 			Instant expiredDate, Instant createDate, Instant modifiedDate, String title) {
 		super();
 		this.salary = salary;
@@ -66,8 +72,6 @@ public class Job {
 		}
 		applies.add(apply);
 	}
-	
-
 }
 
 

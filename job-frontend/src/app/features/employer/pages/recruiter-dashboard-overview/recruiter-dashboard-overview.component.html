@@ -1,0 +1,28 @@
+<section class="overview-page">
+  <header class="overview-head">
+    <h1>Dashboard</h1>
+    <p>Thống kê cơ bản cho tài khoản nhà tuyển dụng.</p>
+  </header>
+
+  <div class="metric-grid">
+    @for (metric of metrics; track metric.title) {
+      <article class="metric-card">
+        <p class="metric-title">{{ metric.title }}</p>
+        <p class="metric-value">{{ metric.value }}</p>
+        <p class="metric-trend">{{ metric.trend }}</p>
+      </article>
+    }
+  </div>
+
+  <div class="placeholder-grid">
+    <article class="placeholder-card tall-card">
+      <h2>Hiệu suất tuyển dụng</h2>
+      <div class="white-panel"></div>
+    </article>
+
+    <article class="placeholder-card">
+      <h2>Hoạt động gần đây</h2>
+      <div class="white-panel"></div>
+    </article>
+  </div>
+</section>

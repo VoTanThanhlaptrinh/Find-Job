@@ -1,8 +1,10 @@
 package com.job_web.seeder;
 
+import com.job_web.data.AddressRepository;
 import com.job_web.data.HirerRepository;
 import com.job_web.data.JobRepository;
 import com.job_web.data.UserRepository;
+import com.job_web.models.Address;
 import com.job_web.models.Hirer;
 import com.job_web.models.Job;
 import com.job_web.models.User;
@@ -77,6 +79,7 @@ public class JobDataSeeder implements CommandLineRunner {
     private final JobRepository jobRepository;
     private final HirerRepository hirerRepository;
     private final UserRepository userRepository;
+    private final AddressRepository addressRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Profile("dev")
@@ -98,7 +101,6 @@ public class JobDataSeeder implements CommandLineRunner {
 
     private List<Hirer> seedHirers() {
         List<Hirer> hirers = new ArrayList<>();
-        LocalDateTime userCreatedAt = LocalDateTime.now().minusDays(120);
         Instant now = Instant.now();
 
         for (int i = 0; i < COMPANY_NAMES.size(); i++) {
@@ -135,17 +137,19 @@ public class JobDataSeeder implements CommandLineRunner {
 
     private void seedJobs(List<Hirer> hirers) {
         List<Job> jobs = new ArrayList<>();
+        List<Address> addresses = addressRepository.findAll();
         Instant now = Instant.now();
 
         for (int i = 0; i < JOB_COUNT; i++) {
             Hirer hirer = hirers.get(i % hirers.size());
             String title = JOB_TITLES.get(i % JOB_TITLES.size()) + " (" + hirer.getCompanyName() + ")";
+            Address address = addresses.isEmpty() ? null : addresses.get(i % addresses.size());
 
             Job job = new Job();
             job.setTitle(title);
             job.setSalary(800 + (i % 10) * 150);
             job.setTime(JOB_TIMES.get(i % JOB_TIMES.size()));
-            job.setAddress(ADDRESSES.get(i % ADDRESSES.size()));
+            job.setAddress(address);
             job.setSkill(SKILLS.get(i % SKILLS.size()));
             job.setRequireDetails("Requirements: " + REQUIREMENTS.get(i % REQUIREMENTS.size()));
             job.setDescription("Work with the " + hirer.getCompanyName()

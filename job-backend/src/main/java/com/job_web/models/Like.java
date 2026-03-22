@@ -3,6 +3,7 @@ package com.job_web.models;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -14,7 +15,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "user_like")
-public class Like {
+@SQLRestriction("status <> 'DELETED'")
+public class Like extends StatusEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -24,8 +26,6 @@ public class Like {
     @ManyToOne
     @JoinColumn(nullable = false)
     private Blog blog;
-
-    private String status;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)

@@ -5,10 +5,12 @@ import java.sql.Timestamp;
 import jakarta.persistence.*;
 
 import lombok.Data;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Data
-public class Candidate {
+@SQLRestriction("status <> 'DELETED'")
+public class Candidate extends StatusEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;

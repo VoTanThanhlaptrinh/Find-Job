@@ -1,20 +1,19 @@
 package com.job_web.dto.message;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+public record MailMessage(
+        String to,
+        String subject,
+        String content
+) {
+    public String getTo() {
+        return to;
+    }
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class MailMessage {
+    public String getSubject() {
+        return subject;
+    }
 
-	private String to;
-	private String subject;
-	private String content;
+    public String getContent() {
+        return content;
+    }
 }
-
-
-
-
-

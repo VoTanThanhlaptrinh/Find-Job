@@ -15,12 +15,11 @@ import {NotifyMessageService} from '../../../../core/services/notify-message.ser
 @Component({
   selector: 'app-post-job',
   imports: [FormsModule
-    , RouterLink
     , QuillModule
     , ReactiveFormsModule
     , CommonModule],
-  templateUrl: './post-job.component.html',
-  styleUrl: './post-job.component.css'
+  templateUrl: './recruiter-post-job.component.html',
+  styleUrl: './recruiter-post-job.component.css'
 })
 
 export class PostJobComponent {

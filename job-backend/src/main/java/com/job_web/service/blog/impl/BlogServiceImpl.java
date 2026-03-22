@@ -66,7 +66,9 @@ public class BlogServiceImpl implements BlogService {
         if (blogOpt.isEmpty()) {
             return new ApiResponse<>("không tìm thấy blog", null, HttpStatus.NOT_FOUND.value());
         }
-        blogRepository.delete(blogOpt.get());
+        Blog blog = blogOpt.get();
+        blog.markDeleted();
+        blogRepository.save(blog);
         return new ApiResponse<>("success", null, HttpStatus.OK.value());
     }
 
@@ -89,6 +91,7 @@ public class BlogServiceImpl implements BlogService {
             return new ApiResponse<>("không tìm thấy user",null, HttpStatus.NOT_FOUND.value());
         }
         comment.setUser(user.get());
+        comment.markActive();
         commentRepository.save(comment);
         return new ApiResponse<>("success",null, HttpStatus.CREATED.value());
     }
@@ -104,17 +107,17 @@ public class BlogServiceImpl implements BlogService {
         if(blog.isEmpty()) {
             return new ApiResponse<>("không tìm thấy blog",null, HttpStatus.NOT_FOUND.value());
         }
-        Optional<Like> like = likeRepository.findLikeByUserAndBlog(user.get(),blog.get());
+        Optional<Like> like = likeRepository.findLatestByUserIdAndBlogId(user.get().getId(), blog.get().getId());
         like.ifPresentOrElse(
                 l -> {
-                    l.setStatus("like");
+                    l.markActive();
                     likeRepository.save(l);
                 },
                 () -> {
                     Like like1 = new Like();
                     like1.setUser(user.get());
                     like1.setBlog(blog.get());
-                    like1.setStatus("like");
+                    like1.markActive();
                     likeRepository.save(like1);
                 }
         );
@@ -132,20 +135,11 @@ public class BlogServiceImpl implements BlogService {
         if(blog.isEmpty()) {
             return new ApiResponse<>("không tìm thấy blog",null, HttpStatus.NOT_FOUND.value());
         }
-        Optional<Like> like = likeRepository.findLikeByUserAndBlog(user.get(),blog.get());
-        like.ifPresentOrElse(
-                l -> {
-                    l.setStatus("unlike");
-                    likeRepository.save(l);
-                },
-                () -> {
-                    Like like1 = new Like();
-                    like1.setUser(user.get());
-                    like1.setBlog(blog.get());
-                    like1.setStatus("unlike");
-                    likeRepository.save(like1);
-                }
-        );
+        Optional<Like> like = likeRepository.findLatestByUserIdAndBlogId(user.get().getId(), blog.get().getId());
+        like.ifPresent(l -> {
+            l.markDeleted();
+            likeRepository.save(l);
+        });
         return new ApiResponse<>("success",null, HttpStatus.OK.value());
     }
 

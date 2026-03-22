@@ -11,6 +11,7 @@ import java.util.StringTokenizer;
 
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -30,7 +31,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(indexes = {
 		@Index(name = "mulitIndex1", columnList = "id, email"),})
-public class User implements UserDetails, Principal {
+@SQLRestriction("status <> 'DELETED'")
+public class User extends StatusEntity implements UserDetails, Principal {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
