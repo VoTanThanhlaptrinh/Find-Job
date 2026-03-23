@@ -29,13 +29,13 @@ public class HirerResumeController {
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @GetMapping("/{id}/download")
-    public ResponseEntity<Resource> downloadResume(@PathVariable("id") long id) {
-        Resume resume = resumeService.findById(id);
-        if (resume == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        ByteArrayResource byteArrayResource = new ByteArrayResource(resume.getData());
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM).body(byteArrayResource);
-    }
+//    @GetMapping("/{id}/download")
+//    public ResponseEntity<Resource> downloadResume(@PathVariable("id") long id) {
+//        Resume resume = resumeService.findById(id);
+//        if (resume == null) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+//        }
+//        ByteArrayResource byteArrayResource = new ByteArrayResource(resume.getData());
+//        return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM).body(byteArrayResource);
+//    }
 }

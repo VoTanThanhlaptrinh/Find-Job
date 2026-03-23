@@ -1,8 +1,17 @@
 <section class="flex flex-col gap-y-2">
-  <header>
+  <header class="flex flex-row justify-between items-center">
     <h2 class="text-xl font-bold text-slate-900 sm:text-2xl">
       Danh sach CV cua ban
     </h2>
+    <div class="rounded-xl">
+      <button
+        type="button"
+        class="bg-blue-500 text-white px-4 py-2 hover:bg-blue-600 rounded-2xl shadow-md transition-colors duration-300"
+        (click)="openUploadModal()"
+        >
+        Thêm CV
+      </button>
+    </div>
   </header>
 
   <div class="flex flex-row justify-between items-center gap-x-2">
@@ -148,4 +157,10 @@
       }
     </div>
   }
+
+  <app-cv-upload-modal
+    [isOpen]="isUploadModalOpen"
+    (closeRequested)="closeUploadModal()"
+    (submitRequested)="submitUploadCv($event)"
+  ></app-cv-upload-modal>
 </section>

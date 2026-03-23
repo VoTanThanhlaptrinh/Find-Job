@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
+import org.jsoup.Jsoup;
 
 import java.time.LocalDate;
 import java.time.ZoneOffset;
@@ -22,18 +23,17 @@ public record JobDTO(
         @NotBlank(message = "Loai cong viec khong duoc rong")
         String jobType,
 
-        @Min(value = 2000000, message = "Muc luong toi thieu la 2 trieu")
+        @Min(value = 5000000, message = "Muc luong toi thieu la 5 trieu")
         double salary,
-
+        @Size(min = 0, max = 5000, message = "Do dai thong tin toi da 5000 ky tu")
         @NotBlank(message = "Mo ta cong viec khong duoc rong")
         String jobDescription,
-
+        @Size(min = 0, max = 5000, message = "Do dai thong tin toi da 5000 ky tu")
         @NotBlank(message = "Yeu cau cong viec khong duoc rong")
         String jobRequirement,
-
-        @NotBlank(message = "Ky nang cong viec khong duoc rong")
+        @NotBlank(message = "Yeu cau ve ky nang, cong cu khong duoc rong")
+        @Size(min = 0, max = 5000, message = "Do dai thong tin toi da 5000 ky tu")
         String jobSkill,
-
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
         @NotNull(message = "Thoi gian nop CV khong duoc rong")
         LocalDate deadlineCV,
@@ -41,10 +41,7 @@ public record JobDTO(
         @Positive(message = "Can thong tin nguoi dang cong viec")
         long hirerId,
 
-        @Positive(message = "Cong viec can co logo dai dien")
-        long imageId,
-
-        @Size(min = 0, max = 1000, message = "Thong tin them toi da 1000 ky tu")
+        @Size(min = 0, max = 5000, message = "Thong tin them toi da 5000 ky tu")
         String moreDetail
 ) {
     @AssertTrue(message = "Han nop CV phai sau it nhat mot ngay so voi hom nay")
@@ -55,16 +52,22 @@ public record JobDTO(
     public void updateJob(Job job) {
         job.setTime(jobType);
         job.setDescription(jobDescription);
+        job.setDescriptionText(parseHtml(jobDescription));
         job.setRequireDetails(jobRequirement);
-        job.setSkill(jobSkill);
+        job.setRequireDetailsText(parseHtml(jobRequirement));
         job.setSalary(salary);
         job.setTitle(jobName);
         job.setExpiredDate(deadlineCV
                 .atStartOfDay(ZoneOffset.UTC)
                 .toInstant());
-        job.setMoreDetail(moreDetail);
+        if(moreDetail != null && !moreDetail.isEmpty()){
+            job.setMoreDetail(moreDetail);
+            job.setMoreDetailText(parseHtml(moreDetail));
+        }
     }
-
+    private String parseHtml(String html){
+        return Jsoup.parse(html).wholeText();
+    }
     public Job toJob() {
         Job job = new Job();
         updateJob(job);
@@ -95,20 +98,12 @@ public record JobDTO(
         return jobRequirement;
     }
 
-    public String getJobSkill() {
-        return jobSkill;
-    }
-
     public LocalDate getDeadlineCV() {
         return deadlineCV;
     }
 
     public long getHirerId() {
         return hirerId;
-    }
-
-    public long getImageId() {
-        return imageId;
     }
 
     public String getMoreDetail() {

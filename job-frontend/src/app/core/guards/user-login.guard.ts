@@ -12,5 +12,5 @@ export const userLoginGuard: CanActivateFn = (
   const auth = inject(AuthService);
   const router: Router = inject(Router);
   const protectRoutes: string[] = ['/infor']; // for check the url is protect by guard
-  return false;
+  return true;
 };

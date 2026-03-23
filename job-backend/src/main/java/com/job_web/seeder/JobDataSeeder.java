@@ -214,7 +214,6 @@ public class JobDataSeeder implements CommandLineRunner {
             job.setSalary(5000000 + (i % 10) * 1500000);
             job.setTime(JOB_TIMES.get(i % JOB_TIMES.size()));
             job.setAddress(address);
-            job.setSkill(SKILLS.get(i % SKILLS.size()));
             job.setRequireDetails("Requirements: " + REQUIREMENTS.get(i % REQUIREMENTS.size()));
             job.setDescription("Work with the " + hirer.getCompanyName()
                     + " team to deliver high-quality features and stable services.");

@@ -29,11 +29,15 @@ public class Job extends StatusEntity {
 	@Column(columnDefinition = "text")
 	private String requireDetails;
 	@Column(columnDefinition = "text")
+	private String requireDetailsText;
+	@Column(columnDefinition = "text")
 	private String description;
+	@Column(columnDefinition = "text")
+	private String descriptionText;
+	private String skill;
+	private String skillText;
 	private Instant expiredDate;
 	private String title;
-	@Column(columnDefinition = "text")
-	private String skill;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "hirer_id")
 	@JsonIgnore
@@ -49,25 +53,12 @@ public class Job extends StatusEntity {
 	private List<Apply> applies;
 	@Column(columnDefinition = "text")
 	private String moreDetail;
+	@Column(columnDefinition = "text")
+	private String moreDetailText;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "address_id") // Khớp với cột address_id trong ảnh bạn gửi
 	private Address address;
-	@Lob
-	private byte[] logo;
-	public Job(double salary, String time, String requireDetails, Address address, String description,
-			Instant expiredDate, Instant createDate, Instant modifiedDate, String title) {
-		super();
-		this.salary = salary;
-		this.time = time;
-		this.requireDetails = requireDetails;
-		this.address = address;
-		this.description = description;
-		this.expiredDate = expiredDate;
-		this.createDate = createDate;
-		this.modifiedDate = modifiedDate;
-		this.title = title;
-	}
-
+	private String logo;
 	public void addApplication(Apply apply) {
 		if(applies == null) {
 			applies = new LinkedList<>();

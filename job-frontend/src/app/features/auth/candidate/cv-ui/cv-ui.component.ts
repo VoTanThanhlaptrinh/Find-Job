@@ -5,11 +5,12 @@ import { LoadingComponent } from '../../../../shared/components/loading/loading.
 import { ResumeReviewComponent } from '../../../../shared/components/resume-review/resume-review.component';
 import { SkeletonCvCardComponent } from '../../../../shared/components/skeleton-cv-card/skeleton-cv-card.component';
 import { ResumeReviewInput } from '../../../../shared/models/jobs/resume-review-input.model';
+import { CvUploadModalComponent } from '../cv-upload-modal/cv-upload-modal.component';
 
 @Component({
   selector: 'app-cv-ui',
   standalone: true,
-  imports: [ResumeReviewComponent, LoadingComponent, SkeletonCvCardComponent],
+  imports: [ResumeReviewComponent, LoadingComponent, SkeletonCvCardComponent, CvUploadModalComponent],
   templateUrl: './cv-ui.component.html',
   styleUrl: './cv-ui.component.css'
 })
@@ -22,6 +23,7 @@ export class CvUiComponent implements OnInit {
 
   resumes: ResumeReviewInput[] = [...this.mockResumes];
   isLoading = false;
+  isUploadModalOpen = false;
   readonly skeleton = true;
   readonly skeletonRows = [1, 2, 3];
 
@@ -76,6 +78,29 @@ export class CvUiComponent implements OnInit {
     }
 
     return new Intl.DateTimeFormat('vi-VN').format(latestDate);
+  }
+
+  openUploadModal(): void {
+    this.isUploadModalOpen = true;
+  }
+
+  closeUploadModal(): void {
+    this.isUploadModalOpen = false;
+  }
+
+  submitUploadCv(file: File): void {
+    const maxId = this.resumes.reduce((currentMax, resume) => {
+      return Math.max(currentMax, resume.id);
+    }, 0);
+
+    const newResume: ResumeReviewInput = {
+      id: maxId + 1,
+      fileName: file.name,
+      createDate: new Date().toISOString()
+    };
+
+    this.resumes = [newResume, ...this.resumes];
+    this.closeUploadModal();
   }
 
 }

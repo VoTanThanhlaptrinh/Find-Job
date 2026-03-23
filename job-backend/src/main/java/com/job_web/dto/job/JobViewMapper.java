@@ -33,7 +33,6 @@ public final class JobViewMapper {
                 job.getSalary(),
                 job.getTime(),
                 job.getRequireDetails(),
-                job.getSkill(),
                 expiredDate
         );
     }

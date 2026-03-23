@@ -31,13 +31,17 @@ public class JwtServiceImpl implements JwtService {
 	private long jwtExpiration;
 	private final JwtFamilyService jwtFamilyService;
 	public String generateToken(UserDetails userDetails) {
-		HashMap<String, Object> claims = new HashMap<>();
-		List<String> roles = userDetails.getAuthorities()
-				.stream()
-				.map(GrantedAuthority::getAuthority)
-				.collect(Collectors.toList());
-		claims.put("roles", roles);
-		return gerenateToken(claims, userDetails.getUsername());
+		try{
+			HashMap<String, Object> claims = new HashMap<>();
+			List<String> roles = userDetails.getAuthorities()
+					.stream()
+					.map(GrantedAuthority::getAuthority)
+					.collect(Collectors.toList());
+			claims.put("roles", roles);
+			return gerenateToken(claims, userDetails.getUsername());
+		}catch (Exception e){
+			throw new RuntimeException(e);
+		}
 	}
 	public String generateToken(String username) {
 		return gerenateToken(new HashMap<>(), username);

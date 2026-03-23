@@ -10,21 +10,33 @@ import com.job_web.dto.application.ResumeView;
 import com.job_web.models.Resume;
 import com.job_web.models.User;
 import com.job_web.service.application.ResumeService;
-import lombok.AllArgsConstructor;
+import com.job_web.utills.KeyGeneratorUtil;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
+
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ResumeServiceImpl implements ResumeService {
     private final ResumeRepository resumeRepository;
     private final UserRepository userRepository;
+    private final S3Client s3Client;
+
+    @Value("${cloudflare.r2.bucket-name}")
+    private String bucketName;
     @Override
     public ApiResponse<List<ResumeView>> getListResumeOfUser(Principal principal) {
         User user = new User();
@@ -43,11 +55,6 @@ public class ResumeServiceImpl implements ResumeService {
     @Override
     public ApiResponse<List<ResumeDTO>> getResumesByUser(String email) {
         return new ApiResponse<>("Not implemented.", null, HttpStatus.NOT_IMPLEMENTED.value());
-    }
-
-    @Override
-    public Resume findById(long id) {
-        return resumeRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found"));
     }
 
     @Override
@@ -79,11 +86,18 @@ public class ResumeServiceImpl implements ResumeService {
         Resume cv = new Resume();
         cv.setUser(userOpt.get());
         cv.setFileName(resumeUploadDTO.getFile().getOriginalFilename());
-        try {
-            cv.setData(resumeUploadDTO.getFile().getBytes());
-        } catch (IOException e) {
-            return new ApiResponse<>("Unable to read the resume file.", null, HttpStatus.BAD_REQUEST.value());
+        String key = KeyGeneratorUtil.generateKey();
+        cv.setKey(key);
+        byte[] data;
+        try{
+            data = toByteArray(resumeUploadDTO.getFile().getInputStream());
+        }catch (Exception e){
+            return new ApiResponse<>("faild", null, HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
+        if(data.length == 0){
+            return new ApiResponse<>("error", null, HttpStatus.INTERNAL_SERVER_ERROR.value());
+        }
+        uploadResumeToCloud(data, key);
         resumeRepository.save(cv);
         return new ApiResponse<>("success", null, HttpStatus.CREATED.value());
     }
@@ -102,11 +116,17 @@ public class ResumeServiceImpl implements ResumeService {
             return new ApiResponse<>("You do not have permission to edit this resume.", null, HttpStatus.FORBIDDEN.value());
         }
         cv.setFileName(resumeUploadDTO.getFile().getOriginalFilename());
-        try {
-            cv.setData(resumeUploadDTO.getFile().getBytes());
-        } catch (IOException e) {
-            return new ApiResponse<>("Unable to read the resume file.", null, HttpStatus.BAD_REQUEST.value());
+        String key = cv.getKey();
+        byte[] data;
+        try{
+            data = toByteArray(resumeUploadDTO.getFile().getInputStream());
+        }catch (Exception e){
+            return new ApiResponse<>("faild", null, HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
+        if(data.length == 0){
+            return new ApiResponse<>("error", null, HttpStatus.INTERNAL_SERVER_ERROR.value());
+        }
+        uploadResumeToCloud(data, key);
         resumeRepository.save(cv);
         return new ApiResponse<>("success", null, HttpStatus.OK.value());
     }
@@ -127,5 +147,28 @@ public class ResumeServiceImpl implements ResumeService {
         cv.markDeleted();
         resumeRepository.save(cv);
         return new ApiResponse<>("success", null, HttpStatus.OK.value());
+    }
+
+    @Override
+    public void uploadResumeToCloud(byte[] data, String key) {
+        PutObjectRequest request = PutObjectRequest.builder()
+                .bucket(bucketName) // Chỉ định đúng bucket thứ 2 của bạn ở đây
+                .key(key)
+                .build();
+
+        s3Client.putObject(request, RequestBody.fromBytes(data));
+    }
+
+    @Override
+    public byte[] toByteArray(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        int nRead;
+        byte[] data = new byte[8192]; // Tạo mảng đệm 8KB
+
+        while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
+            buffer.write(data, 0, nRead);
+        }
+        buffer.flush();
+        return buffer.toByteArray();
     }
 }

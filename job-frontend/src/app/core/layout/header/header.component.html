@@ -9,11 +9,13 @@
   <div class="container">
     <div class="flex justify-between items-center">
       <div id="logo">
-        <a href="/"><img src="assets/web_css/img/logo.png" alt="" title="" /></a>
+        <a href="/"
+          ><img src="assets/web_css/img/logo.png" alt="" title=""
+        /></a>
       </div>
       <c-navbar id="nav-menu-container" expand="lg">
         <c-container>
-          <c-navbar-nav class="nav-menu">
+          <c-navbar-nav class="nav-menu flex flex-row w-full items-center gap-x-2">
             <ng-container>
               <c-nav-item class="menu-active">
                 <a cNavLink href="/">Trang chu</a>
@@ -33,55 +35,36 @@
               <a cNavLink href="/about">Thong tin</a>
             </c-nav-item>
             @if (isLoggedIn) {
-              <ng-container>
-                <c-dropdown
-                  variant="nav-item"
-                  [popper]="false"
-                  autoClose="outside"
-                >
-                  <c-nav-item>
-                    <a cDropdownToggle cNavLink style="color: aliceblue">Tai khoan</a>
-                  </c-nav-item>
-                  <ul cDropdownMenu>
-                    <li>
-                      <button cDropdownItem (click)="goInfor()">
-                        Thong tin ca nhan
-                      </button>
-                    </li>
-                    <li>
-                      <button cDropdownItem (click)="goVerify()">
-                        Kich hoat tai khoan
-                      </button>
-                    </li>
-                    <li>
-                      <button cDropdownItem (click)="logout()">
-                        Dang xuat
-                      </button>
-                    </li>
-                  </ul>
-                </c-dropdown>
-              </ng-container>
+              <div class="text-slate-50">
+                <button matButton [matMenuTriggerFor]="menu">Tai khoan</button>
+                <mat-menu #menu="matMenu" class="bg-white rounded-xl! shadow-md!">
+                  <button mat-menu-item (click)="goInfor()" class="text-slate-50 hover:bg-gray-200! ">Thong tin tai khoan</button>
+                  <button mat-menu-item (click)="logout()" class="text-slate-50 hover:bg-gray-200!">Dang xuat</button>
+                </mat-menu>
+              </div>
             } @else {
-              <ng-container class="flex flex-row justify-between w-full gap-x-2">
+              <ng-container
+                class="flex flex-row justify-between w-full gap-x-2"
+              >
                 @if (isLoginPage) {
                   <c-nav-item
-                    class="bg-white rounded-lg border-blue-900 border-2! px-4 py-2 mr-2"
+                    class="bg-white rounded-lg border-blue-900 border-2! px-2 py-1"
                   >
                     <a cNavLink href="/login" class="text-black!">Dang nhap</a>
                   </c-nav-item>
                 } @else {
-                  <c-nav-item class="rounded-lg bg-blue-500 px-4 py-2 mr-2">
+                  <c-nav-item class="rounded-lg bg-blue-500 px-2 py-1">
                     <a cNavLink href="/login">Dang nhap</a>
                   </c-nav-item>
                 }
                 @if (isRegisterPage) {
                   <c-nav-item
-                    class="bg-white rounded-lg border-blue-900 border-2! px-4 py-2"
+                    class="bg-white rounded-lg border-blue-900 border-2! px-2 py-1"
                   >
                     <a cNavLink href="/register" class="text-black!">Dang ky</a>
                   </c-nav-item>
                 } @else {
-                  <c-nav-item class="rounded-lg bg-blue-500 px-4 py-2">
+                  <c-nav-item class="rounded-lg bg-blue-500 px-2 py-1">
                     <a cNavLink href="/register">Dang ky</a>
                   </c-nav-item>
                 }
