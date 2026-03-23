@@ -5,16 +5,18 @@ import java.sql.Timestamp;
 import jakarta.persistence.*;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Data
+@EqualsAndHashCode(callSuper = true)
 @SQLRestriction("status <> 'DELETED'")
 public class Candidate extends StatusEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "third_user_id")
 	private User user;
 	private String fullName;

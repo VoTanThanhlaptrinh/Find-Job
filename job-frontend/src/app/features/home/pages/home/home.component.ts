@@ -23,29 +23,11 @@ import { JobCardModel } from '../../../../shared/models/jobs/job-card.model';
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent {
   jobPosts: JobCardModel[] = [];
-  relatedJobs: JobCardModel[] = [];
-
-  constructor(private homeService: HomeService) {}
-
-  ngOnInit(): void {
-    this.getData();
-  }
-
-  getData(): void {
-    this.homeService
-      .getData()
-      .pipe(take(1))
-      .subscribe({
-        next: (response) => {
-          this.jobPosts = response.data.jobSalary.content;
-          this.relatedJobs = response.data.jobSoon.content;
-        },
-        error: (error) => {
-          console.error('Error fetching data:', error);
-        },
-      });
+  constructor(private homeService: HomeService) {
+    this.homeService.getData();
+    this.jobPosts = this.homeService.jobPosts();
   }
 
   trackById(index: number, item: JobCardModel): string | number {

@@ -1,107 +1,130 @@
-<section class="banner-area relative" id="category">
-    <div class="overlay overlay-bg"></div>
-    <div class="container">
-        <div class="row search-page-top d-flex align-items-center justify-content-center">
-            <div class="banner-content col-lg-12">
-                <h1 class="text-white">
-                    Tìm  việc
-                </h1>
-                <p class="text-white link-nav">
-                    <a href="/">Trang chủ </a> <span class="lnr lnr-arrow-right"></span> <a
-                        href="/">
-                        Tìm việc</a>
-                </p>
-                <app-search-form/>
-                
-                <p class="text-white"> <span>Tìm kiếm theo tags:</span> Công nghệ, Kinh doanh, Tư vấn, IT Company,
-                    Thiết kế, Lập trình</p>
-            </div>
-        </div>
-    </div>
+<section class="banner-area relative" id="mini">
+  <div class="overlay overlay-bg"></div>
 </section>
 
 <!-- Start post Area -->
 <section class="post-area section-gap">
-    <div class="container">
-        <div class="row justify-content-center d-flex">
-          <div class="col-lg-4 sidebar">
-            <div class="single-slidebar">
-              <h4>Phân loại công việc theo vị trí</h4>
-              <ul class="list-group cat-list">
-                @for (item of addressCount; track item.address) {
-                  <li class="list-group-item d-flex align-items-center justify-content-between">
-                    <div class="form-check d-flex align-items-center m-0">
-                      <input title="checkbox" class="form-check-input" type="checkbox" value="{{item.address}}" (change)="onFilterChange($event)" >
-                      <label class="form-check-label " >{{item.address}}</label>
-                    </div>
-                    <span>{{item.amount}}</span>
-                  </li>
-                }
-              </ul>
-            </div>
-
-            <div class="single-slidebar">
-              <h4>Loại công việc</h4>
-              <ul class="list-group cat-list">
-                @for (job of this.jobTypes; track job.label){
-                  <li class="list-group-item">
-                    <label class="form-switch">
-                      <input type="checkbox" [checked]="job.checked" (change)="onFilterChange($event)">
-                      <span>{{ job.label }}</span>
-                      <span class="slider round"></span>
-                    </label>
-                  </li>
-                }
-
-              </ul>
-            </div>
-
-            <div class="single-slidebar">
-              <h4> Lương </h4>
-              <mat-slider
-                [min]="min"
-                [max]="max"
-                [step]="step"
-                discrete
-                class="my-slider">
-                <input title="min-salary"
-                  matSliderStartThumb
-                  [value]="minSalary"
-                  (valueChange)="onMinChange($event)"
-                  (dragEnd)="onMinChange($event.value)"
-                  (change)="onFilterChange($event)"/>
-                <input title="max-salary"
-                  matSliderEndThumb
-                  [value]="maxSalary"
-                  (valueChange)="onMaxChange($event)"
-                  (dragEnd)="onMaxChange($event.value)"
-                  (change)="onFilterChange($event)"/>
-              </mat-slider>
-
-              <div class="value-labels">
-                <span>{{ formatMoney(minSalary) }}</span>
-                <span>{{ formatMoney(maxSalary) }}</span>
-              </div>
-
-            </div>
+  <div class="container">
+    <div class="row justify-content-center d-flex">
+      <div class="col-lg-4 sidebar">
+        <div class="single-slidebar">
+          <h4>Phân loại công việc theo tên</h4>
+          <div
+            class="flex w-full items-center gap-2 px-2 py-2 bg-white cursor-pointer rounded-xl shadow-md border"
+          >
+            <input
+              title="text"
+              class="w-full outline-none border-none focus:ring-0"
+              type="text"
+              placeholder="Nhập tên công việc bạn muốn tìm"
+              value=""
+              name="title"
+              [ngModel]="title"
+              (ngModelChange)="onTitleChange($event)"
+            />
           </div>
-            <div class="col-lg-8 post-list">
-                @for (item of listJobsNewest; track item.id) {
-              <app-job-card [job]="item" image="assets/web_css/img/post.png" detailRoute="/single"></app-job-card>
-                } @empty {
-                <li>There are no items.</li>
-                }
-              <mat-paginator [length]="this.length"
-                             [pageSize]=" 10"
-                             [pageSizeOptions]="[5, 10, 25]"
-                             [showFirstLastButtons]="true"
-                             [pageIndex]="pageIndex"
-                             (page)="handlePage($event)"
-                             aria-label="Select page">
-              </mat-paginator>
-            </div>
         </div>
+        <div class="single-slidebar">
+          <h4>Phân loại công việc theo vị trí</h4>
+          <ul class="list-group cat-list overflow-y-auto max-h-75">
+            <li class="list-group-item flex justify-between" *ngFor="let item of addressCount">
+              <div class="form-check flex w-full items-center gap-2">
+                <input
+                  title="checkbox"
+                  class="form-check-input"
+                  type="checkbox"
+                  value="{{ item.city }}"
+                  (change)="onFilterChange($event)"
+                />
+                <label class="form-check-label">{{ item.city }}</label>
+              </div>
+              <span>{{ item.count }}</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="single-slidebar">
+          <h4>Loại công việc</h4>
+          <ul class="list-group cat-list">
+            <li class="list-group-item flex flex-col justify-between" *ngFor="let job of jobTypes">
+              <label class="form-switch">
+                <input
+                  type="checkbox"
+                  [checked]="job.checked"
+                  value="{{ job.label }}"
+                  (change)="onFilterChange($event)"
+                />
+                <span>{{ job.label }}</span>
+                <span class="slider round"></span>
+              </label>
+            </li>
+          </ul>
+        </div>
+
+        <div class="single-slidebar">
+          <h4>Lương</h4>
+          <mat-slider
+            [min]="min"
+            [max]="max"
+            [step]="step"
+            discrete
+            class="my-slider"
+          >
+            <input
+              title="min-salary"
+              matSliderStartThumb
+              [value]="minSalary"
+              (valueChange)="onMinChange($event)"
+              (dragEnd)="onMinChange($event.value)"
+              (change)="onFilterChange($event)"
+            />
+            <input
+              title="max-salary"
+              matSliderEndThumb
+              [value]="maxSalary"
+              (valueChange)="onMaxChange($event)"
+              (dragEnd)="onMaxChange($event.value)"
+              (change)="onFilterChange($event)"
+            />
+          </mat-slider>
+
+          <div class="value-labels">
+            <span>{{ formatMoney(minSalary) }}</span>
+            <span>{{ formatMoney(maxSalary) }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-8 post-list">
+        <div class="flex flex-col gap-y-2">
+          @if (isLoadingJobs()) {
+            @for (skeleton of [1, 2, 3, 4, 5]; track skeleton) {
+              <app-skeleton-job-card></app-skeleton-job-card>
+            }
+          } @else {
+            @for (item of jobs(); track item.id) {
+              <app-job-card
+                [job]="item"
+                image="assets/web_css/img/post.png"
+                detailRoute="/single"
+              ></app-job-card>
+            } @empty {
+              <div>There are no items.</div>
+            }
+          }
+        </div>
+        <mat-paginator
+          [length]="this.length"
+          [pageSize]="10"
+          [pageSizeOptions]="[5, 10, 25]"
+          [showFirstLastButtons]="true"
+          [pageIndex]="pageIndex"
+          (page)="handlePage($event)"
+          aria-label="Select page"
+        >
+        </mat-paginator>
+      </div>
     </div>
+  </div>
 </section>
 <!-- End post Area -->
 

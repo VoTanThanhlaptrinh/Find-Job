@@ -8,7 +8,8 @@ public record JobFilterDTO(
         int min,
         int max,
         List<String> address,
-        List<String> times
+        List<String> times,
+        String title
 ) {
     public int getPageIndex() {
         return pageIndex;
@@ -33,4 +34,5 @@ public record JobFilterDTO(
     public List<String> getTimes() {
         return times;
     }
+    public String getTitle(){ return title;}
 }

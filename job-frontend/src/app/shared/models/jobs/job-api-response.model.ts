@@ -3,16 +3,40 @@ import { JobCardModel } from './job-card.model';
 
 export interface PagedPayload<T> {
   content: T[];
+  pageable?: {
+    sort?: {
+      empty?: boolean;
+      unsorted?: boolean;
+      sorted?: boolean;
+    };
+    offset?: number;
+    pageNumber?: number;
+    pageSize?: number;
+    paged?: boolean;
+    unpaged?: boolean;
+  };
+  totalPages?: number;
+  totalElements?: number;
+  last?: boolean;
+  size?: number;
+  number?: number;
+  sort?: {
+    empty?: boolean;
+    unsorted?: boolean;
+    sorted?: boolean;
+  };
+  numberOfElements?: number;
+  first?: boolean;
+  empty?: boolean;
 }
 
 export interface HomeInitViewModel {
-  jobSalary: PagedPayload<JobCardModel>;
   jobSoon: PagedPayload<JobCardModel>;
 }
 
 export interface AddressCountViewModel {
-  address: string;
-  amount: number;
+  city: string;
+  count: number;
 }
 
 export interface JobDetailViewModel {
@@ -44,6 +68,7 @@ export interface JobFilterPayload {
   max: number;
   address: string[];
   times: string[];
+  title: string;
 }
 
 export type HomeInitApiResponse = ApiResponse<HomeInitViewModel>;

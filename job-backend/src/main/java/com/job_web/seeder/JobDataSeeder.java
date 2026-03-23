@@ -13,6 +13,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@Profile("dev")
 @RequiredArgsConstructor
 public class JobDataSeeder implements CommandLineRunner {
     private static final int JOB_COUNT = 50;
@@ -38,8 +40,19 @@ public class JobDataSeeder implements CommandLineRunner {
             "Consumer app studio with fast iteration cycles.",
             "Data engineering consultancy for SMEs."
     );
-    private static final List<String> ADDRESSES = List.of(
-            "Ha Noi", "Ho Chi Minh", "Da Nang", "Hai Phong", "Can Tho"
+    private static final List<AddressSeed> ADDRESS_SEEDS = List.of(
+            new AddressSeed("Ha Noi", "Cau Giay", "Duy Tan"),
+            new AddressSeed("Ha Noi", "Nam Tu Liem", "Pham Hung"),
+            new AddressSeed("Ho Chi Minh", "Quan 1", "Nguyen Hue"),
+            new AddressSeed("Ho Chi Minh", "Binh Thanh", "Dien Bien Phu"),
+            new AddressSeed("Da Nang", "Hai Chau", "Bach Dang"),
+            new AddressSeed("Da Nang", "Thanh Khe", "Nguyen Tat Thanh"),
+            new AddressSeed("Hai Phong", "Ngo Quyen", "Le Hong Phong"),
+            new AddressSeed("Hai Phong", "Hong Bang", "Tran Hung Dao"),
+            new AddressSeed("Can Tho", "Ninh Kieu", "30 Thang 4"),
+            new AddressSeed("Can Tho", "Cai Rang", "Vo Nguyen Giap"),
+            new AddressSeed("Ha Noi", "Dong Da", "Ton Duc Thang"),
+            new AddressSeed("Ho Chi Minh", "Thu Duc", "Xa lo Ha Noi")
     );
     private static final List<String> JOB_TITLES = List.of(
             "Java Backend Developer",
@@ -82,13 +95,9 @@ public class JobDataSeeder implements CommandLineRunner {
     private final AddressRepository addressRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Profile("dev")
     @Override
+    @Transactional
     public void run(String... args) {
-        if (jobRepository.count() > 0) {
-            return;
-        }
-
         List<Hirer> hirers = new ArrayList<>();
         hirerRepository.findAll().forEach(hirers::add);
 
@@ -96,7 +105,11 @@ public class JobDataSeeder implements CommandLineRunner {
             hirers = seedHirers();
         }
 
-        seedJobs(hirers);
+        List<Address> addresses = ensureAddresses(hirers);
+
+        if (jobRepository.count() == 0) {
+            seedJobs(hirers, addresses);
+        }
     }
 
     private List<Hirer> seedHirers() {
@@ -112,7 +125,7 @@ public class JobDataSeeder implements CommandLineRunner {
             user.setEmail(email);
             user.setPassword(passwordEncoder.encode(DEFAULT_PASSWORD));
             user.setRole("ROLE_HIRER");
-            user.setAddress(ADDRESSES.get(i % ADDRESSES.size()));
+            user.setAddress(ADDRESS_SEEDS.get(i % ADDRESS_SEEDS.size()).city());
             user.setMobile("09000000" + (10 + i));
             user.setDateOfBirth(LocalDate.of(1990, 1, 1).plusDays(i * 120L));
             user.setAccountLocked(false);
@@ -135,19 +148,70 @@ public class JobDataSeeder implements CommandLineRunner {
         return hirers;
     }
 
-    private void seedJobs(List<Hirer> hirers) {
+    private List<Address> ensureAddresses(List<Hirer> hirers) {
+        List<Address> existingAddresses = addressRepository.findAll();
+        if (!existingAddresses.isEmpty()) {
+            return existingAddresses;
+        }
+
+        return seedAddresses(hirers);
+    }
+
+    private List<Address> seedAddresses(List<Hirer> hirers) {
+        List<Address> addresses = new ArrayList<>();
+        List<List<Address>> hirerAddresses = new ArrayList<>();
+        long nextId = 1L;
+
+        for (int i = 0; i < hirers.size(); i++) {
+            List<Address> ownedAddresses = new ArrayList<>();
+            for (int j = 0; j < 2; j++) {
+                int addressIndex = (i * 2 + j) % ADDRESS_SEEDS.size();
+                AddressSeed template = ADDRESS_SEEDS.get(addressIndex);
+                LocalDateTime createdAt = LocalDateTime.now().minusDays(20L + addressIndex);
+
+                Address address = new Address();
+                address.setId(nextId++);
+                address.setCity(template.city());
+                address.setDistrict(template.district());
+                address.setStreet(template.street());
+                address.setCreateDate(createdAt);
+                address.setUpdateDate(createdAt.plusDays(1));
+                ownedAddresses.add(address);
+                addresses.add(address);
+            }
+            hirerAddresses.add(ownedAddresses);
+        }
+
+        addressRepository.saveAll(addresses);
+
+        for (int i = 0; i < hirers.size(); i++) {
+            Hirer hirer = hirers.get(i);
+            List<Address> ownedAddresses = hirerAddresses.get(i);
+            hirer.setAddresses(ownedAddresses);
+            hirers.set(i, hirerRepository.save(hirer));
+
+            User user = hirer.getUser();
+            if (user != null && !ownedAddresses.isEmpty()) {
+                user.setAddress(formatAddress(ownedAddresses.get(0)));
+                userRepository.save(user);
+            }
+        }
+
+        return addresses;
+    }
+
+    private void seedJobs(List<Hirer> hirers, List<Address> addresses) {
         List<Job> jobs = new ArrayList<>();
-        List<Address> addresses = addressRepository.findAll();
         Instant now = Instant.now();
 
         for (int i = 0; i < JOB_COUNT; i++) {
             Hirer hirer = hirers.get(i % hirers.size());
             String title = JOB_TITLES.get(i % JOB_TITLES.size()) + " (" + hirer.getCompanyName() + ")";
-            Address address = addresses.isEmpty() ? null : addresses.get(i % addresses.size());
+            Address address = pickAddressForHirer(hirer, addresses, i);
 
             Job job = new Job();
             job.setTitle(title);
-            job.setSalary(800 + (i % 10) * 150);
+            job.setSalary(5000000 + (i % 10) * 1500000);
             job.setTime(JOB_TIMES.get(i % JOB_TIMES.size()));
             job.setAddress(address);
             job.setSkill(SKILLS.get(i % SKILLS.size()));
@@ -164,6 +228,18 @@ public class JobDataSeeder implements CommandLineRunner {
         jobRepository.saveAll(jobs);
     }
 
+    private Address pickAddressForHirer(Hirer hirer, List<Address> addresses, int index) {
+        List<Address> ownedAddresses = hirer.getAddresses();
+        if (ownedAddresses != null && !ownedAddresses.isEmpty()) {
+            return ownedAddresses.get(index % ownedAddresses.size());
+        }
+        return addresses.isEmpty() ? null : addresses.get(index % addresses.size());
+    }
+
+    private String formatAddress(Address address) {
+        return address.getStreet() + ", " + address.getDistrict() + ", " + address.getCity();
+    }
+
     private String uniqueEmail(String baseEmail) {
         String email = baseEmail;
         int counter = 1;
@@ -175,5 +251,8 @@ public class JobDataSeeder implements CommandLineRunner {
             counter++;
         }
         return email;
+    }
+
+    private record AddressSeed(String city, String district, String street) {
     }
 }

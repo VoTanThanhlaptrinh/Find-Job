@@ -1,11 +1,8 @@
 package com.job_web.dto.job;
 
-public interface AddressJobCount {
-     String getAddress();
-     int getCount();
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+
+public record AddressJobCount(String city,long count) {
 }
-
-
-
-
-

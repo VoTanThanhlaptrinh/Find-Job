@@ -3,12 +3,13 @@ package com.job_web.controller.job;
 import java.security.Principal;
 
 import com.job_web.dto.common.ApiResponse;
-import com.job_web.dto.job.HirerJobPostView;
 import com.job_web.dto.job.JobDTO;
-import com.job_web.dto.job.PagedPayload;
+import com.job_web.dto.job.JobResponse;
+import com.job_web.service.job.JobQueryService;
 import com.job_web.service.job.JobService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class HirerJobController {
     private final JobService jobService;
+    private final JobQueryService jobQueryService;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<String>> post(@Valid @ModelAttribute JobDTO job,
@@ -60,16 +62,16 @@ public class HirerJobController {
     }
 
     @GetMapping("/posted/{pageIndex}/{pageSize}")
-    public ResponseEntity<ApiResponse<PagedPayload<HirerJobPostView>>> getHirerJobPost(@PathVariable int pageIndex,
-                                                                                        @PathVariable int pageSize,
-                                                                                        Principal principal) {
-        ApiResponse<PagedPayload<HirerJobPostView>> res = jobService.getHirerJobPost(pageIndex, pageSize, principal);
+    public ResponseEntity<ApiResponse<Page<JobResponse>>> getHirerJobPost(@PathVariable int pageIndex,
+                                                                          @PathVariable int pageSize,
+                                                                          Principal principal) {
+        ApiResponse<Page<JobResponse>> res = jobQueryService.getHirerJobPost(pageIndex, pageSize, principal);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
     @GetMapping("/posted/count")
     public ResponseEntity<ApiResponse<Long>> countHirerJobPost(Principal principal) {
-        ApiResponse<Long> res = jobService.countHirerJobPost(principal);
+        ApiResponse<Long> res = jobQueryService.countHirerJobPost(principal);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 }

@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import { NgFor } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSlider, MatSliderRangeThumb } from '@angular/material/slider';
-import { take } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Subject, take } from 'rxjs';
 import { CallToActionComponent } from '../../../../shared/components/call-to-action/call-to-action.component';
 import { JobCardComponent } from '../../../../shared/components/job-card/job-card.component';
-import { SearchFormComponent } from '../../../../shared/components/search-form/search-form.component';
+import { SkeletonJobCardComponent } from '../../../../shared/components/skeleton-job-card/skeleton-job-card.component';
 import {
   AddressCountViewModel,
   JobFilterPayload,
@@ -18,12 +19,13 @@ import { CategoryService } from '../../services/category.service';
   selector: 'app-category',
   imports: [
     MatPaginatorModule,
+    NgFor,
     FormsModule,
     NgxSliderModule,
     MatSlider,
     MatSliderRangeThumb,
-    SearchFormComponent,
     JobCardComponent,
+    SkeletonJobCardComponent,
     CallToActionComponent,
   ],
   standalone: true,
@@ -31,15 +33,13 @@ import { CategoryService } from '../../services/category.service';
   styleUrl: './category.component.css',
 })
 export class CategoryComponent implements OnInit {
-  listJobsNewest: JobCardModel[] = [];
   addressCount: AddressCountViewModel[] = [];
-
   pageIndex = 0;
   pageSize = 10;
   length = 0;
   min = 0;
   max = 100000000;
-  step = 500000;
+  step = 1000000;
   minGap = 2000000;
 
   minSalary = 5000000;
@@ -49,26 +49,25 @@ export class CategoryComponent implements OnInit {
   jobTypes = [
     { label: 'Full time', checked: false },
     { label: 'Part time', checked: false },
-    { label: 'Freelance', checked: false },
-    { label: 'Internship', checked: false },
+    { label: 'Remote', checked: false },
+    { label: 'Hybrid', checked: false },
   ];
 
-  constructor(private category: CategoryService) {}
-
-  ngOnInit(): void {
-    this.getListJobsNewest(this.pageIndex, this.pageSize);
-    this.getAmount();
-    this.getAddressCount();
+  private searchSubject = new Subject<string>();
+  title: string = '';
+  constructor(private category: CategoryService) {
   }
 
-  getListJobsNewest(pageIndex: number, pageSize: number): void {
-    this.category.listJobsNewest(pageIndex, pageSize).subscribe({
-      next: (res) => {
-        this.listJobsNewest = res.data.content;
-      },
-      error: (error) => {
-        console.error('Error fetching jobs:', error);
-      },
+  ngOnInit(): void {
+    this.category.listJobsNewest(this.pageIndex, this.pageSize);
+    this.getAmount();
+    this.getAddressCount();
+    this.addressCount = this.category.addressCount();
+    this.searchSubject.pipe(
+      debounceTime(400),        // Đợi 400ms sau khi ngừng gõ mới chạy tiếp
+      distinctUntilChanged()    // Chỉ gọi API nếu giá trị thực sự thay đổi so với lần trước
+    ).subscribe(searchValue => {
+      this.executeSearch(searchValue);
     });
   }
 
@@ -84,18 +83,19 @@ export class CategoryComponent implements OnInit {
   }
 
   handlePage(event: PageEvent): void {
-    this.getListJobsNewest(event.pageIndex, event.pageSize);
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+
+    if (this.hasActiveFilters()) {
+      this.searchWithFilters(this.buildFilterPayload());
+      return;
+    }
+
+    this.category.listJobsNewest(this.pageIndex, this.pageSize);
   }
 
   getAddressCount(): void {
-    this.category.getAddressCount().subscribe({
-      next: (res) => {
-        this.addressCount = res.data;
-      },
-      error: (error) => {
-        console.error('Error fetching jobs:', error);
-      },
-    });
+    this.category.getAddressCount();
   }
 
   formatMoney(value: number): string {
@@ -122,7 +122,7 @@ export class CategoryComponent implements OnInit {
     const value = input.value;
     const checked = input.checked;
 
-    if (this.addressCount.some((item) => item.address === value)) {
+    if (this.addressCount.some((item) => item.city === value)) {
       if (checked) {
         this.selectedAddresses.add(value);
       } else {
@@ -150,17 +150,38 @@ export class CategoryComponent implements OnInit {
       max: this.maxSalary,
       address: Array.from(this.selectedAddresses),
       times: Array.from(this.selectedTypes),
+      title: this.title,
     };
   }
 
+  private hasActiveFilters(): boolean {
+    const hasAddress = this.selectedAddresses.size > 0;
+    const hasType = this.selectedTypes.size > 0;
+    const hasTitle = this.title.trim().length > 0;
+    const hasSalaryRangeChange =
+      this.minSalary !== 5000000 || this.maxSalary !== 50000000;
+
+    return hasAddress || hasType || hasTitle || hasSalaryRangeChange;
+  }
+
   private searchWithFilters(filter: JobFilterPayload): void {
-    this.category.filterWithAddressTimeSalary(filter).subscribe({
-      next: (res) => {
-        this.listJobsNewest = res.data.content;
-      },
-      error: (error) => {
-        console.error('Error fetching jobs:', error);
-      },
-    });
+    this.category.filterWithAddressTimeSalary(filter);
+  }
+  jobs() {
+    return this.category.jobs();
+  }
+
+  isLoadingJobs() {
+    return this.category.isLoadingJobs();
+  }
+
+  onTitleChange(value: string) {
+    this.searchSubject.next(value);
+  }
+
+  private executeSearch(value: string) {
+    this.title = value; // Cập nhật title chính thức
+    this.pageIndex = 0; // Reset về trang đầu
+    this.searchWithFilters(this.buildFilterPayload());
   }
 }

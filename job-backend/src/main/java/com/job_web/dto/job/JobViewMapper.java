@@ -10,10 +10,6 @@ public final class JobViewMapper {
     private JobViewMapper() {
     }
 
-    public static PagedPayload<JobCardView> toPagedJobCardView(Page<Job> page) {
-        return new PagedPayload<>(page.map(JobViewMapper::toJobCardView).getContent());
-    }
-
     public static JobCardView toJobCardView(Job job) {
         return new JobCardView(
                 job.getId(),

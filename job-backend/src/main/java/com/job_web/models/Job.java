@@ -7,6 +7,7 @@ import java.util.List;
 import jakarta.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.SQLRestriction;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 @Data
 @Table(name = "job")
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @SQLRestriction("status <> 'DELETED'")
 public class Job extends StatusEntity {
 	@Id
@@ -32,7 +34,7 @@ public class Job extends StatusEntity {
 	private String title;
 	@Column(columnDefinition = "text")
 	private String skill;
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "hirer_id")
 	@JsonIgnore
 	private Hirer hirer;
@@ -47,8 +49,8 @@ public class Job extends StatusEntity {
 	private List<Apply> applies;
 	@Column(columnDefinition = "text")
 	private String moreDetail;
-	@ManyToOne
-	@JoinColumn(name = "address_id")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "address_id") // Khớp với cột address_id trong ảnh bạn gửi
 	private Address address;
 	@Lob
 	private byte[] logo;

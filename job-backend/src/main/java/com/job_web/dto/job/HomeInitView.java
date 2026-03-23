@@ -1,7 +1,8 @@
 package com.job_web.dto.job;
 
+import java.util.List;
+
 public record HomeInitView(
-        PagedPayload<JobCardView> jobSalary,
-        PagedPayload<JobCardView> jobSoon
+        List<JobCardView> jobSoon
 ) {
 }

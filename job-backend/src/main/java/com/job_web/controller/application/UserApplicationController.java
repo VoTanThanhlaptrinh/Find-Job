@@ -8,7 +8,7 @@ import com.job_web.dto.application.ApplyCvWithUploadRequest;
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.dto.job.JobApply;
 import com.job_web.service.application.ApplyService;
-import com.job_web.service.job.JobService;
+import com.job_web.service.job.JobQueryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class UserApplicationController {
     private final ApplyService applyService;
-    private final JobService jobService;
+    private final JobQueryService jobQueryService;
 
     @PostMapping("/applications/submit-existing")
     public ResponseEntity<ApiResponse<String>> applyWithExistingCv(@Valid @RequestBody ApplyCvWithExistingRequest request,
@@ -65,7 +65,7 @@ public class UserApplicationController {
     public ResponseEntity<ApiResponse<Page<JobApply>>> listJobUserApplied(@PathVariable("pageIndex") int pageIndex,
                                                                           @PathVariable("pageSize") int pageSize,
                                                                           Principal principal) {
-        ApiResponse<Page<JobApply>> res = jobService.listJobUserApplied(PageRequest.of(pageIndex, pageSize), principal);
+        ApiResponse<Page<JobApply>> res = jobQueryService.listJobUserApplied(PageRequest.of(pageIndex, pageSize), principal);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 }
