@@ -54,7 +54,7 @@ export class JobSingleComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    this.getRelatedJobs();
+    
     this.route.params.subscribe((params) => {
       this.jobId = params['id'];
       this.getDetailJob(this.jobId);
@@ -71,20 +71,6 @@ export class JobSingleComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error fetching job details:', error);
-        },
-      });
-  }
-
-  getRelatedJobs(): void {
-    this.homeService
-      .getData()
-      .pipe(take(1))
-      .subscribe({
-        next: (response) => {
-          this.relatedJobs = response.data.jobSoon.content;
-        },
-        error: (error) => {
-          console.error('Error fetching data:', error);
         },
       });
   }

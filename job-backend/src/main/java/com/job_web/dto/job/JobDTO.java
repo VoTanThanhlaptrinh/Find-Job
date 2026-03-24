@@ -1,84 +1,112 @@
 package com.job_web.dto.job;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.job_web.models.Hirer;
 import com.job_web.models.Job;
-import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
+import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+import org.jsoup.Jsoup;
 
-import jakarta.validation.constraints.*;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 
-@Data
-public class JobDTO {
-    @NotBlank(message = "Tên công việc không được rỗng")
-    private String jobName;
-    @NotBlank(message = "Địa điểm công việc không được rỗng")
-    private String location;
-    @NotBlank(message = "Loại công việc không được rỗng")
-    private String jobType;
-    @Min(value = 2000000, message = "Mức lương tối thiểu là 2 triệu")
-    private double salary;
-    @NotBlank(message = "Tên công việc không được rỗng")
-    private String jobDescription;
-    @NotBlank(message = "Tên công việc không được rỗng")
-    private String jobRequirement;
-    @NotBlank(message = "Tên công việc không được rỗng")
-    private String jobSkill;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    @NotNull(message = "Thời gian nộp CV không được rỗng")
-    private LocalDate deadlineCV;
-    @NotBlank(message = "Tên công ty không được rỗng")
-    private String companyName;
-    private String companyDescription;
-    private String compayWebsite;
-    @NotNull(message = "Công việc cần có logo đại diện")
-    private MultipartFile image;
+public record JobDTO(
+        @NotBlank(message = "Ten cong viec khong duoc rong")
+        String jobName,
 
-    @AssertTrue(message = "Hạn nộp CV phải sau ít nhất một ngày so với hôm nay")
+        @Positive(message = "Dia diem cong viec khong duoc rong")
+        long addressId,
+
+        @NotBlank(message = "Loai cong viec khong duoc rong")
+        String jobType,
+
+        @Min(value = 5000000, message = "Muc luong toi thieu la 5 trieu")
+        double salary,
+        @Size(min = 0, max = 5000, message = "Do dai thong tin toi da 5000 ky tu")
+        @NotBlank(message = "Mo ta cong viec khong duoc rong")
+        String jobDescription,
+        @Size(min = 0, max = 5000, message = "Do dai thong tin toi da 5000 ky tu")
+        @NotBlank(message = "Yeu cau cong viec khong duoc rong")
+        String jobRequirement,
+        @NotBlank(message = "Yeu cau ve ky nang, cong cu khong duoc rong")
+        @Size(min = 0, max = 5000, message = "Do dai thong tin toi da 5000 ky tu")
+        String jobSkill,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+        @NotNull(message = "Thoi gian nop CV khong duoc rong")
+        LocalDate deadlineCV,
+
+        @Positive(message = "Can thong tin nguoi dang cong viec")
+        long hirerId,
+
+        @Size(min = 0, max = 5000, message = "Thong tin them toi da 5000 ky tu")
+        String moreDetail
+) {
+    @AssertTrue(message = "Han nop CV phai sau it nhat mot ngay so voi hom nay")
     public boolean isDeadlineValid() {
         return deadlineCV != null && deadlineCV.isAfter(LocalDate.now());
     }
-    @AssertTrue(message = "Chỉ chấp nhận png hoặc jpg")
-    public boolean validLogoExtension(){
-        String contentType = image.getContentType();
-        return contentType != null && (contentType.equals("image/jpeg") || contentType.equals("image/png"));
-    }
-    @AssertTrue(message = "kích thước ảnh tối đa 2mb")
-    public boolean isImageSizeValid(){
-        return image != null && image.getSize() <= 2 * 1024 * 1024;
-    }
-    public Job toJob(){
-        Job job = new Job();
+
+    public void updateJob(Job job) {
         job.setTime(jobType);
         job.setDescription(jobDescription);
+        job.setDescriptionText(parseHtml(jobDescription));
         job.setRequireDetails(jobRequirement);
-        job.setSkill(jobSkill);
-        job.setAddress(location);
+        job.setRequireDetailsText(parseHtml(jobRequirement));
         job.setSalary(salary);
         job.setTitle(jobName);
         job.setExpiredDate(deadlineCV
                 .atStartOfDay(ZoneOffset.UTC)
                 .toInstant());
-        if (image != null && !image.isEmpty()) {
-            try {
-                job.setLogo(image.getBytes());
-            } catch (IOException e) {
-                throw new RuntimeException("Không thể đọc file ảnh");
-            }
+        if(moreDetail != null && !moreDetail.isEmpty()){
+            job.setMoreDetail(moreDetail);
+            job.setMoreDetailText(parseHtml(moreDetail));
         }
-        Hirer hirer = new Hirer();
-        hirer.setCompanyName(companyName);
-        hirer.setDescription(companyDescription);
-        hirer.setSocialLink(compayWebsite);
-        job.setHirer(hirer);
+    }
+    private String parseHtml(String html){
+        return Jsoup.parse(html).wholeText();
+    }
+    public Job toJob() {
+        Job job = new Job();
+        updateJob(job);
         return job;
     }
+
+    public String getJobName() {
+        return jobName;
+    }
+
+    public long getAddressId() {
+        return addressId;
+    }
+
+    public String getJobType() {
+        return jobType;
+    }
+
+    public double getSalary() {
+        return salary;
+    }
+
+    public String getJobDescription() {
+        return jobDescription;
+    }
+
+    public String getJobRequirement() {
+        return jobRequirement;
+    }
+
+    public LocalDate getDeadlineCV() {
+        return deadlineCV;
+    }
+
+    public long getHirerId() {
+        return hirerId;
+    }
+
+    public String getMoreDetail() {
+        return moreDetail;
+    }
 }
-
-
-
-
-

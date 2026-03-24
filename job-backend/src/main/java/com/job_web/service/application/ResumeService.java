@@ -4,24 +4,28 @@ import com.job_web.dto.application.ResumeUploadDTO;
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.dto.application.ResumeDTO;
 import com.job_web.dto.application.ResumeDetailDTO;
+import com.job_web.dto.application.ResumeView;
 import com.job_web.models.Resume;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.Principal;
 import java.util.List;
 
 public interface ResumeService {
-    public ApiResponse<List<ResumeDTO>> getListResumeOfUser(Principal principal);
+    ApiResponse<List<ResumeView>> getListResumeOfUser(Principal principal);
 
-    public ApiResponse<List<ResumeDTO>> getResumesByUser(String email);
+    ApiResponse<List<ResumeDTO>> getResumesByUser(String email);
 
-    public Resume findById(long id);
+    ApiResponse<ResumeDetailDTO> getResumeDetail(long id, Principal principal);
 
-    public ApiResponse<ResumeDetailDTO> getResumeDetail(long id, Principal principal);
+    ApiResponse<String> createResume(ResumeUploadDTO resumeUploadDTO, Principal principal);
 
-    public ApiResponse<String> createResume(ResumeUploadDTO resumeUploadDTO, Principal principal);
+    ApiResponse<String> updateResume(long id, ResumeUploadDTO resumeUploadDTO, Principal principal);
 
-    public ApiResponse<String> updateResume(long id, ResumeUploadDTO resumeUploadDTO, Principal principal);
+    ApiResponse<String> deleteResume(long id, Principal principal);
 
-    public ApiResponse<String> deleteResume(long id, Principal principal);
+    void uploadResumeToCloud(byte[] data, String key);
+    byte[] toByteArray(InputStream inputStream) throws IOException;
 }
 

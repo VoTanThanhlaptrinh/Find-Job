@@ -1,19 +1,12 @@
 package com.job_web.dto.blog;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotNull;
 
-import jakarta.validation.constraints.*;
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class LikeDTO {
-    @NotNull(message = "Blog id không được null")
-    private long id;
+public record LikeDTO(
+        @NotNull(message = "Blog id khÃ´ng Ä‘Æ°á»£c null")
+        long id
+) {
+    public long getId() {
+        return id;
+    }
 }
-
-
-
-
-

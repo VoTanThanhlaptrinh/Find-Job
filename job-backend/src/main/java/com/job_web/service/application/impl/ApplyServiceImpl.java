@@ -13,6 +13,8 @@ import com.job_web.models.Job;
 import com.job_web.models.Resume;
 import com.job_web.models.User;
 import com.job_web.service.application.ApplyService;
+import com.job_web.service.application.ResumeService;
+import com.job_web.utills.KeyGeneratorUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,10 +34,9 @@ public class ApplyServiceImpl implements ApplyService {
     private final ResumeRepository resumeRepository;
     private final JobRepository jobRepository;
     private final UserRepository userRepository;
-
+    private final ResumeService resumeService;
     @Override
     public ApiResponse<String> applyWithExistingCv(ApplyCvWithExistingRequest request, Principal principal) {
-
         var job = jobRepository.findById(request.getJobId());
         if(job.isEmpty()){
             return new ApiResponse<>("Công việc không tồn tại.", null, HttpStatus.BAD_REQUEST.value());
@@ -83,7 +84,11 @@ public class ApplyServiceImpl implements ApplyService {
             var resume = new Resume();
             resume.setUser(user.get());
             resume.setCreateDate(LocalDateTime.now());
-            resume.setData(request.getCvFile().getBytes());
+
+            String key = KeyGeneratorUtil.generateKey();
+            byte[] data = resumeService.toByteArray(request.getCvFile().getInputStream());
+            resumeService.uploadResumeToCloud(data, key);
+
             resume.setFileName(request.getCvFile().getName());
             resumeRepository.save(resume);
 

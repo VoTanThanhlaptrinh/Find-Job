@@ -8,7 +8,6 @@ public record JobDetailView(
         double salary,
         String time,
         String requireDetails,
-        String skill,
         String expiredDate
 ) {
 }

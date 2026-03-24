@@ -1,20 +1,38 @@
 package com.job_web.dto.job;
 
-import lombok.Data;
-
 import java.util.List;
 
-@Data
-public class JobFilterDTO {
-    private int pageIndex;
-    private int pageSize;
-    private int min;
-    private int max;
-    private List<String> address;
-    private List<String> times;
+public record JobFilterDTO(
+        int pageIndex,
+        int pageSize,
+        int min,
+        int max,
+        List<String> address,
+        List<String> times,
+        String title
+) {
+    public int getPageIndex() {
+        return pageIndex;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public int getMin() {
+        return min;
+    }
+
+    public int getMax() {
+        return max;
+    }
+
+    public List<String> getAddress() {
+        return address;
+    }
+
+    public List<String> getTimes() {
+        return times;
+    }
+    public String getTitle(){ return title;}
 }
-
-
-
-
-

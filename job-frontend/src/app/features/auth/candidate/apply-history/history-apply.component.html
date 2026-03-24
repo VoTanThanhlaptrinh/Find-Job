@@ -1,0 +1,85 @@
+<section class="flex flex-col gap-y-2">
+	<header>
+		<h2 class="text-xl font-bold text-slate-900 sm:text-2xl">Danh sách các job đã ứng tuyển</h2>
+	</header>
+
+	<div class="flex flex-row justify-between items-center gap-x-2">
+		<article class="rounded-xl border border-slate-200 bg-white p-2 shadow-md w-[15vw] h-44 max-h-44 overflow-hidden">
+			<div class="flex flex-col items-center gap-3">
+				<span class="flex h-15 w-15 items-center justify-center rounded-lg bg-blue-100 text-blue-700">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="h-10 w-10" aria-hidden="true">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75h19.5M3.75 18.75V7.5a1.5 1.5 0 0 1 1.5-1.5h13.5a1.5 1.5 0 0 1 1.5 1.5v11.25" />
+						<path stroke-linecap="round" stroke-linejoin="round" d="M8.25 10.5h7.5M8.25 13.5h4.5" />
+					</svg>
+				</span>
+				<div class="flex items-center">
+					<p class="text-xs text-slate-500">Tổng job đã ứng tuyển:</p>
+					<p class="text-lg font-semibold text-slate-900">{{ totalAppliedJobs }}</p>
+				</div>
+			</div>
+		</article>
+
+		<article class="rounded-xl border border-slate-200 bg-white p-2 shadow-md w-[15vw] h-44 max-h-44 overflow-hidden">
+			<div class="flex flex-col items-center gap-3">
+				<span class="flex h-15 w-15 items-center justify-center rounded-lg bg-indigo-100 text-indigo-700">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="h-10 w-10" aria-hidden="true">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18" />
+						<path stroke-linecap="round" stroke-linejoin="round" d="M7.5 14.25 12 9.75l3 3 3.75-3.75" />
+					</svg>
+				</span>
+				<div class="flex items-center">
+					<p class="text-xs text-slate-500">Lương trung bình:</p>
+					<p class="text-lg font-semibold text-slate-900">{{ averageSalaryLabel }}</p>
+				</div>
+			</div>
+		</article>
+
+		<article class="rounded-xl border border-slate-200 bg-white p-2 shadow-md w-[15vw] h-44 max-h-44 overflow-hidden">
+			<div class="flex flex-col items-center gap-3">
+				<span class="flex h-15 w-15 items-center justify-center rounded-lg bg-amber-100 text-amber-700">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="h-10 w-10" aria-hidden="true">
+						<path stroke-linecap="round" stroke-linejoin="round" d="m12 3 2.817 5.708 6.298.915-4.557 4.443 1.076 6.273L12 17.377l-5.634 2.962 1.076-6.273L2.885 9.623l6.298-.915L12 3Z" />
+					</svg>
+				</span>
+				<div class="flex items-center">
+					<p class="text-xs text-slate-500">Lương cao nhất:</p>
+					<p class="text-lg font-semibold text-slate-900">{{ highestSalaryLabel }}</p>
+				</div>
+			</div>
+		</article>
+
+		<article class="rounded-xl border border-slate-200 bg-white p-2 shadow-md w-[15vw] h-44 max-h-44 overflow-hidden">
+			<div class="flex flex-col items-center gap-3">
+				<span class="flex h-15 w-15 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="h-10 w-10" aria-hidden="true">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m6.75 0A9.75 9.75 0 1 1 3.75 12a9.75 9.75 0 0 1 19.5 0Z" />
+					</svg>
+				</span>
+				<div class="flex items-center">
+					<p class="text-xs text-slate-500">Lần ứng tuyển mới nhất:</p>
+					<p class="text-lg font-semibold text-slate-900">{{ latestAppliedTime }}</p>
+				</div>
+			</div>
+		</article>
+	</div>
+
+	@if (isLoading && !skeleton) {
+		<app-loading message="Đang tải danh sách công việc..."></app-loading>
+	}
+
+	@if (isLoading && skeleton) {
+		<div class="flex flex-col h-110 max-h-110 gap-y-2 overflow-y-auto">
+			@for (row of skeletonRows; track row) {
+				<app-skeleton-job-card></app-skeleton-job-card>
+			}
+		</div>
+	}
+
+	@if (!isLoading) {
+		<div class="flex flex-col h-110 max-h-110 gap-y-2 overflow-y-auto">
+			@for (job of appliedJobs; track job.id) {
+				<app-job-card [job]="job" detailRoute="/single"></app-job-card>
+			}
+		</div>
+	}
+</section>

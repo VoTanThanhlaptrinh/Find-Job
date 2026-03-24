@@ -6,47 +6,89 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
 
 import java.time.LocalDate;
 
-@Data
-public class UserCrudDTO {
-    @NotBlank(message = "Tên đầy đủ không được rỗng")
-    @Size(max = 255, message = "Tên đầy đủ tối đa 255 ký tự")
-    private String fullName;
+public record UserCrudDTO(
+        @NotBlank(message = "TÃªn Ä‘áº§y Ä‘á»§ khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        @Size(max = 255, message = "TÃªn Ä‘áº§y Ä‘á»§ tá»‘i Ä‘a 255 kÃ½ tá»±")
+        String fullName,
 
-    @NotBlank(message = "Email không được rỗng")
-    @Email(message = "Không phải Email")
-    private String email;
+        @NotBlank(message = "Email khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        @Email(message = "KhÃ´ng pháº£i Email")
+        String email,
 
-    @NotBlank(message = "Mật khẩu không được rỗng")
-    @Size(min = 8, message = "Mật khẩu không được dưới 8 ký tự")
-    private String password;
+        @NotBlank(message = "Máº­t kháº©u khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        @Size(min = 8, message = "Máº­t kháº©u khÃ´ng Ä‘Æ°á»£c dÆ°á»›i 8 kÃ½ tá»±")
+        String password,
 
-    @NotBlank(message = "Vai trò không được rỗng")
-    private String role;
+        @NotBlank(message = "Vai trÃ² khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        String role,
 
-    @NotNull(message = "Ngày sinh không được rỗng")
-    @Past(message = "Ngày sinh phải trước hôm nay")
-    private LocalDate dateOfBirth;
+        @NotNull(message = "NgÃ y sinh khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        @Past(message = "NgÃ y sinh pháº£i trÆ°á»›c hÃ´m nay")
+        LocalDate dateOfBirth,
 
-    @NotBlank(message = "Địa chỉ không được rỗng")
-    private String address;
+        @NotBlank(message = "Äá»‹a chá»‰ khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        String address,
 
-    @NotBlank(message = "Số điện thoại không được rỗng")
-    @Pattern(regexp = "^\\d{10}$", message = "Không phải định dạng số điện thoại")
-    private String mobile;
+        @NotBlank(message = "Sá»‘ Ä‘iá»‡n thoáº¡i khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        @Pattern(regexp = "^\\d{10}$", message = "KhÃ´ng pháº£i Ä‘á»‹nh dáº¡ng sá»‘ Ä‘iá»‡n thoáº¡i")
+        String mobile,
 
-    @NotNull(message = "Trạng thái kích hoạt không được rỗng")
-    private Boolean active;
+        @NotNull(message = "Tráº¡ng thÃ¡i kÃ­ch hoáº¡t khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        Boolean active,
 
-    @NotNull(message = "Trạng thái khóa tài khoản không được rỗng")
-    private Boolean accountLocked;
+        @NotNull(message = "Tráº¡ng thÃ¡i khÃ³a tÃ i khoáº£n khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        Boolean accountLocked,
 
-    @NotNull(message = "Trạng thái enable không được rỗng")
-    private Boolean enabled;
+        @NotNull(message = "Tráº¡ng thÃ¡i enable khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        Boolean enabled,
 
-    @NotNull(message = "Trạng thái OAuth2 không được rỗng")
-    private Boolean oauth2Enabled;
+        @NotNull(message = "Tráº¡ng thÃ¡i OAuth2 khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        Boolean oauth2Enabled
+) {
+    public String getFullName() {
+        return fullName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public Boolean getAccountLocked() {
+        return accountLocked;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public Boolean getOauth2Enabled() {
+        return oauth2Enabled;
+    }
 }

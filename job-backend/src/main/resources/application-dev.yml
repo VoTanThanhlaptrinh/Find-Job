@@ -1,6 +1,8 @@
 application:
   service:
     impl:
+      deepseek:
+        api-key: ${DEEP_SEEK_API_KEY}
       gemini:
         api-key: ${GEMINI_API_KEY}
       secret-key: ${SECRET_KEY}
@@ -97,3 +99,12 @@ app:
 
 server:
   port: 8080
+
+cloudflare:
+  r2:
+    account-id: ${CLOUDFLARE_ACCOUNT_ID}
+    access-key: ${CLOUDFLARE_SECRET_KEY}
+    secret-key: ${CLOUDFLARE_ACCESS_KEY}
+    bucket-name: job-portal-resume
+    # Endpoint có dạng: https://<accountid>.r2.cloudflarestorage.com
+    endpoint: https://${cloudflare.r2.account-id}.r2.cloudflarestorage.com

@@ -42,9 +42,6 @@
                 <p class="font-semibold text-slate-900">
                   Dùng CV đã apply trước đó
                 </p>
-                <p class="text-sm text-slate-500">
-                  Chọn một CV từ lịch sử ứng tuyển của bạn.
-                </p>
                 <select
                   formControlName="existingCvId"
                   class="mt-3 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-blue-500 focus:outline-none"
@@ -52,10 +49,14 @@
                 >
                   @for (cv of previousCvOptions; track cv.id) {
                     <option [value]="cv.id">
-                      {{ cv.label }}
+                      {{ cv.fileName }}
                     </option>
                   }
                 </select>
+
+                @if (isMode('existing') && selectedExistingCv) {
+                  <app-resume-review [resume]="selectedExistingCv"></app-resume-review>
+                }
               </div>
             </label>
 

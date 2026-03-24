@@ -1,0 +1,109 @@
+<section>
+  <div class="max-h-[90vh] overflow-y-auto p-2">
+    <form
+      class="flex flex-col items-center mx-auto gap-y-2"
+      [formGroup]="this.postJobFG"
+      (ngSubmit)="this.onSubmit()"
+    >
+      <div class="flex sm:flex-col lg:flex-row  w-full gap-x-2">
+        <div class="w-full max-w-sm min-w-40">
+          <label class="block mb-2 text-sm text-slate-600"
+            >Tên công việc:</label
+          >
+          <input
+            type="text"
+            class="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+            required
+            name="jobName"
+            formControlName="jobName"
+            placeholder="VD: Nhà thiết kế sản phẩm"
+          />
+        </div>
+        <div class="w-full max-w-sm min-w-40">
+          <label class="block mb-2 text-sm text-slate-600">Địa điểm:</label>
+          <input
+            type="text"
+            class="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+            name="location"
+            formControlName="location"
+            placeholder="VD: Hồ Chí Minh"
+          />
+        </div>
+      </div>
+      <div class="flex sm:flex-col lg:flex-row justify-between w-full mt-4 gap-x-2">
+        <div class="w-full max-w-sm min-w-30">
+          <label class="block mb-2 text-sm text-slate-600">Loại hình:</label>
+          <select
+            title="Loại hình"
+            class="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+            name="jobType"
+            formControlName="jobType"
+          >
+            <option >Full Time</option>
+            <option>Part Time</option>
+            <option>Internship</option>
+          </select>
+        </div>
+        <div class="w-full max-w-sm min-w-30">
+          <label class="block mb-2 text-sm text-slate-600"
+            >Mức lương (VNĐ)</label
+          >
+          <input
+            type="number"
+            class="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+            required
+            name="salary"
+            formControlName="salary"
+            placeholder="VD: 15.000.000"
+          />
+        </div>
+        <div class="w-full max-w-sm min-w-30">
+          <label class="block mb-2 text-sm text-slate-600">Hạn nộp CV</label>
+          <input
+            title="input"
+            type="date"
+            class="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+            required
+            name="deadlineCV"
+            formControlName="deadlineCV"
+          />
+        </div>
+      </div>
+
+      <div class="flex flex-col items-start gap-x-2">
+        <label>Mô tả công việc</label>
+        <div class="quill-wrapper">
+          <quill-editor formControlName="jobDescription"></quill-editor>
+        </div>
+      </div>
+      <div class="flex flex-col items-start gap-x-2">
+        <label>Yêu cầu công việc</label>
+        <div class="quill-wrapper">
+          <quill-editor formControlName="jobRequirement"></quill-editor>
+        </div>
+      </div>
+      <div class="flex flex-col items-start gap-x-2">
+        <label>Thông tin thêm(không bắt buộc)</label>
+        <div class="quill-wrapper">
+          <quill-editor formControlName="jobSkill"></quill-editor>
+        </div>
+      </div>
+      <div class="flex flex-col items-end w-full gap-x-2">
+            <div class="">
+              <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit">
+                Lưu công việc
+              </button>
+        </div>
+        <div>
+          <span
+            [ngClass]="{
+              'text-success': this.messageType === true,
+              'text-danger': this.messageType === false,
+            }"
+            >{{ this.message }}</span
+          >
+        </div>
+      </div>
+    </form>
+  </div>
+</section>

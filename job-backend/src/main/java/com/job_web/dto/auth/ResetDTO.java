@@ -1,26 +1,34 @@
 package com.job_web.dto.auth;
 
-import lombok.Data;
+import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
-import jakarta.validation.constraints.*;
+public record ResetDTO(
+        @Size(min = 8, message = "Máº­t kháº©u khÃ´ng Ä‘Æ°á»£c dÆ°á»›i 8 kÃ½ tá»±")
+        @NotBlank(message = "Máº­t kháº©u má»›i khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        String newPass,
 
-@Data
-public class ResetDTO {
-    @Size(min = 8, message = "Mật khẩu không được dưới 8 ký tự")
-    @NotBlank(message = "Mật khẩu mới không được rỗng")
-    private String newPass;
-    @NotBlank(message = "Xác nhận mật khẩu mới không được rỗng")
-    private String confirmPass;
-    @NotBlank(message = "Mã xác nhận không được rỗng")
-    private String random;
+        @NotBlank(message = "XÃ¡c nháº­n máº­t kháº©u má»›i khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        String confirmPass,
 
-    @AssertTrue(message = "Mật khẩu mới và mật khẩu xác nhận không giống nhau")
+        @NotBlank(message = "MÃ£ xÃ¡c nháº­n khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        String random
+) {
+    @AssertTrue(message = "Máº­t kháº©u má»›i vÃ  máº­t kháº©u xÃ¡c nháº­n khÃ´ng giá»‘ng nhau")
     public boolean isValid() {
         return newPass.equals(confirmPass);
     }
+
+    public String getNewPass() {
+        return newPass;
+    }
+
+    public String getConfirmPass() {
+        return confirmPass;
+    }
+
+    public String getRandom() {
+        return random;
+    }
 }
-
-
-
-
-

@@ -7,6 +7,8 @@ import java.util.List;
 import jakarta.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.SQLRestriction;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -16,7 +18,9 @@ import org.springframework.data.annotation.LastModifiedDate;
 @Data
 @Table(name = "job")
 @NoArgsConstructor
-public class Job {
+@EqualsAndHashCode(callSuper = true)
+@SQLRestriction("status <> 'DELETED'")
+public class Job extends StatusEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
@@ -24,14 +28,17 @@ public class Job {
 	private String time;
 	@Column(columnDefinition = "text")
 	private String requireDetails;
-	private String address;
+	@Column(columnDefinition = "text")
+	private String requireDetailsText;
 	@Column(columnDefinition = "text")
 	private String description;
+	@Column(columnDefinition = "text")
+	private String descriptionText;
+	private String skill;
+	private String skillText;
 	private Instant expiredDate;
 	private String title;
-	@Column(columnDefinition = "text")
-	private String skill;
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "hirer_id")
 	@JsonIgnore
 	private Hirer hirer;
@@ -44,30 +51,20 @@ public class Job {
 	@OneToMany(mappedBy = "job", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
 	@JsonIgnore
 	private List<Apply> applies;
-	@Lob
-	private byte[] logo;
-	public Job(double salary, String time, String requireDetails, String address, String description,
-			Instant expiredDate, Instant createDate, Instant modifiedDate, String title) {
-		super();
-		this.salary = salary;
-		this.time = time;
-		this.requireDetails = requireDetails;
-		this.address = address;
-		this.description = description;
-		this.expiredDate = expiredDate;
-		this.createDate = createDate;
-		this.modifiedDate = modifiedDate;
-		this.title = title;
-	}
-
+	@Column(columnDefinition = "text")
+	private String moreDetail;
+	@Column(columnDefinition = "text")
+	private String moreDetailText;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "address_id") // Khớp với cột address_id trong ảnh bạn gửi
+	private Address address;
+	private String logo;
 	public void addApplication(Apply apply) {
 		if(applies == null) {
 			applies = new LinkedList<>();
 		}
 		applies.add(apply);
 	}
-	
-
 }
 
 

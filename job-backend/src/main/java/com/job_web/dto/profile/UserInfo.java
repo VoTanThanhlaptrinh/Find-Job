@@ -1,51 +1,62 @@
 package com.job_web.dto.profile;
 
-import jakarta.validation.constraints.*;
-
 import com.job_web.models.User;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@AllArgsConstructor
-@Data
-@NoArgsConstructor
-public class UserInfo {
-	@NotNull(message = "Tên đầy đủ không được rỗng")
-	private String fullName;
-	@NotNull(message = "Ngày sinh không được rỗng")
-	private LocalDate dateOfBirth;
-	@NotNull(message = "Địa chỉ không được rỗng")
-	private String address;
-	@NotNull(message = "Số điện thoại không được rỗng")
-	private String mobile;
+public record UserInfo(
+        @NotNull(message = "TÃªn Ä‘áº§y Ä‘á»§ khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        String fullName,
 
-	@AssertTrue(message = "không phải đinh dạng số điện thoại")
-	public boolean isMobile() {
-		Pattern pattern = Pattern.compile("^\\d{10}$");
-		Matcher matcher = pattern.matcher(mobile);
-		return matcher.matches();
-	}
+        @NotNull(message = "NgÃ y sinh khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        LocalDate dateOfBirth,
 
-	public void toUserInfo(User userLogin) {
-		this.fullName = userLogin.getFullName();
-		this.address = userLogin.getAddress();
-		this.mobile = userLogin.getMobile();
-		this.dateOfBirth = userLogin.getDateOfBirth();
-	}
-	public void update(User userLogin) {
-		userLogin.setFullName(fullName);
-		userLogin.setDateOfBirth(dateOfBirth);
-		userLogin.setAddress(address);
-		userLogin.setMobile(mobile);
-	}
+        @NotNull(message = "Äá»‹a chá»‰ khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        String address,
+
+        @NotNull(message = "Sá»‘ Ä‘iá»‡n thoáº¡i khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        String mobile
+) {
+    @AssertTrue(message = "khÃ´ng pháº£i Ä‘inh dáº¡ng sá»‘ Ä‘iá»‡n thoáº¡i")
+    public boolean isMobile() {
+        Pattern pattern = Pattern.compile("^\\d{10}$");
+        Matcher matcher = pattern.matcher(mobile);
+        return matcher.matches();
+    }
+
+    public static UserInfo fromUser(User userLogin) {
+        return new UserInfo(
+                userLogin.getFullName(),
+                userLogin.getDateOfBirth(),
+                userLogin.getAddress(),
+                userLogin.getMobile()
+        );
+    }
+
+    public void update(User userLogin) {
+        userLogin.setFullName(fullName);
+        userLogin.setDateOfBirth(dateOfBirth);
+        userLogin.setAddress(address);
+        userLogin.setMobile(mobile);
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
 }
-
-
-
-
-

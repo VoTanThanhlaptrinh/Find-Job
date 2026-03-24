@@ -11,6 +11,8 @@ import java.util.List;
 import jakarta.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.SQLRestriction;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,11 +23,13 @@ import org.springframework.data.annotation.LastModifiedDate;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Blog {
+@EqualsAndHashCode(callSuper = true)
+@SQLRestriction("status <> 'DELETED'")
+public class Blog extends StatusEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonIgnore
 	@JoinColumn(nullable = false)
 	private User author;
@@ -36,12 +40,12 @@ public class Blog {
 	private String content;
 	private int amountLike;
 
-	@OneToMany
+	@OneToMany(fetch = FetchType.LAZY)
 	@JsonIgnore
 	@Column(nullable = true)
 	private List<Comment> comments;
 
-	@OneToMany
+	@OneToMany(fetch = FetchType.LAZY)
 	@JsonIgnore
 	@Column(nullable = true)
 	private List<Comment> likes;
