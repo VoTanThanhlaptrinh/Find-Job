@@ -39,7 +39,7 @@ export class CvUploadModalComponent implements OnChanges {
 
   onSubmit(): void {
     if (!this.selectedFile) {
-      this.errorMessage = 'Vui long chon file CV truoc khi gui.';
+      this.errorMessage = 'Vui lòng chọn file CV trước khi gửi.';
       return;
     }
 
@@ -114,13 +114,13 @@ export class CvUploadModalComponent implements OnChanges {
 
     if (!isAllowedExtension) {
       this.selectedFile = null;
-      this.errorMessage = 'Chi ho tro dinh dang .pdf, .doc, .docx.';
+      this.errorMessage = 'Chỉ hỗ trợ định dạng .pdf, .doc, .docx.';
       return;
     }
 
     if (file.size > this.maxFileSize) {
       this.selectedFile = null;
-      this.errorMessage = 'Kich thuoc file vuot qua gioi han 5MB.';
+      this.errorMessage = 'Kích thước file vượt quá giới hạn 5MB.';
       return;
     }
 

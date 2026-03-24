@@ -81,12 +81,12 @@ export class ResumeReviewComponent {
 
   get createDateLabel(): string {
     if (!this.resume.createDate) {
-      return 'Ngay Upload: --';
+      return 'Ngày tải lên: --';
     }
 
     const date = new Date(this.resume.createDate);
     if (Number.isNaN(date.getTime())) {
-      return `Ngay Upload: ${this.resume.createDate}`;
+      return `Ngày tải lên: ${this.resume.createDate}`;
     }
 
     const datePart = new Intl.DateTimeFormat('vi-VN').format(date);
@@ -96,6 +96,6 @@ export class ResumeReviewComponent {
       hour12: true
     }).format(date);
 
-    return `Ngay Upload: ${datePart} | ${timePart}`;
+    return `Ngày tải lên: ${datePart} | ${timePart}`;
   }
 }

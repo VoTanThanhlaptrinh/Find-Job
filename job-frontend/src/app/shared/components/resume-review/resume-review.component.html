@@ -4,8 +4,8 @@
   <div class="flex items-center gap-3 sm:gap-4">
     <img
       [src]="fileIconPath"
-      alt="Resume file icon"
-      title="Resume file icon"
+      alt="Biểu tượng file CV"
+      title="Biểu tượng file CV"
       class="h-16 w-16 shrink-0 rounded-xl border border-slate-200 bg-slate-50 object-contain p-1 sm:h-20 sm:w-20"
       loading="lazy"
     />
@@ -25,7 +25,7 @@
           <button
             type="button"
             class="inline-flex h-9 w-9 items-center border-none justify-center text-black bg-white hover:bg-slate-100"
-            aria-label="More options"
+            aria-label="Tùy chọn thêm"
             (click)="toggleMenu()"
           >
             <svg
@@ -51,7 +51,7 @@
                 [disabled]="isDeleting"
                 (click)="onDeleteResume()"
               >
-                {{ isDeleting ? "Dang xoa..." : "Xoa" }}
+                {{ isDeleting ? "Đang xóa..." : "Xóa" }}
               </button>
             </div>
           }
@@ -61,7 +61,7 @@
       <div class="flex items-center gap-3">
         <button
           type="button"
-          class="inline-flex h-10 w-10 items-center justify-center rounded-lg border-none text-black  hover:bg-blue-100"
+          class="inline-flex h-10 w-10 items-center justify-center rounded-lg border-none text-black hover:bg-blue-100"
           title="Xem CV"
           aria-label="Xem CV"
           (click)="onViewResume()"
@@ -91,8 +91,8 @@
         <button
           type="button"
           class="inline-flex h-10 w-10 items-center justify-center rounded-lg text-black hover:bg-blue-200"
-          title="Tai CV"
-          aria-label="Tai CV"
+          title="Tải CV"
+          aria-label="Tải CV"
           (click)="onDownloadResume()"
         >
           <svg

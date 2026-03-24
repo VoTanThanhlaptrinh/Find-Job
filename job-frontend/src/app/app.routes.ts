@@ -12,6 +12,7 @@ import { ChangePassComponent } from './features/auth/candidate/change-pass/chang
 import { CvUiComponent } from './features/auth/candidate/cv-ui/cv-ui.component';
 import { HistoryApplyComponent } from './features/auth/candidate/apply-history/history-apply.component';
 import { ProfileComponent } from './features/auth/candidate/profile/profile.component';
+import { RecommendedJobsComponent } from './features/auth/candidate/recommended-jobs/recommended-jobs.component';
 import { VerifyComponent } from './features/auth/pages/verify/verify.component';
 import { ActivateComponent } from './features/auth/pages/activate/activate.component';
 import { JobSingleComponent } from './features/jobs/pages/job-single/job-single.component';
@@ -54,6 +55,7 @@ export const routes: Routes = [
       { path: 'profile', component: ProfileComponent, canActivate: [userLoginGuard] },
       { path: 'change-password', component: ChangePassComponent },
       { path: 'cv', component: CvUiComponent },
+      { path: 'recommended-jobs', component: RecommendedJobsComponent },
       { path: 'history-apply', component: HistoryApplyComponent }
     ]
   },

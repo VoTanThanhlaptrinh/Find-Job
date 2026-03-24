@@ -1,22 +1,59 @@
 <div class="card">
-  <h2>Change Password</h2>
-  <form class="password-form" [formGroup]="this.formGroup" (ngSubmit)="onSubmit()">
-    <input type="password" placeholder="Current Password" name="oldPass" formControlName="oldPass" required autocomplete="current-password">
-    <input type="password" placeholder="New Password" name="newPass" formControlName="newPass" required autocomplete="new-password">
-    <input type="password" placeholder="Confirm New Password"  name="confirmPass" formControlName="confirmPass" required autocomplete="new-password">
-  <div class="requirements">
-    <h3>Password requirements</h3>
-    <p>Please follow this guide for a strong password</p>
-    <ul>
-      <li>One special characters</li>
-      <li>Min 6 characters</li>
-      <li>One number (2 are recommended)</li>
-      <li>Change it often</li>
-    </ul>
-  </div>
+  @if (requiresVerification) {
+    <div class="space-y-4">
+      <h2>Đổi mật khẩu</h2>
+      <p class="text-sm text-slate-600">
+        Tài khoản của bạn cần xác thực trước khi có thể đổi mật khẩu.
+      </p>
+      <a
+        routerLink="/verify"
+        class="inline-flex items-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white no-underline transition hover:bg-slate-700"
+      >
+        Đi đến trang xác thực
+      </a>
+    </div>
+  } @else {
+    <h2>Đổi mật khẩu</h2>
+    <form class="password-form" [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+      <input
+        type="password"
+        placeholder="Mật khẩu hiện tại"
+        name="oldPass"
+        formControlName="oldPass"
+        required
+        autocomplete="current-password"
+      >
+      <input
+        type="password"
+        placeholder="Mật khẩu mới"
+        name="newPass"
+        formControlName="newPass"
+        required
+        autocomplete="new-password"
+      >
+      <input
+        type="password"
+        placeholder="Xác nhận mật khẩu mới"
+        name="confirmPass"
+        formControlName="confirmPass"
+        required
+        autocomplete="new-password"
+      >
 
-  <div class="btn-container">
-    <button type="submit" >Update Password</button>
-  </div>
-  </form>
+      <div class="requirements">
+        <h3>Yêu cầu mật khẩu</h3>
+        <p>Hãy dùng mật khẩu đủ mạnh để bảo vệ tài khoản.</p>
+        <ul>
+          <li>Có ít nhất 1 ký tự đặc biệt</li>
+          <li>Tối thiểu 6 ký tự</li>
+          <li>Có ít nhất 1 chữ số</li>
+          <li>Nên thay đổi định kỳ</li>
+        </ul>
+      </div>
+
+      <div class="btn-container">
+        <button type="submit">Cập nhật mật khẩu</button>
+      </div>
+    </form>
+  }
 </div>

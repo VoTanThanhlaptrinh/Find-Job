@@ -1,53 +1,60 @@
-import {Component, OnInit} from '@angular/core';
-import {AccountService} from '../../../../core/services/account.service';
-import {NotifyMessageService} from '../../../../core/services/notify-message.service';
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {Router} from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { AccountService } from '../../../../core/services/account.service';
+import { NotifyMessageService } from '../../../../core/services/notify-message.service';
 
 @Component({
   selector: 'app-change-pass',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './change-pass.component.html',
   styleUrl: './change-pass.component.css',
-  standalone:true
+  standalone: true
 })
-export class ChangePassComponent implements OnInit{
-  constructor(private accountService: AccountService,
-              private notify: NotifyMessageService,
-              private router: Router) {
-  }
+export class ChangePassComponent implements OnInit {
+  requiresVerification = false;
+
+  constructor(
+    private readonly accountService: AccountService,
+    private readonly notify: NotifyMessageService
+  ) {}
+
+  readonly formGroup = new FormGroup({
+    oldPass: new FormControl('', [Validators.required, Validators.minLength(6)]),
+    newPass: new FormControl('', [Validators.required, Validators.minLength(6)]),
+    confirmPass: new FormControl('', [Validators.required, Validators.minLength(6)])
+  });
 
   ngOnInit(): void {
     this.accountService.checkOauth2().subscribe({
-      next: res =>{
-        if(!res)
-          this.router.navigate(['verify'])
+      next: (res) => {
+        this.requiresVerification = !res;
       }
     });
-    }
-  formGroup = new FormGroup({
-    oldPass: new FormControl('', [Validators.required, Validators.minLength(6)]),
-    newPass: new FormControl('', [Validators.required, Validators.minLength(6)]),
-    confirmPass : new FormControl('', [Validators.required, Validators.minLength(6)]),
-  })
-  isMatch(): boolean{
-    return this.formGroup.value.confirmPass === this.formGroup.value.newPass
   }
-  onSubmit(){
-    if(!this.isMatch()){
-      this.notify.showMessage('Xác nhận mật khẩu phải trùng với mật khẩu mới','','error');
+
+  isMatch(): boolean {
+    return this.formGroup.value.confirmPass === this.formGroup.value.newPass;
+  }
+
+  onSubmit(): void {
+    if (this.requiresVerification) {
       return;
     }
-    console.log('Form value:', this.formGroup.value);
-    console.log('Form valid:', this.formGroup.valid);
+
+    if (!this.isMatch()) {
+      this.notify.showMessage('Xác nhận mật khẩu phải trùng với mật khẩu mới.', '', 'error');
+      return;
+    }
 
     this.accountService.changePass(this.formGroup.value).subscribe({
-      next: res =>{
-        this.notify.showMessage('Thay đổi mật khẩu thành công','','success');
+      next: () => {
+        this.notify.showMessage('Thay đổi mật khẩu thành công.', '', 'success');
         this.formGroup.reset();
-      },error: err =>{
-        this.notify.showMessage(err?.error?.message || 'Có lỗi xảy ra','','error')
+      },
+      error: (err) => {
+        this.notify.showMessage(err?.error?.message || 'Có lỗi xảy ra.', '', 'error');
       }
-    })
+    });
   }
 }

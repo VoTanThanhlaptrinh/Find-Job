@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class AIServiceImpl implements AIService {
 
-    // Sử dụng Interface ChatLanguageModel thay vì class cụ thể để dễ mở rộng sau này
     private final ChatModel model;
 
     private ResumeParserAgent parserAgent;
@@ -61,7 +60,10 @@ public class AIServiceImpl implements AIService {
 
         var count = 0;
         while(count < MAX_RETRIES){
-            var updateResume = parser(rawText, bestVerify.getSuggestion());
+            String detailedFeedback = "Các lỗi cần sửa: " + String.join(", ", bestVerify.getErrors())
+                    + ". Gợi ý: " + bestVerify.getSuggestion();
+
+            var updateResume = parser(rawText, detailedFeedback);
             count++;
             var currentVerify = verify(updateResume,rawText);
 

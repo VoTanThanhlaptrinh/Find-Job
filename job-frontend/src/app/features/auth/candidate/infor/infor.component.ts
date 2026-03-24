@@ -26,6 +26,7 @@ export class InforComponent {
     { name: 'Hồ sơ', icon: 'fas fa-user-circle', route: '/infor/profile', exact: true },
     { name: 'Đổi mật khẩu', icon: 'fas fa-key', route: '/infor/change-password' },
     { name: 'CV của bạn', icon: 'fas fa-file-alt', route: '/infor/cv' },
+    { name: 'Gợi ý việc làm', icon: 'fas fa-lightbulb', route: '/infor/recommended-jobs' },
     { name: 'Danh sách các job đã ứng tuyển', icon: 'fas fa-briefcase', route: '/infor/history-apply' }
   ];
 

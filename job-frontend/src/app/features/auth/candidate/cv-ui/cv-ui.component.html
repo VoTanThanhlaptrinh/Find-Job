@@ -1,14 +1,14 @@
 <section class="flex flex-col gap-y-2">
   <header class="flex flex-row justify-between items-center">
     <h2 class="text-xl font-bold text-slate-900 sm:text-2xl">
-      Danh sach CV cua ban
+      Danh sách CV của bạn
     </h2>
     <div class="rounded-xl">
       <button
         type="button"
         class="bg-blue-500 text-white px-4 py-2 hover:bg-blue-600 rounded-2xl shadow-md transition-colors duration-300"
         (click)="openUploadModal()"
-        >
+      >
         Thêm CV
       </button>
     </div>
@@ -39,7 +39,7 @@
           </svg>
         </span>
         <div class="flex items-center">
-          <p class="text-xs text-slate-500">Tong CV:</p>
+          <p class="text-xs text-slate-500">Tổng CV:</p>
           <p class="text-lg font-semibold text-slate-900">{{ totalResumes }}</p>
         </div>
       </div>
@@ -121,7 +121,7 @@
           </svg>
         </span>
         <div class="flex items-center">
-          <p class="text-xs text-slate-500">CV moi nhat:</p>
+          <p class="text-xs text-slate-500">CV mới nhất:</p>
           <p class="text-lg font-semibold text-slate-900">
             {{ latestCvDateLabel }}
           </p>
@@ -131,7 +131,7 @@
   </div>
 
   @if (isLoading && !skeleton) {
-    <app-loading message="Dang tai danh sach CV..."></app-loading>
+    <app-loading message="Đang tải danh sách CV..."></app-loading>
   }
 
   @if (isLoading && skeleton) {
@@ -146,7 +146,7 @@
     <p
       class="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600"
     >
-      Ban chua co CV nao.
+      Bạn chưa có CV nào.
     </p>
   }
 
