@@ -23,8 +23,8 @@ public record JobDTO(
         @NotBlank(message = "Loai cong viec khong duoc rong")
         String jobType,
 
-        @Min(value = 5000000, message = "Muc luong toi thieu la 5 trieu")
-        double salary,
+        @Size(max = 255)
+        String salary,
         @Size(min = 0, max = 5000, message = "Do dai thong tin toi da 5000 ky tu")
         @NotBlank(message = "Mo ta cong viec khong duoc rong")
         String jobDescription,
@@ -86,7 +86,7 @@ public record JobDTO(
         return jobType;
     }
 
-    public double getSalary() {
+    public String getSalary() {
         return salary;
     }
 

@@ -17,7 +17,7 @@ import {MatButtonModule} from '@angular/material/button';
   standalone: true,
 })
 export class HeaderComponent {
-  isDropdownOpen = false;
+  isMobileMenuOpen = false;
   isScrolled = false;
 
   constructor(
@@ -34,6 +34,14 @@ export class HeaderComponent {
 
   goVerify(): void {
     window.location.href = '/verify';
+  }
+
+  toggleMobileMenu(): void {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  closeMobileMenu(): void {
+    this.isMobileMenuOpen = false;
   }
 
   @HostListener('window:scroll', [])

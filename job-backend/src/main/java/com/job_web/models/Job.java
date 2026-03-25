@@ -24,7 +24,7 @@ public class Job extends StatusEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	private double salary;
+	private String salary;
 	private String time;
 	@Column(columnDefinition = "text")
 	private String requireDetails;
@@ -38,6 +38,7 @@ public class Job extends StatusEntity {
 	private String skillText;
 	private Instant expiredDate;
 	private String title;
+	private int yearOfExperience;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "hirer_id")
 	@JsonIgnore

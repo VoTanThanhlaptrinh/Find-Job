@@ -7,9 +7,11 @@ import com.job_web.dto.application.ResumeDetailDTO;
 import com.job_web.dto.application.ResumeUploadDTO;
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.dto.application.ResumeView;
+import com.job_web.message.MessageProducer;
 import com.job_web.models.Resume;
 import com.job_web.models.User;
 import com.job_web.service.application.ResumeService;
+import com.job_web.service.support.FileService;
 import com.job_web.utills.KeyGeneratorUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,7 +36,8 @@ public class ResumeServiceImpl implements ResumeService {
     private final ResumeRepository resumeRepository;
     private final UserRepository userRepository;
     private final S3Client s3Client;
-
+    private final FileService fileService;
+    private final MessageProducer producer;
     @Value("${cloudflare.r2.bucket-name}")
     private String bucketName;
     @Override
@@ -89,16 +92,20 @@ public class ResumeServiceImpl implements ResumeService {
         String key = KeyGeneratorUtil.generateKey();
         cv.setKey(key);
         byte[] data;
+        String rawText;
         try{
             data = toByteArray(resumeUploadDTO.getFile().getInputStream());
+            rawText = fileService.extractTextFromFile(resumeUploadDTO.getFile().getInputStream());
         }catch (Exception e){
             return new ApiResponse<>("faild", null, HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
         if(data.length == 0){
             return new ApiResponse<>("error", null, HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
+
         uploadResumeToCloud(data, key);
         resumeRepository.save(cv);
+        producer.processAI(rawText, userOpt.get().getId(), cv.getId());
         return new ApiResponse<>("success", null, HttpStatus.CREATED.value());
     }
 
