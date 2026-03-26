@@ -10,21 +10,22 @@ import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.service.AiServices;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class AIServiceImpl implements AIService {
-
     private final ChatModel model;
-
     private ResumeParserAgent parserAgent;
     private ResumeVerifierAgent verifierAgent;
-
     private static final int MAX_RETRIES = 3;
     private static final int PASS_THRESHOLD = 80;
+    @Value("${application.service.impl.deepseek.api-key}")
+    private String apiKey;
 
-    public AIServiceImpl(@Value("${application.service.impl.deepseek.api-key}") String apiKey) {
+    public AIServiceImpl() {
         this.model = OpenAiChatModel.builder()
                 .baseUrl("https://api.deepseek.com/v1") // Trỏ base URL về DeepSeek
                 .apiKey(apiKey)

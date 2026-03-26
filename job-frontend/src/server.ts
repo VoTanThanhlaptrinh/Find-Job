@@ -14,6 +14,25 @@ const browserDistFolder = resolve(serverDistFolder, '../browser');
 const app = express();
 const angularApp = new AngularNodeAppEngine();
 
+const cspHeader = [
+  "default-src 'self'",
+  "base-uri 'self'",
+  "object-src 'none'",
+  "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com",
+  "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:",
+  "img-src 'self' data: blob: https:",
+  "connect-src 'self' http://localhost:8080 https://your-backend-domain.com",
+  "frame-src 'self' https://accounts.google.com",
+  "frame-ancestors 'self'",
+  "worker-src 'self' blob:",
+].join('; ');
+
+app.use((_, res, next) => {
+  res.setHeader('Content-Security-Policy', cspHeader);
+  next();
+});
+
 /**
  * Example Express Rest API endpoints can be defined here.
  * Uncomment and define endpoints as necessary.

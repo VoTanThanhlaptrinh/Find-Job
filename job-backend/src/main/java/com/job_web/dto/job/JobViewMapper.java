@@ -15,7 +15,6 @@ public final class JobViewMapper {
                 job.getId(),
                 job.getTitle(),
                 formatAddress(job.getAddress()),
-                job.getDescription(),
                 job.getSalary(),
                 job.getTime()
         );
@@ -33,6 +32,7 @@ public final class JobViewMapper {
                 job.getSalary(),
                 job.getTime(),
                 job.getRequireDetails(),
+                job.getSkill(),
                 expiredDate
         );
     }

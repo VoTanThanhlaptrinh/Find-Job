@@ -1,10 +1,15 @@
 package com.job_web.seeder;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.job_web.data.AddressRepository;
 import com.job_web.data.HirerRepository;
+import com.job_web.data.JobRepository;
 import com.job_web.data.UserRepository;
+import com.job_web.dto.job.JobDTOJson;
 import com.job_web.models.Address;
 import com.job_web.models.Hirer;
+import com.job_web.models.Job;
 import com.job_web.models.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,12 +19,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Slf4j
 @Component
@@ -70,7 +78,8 @@ public class MasterDataSeeder implements CommandLineRunner {
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
     private final PasswordEncoder passwordEncoder;
-
+    private final JobRepository jobRepository;
+    private final Random random = new Random();
     @Override
     @Transactional
     public void run(String... args) {
@@ -82,10 +91,20 @@ public class MasterDataSeeder implements CommandLineRunner {
         if (hirers.isEmpty()) {
             log.info("Chưa có dữ liệu Hirer, tiến hành tạo mới...");
             hirers = seedHirers();
+            ensureAddresses(hirers);
         }
+        if (jobRepository.count() == 0) {
+            log.info("Tiến hành đọc file JSON và tạo dữ liệu Job...");
+            var jobsJson = convertJsonFileToList("C:/Users/DELL/Downloads/job_data_500.json");
 
-        ensureAddresses(hirers);
+            List<Hirer> finalHirers = hirers;
+            List<Job> jobEntities = jobsJson.stream()
+                    .map(dto -> convertJob(dto, finalHirers))
+                    .toList();
 
+            jobRepository.saveAll(jobEntities);
+            log.info("✅ Đã lưu {} công việc vào database.", jobEntities.size());
+        }
         log.info("✅ Hoàn tất khởi tạo Master Data.");
     }
 
@@ -205,5 +224,78 @@ public class MasterDataSeeder implements CommandLineRunner {
     }
 
     private record AddressSeed(String city, String district, String street) {
+    }
+    public List<JobDTOJson> convertJsonFileToList(String filePath) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            File file = new File(filePath);
+
+            if (!file.exists()) {
+                System.err.println("File không tồn tại!");
+                return new ArrayList<>();
+            }
+
+            // Sử dụng TypeReference để định nghĩa List<JobDTO>
+            List<JobDTOJson> jobList = objectMapper.readValue(file, new TypeReference<List<JobDTOJson>>() {});
+
+            return jobList;
+
+        } catch (IOException e) {
+            System.err.println("Lỗi khi convert danh sách JSON: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+    private Job convertJob(JobDTOJson j, List<Hirer> hirers) {
+        Job job = new Job();
+        job.setTitle(j.getTitle());
+        job.setDescription(j.getJobDescription());
+        job.setRequireDetails(j.getJobRequirement());
+        job.setSkill(j.getJobSkill());
+        job.setMoreDetail(j.getMoreDetail());
+        job.setYearOfExperience(j.getYearOfExperience());
+        job.setTime(j.getTime());
+
+        // 1. Set Hirer (Lấy ngẫu nhiên hoặc theo ID giả lập từ JSON)
+        Hirer randomHirer = hirers.get(random.nextInt(hirers.size()));
+        job.setHirer(randomHirer);
+
+        // 2. Set Address (Lấy một địa chỉ trong danh sách địa chỉ của Hirer đó)
+        if (randomHirer.getAddresses() != null && !randomHirer.getAddresses().isEmpty()) {
+            job.setAddress(randomHirer.getAddresses().get(0));
+        }
+
+        // 3. Set Expired Date (Ngẫu nhiên từ 15 đến 60 ngày tới)
+        job.setExpiredDate(LocalDateTime.now().plusDays(15 + random.nextInt(45)));
+
+        // 4. Set Photo (Lấy logo của Hirer làm ảnh đại diện Job luôn cho đồng bộ)
+        // Giả sử Hirer có trường logo, hoặc bạn dùng COMPANY_LOGOS dựa trên index
+        job.setLogo(COMPANY_LOGOS.get(random.nextInt(COMPANY_LOGOS.size())));
+
+        // 5. Set Salary (Xử lý 3 dạng: VNĐ, Đô, Thỏa thuận)
+        job.setSalary(generateRandomSalary());
+
+        // Set ngày tạo
+        job.setCreateDate(LocalDateTime.now());
+
+        return job;
+    }
+    private String generateRandomSalary() {
+        int type = random.nextInt(3); // 0, 1, 2
+
+        return switch (type) {
+            case 0 -> {
+                // Dạng VNĐ: 10 - 15 triệu
+                int min = 8 + random.nextInt(7);
+                int max = min + 3 + random.nextInt(10);
+                yield min + " - " + max + " triệu";
+            }
+            case 1 -> {
+                // Dạng Đô: $500 - $1000
+                int min = 500 + (random.nextInt(10) * 100);
+                int max = min + 500 + (random.nextInt(10) * 100);
+                yield "$" + min + " - $" + max;
+            }
+            default -> "Thỏa thuận";
+        };
     }
 }

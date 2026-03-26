@@ -20,14 +20,12 @@ import { ApplyCvComponent } from './features/jobs/pages/apply-cv/apply-cv.compon
 import { LoginCallbackComponent } from './features/auth/pages/login-callback/login-callback.component';
 import { ForgotPassComponent } from './features/auth/pages/forgot-pass/forgot-pass.component';
 import { ResetPassComponent } from './features/auth/pages/reset-pass/reset-pass.component';
-import { HirerHomeComponent } from './features/employer/pages/hirer-home/hirer-home.component';
-import { UpdateJobComponent } from './features/employer/pages/update-job/update-job.component';
-import { CandidateListComponent } from './features/employer/pages/candidate-list/candidate-list.component';
+import { CandidateListComponent } from './features/recruiter/pages/candidate-list/candidate-list.component';
 import { userLoginGuard } from './core/guards/user-login.guard';
 import { hirerGuard } from './core/guards/hirer-guard.guard';
-import { RecruiterLoginComponent } from './features/employer/pages/recruiter-login/recruiter-login.component';
-import { RecruiterRegisterComponent } from './features/employer/pages/recruiter-register/recruiter-register.component';
-import { recruiterDashboardRoutes } from './features/employer/pages/recruiter-dashboard/recruiter-dashboard.routes';
+import { RecruiterLoginComponent } from './features/recruiter/pages/recruiter-login/recruiter-login.component';
+import { RecruiterRegisterComponent } from './features/recruiter/pages/recruiter-register/recruiter-register.component';
+import { recruiterDashboardRoutes } from './features/recruiter/pages/recruiter-dashboard/recruiter-dashboard.routes';
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'recruiter/login', component: RecruiterLoginComponent },
@@ -58,16 +56,6 @@ export const routes: Routes = [
       { path: 'recommended-jobs', component: RecommendedJobsComponent },
       { path: 'history-apply', component: HistoryApplyComponent }
     ]
-  },
-  {
-    path: 'hirer',
-    component: HirerHomeComponent,
-    canActivate: [hirerGuard],
-  },
-  {
-    path: 'update-job',
-    component: UpdateJobComponent,
-    canActivate: [hirerGuard],
   },
   {
     path: 'candidate-list',

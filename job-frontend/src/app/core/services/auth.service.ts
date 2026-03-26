@@ -99,6 +99,7 @@ export class AuthService {
       return this.http
         .post<any>(`${this.url}/auth/register`, data)
         .pipe(
+          take(1),
           map((res) => ({
             status: res.status === 200,
             email: data.email,
@@ -115,7 +116,7 @@ export class AuthService {
   }
   refreshToken$(): Observable<any> {
     const url = `${this.url}/auth/refreshToken`;
-    return this.http.get<any>(url, { withCredentials: true });
+    return this.http.get<any>(url, { withCredentials: true }).pipe(take(1));
   }
   checkLoginStatus(): void {
     if (this.loginStatusRequestInFlight) {

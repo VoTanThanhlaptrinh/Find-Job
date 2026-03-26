@@ -52,17 +52,11 @@ public record JobDTO(
     public void updateJob(Job job) {
         job.setTime(jobType);
         job.setDescription(jobDescription);
-        job.setDescriptionText(parseHtml(jobDescription));
         job.setRequireDetails(jobRequirement);
-        job.setRequireDetailsText(parseHtml(jobRequirement));
         job.setSalary(salary);
         job.setTitle(jobName);
-        job.setExpiredDate(deadlineCV
-                .atStartOfDay(ZoneOffset.UTC)
-                .toInstant());
         if(moreDetail != null && !moreDetail.isEmpty()){
             job.setMoreDetail(moreDetail);
-            job.setMoreDetailText(parseHtml(moreDetail));
         }
     }
     private String parseHtml(String html){

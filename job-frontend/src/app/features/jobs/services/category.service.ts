@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, Injectable, signal } from '@angular/core';
-import { finalize, Observable } from 'rxjs';
+import { finalize, Observable, take } from 'rxjs';
 import { UtilitiesService } from '../../../core/services/utilities.service';
 import {
   AddressCountViewModel,
@@ -77,6 +77,7 @@ export class CategoryService {
     this.http.get<ApiResponse<PagedPayload<JobCardModel>>>(
       `${this.url}/jobs/newest/${pageIndex}/${pageSize}`
     ).pipe(
+      take(1),
       finalize(() => this.finishJobsLoading())
     ).subscribe({
       next: (response) => {
@@ -89,11 +90,11 @@ export class CategoryService {
   }
 
   getAmount(): Observable<JobCountApiResponse> {
-    return this.http.get<JobCountApiResponse>(`${this.url}/jobs/count`);
+    return this.http.get<JobCountApiResponse>(`${this.url}/jobs/count`).pipe(take(1));
   }
 
   getAddressCount() {
-    this.http.get<JobAddressCountApiResponse>(`${this.url}/jobs/addressCount`).subscribe({
+    this.http.get<JobAddressCountApiResponse>(`${this.url}/jobs/addressCount`).pipe(take(1)).subscribe({
       next: (response) => {
         this.addressData.set(response.data);
       },
@@ -106,6 +107,7 @@ export class CategoryService {
   filterWithAddressTimeSalary(filter: JobFilterPayload) {
     this.startJobsLoading();
     this.http.post<JobListApiResponse>(`${this.url}/jobs/filter`, filter).pipe(
+      take(1),
       finalize(() => this.finishJobsLoading())
     ).subscribe({
       next: (response) => {

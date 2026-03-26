@@ -23,11 +23,11 @@ export class AccountService {
   }
 
   activate(token: string): Observable<any> {
-    return this.http.get(`${this.url}/account/activate/${token}`);
+    return this.http.get(`${this.url}/account/activate/${token}`).pipe(take(1));
   }
 
   getGoogleLoginUrl(): Observable<any> {
-    return this.http.get(`${this.url}/auth/google/url`);
+    return this.http.get(`${this.url}/auth/google/url`).pipe(take(1));
   }
 
   sendCode(email: string): Observable<any> {
@@ -46,7 +46,7 @@ export class AccountService {
 
   sendLink(email: string): Observable<any> {
     const url = `${this.url}/account/sendLink/${email}`;
-    return this.http.get(url);
+    return this.http.get(url).pipe(take(1));
   }
 
   changePass(value: any): Observable<any> {

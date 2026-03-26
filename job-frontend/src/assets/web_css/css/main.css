@@ -2659,7 +2659,6 @@ body.mobile-nav-active #mobile-nav-toggle {
 .post-list .single-post .btns li i, .post-list .single-post .btns li a {
   text-transform: uppercase;
   font-weight: 500;
-  color: #222;
 }
 
 .post-list .single-post .btns li:hover {

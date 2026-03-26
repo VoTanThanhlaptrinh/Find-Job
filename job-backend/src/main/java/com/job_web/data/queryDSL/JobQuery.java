@@ -177,7 +177,7 @@ public class JobQuery {
         Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by("createDate").descending());
 
         BooleanBuilder filterBuilder = new BooleanBuilder();
-        filterBuilder.and(job.salary.between((double) min, (double) max));
+//        filterBuilder.and(job.salary.between((double) min, (double) max));
         if (cities != null && !cities.isEmpty()) {
             filterBuilder.and(address.city.in(cities));
         }
@@ -332,7 +332,6 @@ public class JobQuery {
                 job.id,
                 job.title,
                 address.city,
-                job.description,
                 job.salary,
                 job.time
         );

@@ -19,7 +19,6 @@ export class CandidateJobSuggestionService {
       {
         id: 401,
         title: 'Frontend Developer (Angular)',
-        description: 'Xây dựng giao diện Angular, tối ưu trải nghiệm người dùng và hiệu năng hiển thị.',
         address: 'Hồ Chí Minh',
         salary: 24000000,
         time: 'Toàn thời gian'
@@ -27,7 +26,6 @@ export class CandidateJobSuggestionService {
       {
         id: 402,
         title: 'UI Engineer',
-        description: 'Làm việc với design system, responsive layout và các thành phần giao diện tái sử dụng.',
         address: 'Hà Nội',
         salary: 22000000,
         time: 'Làm việc kết hợp'
@@ -35,7 +33,6 @@ export class CandidateJobSuggestionService {
       {
         id: 403,
         title: 'Frontend Web Developer',
-        description: 'Phát triển trang quản trị và dashboard bằng Angular, TailwindCSS và REST API.',
         address: 'Đà Nẵng',
         salary: 26000000,
         time: 'Làm việc từ xa'
@@ -45,7 +42,6 @@ export class CandidateJobSuggestionService {
       {
         id: 404,
         title: 'Backend Developer (Java Spring)',
-        description: 'Phát triển API, xử lý business logic và tối ưu truy vấn cho hệ thống tuyển dụng.',
         address: 'Hồ Chí Minh',
         salary: 30000000,
         time: 'Toàn thời gian'
@@ -53,7 +49,6 @@ export class CandidateJobSuggestionService {
       {
         id: 405,
         title: 'Node.js Engineer',
-        description: 'Xây dựng microservice, kết nối database và triển khai quy trình theo dõi log.',
         address: 'Cần Thơ',
         salary: 28000000,
         time: 'Làm việc kết hợp'
