@@ -23,8 +23,8 @@ public record JobDTO(
         @NotBlank(message = "Loai cong viec khong duoc rong")
         String jobType,
 
-        @Min(value = 5000000, message = "Muc luong toi thieu la 5 trieu")
-        double salary,
+        @Size(max = 255)
+        String salary,
         @Size(min = 0, max = 5000, message = "Do dai thong tin toi da 5000 ky tu")
         @NotBlank(message = "Mo ta cong viec khong duoc rong")
         String jobDescription,
@@ -52,17 +52,11 @@ public record JobDTO(
     public void updateJob(Job job) {
         job.setTime(jobType);
         job.setDescription(jobDescription);
-        job.setDescriptionText(parseHtml(jobDescription));
         job.setRequireDetails(jobRequirement);
-        job.setRequireDetailsText(parseHtml(jobRequirement));
         job.setSalary(salary);
         job.setTitle(jobName);
-        job.setExpiredDate(deadlineCV
-                .atStartOfDay(ZoneOffset.UTC)
-                .toInstant());
         if(moreDetail != null && !moreDetail.isEmpty()){
             job.setMoreDetail(moreDetail);
-            job.setMoreDetailText(parseHtml(moreDetail));
         }
     }
     private String parseHtml(String html){
@@ -86,7 +80,7 @@ public record JobDTO(
         return jobType;
     }
 
-    public double getSalary() {
+    public String getSalary() {
         return salary;
     }
 

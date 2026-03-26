@@ -7,7 +7,7 @@ import com.job_web.dto.auth.RegistationForm;
 import com.job_web.dto.auth.ResetDTO;
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.dto.message.MailMessage;
-import com.job_web.message.MailProducer;
+import com.job_web.message.MessageProducer;
 import com.job_web.models.User;
 import com.job_web.service.account.AuthService;
 import com.job_web.service.security.JwtService;
@@ -41,7 +41,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final ReferenceService refService;
     private final VerificationService verifyService;
-    private final MailProducer mailProducer;
+    private final MessageProducer messageProducer;
     private final RefreshTokenService refreshTokenService;
     private final SpamService spamService;
     private final JwtService jwtService;
@@ -75,7 +75,7 @@ public class AuthServiceImpl implements AuthService {
         String text = String.format(textVerify, link);
         MailMessage mailMessage = new MailMessage(email, subjectVerify, text);
         try {
-            mailProducer.sendMail(mailMessage);
+            messageProducer.sendMail(mailMessage);
         } catch (Exception e) {
             log.trace(e.getMessage(), e);
             return new ApiResponse<>("Gửi email thất bại", null, HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -195,7 +195,7 @@ public class AuthServiceImpl implements AuthService {
         }
         String refCode = refService.getRef(6).toUpperCase();
         MailMessage mailMessage = new MailMessage(email, "Mã xác thực quên mật khẩu", "Mã xác thực của bạn là: " + refCode);
-        mailProducer.sendMail(mailMessage);
+        messageProducer.sendMail(mailMessage);
 
         verifyService.add("ref-email:" + email, refCode, 60 * 5);
         return new ApiResponse<>("Chúng tôi đã gửi mã xác thực vào email của bạn", null, HttpStatus.OK.value());

@@ -1,0 +1,191 @@
+<section
+  class="h-screen w-full overflow-hidden bg-linear-to-br from-slate-100 via-sky-50 to-rose-50 p-3 sm:p-4"
+>
+  <div class="flex h-full w-full gap-3 lg:flex-row lg:gap-4">
+    <div
+      class="hidden lg:flex min-h-[97vh] w-full max-w-2xs items-center justify-center"
+    >
+      <div
+        class="relative flex h-full w-full max-w-[20rem] flex-col rounded-3xl bg-white bg-clip-border border border-slate-50 text-slate-700 shadow-xl"
+      >
+        <div class="p-4 mb-2">
+          <h5
+            class="block font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-slate-900"
+          >
+            Menu Hệ Thống
+          </h5>
+        </div>
+
+        <nav
+          class="flex flex-col gap-2 p-2 font-sans text-base font-normal text-slate-700 overflow-y-auto"
+        >
+          <a
+            routerLink="overview"
+            routerLinkActive="bg-sky-50 text-sky-700 font-semibold shadow-sm border border-gray-600"
+            class="flex cursor-pointer items-center gap-4 w-full p-3 transition-all rounded-lg hover:bg-slate-100 hover:text-slate-900"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M2.25 2.25a.75.75 0 000 1.5H3v10.5a3 3 0 003 3h1.21l-1.172 3.513a.75.75 0 001.424.474l.329-.987h8.418l.33.987a.75.75 0 001.422-.474l-1.17-3.513H18a3 3 0 003-3V3.75h.75a.75.75 0 000-1.5H2.25zm6.04 16.5l.5-1.5h6.42l.5 1.5H8.29zm7.46-12a.75.75 0 00-1.5 0v6a.75.75 0 001.5 0v-6zm-3 2.25a.75.75 0 00-1.5 0v3.75a.75.75 0 001.5 0V9zm-3 2.25a.75.75 0 00-1.5 0v1.5a.75.75 0 001.5 0v-1.5z"
+                clip-rule="evenodd"
+              ></path>
+            </svg>
+            <span
+              class="block font-sans text-base antialiased font-medium leading-relaxed"
+              >Dashboard</span
+            >
+          </a>
+
+          <details class="group">
+            <summary
+              class="flex cursor-pointer items-center justify-between w-full p-3 transition-all rounded-lg outline-none bg-transparent hover:bg-slate-100 list-none marker:hidden"
+            >
+              <div class="flex items-center gap-4">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-5 h-5 text-sky-700"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M20.25 14.15v4.25c0 1.084-.816 1.92-1.872 1.954l-12.75.39a1.92 1.92 0 01-1.98-1.925l.39-12.75a1.92 1.92 0 011.925-1.872h3.535M10.5 3h3m-3 0A1.5 1.5 0 009 4.5v1.5h6V4.5A1.5 1.5 0 0013.5 3m-3 0h3m-3 1.5h3"
+                  />
+                </svg>
+                <span
+                  class="block font-sans text-base antialiased font-medium leading-relaxed text-sky-700"
+                  >Công việc</span
+                >
+              </div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2.5"
+                stroke="currentColor"
+                class="w-4 h-4 text-sky-700 transition-transform group-open:rotate-180"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                ></path>
+              </svg>
+            </summary>
+
+            <div class="flex flex-col gap-1 pl-6 pr-0 py-1 mt-1">
+              <a
+                routerLink="jobs"
+                routerLinkActive="bg-sky-50 text-sky-700 font-semibold shadow-sm border border-gray-600 "
+                class="flex items-center w-full p-2.5 transition-all rounded-lg text-slate-700 hover:bg-slate-100 hover:text-sky-700 cursor-pointer"
+              >
+                <div class="mr-3 w-1.5 h-1.5 bg-slate-400 rounded-full"></div>
+                Danh sách công việc
+              </a>
+              <a
+                routerLink="jobs/post-job"
+                routerLinkActive="bg-sky-50 text-sky-700 font-semibold shadow-sm border border-gray-600 "
+                class="flex items-center w-full p-2.5 transition-all rounded-lg text-slate-700 hover:bg-slate-100 hover:text-sky-700 cursor-pointer"
+              >
+                <div class="mr-3 w-1.5 h-1.5 bg-slate-400 rounded-full"></div>
+                Đăng tải công việc
+              </a>
+            </div>
+          </details>
+
+          <details class="group">
+            <summary
+              class="flex cursor-pointer items-center justify-between w-full p-3 transition-all rounded-lg outline-none bg-transparent hover:bg-slate-100 list-none marker:hidden"
+            >
+              <div class="flex items-center gap-4">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-5 h-5 text-sky-700"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z"
+                  />
+                </svg>
+                <span
+                  class="block font-sans text-base antialiased font-medium leading-relaxed text-sky-700"
+                  >Công Ty</span
+                >
+              </div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2.5"
+                stroke="currentColor"
+                class="w-4 h-4 text-sky-700 transition-transform group-open:rotate-180"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                ></path>
+              </svg>
+            </summary>
+
+            <div class="flex flex-col gap-1 pl-6 pr-0 py-1 mt-1">
+              <a
+                routerLink="company-address"
+                routerLinkActive="bg-sky-50 text-sky-700 font-semibold shadow-sm border border-gray-600 "
+                class="flex items-center w-full p-2.5 transition-all rounded-lg text-slate-700 hover:bg-slate-100 hover:text-sky-700 cursor-pointer"
+              >
+                <div class="mr-3 w-1.5 h-1.5 bg-slate-400 rounded-full"></div>
+                Danh sách địa chỉ công ty
+              </a>
+            </div>
+          </details>
+
+          <div class="grow"></div>
+
+          <a
+            href="javascript:void(0)"
+            class="flex cursor-pointer items-center gap-4 w-full p-3 mt-auto transition-all rounded-lg text-red-500 hover:bg-red-50 hover:text-red-700"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M12 2.25a.75.75 0 01.75.75v9a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM6.166 5.106a.75.75 0 010 1.06 8.25 8.25 0 1011.668 0 .75.75 0 111.06-1.06c3.808 3.807 3.808 9.98 0 13.788-3.807 3.808-9.98 3.808-13.788 0-3.808-3.807-3.808-9.98 0-13.788a.75.75 0 011.06 0z"
+                clip-rule="evenodd"
+              ></path>
+            </svg>
+            <span
+              class="block font-sans text-base antialiased font-medium leading-relaxed"
+              >Đăng xuất</span
+            >
+          </a>
+        </nav>
+      </div>
+    </div>
+    <main
+      class="relative flex w-full min-h-[97vh] bg-white flex-col  rounded-3xl border shadow-lg shadow-slate-900/5 backdrop-blur-sm sm:p-6 transition-all duration-300"
+    >
+      <div class="flex-1 w-full h-full overflow-x-hidden">
+        <router-outlet class="overflow-y-hidden"></router-outlet>
+      </div>
+    </main>
+  </div>
+</section>

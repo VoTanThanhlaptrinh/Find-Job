@@ -20,7 +20,6 @@ export class HistoryApplyComponent implements OnInit {
     {
       id: 101,
       title: 'Frontend Developer (Angular)',
-      description: 'Phát triển giao diện web, tối ưu hiệu năng và trải nghiệm người dùng.',
       address: 'Hồ Chí Minh',
       salary: 25000000,
       time: 'Đã ứng tuyển 2 ngày trước'
@@ -28,7 +27,6 @@ export class HistoryApplyComponent implements OnInit {
     {
       id: 102,
       title: 'Backend Developer (Java Spring)',
-      description: 'Xây dựng API, tối ưu truy vấn và triển khai hệ thống ổn định.',
       address: 'Đà Nẵng',
       salary: 30000000,
       time: 'Đã ứng tuyển 5 ngày trước'
@@ -36,7 +34,6 @@ export class HistoryApplyComponent implements OnInit {
     {
       id: 103,
       title: 'Fullstack Engineer',
-      description: 'Tham gia phát triển end-to-end, phối hợp với team product và QA.',
       address: 'Hà Nội',
       salary: 35000000,
       time: 'Đã ứng tuyển 1 tuần trước'

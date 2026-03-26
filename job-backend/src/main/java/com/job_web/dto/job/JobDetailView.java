@@ -5,9 +5,10 @@ public record JobDetailView(
         String title,
         String address,
         String description,
-        double salary,
+        String salary,
         String time,
         String requireDetails,
+        String skill,
         String expiredDate
 ) {
 }

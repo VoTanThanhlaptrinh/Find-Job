@@ -133,7 +133,7 @@
 <section class="post-area section-gap">
   <div class="container">
     <div class="row justify-content-center d-flex">
-      <div class="col-lg-8 post-list">
+      <div class="col-lg-8 post-list w-full">
         <ul class="cat-list">
           <li><a href="#">Recent</a></li>
           <li><a href="#">Full Time</a></li>
@@ -143,13 +143,13 @@
 
         <!-- Nếu có công việc -->
         @if (jobPosts.length > 0) {
-          <div class="flex flex-col gap-y-2 items-center">
+          <div class="flex flex-col gap-y-2 items-center w-full">
             @for (item of jobPosts; track trackById($index, item)) {
               <app-job-card
                 [job]="item"
                 image="assets/web_css/img/post.png"
                 detailRoute="/single"
-              ></app-job-card>
+              />
             }
           </div>
         } @else {
@@ -218,7 +218,7 @@
           <!-- <owl-carousel-o [options]="carouselOptions" *ngIf="relatedJobs?.length > 0">
                     <ng-template
                       carouselSlide
-                      *ngFor="let relatedJob of relatedJobs; trackBy: trackById"
+                      @for (relatedJob of relatedJobs; track relatedJob.id)
                       [id]="relatedJob.id">
                       <div class="single-rated">
                         <img class="img-fluid" [src]="relatedJob.image" alt="">

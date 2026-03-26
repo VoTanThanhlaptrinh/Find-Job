@@ -17,12 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
@@ -117,7 +112,7 @@ public class AuthController {
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @org.springframework.web.bind.annotation.PatchMapping("/password/reset")
+    @PatchMapping("/password/reset")
     public ResponseEntity<ApiResponse<String>> resetPassword(@RequestBody @Valid ResetDTO resetDTO,
                                                              BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {

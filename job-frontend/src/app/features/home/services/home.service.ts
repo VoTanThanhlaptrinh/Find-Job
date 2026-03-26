@@ -19,7 +19,7 @@ export class HomeService {
   }
 
   getData(): void {
-    this.http.get<ApiResponse<JobCardModel[]>>(`${this.url}/home/init`).subscribe({
+    this.http.get<ApiResponse<JobCardModel[]>>(`${this.url}/home/init`).pipe(take(1)).subscribe({
       next: (response) => {
         this.jobData.set(response.data);
       },

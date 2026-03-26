@@ -1,6 +1,7 @@
 package com.job_web.models;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,37 +25,32 @@ public class Job extends StatusEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	private double salary;
+	private String salary;
 	private String time;
 	@Column(columnDefinition = "text")
 	private String requireDetails;
 	@Column(columnDefinition = "text")
-	private String requireDetailsText;
-	@Column(columnDefinition = "text")
 	private String description;
 	@Column(columnDefinition = "text")
-	private String descriptionText;
 	private String skill;
-	private String skillText;
-	private Instant expiredDate;
+	private LocalDateTime expiredDate;
 	private String title;
+	private int yearOfExperience;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "hirer_id")
 	@JsonIgnore
 	private Hirer hirer;
 	@CreatedDate
 	@Column(nullable = false)
-	private Instant createDate;
+	private LocalDateTime createDate;
 	@LastModifiedDate
 	@Column(nullable = true, updatable = true)
-	private Instant modifiedDate;
+	private LocalDateTime modifiedDate;
 	@OneToMany(mappedBy = "job", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
 	@JsonIgnore
 	private List<Apply> applies;
 	@Column(columnDefinition = "text")
 	private String moreDetail;
-	@Column(columnDefinition = "text")
-	private String moreDetailText;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "address_id") // Khớp với cột address_id trong ảnh bạn gửi
 	private Address address;

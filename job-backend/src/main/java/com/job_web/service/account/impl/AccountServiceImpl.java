@@ -4,7 +4,7 @@ import com.job_web.data.UserRepository;
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.dto.message.MailMessage;
 import com.job_web.dto.profile.UserInfo;
-import com.job_web.message.MailProducer;
+import com.job_web.message.MessageProducer;
 import com.job_web.models.User;
 import com.job_web.service.account.AccountService;
 import com.job_web.service.support.VerificationService;
@@ -27,7 +27,7 @@ public class AccountServiceImpl implements AccountService {
     private final PasswordEncoder encoder;
     private final UserRepository userRepository;
     private final VerificationService verifyService;
-    private final MailProducer mailProducer;
+    private final MessageProducer mailProducer;
 
     @Value("${application.service.impl.subject-oauth2}")
     private String subjectOauth;

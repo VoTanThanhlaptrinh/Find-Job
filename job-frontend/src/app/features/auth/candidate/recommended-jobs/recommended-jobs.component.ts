@@ -111,7 +111,7 @@ export class RecommendedJobsComponent implements OnInit {
   private loadResumes(): void {
     this.isResumeLoading = true;
 
-    this.candidateJobSuggestionService.getCandidateResumes().pipe(take(1)).subscribe({
+    this.candidateJobSuggestionService.getCandidateResumes().pipe(take(1), finalize(() => { this.isResumeLoading = false; })).subscribe({
       next: (resumes) => {
         this.resumes = resumes;
         this.isResumeLoading = false;

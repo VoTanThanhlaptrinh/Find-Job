@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -28,6 +29,6 @@ public class HomeFeedController {
     public ResponseEntity<ApiResponse<List<JobCardView>>> getInit() {
         PageRequest pageRequest = PageRequest.of(0,10, Sort.by("createDate").descending());
         PageRequest blogByTime = PageRequest.of(0, 3, Sort.by("amountLike").descending());
-        return ResponseEntity.ok(new ApiResponse<>("Load dữ liệu thành công", jobRepository.findJobs(Instant.now(), "ACTIVE",pageRequest), 200));
+        return ResponseEntity.ok(new ApiResponse<>("Load dữ liệu thành công", jobRepository.findJobs(LocalDateTime.now(), "ACTIVE",pageRequest), 200));
     }
 }

@@ -4,8 +4,7 @@ public record JobCardView(
         long id,
         String title,
         String address,
-        String description,
-        double salary,
+        String salary,
         String time
 ) {
 }

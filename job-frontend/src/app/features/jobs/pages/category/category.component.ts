@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { NgFor } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatSlider, MatSliderRangeThumb } from '@angular/material/slider';
 import { debounceTime, distinctUntilChanged, Subject, take } from 'rxjs';
 import { CallToActionComponent } from '../../../../shared/components/call-to-action/call-to-action.component';
 import { JobCardComponent } from '../../../../shared/components/job-card/job-card.component';
@@ -12,18 +10,14 @@ import {
   AddressCountViewModel,
   JobFilterPayload,
 } from '../../../../shared/models/jobs/job-api-response.model';
-import { JobCardModel } from '../../../../shared/models/jobs/job-card.model';
 import { CategoryService } from '../../services/category.service';
 
 @Component({
   selector: 'app-category',
   imports: [
     MatPaginatorModule,
-    NgFor,
     FormsModule,
     NgxSliderModule,
-    MatSlider,
-    MatSliderRangeThumb,
     JobCardComponent,
     SkeletonJobCardComponent,
     CallToActionComponent,

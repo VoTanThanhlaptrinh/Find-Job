@@ -3,6 +3,7 @@ import { PostJobComponent } from '../recruiter-post-job/recruiter-post-job.compo
 import { RecruiterDashboardComponent } from './recruiter-dashboard.component';
 import { RecruiterDashboardOverviewComponent } from '../recruiter-dashboard-overview/recruiter-dashboard-overview.component';
 import { RecruiterJobListComponent } from '../recruiter-job-list/recruiter-job-list.component';
+import { CompanyAddressComponent } from '../company-address/company-address.component';
 
 export const recruiterDashboardRoutes: Routes = [
   {
@@ -13,6 +14,7 @@ export const recruiterDashboardRoutes: Routes = [
       { path: 'overview', component: RecruiterDashboardOverviewComponent },
       { path: 'jobs', component: RecruiterJobListComponent },
       { path: 'jobs/post-job', component: PostJobComponent },
+      { path: 'company-address', component: CompanyAddressComponent },
     ],
   },
 ];

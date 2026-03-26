@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, take } from 'rxjs';
 import { UtilitiesService } from './utilities.service';
 import { ResumeReviewInput } from '../../shared/models/jobs/resume-review-input.model';
 import { ApiResponse } from '../../shared/models/api-response.model';
@@ -18,7 +18,7 @@ export class ResumeService {
     }
 
     getUserResumes(): Observable<ApiResponse<ResumeReviewInput[]>> {
-        return this.http.get<ApiResponse<ResumeReviewInput[]>>(`${this.url}/user/resumes`);
+        return this.http.get<ApiResponse<ResumeReviewInput[]>>(`${this.url}/user/resumes`).pipe(take(1));
     }
 
     getResumeResourceUrl(resumeId: number, fileName: string, mode: 'inline' | 'attachment'): string {
@@ -29,6 +29,6 @@ export class ResumeService {
 
     deleteResume(resumeId: number): Observable<unknown> {
         const encodedResumeId = encodeURIComponent(String(resumeId));
-        return this.http.delete(`${this.url}/user/resumes/${encodedResumeId}`);
+        return this.http.delete(`${this.url}/user/resumes/${encodedResumeId}`).pipe(take(1));
     }
 }

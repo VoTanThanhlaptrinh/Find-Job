@@ -5,10 +5,12 @@ import { HomeService } from '../../../home/services/home.service';
 import { JobDetailViewModel } from '../../../../shared/models/jobs/job-api-response.model';
 import { JobCardModel } from '../../../../shared/models/jobs/job-card.model';
 import { JobServiceService } from '../../services/job-service.service';
+import { SafeHtmlPipe } from '../../../../shared/pipes/safe-html.pipe';
 
 @Component({
   selector: 'app-job-single',
-  imports: [RouterModule],
+  imports: [RouterModule, SafeHtmlPipe],
+  standalone: true,
   templateUrl: './job-single.component.html',
   styleUrl: './job-single.component.css',
   schemas: [NO_ERRORS_SCHEMA],

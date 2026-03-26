@@ -1,4 +1,4 @@
-<div [id]="job.id" class="flex flex-row items-center border shadow-md rounded-xl m-1 py-2 px-4 gap-x-2">
+<div [id]="job.id" class="flex flex-row items-center border shadow-md rounded-xl m-1 py-4 px-4 gap-x-2 w-[50vw]">
   <div class="thumb">
     <img title="img" class="img-fluid my-auto" [src]="image" [alt]="job.title" />
   </div>
@@ -10,7 +10,6 @@
         </a>
       </div>
     </div>
-    <p>{{ job.description }}</p>
     <p class="info">
       <span><i class="lnr lnr-map"></i>&nbsp;{{ job.address }}</span>
       <span class="divider"></span>

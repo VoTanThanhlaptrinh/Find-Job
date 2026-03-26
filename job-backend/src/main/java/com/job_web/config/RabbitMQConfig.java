@@ -14,21 +14,36 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableRabbit
 public class RabbitMQConfig {
+	/* Config for mail message queue */
 	@Bean
-	Queue queue() {
+	Queue mailQueue() {
 		return new Queue("mailQueue", false);
 	}
 
 	@Bean
-	DirectExchange exchange() {
+	DirectExchange mailExchange() {
 		return new DirectExchange("mailExchange");
 	}
 
 	@Bean
-	Binding binding(Queue queue, DirectExchange exchange) {
-		return BindingBuilder.bind(queue).to(exchange).with("mailRoutingKey");
+	Binding mailBinding(Queue mailQueue, DirectExchange mailExchange) {
+		return BindingBuilder.bind(mailQueue).to(mailExchange).with("mailRoutingKey");
+	}
+	/* Config for AI service message queue */
+	@Bean
+	Queue parsingQueue() {
+		return new Queue("parsingQueue", false);
 	}
 
+	@Bean
+	DirectExchange parsingExchange() {
+		return new DirectExchange("parsingExchange");
+	}
+
+	@Bean
+	Binding parsingBinding(Queue parsingQueue, DirectExchange parsingExchange) {
+		return BindingBuilder.bind(parsingQueue).to(parsingExchange).with("parsingRoutingKey");
+	}
 	@Bean
 	public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
 	    RabbitTemplate template = new RabbitTemplate(connectionFactory);

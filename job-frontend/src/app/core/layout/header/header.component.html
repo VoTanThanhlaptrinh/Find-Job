@@ -1,6 +1,6 @@
 <header
   id="header"
-  class="transition-colors duration-300 fixed"
+  class="fixed z-50 w-full transition-colors duration-300"
   [ngClass]="{
     'bg-black': isScrolled,
     'bg-transparent': !isScrolled,
@@ -9,19 +9,37 @@
   <div class="container">
     <div class="flex justify-between items-center">
       <div id="logo">
-        <a href="/"
-          ><img src="assets/web_css/img/logo.png" alt="" title=""
+        <a href="/" aria-label="Trang chủ" title="Trang chủ"
+          ><img
+            src="assets/web_css/img/logo.png"
+            alt="Logo trang chủ"
+            title="Trang chủ"
         /></a>
       </div>
-      <c-navbar id="nav-menu-container" expand="lg">
+      <div class="lg:hidden">
+        <button
+          type="button"
+          class="flex h-10 w-10 flex-col items-center justify-center gap-1 rounded-lg border border-white/35 bg-black/35"
+          aria-label="Mở menu"
+          (click)="toggleMobileMenu()"
+        >
+          <span class="block h-0.5 w-5 bg-white"></span>
+          <span class="block h-0.5 w-5 bg-white"></span>
+          <span class="block h-0.5 w-5 bg-white"></span>
+        </button>
+      </div>
+
+      <c-navbar id="nav-menu-container" expand="lg" class="hidden lg:block">
         <c-container>
-          <c-navbar-nav class="nav-menu flex flex-row w-full items-center gap-x-2">
+          <c-navbar-nav
+            class="nav-menu flex flex-row w-full items-center gap-x-2"
+          >
             <ng-container>
               <c-nav-item class="menu-active">
-                <a cNavLink href="/">Trang chu</a>
+                <a cNavLink href="/">Trang chủ</a>
               </c-nav-item>
               <c-nav-item>
-                <a cNavLink href="/category">Tim viec</a>
+                <a cNavLink href="/category">Tìm việc</a>
               </c-nav-item>
             </ng-container>
 
@@ -29,17 +47,32 @@
               <a cNavLink href="/blogHome">Blog</a>
             </c-nav-item>
             <c-nav-item>
-              <a cNavLink href="/contact">Lien he</a>
+              <a cNavLink href="/contact">Liên hệ</a>
             </c-nav-item>
             <c-nav-item>
-              <a cNavLink href="/about">Thong tin</a>
+              <a cNavLink href="/about">Thông tin</a>
             </c-nav-item>
             @if (isLoggedIn) {
               <div class="text-slate-50">
-                <button matButton [matMenuTriggerFor]="menu">Tai khoan</button>
-                <mat-menu #menu="matMenu" class="bg-white rounded-xl! shadow-md!">
-                  <button mat-menu-item (click)="goInfor()" class="text-slate-50 hover:bg-gray-200! ">Thong tin tai khoan</button>
-                  <button mat-menu-item (click)="logout()" class="text-slate-50 hover:bg-gray-200!">Dang xuat</button>
+                <button matButton [matMenuTriggerFor]="menu">Tài khoản</button>
+                <mat-menu
+                  #menu="matMenu"
+                  class="bg-white rounded-xl! shadow-md!"
+                >
+                  <button
+                    mat-menu-item
+                    (click)="goInfor()"
+                    class="text-slate-50 hover:bg-gray-200!"
+                  >
+                    Thông tin tài khoản
+                  </button>
+                  <button
+                    mat-menu-item
+                    (click)="logout()"
+                    class="text-slate-50 hover:bg-gray-200!"
+                  >
+                    Đăng xuất
+                  </button>
                 </mat-menu>
               </div>
             } @else {
@@ -50,22 +83,22 @@
                   <c-nav-item
                     class="bg-white rounded-lg border-blue-900 border-2! px-2 py-1"
                   >
-                    <a cNavLink href="/login" class="text-black!">Dang nhap</a>
+                    <a cNavLink href="/login" class="text-black!">Đăng nhập</a>
                   </c-nav-item>
                 } @else {
                   <c-nav-item class="rounded-lg bg-blue-500 px-2 py-1">
-                    <a cNavLink href="/login">Dang nhap</a>
+                    <a cNavLink href="/login">Đăng nhập</a>
                   </c-nav-item>
                 }
                 @if (isRegisterPage) {
                   <c-nav-item
                     class="bg-white rounded-lg border-blue-900 border-2! px-2 py-1"
                   >
-                    <a cNavLink href="/register" class="text-black!">Dang ky</a>
+                    <a cNavLink href="/register" class="text-black!">Đăng ký</a>
                   </c-nav-item>
                 } @else {
                   <c-nav-item class="rounded-lg bg-blue-500 px-2 py-1">
-                    <a cNavLink href="/register">Dang ky</a>
+                    <a cNavLink href="/register">Đăng ký</a>
                   </c-nav-item>
                 }
               </ng-container>
@@ -76,3 +109,96 @@
     </div>
   </div>
 </header>
+
+<div
+  class="fixed inset-0 z-50 bg-slate-950/50 transition-opacity duration-200 lg:hidden"
+  [class.opacity-100]="isMobileMenuOpen"
+  [class.pointer-events-auto]="isMobileMenuOpen"
+  [class.opacity-0]="!isMobileMenuOpen"
+  [class.pointer-events-none]="!isMobileMenuOpen"
+  (click)="closeMobileMenu()"
+></div>
+
+<aside
+  role="dialog"
+  aria-label="Menu điều hướng"
+  class="fixed right-0 top-0 z-50 flex h-screen w-[min(82vw,320px)] flex-col bg-white p-4 shadow-[-6px_0_18px_rgba(0,0,0,0.15)] transition-transform duration-200 ease-out lg:hidden"
+  [class.translate-x-0]="isMobileMenuOpen"
+  [class.translate-x-full]="!isMobileMenuOpen"
+>
+  <button
+    type="button"
+    class="ml-auto border-none bg-transparent text-[30px] leading-none text-slate-900"
+    aria-label="Đóng menu"
+    (click)="closeMobileMenu()"
+  >
+    ×
+  </button>
+
+  <nav class="mt-2 flex flex-col items-center gap-2">
+    <a
+      href="/"
+      class="rounded-[10px] px-3 py-2.5 font-semibold text-slate-900 hover:bg-slate-100"
+      (click)="closeMobileMenu()"
+      >Trang chủ</a
+    >
+    <a
+      href="/category"
+      class="rounded-[10px] px-3 py-2.5 font-semibold text-slate-900 hover:bg-slate-100"
+      (click)="closeMobileMenu()"
+      >Tìm việc</a
+    >
+    <a
+      href="/blogHome"
+      class="rounded-[10px] px-3 py-2.5 font-semibold text-slate-900 hover:bg-slate-100"
+      (click)="closeMobileMenu()"
+      >Blog</a
+    >
+    <a
+      href="/contact"
+      class="rounded-[10px] px-3 py-2.5 font-semibold text-slate-900 hover:bg-slate-100"
+      (click)="closeMobileMenu()"
+      >Liên hệ</a
+    >
+    <a
+      href="/about"
+      class="rounded-[10px] px-3 py-2.5 font-semibold text-slate-900 hover:bg-slate-100"
+      (click)="closeMobileMenu()"
+      >Thông tin</a
+    >
+  </nav>
+  <div class="border bg-gray-600 h-0.5 w-full"></div>
+  @if (isLoggedIn) {
+    <div class="flex flex-col gap-2.5">
+      <button
+        type="button"
+        class="rounded-[10px] border-none bg-blue-600 px-3 py-2.5 text-center font-semibold text-white"
+        (click)="goInfor(); closeMobileMenu()"
+      >
+        Thông tin tài khoản
+      </button>
+      <button
+        type="button"
+        class="rounded-[10px] border-none bg-red-600 px-3 py-2.5 text-center font-semibold text-white"
+        (click)="logout(); closeMobileMenu()"
+      >
+        Đăng xuất
+      </button>
+    </div>
+  } @else {
+    <div class="flex flex-col gap-2.5">
+      <a
+        href="/login"
+        class="rounded-[10px] bg-blue-600 px-3 py-2.5 text-center font-semibold text-blue-400"
+        (click)="closeMobileMenu()"
+        >Đăng nhập</a
+      >
+      <a
+        href="/register"
+        class="rounded-[10px] bg-blue-600 px-3 py-2.5 text-center font-semibold text-blue-400"
+        (click)="closeMobileMenu()"
+        >Đăng ký</a
+      >
+    </div>
+  }
+</aside>

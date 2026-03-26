@@ -9,11 +9,14 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @Component
-public class MailProducer {
+public class MessageProducer {
 	private final RabbitTemplate rabbitTemplate;
 
 	public void sendMail(MailMessage message) {
 		rabbitTemplate.convertAndSend("mailExchange", "mailRoutingKey", message);
+	}
+	public void processAI(String rawText,long userId, long cvId ) {
+		rabbitTemplate.convertAndSend("parsingExchange", "parsingRoutingKey", rawText);
 	}
 }
 
