@@ -5,7 +5,7 @@
       [formGroup]="this.postJobFG"
       (ngSubmit)="this.onSubmit()"
     >
-      <div class="flex sm:flex-col lg:flex-row  w-full gap-x-2">
+      <div class="flex sm:flex-col lg:flex-row w-full gap-x-2">
         <div class="w-full max-w-sm min-w-40">
           <label class="block mb-2 text-sm text-slate-600"
             >Tên công việc:</label
@@ -29,9 +29,7 @@
             placeholder="VD: Hồ Chí Minh"
           />
         </div>
-      </div>
-      <div class="flex sm:flex-col lg:flex-row justify-between w-full mt-4 gap-x-2">
-        <div class="w-full max-w-sm min-w-30">
+        <div class=" w-40 min-w-40">
           <label class="block mb-2 text-sm text-slate-600">Loại hình:</label>
           <select
             title="Loại hình"
@@ -39,22 +37,27 @@
             name="jobType"
             formControlName="jobType"
           >
-            <option >Full Time</option>
+            <option>Full Time</option>
             <option>Part Time</option>
+            <option>Hybrid</option>
             <option>Internship</option>
           </select>
         </div>
+      </div>
+      <div
+        class="flex sm:flex-col lg:flex-row justify-between w-full mt-4 gap-x-2"
+      >
         <div class="w-full max-w-sm min-w-30">
           <label class="block mb-2 text-sm text-slate-600"
             >Mức lương (VNĐ)</label
           >
           <input
-            type="number"
+            type="text"
             class="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
             required
             name="salary"
             formControlName="salary"
-            placeholder="VD: 15.000.000"
+            placeholder="VD: 15-20 triệu / 1000-1500 USD / Thỏa thuận"
           />
         </div>
         <div class="w-full max-w-sm min-w-30">
@@ -66,6 +69,19 @@
             required
             name="deadlineCV"
             formControlName="deadlineCV"
+          />
+        </div>
+        <div class="w-full max-w-sm min-w-40">
+          <label class="block mb-2 text-sm text-slate-600"
+            >Số năm kinh nghiệm</label
+          >
+          <input
+            type="text"
+            class="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+            name="location"
+            [value]="0"
+            formControlName="location"
+            placeholder="VD: 3"
           />
         </div>
       </div>
@@ -89,10 +105,13 @@
         </div>
       </div>
       <div class="flex flex-col items-end w-full gap-x-2">
-            <div class="">
-              <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit">
-                Lưu công việc
-              </button>
+        <div class="">
+          <button
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            type="submit"
+          >
+            Lưu công việc
+          </button>
         </div>
         <div>
           <span

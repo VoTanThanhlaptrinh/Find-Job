@@ -28,7 +28,7 @@ export class PostJobComponent {
   postJobFG = new FormGroup({
     jobName: new FormControl('', [Validators.required]),
     location: new FormControl('', [Validators.required]),
-    jobType: new FormControl('', [Validators.required]),
+    jobType: new FormControl('Full Time', [Validators.required]),
     salary: new FormControl('', [Validators.required, Validators.min(2000000)]),
     jobDescription: new FormControl('', [Validators.required]),
     jobRequirement: new FormControl('', [Validators.required]),
@@ -74,7 +74,6 @@ export class PostJobComponent {
   onFilePicked(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
-      // Khi patch file cần thêm opt emitModelToViewChange: false để tránh lỗi DOMException
       this.postJobFG.get('image')?.setValue(file, { emitModelToViewChange: false });
     }
   }
