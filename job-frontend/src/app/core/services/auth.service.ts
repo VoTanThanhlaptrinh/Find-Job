@@ -9,7 +9,7 @@ import {
   take,
   throwError,
 } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { filter, map, tap } from 'rxjs/operators';
 import { NavigationEnd, Router } from '@angular/router';
 import { TokenService } from './token.service';
 import { UtilitiesService } from './utilities.service';
@@ -28,6 +28,7 @@ export class AuthService {
   loginClick = signal(false);
   registerClick = signal(false);
   private readonly loggedIn = signal(false);
+  private readonly _authReady = signal(false);
   private pageAccessTrackingInitialized = false;
   private loginStatusRequestInFlight = false;
 
@@ -35,6 +36,7 @@ export class AuthService {
   public isLoginClicked = computed(() => this.loginClick());
   public isRegisterClicked = computed(() => this.registerClick());
   public isLoggedIn = computed(() => this.loggedIn());
+  public isAuthReady = computed(() => this._authReady());
   constructor(
     private http: HttpClient,
     private router: Router,
@@ -96,44 +98,47 @@ export class AuthService {
       );
   }
   register(data: any): Observable<RegisterResult> {
-      return this.http
-        .post<any>(`${this.url}/auth/register`, data)
-        .pipe(
-          take(1),
-          map((res) => ({
-            status: res.status === 200,
-            email: data.email,
-          })),
-          startWith({
-            status: false,
-            email: data.email,
-          }),
-          catchError((err) => {
-            const msg = err?.error?.message || 'Đăng ký thất bại';
-            return throwError(() => msg);
-          })
-        );
+    return this.http
+      .post<any>(`${this.url}/auth/register`, data)
+      .pipe(
+        take(1),
+        map((res) => ({
+          status: res.status === 200,
+          email: data.email,
+        })),
+        startWith({
+          status: false,
+          email: data.email,
+        }),
+        catchError((err) => {
+          const msg = err?.error?.message || 'Đăng ký thất bại';
+          return throwError(() => msg);
+        })
+      );
   }
   refreshToken$(): Observable<any> {
     const url = `${this.url}/auth/refreshToken`;
     return this.http.get<any>(url, { withCredentials: true }).pipe(take(1));
   }
-  checkLoginStatus(): void {
-    if (this.loginStatusRequestInFlight) {
-      return;
-    }
-
-    this.loginStatusRequestInFlight = true;
-    this.http.get<ApiResponse<string>>(`${this.url}/auth/status`, { withCredentials: true }).pipe(
-      take(1),
-      map((res) => Boolean(res.data)),
-      catchError(() => of(false)),
+  refreshToken() {
+    return this.http.get<any>(`${this.url}/auth/refreshToken`, { withCredentials: true }).pipe(
+      tap({
+        next: (res) => {
+          this.tokenService.setToken(res.data);
+          this.setLoggedIn(true);
+        },
+        error: () => {
+          this.setLoggedIn(false);
+        }
+      }),
+      catchError((error) => {
+        console.error('Lỗi khi lấy refresh token lúc khởi động', error);
+        return of(null);
+      }),
       finalize(() => {
-        this.loginStatusRequestInFlight = false;
+        this._authReady.set(true);
       })
-    ).subscribe((isLoggedIn) => {
-      this.loggedIn.set(isLoggedIn);
-    });
+    );
   }
   logout(): void {
     this.http

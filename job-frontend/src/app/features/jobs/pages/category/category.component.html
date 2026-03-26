@@ -68,7 +68,7 @@
               <app-skeleton-job-card></app-skeleton-job-card>
             }
           } @else {
-            @for (item of jobs(); track item.id) {
+            @for (item of jobs; track item.id) {
               <app-job-card
                 [job]="item"
                 image="assets/web_css/img/post.png"

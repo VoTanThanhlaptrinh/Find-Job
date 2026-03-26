@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page;
 public interface UserCrudService {
     ApiResponse<String> createUser(UserCrudDTO userDTO);
 
-    ApiResponse<UserResponseDTO> getUserById(long id);
+    ApiResponse<UserResponseDTO> getUserByEmail(String emal);
 
     ApiResponse<Page<UserResponseDTO>> getUsers(int pageIndex, int pageSize);
 

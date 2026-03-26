@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, effect, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { take } from 'rxjs';
 import { HomeService } from '../../services/home.service';
@@ -23,11 +23,16 @@ import { JobCardModel } from '../../../../shared/models/jobs/job-card.model';
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   jobPosts: JobCardModel[] = [];
   constructor(private homeService: HomeService) {
+    effect(() => {
+      this.jobPosts = this.homeService.jobPosts();
+    })
+  }
+
+  ngOnInit(): void {
     this.homeService.getData();
-    this.jobPosts = this.homeService.jobPosts();
   }
 
   trackById(index: number, item: JobCardModel): string | number {

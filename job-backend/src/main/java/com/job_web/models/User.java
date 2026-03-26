@@ -38,7 +38,6 @@ public class User extends StatusEntity implements UserDetails, Principal {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-
 	private String fullName;
 	private String password;
 	private LocalDate dateOfBirth;

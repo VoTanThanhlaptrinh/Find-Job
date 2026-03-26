@@ -34,7 +34,6 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.authService.checkLoginStatus();
   }
 
   private updateHeaderVisibility(url: string): void {
