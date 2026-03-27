@@ -49,15 +49,13 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain restChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .ignoringRequestMatchers(ApiConstants.PUBLIC_ENDPOINTS))
+        http.csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(ApiConstants.PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.GET, ApiConstants.PUBLIC_GET_ENDPOINTS).permitAll()
-                        .requestMatchers(ApiConstants.HIRER_ENDPOINTS).hasAuthority("HIRER")
-                        .requestMatchers(ApiConstants.USER_ENDPOINTS).hasAuthority("USER")
+                        .requestMatchers(ApiConstants.HIRER_ENDPOINTS).hasAnyAuthority("ROLE_HIRER","HIRER")
+                        .requestMatchers(ApiConstants.USER_ENDPOINTS).hasAnyAuthority("USER", "ROLE_USER")
                         .anyRequest().authenticated()
                 ).addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(verifyRecoveryFillter, UsernamePasswordAuthenticationFilter.class)

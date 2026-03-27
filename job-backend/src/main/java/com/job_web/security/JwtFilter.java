@@ -37,6 +37,7 @@ public class JwtFilter extends OncePerRequestFilter {
 	private final JwtService jwtService;
 	private final UserDetailsService userDetailsService;
 	private AntPathMatcher pathMatcher;
+
 	@Override
 	protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
@@ -62,6 +63,7 @@ public class JwtFilter extends OncePerRequestFilter {
 			if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 				 userDetails = userDetailsService.loadUserByUsername(userEmail);
                 if (jwtService.isTokenValid(jwt, userDetails)) {
+					userDetails.getAuthorities().forEach(a -> log.info(a.getAuthority()));
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities());
                     usernamePasswordAuthenticationToken

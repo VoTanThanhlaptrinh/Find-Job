@@ -87,7 +87,7 @@ public class ApplyServiceImpl implements ApplyService {
 
             String key = KeyGeneratorUtil.generateKey();
             byte[] data = resumeService.toByteArray(request.getCvFile().getInputStream());
-            resumeService.uploadResumeToCloud(data, key);
+            resumeService.uploadResumeToCloud(data, key, request.getCvFile().getOriginalFilename());;
 
             resume.setFileName(request.getCvFile().getName());
             resumeRepository.save(resume);

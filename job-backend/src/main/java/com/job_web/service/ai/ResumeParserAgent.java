@@ -2,6 +2,7 @@ package com.job_web.service.ai;
 
 import com.job_web.dto.ai.ResumeModel;
 import dev.langchain4j.service.SystemMessage;
+import dev.langchain4j.service.UserMessage;
 import dev.langchain4j.service.V;
 
 public interface ResumeParserAgent {
@@ -30,8 +31,16 @@ public interface ResumeParserAgent {
     - Giữ nguyên các thuật ngữ kỹ thuật bằng tiếng Anh (ví dụ: RESTful, Database, Framework).
     - Không sử dụng các ký tự đặc biệt (như icon, emoji) làm nhiễu văn bản.
     - Đảm bảo khối văn bản có tính logic, rành mạch để model Sentence-BERT tạo Vector chính xác nhất.
+    """)
+    @UserMessage("""
+    Hãy thực hiện trích xuất dữ liệu dựa trên nội dung CV sau đây:
+    
+    === NỘI DUNG CV GỐC ===
+    {{cv_text}}
+    =======================
 
-    Ghi chú bổ sung: {{feedback}}
+    Ghi chú bổ sung / Yêu cầu sửa lỗi: 
+    {{feedback}}
     """)
     ResumeModel parse(@V("cv_text") String rawText, @V("feedback") String feedback);
 }

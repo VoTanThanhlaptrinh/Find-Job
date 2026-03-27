@@ -12,6 +12,7 @@ import com.job_web.models.QHirer;
 import com.job_web.models.QJob;
 import com.job_web.models.QUser;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -326,8 +327,8 @@ public class JobQuery {
         return fetchPage(pageable, contentQuery, countQuery);
     }
 
-    private com.querydsl.core.types.ConstructorExpression<JobCardView> jobCardProjection(QJob job, QAddress address) {
-        return com.querydsl.core.types.Projections.constructor(
+    private ConstructorExpression<JobCardView> jobCardProjection(QJob job, QAddress address) {
+        return Projections.constructor(
                 JobCardView.class,
                 job.id,
                 job.title,

@@ -1,5 +1,6 @@
 package com.job_web.message;
 
+import com.job_web.dto.ai.ResumeParsingMessage;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
@@ -15,8 +16,8 @@ public class MessageProducer {
 	public void sendMail(MailMessage message) {
 		rabbitTemplate.convertAndSend("mailExchange", "mailRoutingKey", message);
 	}
-	public void processAI(String rawText,long userId, long cvId ) {
-		rabbitTemplate.convertAndSend("parsingExchange", "parsingRoutingKey", rawText);
+	public void processAI(ResumeParsingMessage message) {
+		rabbitTemplate.convertAndSend("parsingExchange", "parsingRoutingKey", message);
 	}
 }
 

@@ -96,7 +96,7 @@ public class MasterDataSeeder implements CommandLineRunner {
         if (jobRepository.count() == 0) {
             log.info("Tiến hành đọc file JSON và tạo dữ liệu Job...");
             var jobsJson = convertJsonFileToList("C:/Users/DELL/Downloads/job_data_500.json");
-
+            jobsJson.addAll(convertJsonFileToList("C:/Users/DELL/Downloads/job_data_vn_300 .json"));
             List<Hirer> finalHirers = hirers;
             List<Job> jobEntities = jobsJson.stream()
                     .map(dto -> convertJob(dto, finalHirers))
