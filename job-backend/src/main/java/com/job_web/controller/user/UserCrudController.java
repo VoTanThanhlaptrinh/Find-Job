@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
+
 @RestController
 @RequestMapping(path = "/api/users", produces = "application/json")
 @RequiredArgsConstructor
@@ -43,9 +45,12 @@ public class UserCrudController {
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<UserResponseDTO>> detail(@PathVariable("id") long id) {
-        ApiResponse<UserResponseDTO> res = userCrudService.getUserById(id);
+    @GetMapping
+    public ResponseEntity<ApiResponse<UserResponseDTO>> detail(Principal principal) {
+        if(principal == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse<>("",null, HttpStatus.UNAUTHORIZED.value()));
+        }
+        ApiResponse<UserResponseDTO> res = userCrudService.getUserByEmail(principal.getName());
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 

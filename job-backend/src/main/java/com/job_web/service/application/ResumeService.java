@@ -19,13 +19,13 @@ public interface ResumeService {
 
     ApiResponse<ResumeDetailDTO> getResumeDetail(long id, Principal principal);
 
-    ApiResponse<String> createResume(ResumeUploadDTO resumeUploadDTO, Principal principal);
+    ApiResponse<ResumeView> createResume(ResumeUploadDTO resumeUploadDTO, Principal principal);
 
     ApiResponse<String> updateResume(long id, ResumeUploadDTO resumeUploadDTO, Principal principal);
 
     ApiResponse<String> deleteResume(long id, Principal principal);
 
-    void uploadResumeToCloud(byte[] data, String key);
+    void uploadResumeToCloud(byte[] data, String key, String originalName);
     byte[] toByteArray(InputStream inputStream) throws IOException;
 }
 

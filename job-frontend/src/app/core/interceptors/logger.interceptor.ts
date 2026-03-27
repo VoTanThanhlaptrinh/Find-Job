@@ -7,9 +7,10 @@ export const loggerInterceptor: HttpInterceptorFn = (req, next) => {
   let jwtToken = tokenService.getToken();
   if (jwtToken) {
     const clone = req.clone({
-    setHeaders: {
-      Authorization: `Bearer ${jwtToken}`,
-    },});
+      setHeaders: {
+        Authorization: `Bearer ${jwtToken}`,
+      },
+    });
     return next(clone);
   }
   return next(req);

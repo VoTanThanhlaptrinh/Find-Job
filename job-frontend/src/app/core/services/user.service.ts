@@ -16,8 +16,8 @@ export class UserService {
     this.url = this.utilities.getURLDev();
   }
 
-  getDetails(id: string | number = 'id'): Observable<any> {
-    return this.http.get(`${this.url}/users/${id}`).pipe(take(1));
+  getDetails(): Observable<any> {
+    return this.http.get(`${this.url}/users`).pipe(take(1));
   }
 
   updateInfo(value: any, id: string | number = 'id'): Observable<any> {

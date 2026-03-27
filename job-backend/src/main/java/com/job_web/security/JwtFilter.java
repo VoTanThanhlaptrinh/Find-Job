@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import com.job_web.constant.ApiConstants;
 import com.job_web.service.security.RefreshTokenService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -21,6 +22,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.job_web.service.security.JwtService;
@@ -34,32 +36,15 @@ import lombok.RequiredArgsConstructor;
 public class JwtFilter extends OncePerRequestFilter {
 	private final JwtService jwtService;
 	private final UserDetailsService userDetailsService;
-    private final RefreshTokenService refreshTokenService;
-	private final List<String> allowedOrigins = Arrays.asList(
-			"/api/auth/login"
-			,"/api/auth/register"
-			,"/api/auth/activation-links/.*"
-			,"/api/auth/activate/.*"
-			,"/api/auth/refresh-token"
-			,"/api/auth/logout"
-			,"/api/auth/google/.*"
-			,"/api/auth/password/.*"
-			,"/api/auth/status"
-			,"/error"
-			,"/api/home/init"
-			,"/api/jobs/.*"
-			,"/api/blogs/.*"
-			, "/auth/.*",
-			"/oauth2/authorization/.*",
-			"/login/oauth2/code/.*"
-	);
+	private AntPathMatcher pathMatcher;
+
 	@Override
 	protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		String url = request.getServletPath();
-		for (String allowedOrigin : allowedOrigins) {
-			if (Pattern.compile(allowedOrigin).matcher(url).matches()) {
+		for (String allowedOrigin : ApiConstants.PUBLIC_ENDPOINTS) {
+			if (pathMatcher.match(allowedOrigin, url)) {
 				filterChain.doFilter(request, response);
 				return;
 			}
@@ -78,6 +63,7 @@ public class JwtFilter extends OncePerRequestFilter {
 			if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 				 userDetails = userDetailsService.loadUserByUsername(userEmail);
                 if (jwtService.isTokenValid(jwt, userDetails)) {
+					userDetails.getAuthorities().forEach(a -> log.info(a.getAuthority()));
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities());
                     usernamePasswordAuthenticationToken
@@ -103,6 +89,11 @@ public class JwtFilter extends OncePerRequestFilter {
 			return;
 		}
 		filterChain.doFilter(request, response);
+	}
+
+	@Override
+	protected void initFilterBean() throws ServletException {
+		pathMatcher = new AntPathMatcher();
 	}
 }
 

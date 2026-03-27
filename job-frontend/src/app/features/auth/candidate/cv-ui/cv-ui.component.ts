@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, effect, OnInit } from '@angular/core';
 import { take } from 'rxjs';
 import { ResumeService } from '../../../../core/services/resume.service';
 import { LoadingComponent } from '../../../../shared/components/loading/loading.component';
@@ -15,19 +15,18 @@ import { CvUploadModalComponent } from '../cv-upload-modal/cv-upload-modal.compo
   styleUrl: './cv-ui.component.css'
 })
 export class CvUiComponent implements OnInit {
-  private readonly mockResumes: ResumeReviewInput[] = [
-    { id: 1001, fileName: 'Nguyen_Frontend_2026.pdf', createDate: '2026-03-10T09:20:00' },
-    { id: 1002, fileName: 'Tran_Backend_Profile.docx', createDate: '2026-03-06T14:05:00' },
-    { id: 1003, fileName: 'Le_Fullstack_CV.pdf', createDate: '2026-02-28T19:40:00' }
-  ];
-
-  resumes: ResumeReviewInput[] = [...this.mockResumes];
+  resumes: ResumeReviewInput[] = [];
   isLoading = false;
   isUploadModalOpen = false;
   readonly skeleton = true;
   readonly skeletonRows = [1, 2, 3];
 
-  constructor(private readonly resumeService: ResumeService) {}
+  constructor(private readonly resumeService: ResumeService) {
+    effect(() => {
+      this.resumes = this.resumeService.resumes$();
+      this.isLoading = false;
+    });
+  }
 
   ngOnInit(): void {
     this.loadResumes();
@@ -35,17 +34,7 @@ export class CvUiComponent implements OnInit {
 
   private loadResumes(): void {
     this.isLoading = true;
-    this.resumeService.getUserResumes().pipe(take(1)).subscribe({
-      next: (response) => {
-        const apiResumes = response.data ?? [];
-        this.resumes = apiResumes.length > 0 ? apiResumes : [...this.mockResumes];
-        this.isLoading = false;
-      },
-      error: () => {
-        this.resumes = [...this.mockResumes];
-        this.isLoading = false;
-      }
-    });
+    this.resumeService.getUserResumes();
   }
 
   get totalResumes(): number {
@@ -89,17 +78,7 @@ export class CvUiComponent implements OnInit {
   }
 
   submitUploadCv(file: File): void {
-    const maxId = this.resumes.reduce((currentMax, resume) => {
-      return Math.max(currentMax, resume.id);
-    }, 0);
-
-    const newResume: ResumeReviewInput = {
-      id: maxId + 1,
-      fileName: file.name,
-      createDate: new Date().toISOString()
-    };
-
-    this.resumes = [newResume, ...this.resumes];
+    this.resumeService.postResume(file);
     this.closeUploadModal();
   }
 

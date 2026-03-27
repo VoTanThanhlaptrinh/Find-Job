@@ -1,6 +1,7 @@
 package com.job_web.message;
 
 import com.job_web.dto.ai.ResumeModel;
+import com.job_web.dto.ai.ResumeParsingMessage;
 import com.job_web.service.ai.AIService;
 import com.job_web.service.ai.ApiService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -23,8 +24,8 @@ public class MessageConsumer {
         mailService.sendMessage(message.getTo(), message.getSubject(), message.getContent());
     }
     @RabbitListener(queues = "parsingQueue")
-    public void parsingRawText(@Payload String rawText,@Payload long userId,@Payload long cvId){
-        aiService.processResume(rawText);
+    public void parsingRawText(@Payload ResumeParsingMessage message){
+        aiService.processResume(message.rawText());
     }
 }
 

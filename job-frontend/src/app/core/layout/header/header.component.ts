@@ -7,10 +7,11 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatButtonModule} from '@angular/material/button';
+import { RouterLink } from "@angular/router";
 
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, MatButtonModule, MatMenuModule],
+  imports: [CommonModule, MatButtonModule, MatMenuModule, RouterLink],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -59,5 +60,9 @@ export class HeaderComponent {
 
   get isLoggedIn(): boolean {
     return this.auth.isLoggedIn();
+  }
+
+  get isAuthReady(): boolean {
+    return this.auth.isAuthReady();
   }
 }

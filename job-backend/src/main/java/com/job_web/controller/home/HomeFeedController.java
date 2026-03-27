@@ -19,16 +19,20 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/home")
 @AllArgsConstructor
 public class HomeFeedController {
     private JobRepository jobRepository;
     private BlogRepository blogRepository;
 
-    @GetMapping("/home/init")
+    @GetMapping("/init")
     public ResponseEntity<ApiResponse<List<JobCardView>>> getInit() {
         PageRequest pageRequest = PageRequest.of(0,10, Sort.by("createDate").descending());
         PageRequest blogByTime = PageRequest.of(0, 3, Sort.by("amountLike").descending());
         return ResponseEntity.ok(new ApiResponse<>("Load dữ liệu thành công", jobRepository.findJobs(LocalDateTime.now(), "ACTIVE",pageRequest), 200));
+    }
+    @GetMapping()
+    public ResponseEntity<String> home(){
+        return ResponseEntity.ok("Hello world");
     }
 }

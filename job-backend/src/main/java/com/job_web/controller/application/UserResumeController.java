@@ -31,6 +31,9 @@ public class UserResumeController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<ResumeView>>> getListResumeOfUser(Principal principal) {
+        if(principal == null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>("Not login", null, HttpStatus.BAD_REQUEST.value()));
+        }
         ApiResponse<List<ResumeView>> res = resumeService.getListResumeOfUser(principal);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
@@ -42,14 +45,14 @@ public class UserResumeController {
     }
 
     @PostMapping(consumes = "multipart/form-data")
-    public ResponseEntity<ApiResponse<String>> uploadResume(@Valid @ModelAttribute ResumeUploadDTO resumeUploadDTO,
+    public ResponseEntity<ApiResponse<ResumeView>> uploadResume(@Valid @ModelAttribute ResumeUploadDTO resumeUploadDTO,
                                                             BindingResult bindingResult,
                                                             Principal principal) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, HttpStatus.BAD_REQUEST.value()));
         }
-        ApiResponse<String> res = resumeService.createResume(resumeUploadDTO, principal);
+        var res = resumeService.createResume(resumeUploadDTO, principal);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 

@@ -34,8 +34,8 @@ public class UserCrudServiceImpl implements UserCrudService {
     }
 
     @Override
-    public ApiResponse<UserResponseDTO> getUserById(long id) {
-        return userRepository.findById(id)
+    public ApiResponse<UserResponseDTO> getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
                 .map(user -> new ApiResponse<>("success", toResponse(user), HttpStatus.OK.value()))
                 .orElseGet(() -> new ApiResponse<>("Không tìm thấy user", null, HttpStatus.NOT_FOUND.value()));
     }

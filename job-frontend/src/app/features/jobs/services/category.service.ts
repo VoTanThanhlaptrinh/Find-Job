@@ -89,7 +89,7 @@ export class CategoryService {
     });
   }
 
-  getAmount(): Observable<JobCountApiResponse> {
+  getAmount() {
     return this.http.get<JobCountApiResponse>(`${this.url}/jobs/count`).pipe(take(1));
   }
 

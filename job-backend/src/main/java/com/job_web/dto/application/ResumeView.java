@@ -4,15 +4,15 @@ import java.time.LocalDateTime;
 
 public record ResumeView(
         long id,
-        String fitleName,
+        String fileName,
         LocalDateTime createDate
 ) {
     public long getId() {
         return id;
     }
 
-    public String getFitleName() {
-        return fitleName;
+    public String getFileName() {
+        return fileName;
     }
 
     public LocalDateTime getCreateDate() {

@@ -46,7 +46,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
             user.setEmail(Objects.requireNonNull(principal.getAttribute("email")).toString());
             user.setFullName(Objects.requireNonNull(principal.getAttribute("name")).toString());
             user.setActive(true);
-            user.setRole("ROLE_USER");
+            user.setRole("USER");
             user.setEnabled(true);
             user.setOauth2Enabled(true);
             userRepository.save(user);

@@ -64,8 +64,6 @@ export interface HirerJobViewModel {
 export interface JobFilterPayload {
   pageIndex: number;
   pageSize: number;
-  min: number;
-  max: number;
   address: string[];
   times: string[];
   title: string;

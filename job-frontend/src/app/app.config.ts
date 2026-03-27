@@ -1,4 +1,4 @@
-import {ApplicationConfig, importProvidersFrom, provideZoneChangeDetection} from '@angular/core';
+import { APP_INITIALIZER, ApplicationConfig, importProvidersFrom, inject, provideAppInitializer, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
@@ -7,12 +7,16 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { loggerInterceptor } from './core/interceptors/logger.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { refreshTokenInterceptor } from './core/interceptors/refresh-token.interceptor';
-import {provideQuillConfig} from 'ngx-quill';
+import { provideQuillConfig } from 'ngx-quill';
 import hljs from 'highlight.js';
-import {provideNativeDateAdapter} from '@angular/material/core';
-import {JwtModule} from '@auth0/angular-jwt';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { JwtModule } from '@auth0/angular-jwt';
 import { provideHotToastConfig } from '@ngxpert/hot-toast';
+import { AuthService } from './core/services/auth.service';
 
+export function initializeApp(authService: AuthService) {
+  return () => authService.refreshToken();
+}
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
@@ -25,6 +29,10 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(JwtModule.forRoot({})),
     provideNativeDateAdapter(),
     provideHotToastConfig(),
+    provideAppInitializer(() => {
+      const authService = inject(AuthService);
+      return authService.refreshToken();
+    }),
     provideAnimations(),
     provideQuillConfig({
       modules: {
@@ -47,5 +55,6 @@ export const appConfig: ApplicationConfig = {
         ]
       }
     }), provideHotToastConfig(),
+
   ]
 };

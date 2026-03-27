@@ -48,17 +48,28 @@ spring:
     password: Aibietdau123
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-  jpa: # Đã đưa ra ngoài ngang hàng với datasource
+  jpa:
     hibernate:
       ddl-auto: create-drop
     show-sql: true
 
-  rabbitmq: # Đã đưa ra ngoài
+  rabbitmq:
     host: localhost
     port: 5672
     username: guest
     password: guest
     virtual-host: /
+    listener:
+      simple:
+        # Tắt tính năng tự động nhét lại tin nhắn lỗi vào Queue (Cắt đứt vòng lặp vô tận)
+        default-requeue-rejected: false
+        retry:
+          # Bật cơ chế thử lại của Spring
+          enabled: true
+          # Chỉ cho phép gọi tối đa 3 lần
+          max-attempts: 3
+          # Khoảng thời gian chờ giữa các lần thử (2 giây)
+          initial-interval: 2s
 
   mail: # Đã đưa ra ngoài
     host: smtp.gmail.com
@@ -103,8 +114,7 @@ server:
 cloudflare:
   r2:
     account-id: ${CLOUDFLARE_ACCOUNT_ID}
-    access-key: ${CLOUDFLARE_SECRET_KEY}
-    secret-key: ${CLOUDFLARE_ACCESS_KEY}
+    access-key: ${CLOUDFLARE_ACCESS_KEY}
+    secret-key: ${CLOUDFLARE_SECRET_KEY}
     bucket-name: job-portal-resume
-    # Endpoint có dạng: https://<accountid>.r2.cloudflarestorage.com
     endpoint: https://${cloudflare.r2.account-id}.r2.cloudflarestorage.com

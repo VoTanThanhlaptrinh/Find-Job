@@ -2,11 +2,13 @@ package com.job_web.config;
 
 import java.util.List;
 
+import com.job_web.constant.ApiConstants;
 import com.job_web.security.CustomOAuth2SuccessHandler;
 import org.springframework.beans.factory.aspectj.ConfigurableObject;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
@@ -19,8 +21,10 @@ import org.springframework.security.config.annotation.web.configurers.oauth2.ser
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.firewall.DefaultHttpFirewall;
 import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -45,38 +49,24 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain restChain(HttpSecurity http) throws Exception {
-        http.cors(c -> c.configurationSource(corsConfigurationSource()))
-                .csrf(AbstractHttpConfigurer::disable)
+        http.csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login",
-                                "/api/auth/register",
-                                "/api/auth/activation-links/**",
-                                "/api/auth/activate/**",
-                                "/api/auth/refresh-token",
-                                "/api/auth/logout",
-                                "/api/auth/google/**",
-                                "/api/auth/password/**",
-                                "/api/auth/status",
-                                "/api/home/init",
-                                "/error",
-                                "/oauth2/**", "/login/oauth2/**", "/auth/status").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/jobs/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/jobs/filter").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/blogs/**").permitAll()
-                        .requestMatchers("/api/hirer/**").hasAuthority("ROLE_HIRER")
-                        .requestMatchers("/api/user/**").hasAuthority("ROLE_USER")
-                        .requestMatchers("/api/account/roles/hirer").hasAuthority("ROLE_HIRER")
-                        .requestMatchers("/api/account/roles/user").hasAuthority("ROLE_USER")
-                        .requestMatchers("/api/account/**", "/api/blogs/**", "/api/users/**").authenticated()
-                        .anyRequest().permitAll()
+                        .requestMatchers(ApiConstants.PUBLIC_ENDPOINTS).permitAll()
+                        .requestMatchers(HttpMethod.GET, ApiConstants.PUBLIC_GET_ENDPOINTS).permitAll()
+                        .requestMatchers(ApiConstants.HIRER_ENDPOINTS).hasAnyAuthority("ROLE_HIRER","HIRER")
+                        .requestMatchers(ApiConstants.USER_ENDPOINTS).hasAnyAuthority("USER", "ROLE_USER")
+                        .anyRequest().authenticated()
                 ).addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(verifyRecoveryFillter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(o -> o
                         .successHandler(customOAuth2SuccessHandler)
-                )
+                ).exceptionHandling(exceptions -> exceptions
+                        .defaultAuthenticationEntryPointFor(
+                                new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
+                                new AntPathRequestMatcher("/api/**")))
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authenticationProvider(authenticationProvider());
-
         return http.build();
     }
 

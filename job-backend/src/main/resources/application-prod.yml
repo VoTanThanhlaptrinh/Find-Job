@@ -104,8 +104,7 @@ server:
 cloudflare:
   r2:
     account-id: ${CLOUDFLARE_ACCOUNT_ID}
-    access-key: ${CLOUDFLARE_SECRET_KEY}
-    secret-key: ${CLOUDFLARE_ACCESS_KEY}
+    access-key: ${CLOUDFLARE_ACCESS_KEY}
+    secret-key: ${CLOUDFLARE_SECRET_KEY}
     bucket-name: job-portal-resume
-    # Endpoint có dạng: https://<accountid>.r2.cloudflarestorage.com
     endpoint: https://${cloudflare.r2.account-id}.r2.cloudflarestorage.com

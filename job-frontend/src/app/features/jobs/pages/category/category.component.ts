@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, effect, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
@@ -11,6 +11,7 @@ import {
   JobFilterPayload,
 } from '../../../../shared/models/jobs/job-api-response.model';
 import { CategoryService } from '../../services/category.service';
+import { JobCardModel } from '../../../../shared/models/jobs/job-card.model';
 
 @Component({
   selector: 'app-category',
@@ -28,16 +29,10 @@ import { CategoryService } from '../../services/category.service';
 })
 export class CategoryComponent implements OnInit {
   addressCount: AddressCountViewModel[] = [];
+  jobs: JobCardModel[] = [];
   pageIndex = 0;
   pageSize = 10;
   length = 0;
-  min = 0;
-  max = 100000000;
-  step = 1000000;
-  minGap = 2000000;
-
-  minSalary = 5000000;
-  maxSalary = 50000000;
   selectedAddresses = new Set<string>();
   selectedTypes = new Set<string>();
   jobTypes = [
@@ -50,13 +45,16 @@ export class CategoryComponent implements OnInit {
   private searchSubject = new Subject<string>();
   title: string = '';
   constructor(private category: CategoryService) {
+    effect(() => {
+      this.addressCount = this.category.addressCount();
+      this.jobs = this.category.jobs();
+    });
   }
 
   ngOnInit(): void {
     this.category.listJobsNewest(this.pageIndex, this.pageSize);
     this.getAmount();
     this.getAddressCount();
-    this.addressCount = this.category.addressCount();
     this.searchSubject.pipe(
       debounceTime(400),        // Đợi 400ms sau khi ngừng gõ mới chạy tiếp
       distinctUntilChanged()    // Chỉ gọi API nếu giá trị thực sự thay đổi so với lần trước
@@ -96,16 +94,6 @@ export class CategoryComponent implements OnInit {
     return `${value.toLocaleString('vi-VN')} VND`;
   }
 
-  onMinChange(value: number): void {
-    this.minSalary = Math.min(value, this.maxSalary - this.minGap);
-    this.searchWithFilters(this.buildFilterPayload());
-  }
-
-  onMaxChange(value: number): void {
-    this.maxSalary = Math.max(value, this.minSalary + this.minGap);
-    this.searchWithFilters(this.buildFilterPayload());
-  }
-
   onFilterChange(event: Event): void {
     const input = event.target as HTMLInputElement | null;
 
@@ -140,8 +128,6 @@ export class CategoryComponent implements OnInit {
     return {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize,
-      min: this.minSalary,
-      max: this.maxSalary,
       address: Array.from(this.selectedAddresses),
       times: Array.from(this.selectedTypes),
       title: this.title,
@@ -152,19 +138,13 @@ export class CategoryComponent implements OnInit {
     const hasAddress = this.selectedAddresses.size > 0;
     const hasType = this.selectedTypes.size > 0;
     const hasTitle = this.title.trim().length > 0;
-    const hasSalaryRangeChange =
-      this.minSalary !== 5000000 || this.maxSalary !== 50000000;
 
-    return hasAddress || hasType || hasTitle || hasSalaryRangeChange;
+    return hasAddress || hasType || hasTitle;
   }
 
   private searchWithFilters(filter: JobFilterPayload): void {
     this.category.filterWithAddressTimeSalary(filter);
   }
-  jobs() {
-    return this.category.jobs();
-  }
-
   isLoadingJobs() {
     return this.category.isLoadingJobs();
   }
