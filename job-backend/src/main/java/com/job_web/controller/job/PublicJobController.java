@@ -7,10 +7,12 @@ import com.job_web.dto.job.AddressJobCount;
 import com.job_web.dto.job.JobCardView;
 import com.job_web.dto.job.JobDetailView;
 import com.job_web.dto.job.JobFilterDTO;
+import com.job_web.service.ai.ApiService;
 import com.job_web.service.job.JobQueryService;
 import com.job_web.service.job.JobService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PublicJobController {
     private final JobService jobService;
     private final JobQueryService jobQueryService;
+    private final ApiService apiService;
 
     @GetMapping("/newest/{pageIndex}/{pageSize}")
     public ResponseEntity<ApiResponse<Page<JobCardView>>> getListJobNewest(@PathVariable int pageIndex, @PathVariable int pageSize) {
@@ -67,5 +70,12 @@ public class PublicJobController {
     public ResponseEntity<ApiResponse<Boolean>> checkApplyJob(@PathVariable String id) {
         ApiResponse<Boolean> res = jobService.checkExistJob(id);
         return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    @GetMapping("/match/{cvId}")
+    public ResponseEntity<ApiResponse<List<JobCardView>>> getMatchedJobs(@PathVariable Long cvId) {
+        List<JobCardView> jobs = apiService.matchJobs(cvId);
+        ApiResponse<List<JobCardView>> res = new ApiResponse<>("success", jobs, HttpStatus.OK.value());
+        return ResponseEntity.ok(res);
     }
 }

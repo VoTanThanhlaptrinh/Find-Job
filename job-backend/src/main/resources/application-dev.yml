@@ -50,7 +50,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     show-sql: true
 
   rabbitmq:
@@ -103,6 +103,9 @@ spring:
       resource-server: # Đã sửa từ "resource server" thành "resource-server"
         jwt:
           jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
+  ai:
+    agent:
+      base-url: https://votanthanh32004-job-portal-vectorize-cv.hf.space
 
 app:
   cookie:

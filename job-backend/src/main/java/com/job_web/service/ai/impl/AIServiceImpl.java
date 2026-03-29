@@ -11,7 +11,6 @@ import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.service.AiServices;
 
 import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -57,7 +56,6 @@ public class AIServiceImpl implements AIService {
 
     @Override
     public ResumeModel processResume(String rawText) {
-        log.info(apiKey);
         var bestResume = parser(rawText, "");
         var bestVerify = verify(bestResume, rawText);
         if (bestVerify.getConfidenceScore() >= PASS_THRESHOLD) {
