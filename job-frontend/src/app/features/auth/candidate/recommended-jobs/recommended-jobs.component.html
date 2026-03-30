@@ -1,5 +1,6 @@
-<section class="flex flex-col gap-4">
-  <header class="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-4 shadow-sm lg:flex-row lg:items-end lg:justify-between">
+<section class="flex flex-col gap-2 h-screen">
+  <header
+    class="flex flex-col gap-2 rounded-3xl border border-slate-200 bg-white px-4 py-3 shadow-sm lg:flex-row lg:items-end lg:justify-between">
     <div class="space-y-2">
       <h2 class="text-xl font-bold text-slate-900 sm:text-2xl">{{ title }}</h2>
       <p class="text-sm text-slate-500">
@@ -11,83 +12,58 @@
       <label for="resume-select" class="mb-2 block text-sm font-semibold text-slate-700">
         {{ selectLabel }}
       </label>
-      <select
-        id="resume-select"
+      <select id="resume-select"
         class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-100 disabled:cursor-not-allowed disabled:opacity-70"
-        [ngModel]="selectedResumeId()"
-        (ngModelChange)="onResumeChange($event)"
-        [disabled]="isResumeLoading() || resumes().length === 0"
-      >
+        [ngModel]="selectedResumeId()" (ngModelChange)="onResumeChange($event)"
+        [disabled]="isResumeLoading() || resumes().length === 0">
         @if (isResumeLoading()) {
-          <option [ngValue]="null">{{ selectLoadingLabel }}</option>
+        <option [ngValue]="null">{{ selectLoadingLabel }}</option>
         } @else if (resumes().length === 0) {
-          <option [ngValue]="null">{{ selectEmptyLabel }}</option>
+        <option [ngValue]="null">{{ selectEmptyLabel }}</option>
         } @else {
-          @for (resume of resumes(); track resume.id) {
-            <option [ngValue]="resume.id">{{ resume.fileName }}</option>
-          }
+        @for (resume of resumes(); track resume.id) {
+        <option [ngValue]="resume.id">{{ resume.fileName }}</option>
+        }
         }
       </select>
     </div>
   </header>
-
-  @if (!isResumeLoading() && selectedResume()) {
-    <article class="flex flex-col gap-3 rounded-3xl border border-slate-200 bg-slate-50 px-4 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-      <div class="space-y-1">
-        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-          {{ selectedResumeLabel }}
-        </p>
-        <p class="break-all text-base font-semibold text-slate-900">
-          {{ selectedResume()?.fileName }}
-        </p>
-        <p class="text-sm text-slate-500">
-          {{ selectedResumeDatePrefix }} {{ selectedResumeDateLabel() }}
-        </p>
-      </div>
-
-      <div class="inline-flex w-fit items-center rounded-full bg-blue-100 px-4 py-2 text-sm font-semibold text-blue-700">
-        {{ suggestionCount() }} {{ suggestionCountLabel }}
-      </div>
-    </article>
-  }
-
   @if (!isResumeLoading() && resumes().length === 0) {
-    <article class="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-5 py-8 text-center shadow-sm">
-      <h3 class="text-lg font-semibold text-slate-900">{{ emptyResumeTitle }}</h3>
-      <p class="mt-2 text-sm leading-6 text-slate-500">
-        {{ emptyResumeDescription }}
-      </p>
-      <a
-        routerLink="/infor/cv"
-        class="mt-5 inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700"
-      >
-        {{ emptyResumeAction }}
-      </a>
-    </article>
+  <article class="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-5 py-8 text-center shadow-sm">
+    <h3 class="text-lg font-semibold text-slate-900">{{ emptyResumeTitle }}</h3>
+    <p class="mt-2 text-sm leading-6 text-slate-500">
+      {{ emptyResumeDescription }}
+    </p>
+    <a routerLink="/infor/cv"
+      class="mt-5 inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700">
+      {{ emptyResumeAction }}
+    </a>
+  </article>
   }
 
   @if (isJobLoading()) {
-    <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-      @for (row of skeletonRows; track row) {
-        <app-skeleton-cv-card></app-skeleton-cv-card>
-      }
-    </div>
+  <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+    @for (row of skeletonRows; track row) {
+    <app-skeleton-cv-card></app-skeleton-cv-card>
+    }
+  </div>
   }
 
-  @if (!isResumeLoading() && !isJobLoading() && resumes().length > 0 && suggestedJobs().length === 0 && selectedResumeId() !== null) {
-    <article class="rounded-3xl border border-dashed border-slate-300 bg-white px-5 py-8 text-center shadow-sm">
-      <h3 class="text-lg font-semibold text-slate-900">{{ emptyJobTitle }}</h3>
-      <p class="mt-2 text-sm leading-6 text-slate-500">
-        {{ emptyJobDescription }}
-      </p>
-    </article>
+  @if (!isResumeLoading() && !isJobLoading() && resumes().length > 0 && suggestedJobs().length === 0 &&
+  selectedResumeId() !== null) {
+  <article class="rounded-3xl border border-dashed border-slate-300 bg-white px-5 py-8 text-center shadow-sm">
+    <h3 class="text-lg font-semibold text-slate-900">{{ emptyJobTitle }}</h3>
+    <p class="mt-2 text-sm leading-6 text-slate-500">
+      {{ emptyJobDescription }}
+    </p>
+  </article>
   }
 
   @if (!isResumeLoading() && !isJobLoading() && suggestedJobs().length > 0) {
-    <div class="flex flex-col gap-3">
-      @for (job of suggestedJobs(); track job.id) {
-        <app-job-card [job]="job" detailRoute="/single"></app-job-card>
-      }
-    </div>
+  <div class="flex flex-col gap-3 overflow-y-auto h-full items-center">
+    @for (job of suggestedJobs(); track job.id) {
+    <app-job-card [job]="job" detailRoute="/single"></app-job-card>
+    }
+  </div>
   }
 </section>

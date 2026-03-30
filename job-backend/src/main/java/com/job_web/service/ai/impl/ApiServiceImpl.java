@@ -1,13 +1,19 @@
 package com.job_web.service.ai.impl;
 
+import com.job_web.data.queryDSL.JobQuery;
 import com.job_web.dto.ai.ResumeRequest;
+import com.job_web.dto.common.ApiResponse;
 import com.job_web.dto.job.JobCardView;
 import com.job_web.dto.job.JobDTO;
+import com.job_web.dto.job.MatchJobsResponse;
 import com.job_web.dto.job.VectorizeJdRequest;
 import com.job_web.service.ai.ApiService;
+import com.job_web.service.job.JobQueryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.web.client.RestClientBuilderConfigurer;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -18,7 +24,8 @@ import java.util.List;
 @Service
 public class ApiServiceImpl implements ApiService {
     private final RestClient restClient;
-
+    @Autowired
+    private JobQuery jobQuery;
     public ApiServiceImpl(RestClient.Builder restClientBuilder,@Value("${spring.ai.agent.base-url}") String baseUrl){
         this.restClient = restClientBuilder
                 .baseUrl(baseUrl)
@@ -47,7 +54,15 @@ public class ApiServiceImpl implements ApiService {
 
     @Override
     public List<JobCardView> matchJobs(Long cvId) {
-        return List.of();
+
+        var res = restClient.get()
+                .uri("/match-jobs/"+cvId)
+                .retrieve()
+                .toEntity(MatchJobsResponse.class);
+        if(res.getBody() == null){
+            return List.of();
+        }
+        return jobQuery.findMatchJobs(res.getBody());
     }
 
     @Override

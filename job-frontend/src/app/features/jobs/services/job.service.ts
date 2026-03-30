@@ -115,4 +115,11 @@ export class JobService {
   filterWithAddressTimeSalary(filter: JobFilterPayload): Observable<JobListApiResponse> {
     return this.http.post<JobListApiResponse>(`${this.url}/jobs/filter`, filter).pipe(take(1));
   }
+
+  listJobUserApplied(pageIndex: number, pageSize: number): Observable<JobListApiResponse> {
+    return this.http.get<JobListApiResponse>(
+      `${this.url}/jobs/applied/${pageIndex}/${pageSize}`,
+      { withCredentials: true }
+    ).pipe(take(1));
+  }
 }

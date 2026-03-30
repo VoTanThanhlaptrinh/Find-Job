@@ -26,5 +26,7 @@ public interface JobQueryService {
 
     ApiResponse<Long> countHirerJobPost(Principal principal);
 
-    ApiResponse<Page<JobApply>> listJobUserApplied(Pageable pageable, Principal principal);
+    ApiResponse<Page<JobCardView>> listJobUserApplied(Pageable pageable, Principal principal);
+
+
 }

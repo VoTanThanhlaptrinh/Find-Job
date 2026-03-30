@@ -1,6 +1,8 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, effect, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { JobService } from '../../services/job.service';
+import { ResumeService } from '../../../../core/services/resume.service';
+import { NotifyMessageService } from '../../../../core/services/notify-message.service';
 
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { take } from 'rxjs';
@@ -36,34 +38,38 @@ export class ApplyCvComponent implements OnInit {
   isDragging = false;
   readonly maxFileSize = 5 * 1024 * 1024;
   readonly acceptedExtensions = '.pdf,.doc,.docx';
-  readonly previousCvOptions: ResumeReviewInput[] = [
-    {
-      id: 1,
-      fileName: 'Nguyen_2023_Revised.pdf',
-      createDate: '2023-10-12T09:15:00'
-    },
-    {
-      id: 2,
-      fileName: 'Tran_Resume_Final.docx',
-      createDate: '2024-01-08T15:40:00'
-    }
-  ];
+  get previousCvOptions(): ResumeReviewInput[] {
+    return this.resumeService.resumes$() || [];
+  }
 
   constructor(private router: Router,
     private route: ActivatedRoute,
-    private jobService: JobService
+    private jobService: JobService,
+    public resumeService: ResumeService,
+    private notifyService: NotifyMessageService
   ) {
     this.applyCvForm = this.fb.nonNullable.group({
       cvMode: this.fb.nonNullable.control<CvMode>('existing', Validators.required),
       existingCvId: this.fb.nonNullable.control(this.previousCvOptions[0]?.id ?? 0, Validators.required),
       email: this.fb.nonNullable.control('', [Validators.required, Validators.email]),
-      coverLetter: this.fb.nonNullable.control('')
+      coverLetter: this.fb.nonNullable.control('', [Validators.maxLength(1000)])
     });
 
     this.updateExistingCvValidator('existing');
+
+    effect(() => {
+      const resumes = this.resumeService.resumes$();
+      if (resumes && resumes.length > 0) {
+        // If current value is 0 (default/unselected), select the first available resume
+        if (this.applyCvForm.controls.existingCvId.value === 0) {
+          this.applyCvForm.controls.existingCvId.setValue(resumes[0].id);
+        }
+      }
+    });
   }
 
   ngOnInit(): void {
+    this.resumeService.getUserResumes();
     this.route.params.pipe(take(1)).subscribe(params => {
       this.jobId = params['id'];
     });
@@ -167,21 +173,24 @@ export class ApplyCvComponent implements OnInit {
   onSubmit(): void {
     if (this.applyCvForm.invalid) {
       this.applyCvForm.markAllAsTouched();
+      this.notifyService.error('Vui lòng kiểm tra lại thông tin form.');
       return;
     }
 
     const payload = this.buildApplyCvPayload();
     if (!payload) {
+      this.notifyService.error('Không thể tạo dữ liệu nộp hồ sơ. Vui lòng thử lại.');
       return;
     }
 
     if (this.isMode('existing')) {
       this.jobService.submitApplyCvExisting(payload as ApplyCvWithExistingRequest).subscribe({
         next: (response: ApplyCvResponse) => {
-          console.log('Submit existing CV success:', response);
+          this.notifyService.success(response.message || 'Nộp hồ sơ thành công!');
+          this.router.navigate(['/jobs', this.jobId]);
         },
-        error: (error: unknown) => {
-          console.error('Submit existing CV failed:', error);
+        error: (error: any) => {
+           this.notifyService.error(error.error?.message || 'Có lỗi xảy ra khi nộp hồ sơ.');
         }
       });
       return;
@@ -189,10 +198,11 @@ export class ApplyCvComponent implements OnInit {
 
     this.jobService.submitApplyCvUpload(payload as ApplyCvWithUploadRequest).subscribe({
       next: (response: ApplyCvResponse) => {
-        console.log('Submit upload CV success:', response);
+        this.notifyService.success(response.message || 'Nộp hồ sơ thành công!');
+        this.router.navigate(['/jobs', this.jobId]);
       },
-      error: (error: unknown) => {
-        console.error('Submit upload CV failed:', error);
+      error: (error: any) => {
+        this.notifyService.error(error.error?.message || 'Có lỗi xảy ra khi tải CV lên.');
       }
     });
   }

@@ -2,6 +2,7 @@ package com.job_web.service.ai;
 
 
 import com.job_web.dto.ai.ResumeRequest;
+import com.job_web.dto.common.ApiResponse;
 import com.job_web.dto.job.JobCardView;
 import com.job_web.dto.job.JobDTO;
 import com.job_web.dto.job.VectorizeJdRequest;

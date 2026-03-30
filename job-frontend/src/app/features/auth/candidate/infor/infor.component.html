@@ -1,11 +1,10 @@
 <section class="banner-area relative" id="mini">
   <div class="overlay overlay-bg"></div>
 </section>
-<div class="h-5"></div>
-<div class="relative min-h-screen h-screen my-2">
-  <div class="flex w-full mx-auto h-full">
+<div class="relative min-h-screen h-screen">
+  <div class="flex w-full mx-auto h-screen">
     <!-- Sidebar -->
-    <div class="shrink-0 bg-white shadow-md h-full border transition-all duration-300 ease-in-out overflow-hidden"
+    <div class="shrink-0 bg-white shadow-md h-screen border transition-all duration-300 ease-in-out overflow-hidden"
       [ngClass]="isOpen ? 'w-64' : 'w-0'">
       <div class="flex flex-col gap-y-3 items-center px-3 py-4 min-w-[16rem]">
         <!-- User Info -->
@@ -41,9 +40,8 @@
     </div>
 
     <!-- Main Content -->
-    <section class="min-w-0 flex-1 w-full bg-white p-4 shadow-md border border-slate-200 h-full">
+    <section class="min-w-0 flex-1 w-full bg-white p-4 shadow-md border border-slate-200 h-screen">
       <router-outlet></router-outlet>
     </section>
   </div>
 </div>
-<div class="h-5"></div>

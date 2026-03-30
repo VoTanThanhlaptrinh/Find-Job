@@ -107,7 +107,8 @@ spring:
     api-key: ${OCR_API_KEY}
   ai:
     agent:
-      base-url: https://votanthanh32004-job-portal-matching.hf.space
+      base-url: https://undeluged-marilyn-trappy.ngrok-free.dev
+#      https://votanthanh32004-job-portal-matching.hf.space
 
 app:
   cookie:
