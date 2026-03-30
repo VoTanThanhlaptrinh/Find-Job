@@ -7,6 +7,7 @@ import com.job_web.dto.ai.ResumeParsingMessage;
 import com.job_web.dto.application.ResumeDTO;
 import com.job_web.dto.application.ResumeDetailDTO;
 import com.job_web.dto.application.ResumeUploadDTO;
+import com.job_web.dto.message.ApiMessage;
 import com.job_web.dto.message.CloudUploadMessage;
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.dto.application.ResumeView;
@@ -97,6 +98,10 @@ public class ResumeServiceImpl implements ResumeService {
         try {
             data = toByteArray(resumeUploadDTO.getFile().getInputStream());
             rawText = fileService.extractTextFromFile(resumeUploadDTO.getFile().getInputStream());
+            if(rawText == null || rawText.isEmpty()){
+                rawText = fileService.extractTextFromFileOcr(resumeUploadDTO.getFile());
+            }
+            rawText = fileService.cleanText(rawText);
         } catch (Exception e) {
             return new ApiResponse<>("failed", null, HttpStatus.INTERNAL_SERVER_ERROR.value());
         }

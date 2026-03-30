@@ -7,7 +7,7 @@ import {
   ReactiveFormsModule, ValidationErrors,
   Validators
 } from '@angular/forms';
-import {JobServiceService} from '../../../jobs/services/job.service';
+import {JobService} from '../../../jobs/services/job.service';
 import {RouterLink} from '@angular/router';
 import {QuillModule} from 'ngx-quill';
 import {CommonModule} from '@angular/common';
@@ -40,7 +40,7 @@ export class PostJobComponent {
     image: new FormControl<File | null>(null, Validators.required)
   });
 
-  constructor(private jobService: JobServiceService
+  constructor(private jobService: JobService
               ,private notify: NotifyMessageService) {
   }
   onSubmit() {

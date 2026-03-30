@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { JobServiceService } from '../../services/job.service';
+import { JobService } from '../../services/job.service';
 
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { take } from 'rxjs';
@@ -51,7 +51,7 @@ export class ApplyCvComponent implements OnInit {
 
   constructor(private router: Router,
     private route: ActivatedRoute,
-    private jobService: JobServiceService
+    private jobService: JobService
   ) {
     this.applyCvForm = this.fb.nonNullable.group({
       cvMode: this.fb.nonNullable.control<CvMode>('existing', Validators.required),

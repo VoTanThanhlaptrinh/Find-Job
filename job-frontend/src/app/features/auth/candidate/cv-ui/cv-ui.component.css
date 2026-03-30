@@ -70,3 +70,14 @@
     transform: scale(1);
   }
 }
+
+/* Analyzing state progress bar (indigo theme) */
+.progress-bar-container.analyzing {
+  background-color: #e0e7ff;
+}
+
+.progress-bar-fill.analyzing {
+  background: linear-gradient(90deg, #6366f1, #a5b4fc, #6366f1);
+  background-size: 200% 100%;
+  animation: progressFlow 1.5s ease-in-out infinite;
+}

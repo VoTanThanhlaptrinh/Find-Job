@@ -102,7 +102,7 @@ public class MasterDataSeeder implements CommandLineRunner {
         if (jobRepository.count() == 0) {
             log.info("Tiến hành đọc file JSON và tạo dữ liệu Job...");
             var jobsJson = convertJsonFileToList("C:/Users/DELL/Downloads/job_data_500.json");
-            jobsJson.addAll(convertJsonFileToList("C:/Users/DELL/Downloads/job_data_vn_300 .json"));
+            jobsJson.addAll(convertJsonFileToList("C:/Users/DELL/Downloads/job_data_vn_300.json"));
             List<Hirer> finalHirers = hirers;
             List<Job> jobEntities = jobsJson.stream()
                     .map(dto -> convertJob(dto, finalHirers))
@@ -112,7 +112,7 @@ public class MasterDataSeeder implements CommandLineRunner {
             log.info("✅ Đã lưu {} công việc vào database.", jobEntities.size());
 
             // Vectorize tất cả các JD đã lưu
-            vectorizeJobs(jobEntities);
+//            vectorizeJobs(jobEntities);
         }
         log.info("✅ Hoàn tất khởi tạo Master Data.");
     }
@@ -336,13 +336,9 @@ public class MasterDataSeeder implements CommandLineRunner {
     private VectorizeJdRequest createVectorizeJdRequest(Job job) {
         VectorizeJdRequest request = new VectorizeJdRequest();
         request.setJobId(job.getId());
-        request.setUserId(job.getHirer() != null && job.getHirer().getUser() != null 
-                ? job.getHirer().getUser().getId() 
-                : null);
+        request.setUserId(job.getHirer().getId());
         request.setRequiredYearsExperience(job.getYearOfExperience());
-        request.setDeadlineDate(job.getExpiredDate() != null 
-                ? job.getExpiredDate().toLocalDate() 
-                : null);
+        request.setDeadlineDate(LocalDate.from(job.getExpiredDate()));
 
         // Tạo JdDataContext với text đã được trích xuất từ HTML
         JdDataContext dataContext = new JdDataContext();
