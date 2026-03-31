@@ -136,7 +136,8 @@
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-open-ai</artifactId>
-            <version>1.12.2</version> </dependency>
+            <version>1.12.2</version>
+        </dependency>
         <!--đọc .env-->
         <dependency>
             <groupId>io.github.cdimascio</groupId>

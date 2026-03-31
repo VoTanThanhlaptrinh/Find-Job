@@ -16,6 +16,7 @@ public interface JobService {
     ApiResponse<String> updateJob(long id, JobDTO jobDTO, Principal principal);
 
     ApiResponse<String> deleteJob(long id, Principal principal);
+
 }
 
 

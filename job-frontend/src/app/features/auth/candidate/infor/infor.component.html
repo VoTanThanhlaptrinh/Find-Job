@@ -1,40 +1,47 @@
 <section class="banner-area relative" id="mini">
   <div class="overlay overlay-bg"></div>
 </section>
-<div class="h-5"></div>
-<div class="relative h-screen my-2">
-  <div class="flex w-full max-w-7xl mx-auto h-full gap-4">
-    <div
-      class="hidden lg:flex flex-col bg-white gap-y-3 items-center max-w-77 shadow-md rounded-lg border px-2"
-    >
-      <div class="flex flex-col items-center gap-3">
-        <img
-          [src]="userAvatar"
-          alt="User avatar"
-          title="User avatar"
-          class="h-20 w-20 rounded-full border border-slate-300 object-cover mt-2"
-        />
-        <h3 class="text-sm font-semibold text-slate-900">{{ userName }}</h3>
-      </div>
-      <div class="bg-gray-400 h-0.5 w-70 border px-2"></div>
-      <nav class="flex-1 space-y-1 overflow-y-auto">
-        @for (item of menuItems; track item.route) {
-          <a
-            [routerLink]="item.route"
-            routerLinkActive="text-slate-50 bg-gray-800 shadow-md border"
+<div class="relative min-h-screen h-screen">
+  <div class="flex w-full mx-auto h-screen">
+    <!-- Sidebar -->
+    <div class="shrink-0 bg-white shadow-md h-screen border transition-all duration-300 ease-in-out overflow-hidden"
+      [ngClass]="isOpen ? 'w-64' : 'w-0'">
+      <div class="flex flex-col gap-y-3 items-center px-3 py-4 min-w-[16rem]">
+        <!-- User Info -->
+        <div class="flex flex-col items-center gap-3">
+          <img [src]="userAvatar" alt="User avatar" title="User avatar"
+            class="h-20 w-20 rounded-full border-2 border-slate-300 object-cover shadow-sm" />
+          <h3 class="text-sm font-semibold text-slate-900 whitespace-nowrap">{{ userName }}</h3>
+        </div>
+        <div class="bg-gray-300 h-px w-full"></div>
+        <!-- Navigation -->
+        <nav class="flex-1 space-y-1 overflow-y-auto w-full">
+          @for (item of menuItems; track item.route) {
+          <a [routerLink]="item.route" routerLinkActive="text-blue-600 border border-gray-200 bg-gray-800 shadow-md"
             [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
-            class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition"
-            (click)="isOpen = false"
-          >
-            <i [class]="item.icon"></i>
+            class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm  font-medium transition-colors duration-200 hover:bg-gray-100 whitespace-nowrap"
+            (click)="onMenuItemClick()">
+            <i [class]="item.icon" class="w-5 text-center"></i>
             <span>{{ item.name }}</span>
           </a>
-        }
-      </nav>
+          }
+        </nav>
+      </div>
     </div>
-    <section class="min-w-0 flex-1 w-full border-slate-200 bg-white p-3 shadow-md rounded-lg border">
+
+    <!-- Black Divider Bar with Toggle Button -->
+    <div class="shrink-0 w-0.5 bg-gray-400 relative cursor-pointer group  transition-colors duration-200 "
+      (click)="toggleSidebar()" title="Thu/mở sidebar">
+      <div
+        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-7 h-7 bg-gray-900 group-hover:bg-gray-700 rounded-full flex items-center justify-center shadow-lg transition-colors duration-200 z-10">
+        <i class="fas text-white text-xs transition-transform duration-300"
+          [ngClass]="isOpen ? 'fa-chevron-left' : 'fa-chevron-right'"></i>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <section class="min-w-0 flex-1 w-full bg-white p-4 shadow-md border border-slate-200 h-screen">
       <router-outlet></router-outlet>
     </section>
   </div>
 </div>
-<div class="h-5"></div>

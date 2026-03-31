@@ -1,6 +1,5 @@
 import { Component, effect, OnInit } from '@angular/core';
-import { take } from 'rxjs';
-import { ResumeService } from '../../../../core/services/resume.service';
+import { ResumeService, UploadingFileState } from '../../../../core/services/resume.service';
 import { LoadingComponent } from '../../../../shared/components/loading/loading.component';
 import { ResumeReviewComponent } from '../../../../shared/components/resume-review/resume-review.component';
 import { SkeletonCvCardComponent } from '../../../../shared/components/skeleton-cv-card/skeleton-cv-card.component';
@@ -18,6 +17,7 @@ export class CvUiComponent implements OnInit {
   resumes: ResumeReviewInput[] = [];
   isLoading = false;
   isUploadModalOpen = false;
+  uploadingFile: UploadingFileState | null = null;
   readonly skeleton = true;
   readonly skeletonRows = [1, 2, 3];
 
@@ -25,6 +25,9 @@ export class CvUiComponent implements OnInit {
     effect(() => {
       this.resumes = this.resumeService.resumes$();
       this.isLoading = false;
+    });
+    effect(() => {
+      this.uploadingFile = this.resumeService.uploadingFile$();
     });
   }
 

@@ -8,7 +8,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
-import org.jsoup.Jsoup;
 
 import java.time.LocalDate;
 import java.time.ZoneOffset;
@@ -59,9 +58,7 @@ public record JobDTO(
             job.setMoreDetail(moreDetail);
         }
     }
-    private String parseHtml(String html){
-        return Jsoup.parse(html).wholeText();
-    }
+
     public Job toJob() {
         Job job = new Job();
         updateJob(job);

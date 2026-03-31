@@ -7,6 +7,8 @@ import com.job_web.dto.ai.ResumeParsingMessage;
 import com.job_web.dto.application.ResumeDTO;
 import com.job_web.dto.application.ResumeDetailDTO;
 import com.job_web.dto.application.ResumeUploadDTO;
+import com.job_web.dto.message.ApiMessage;
+import com.job_web.dto.message.CloudUploadMessage;
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.dto.application.ResumeView;
 import com.job_web.message.MessageProducer;
@@ -96,6 +98,10 @@ public class ResumeServiceImpl implements ResumeService {
         try {
             data = toByteArray(resumeUploadDTO.getFile().getInputStream());
             rawText = fileService.extractTextFromFile(resumeUploadDTO.getFile().getInputStream());
+            if(rawText == null || rawText.isEmpty()){
+                rawText = fileService.extractTextFromFileOcr(resumeUploadDTO.getFile());
+            }
+            rawText = fileService.cleanText(rawText);
         } catch (Exception e) {
             return new ApiResponse<>("failed", null, HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
@@ -103,7 +109,7 @@ public class ResumeServiceImpl implements ResumeService {
             return new ApiResponse<>("error", null, HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
 
-        uploadResumeToCloud(data, key, resumeUploadDTO.getFile().getOriginalFilename());
+        producer.uploadToCloud(new CloudUploadMessage(data, key, resumeUploadDTO.getFile().getOriginalFilename()));
         resumeRepository.save(cv);
         producer.processAI(new ResumeParsingMessage(rawText, userOpt.get().getId(), cv.getId()));
         return new ApiResponse<>("success", new ResumeView(cv.getId(), cv.getFileName(), cv.getCreateDate()), HttpStatus.CREATED.value());
@@ -133,7 +139,7 @@ public class ResumeServiceImpl implements ResumeService {
         if (data.length == 0) {
             return new ApiResponse<>("error", null, HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
-        uploadResumeToCloud(data, key, resumeUploadDTO.getFile().getOriginalFilename());
+        producer.uploadToCloud(new CloudUploadMessage(data, key, resumeUploadDTO.getFile().getOriginalFilename()));
         resumeRepository.save(cv);
         return new ApiResponse<>("success", null, HttpStatus.OK.value());
     }

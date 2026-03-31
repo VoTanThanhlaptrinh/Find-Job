@@ -4,16 +4,20 @@ import com.job_web.data.ApplyRepository;
 import com.job_web.data.JobRepository;
 import com.job_web.data.ResumeRepository;
 import com.job_web.data.UserRepository;
+import com.job_web.dto.ai.ResumeParsingMessage;
 import com.job_web.dto.application.ApplyCvWithExistingRequest;
 import com.job_web.dto.application.ApplyCvWithUploadRequest;
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.dto.application.CandidateDTO;
+import com.job_web.dto.message.CloudUploadMessage;
+import com.job_web.message.MessageProducer;
 import com.job_web.models.Apply;
 import com.job_web.models.Job;
 import com.job_web.models.Resume;
 import com.job_web.models.User;
 import com.job_web.service.application.ApplyService;
 import com.job_web.service.application.ResumeService;
+import com.job_web.service.support.FileService;
 import com.job_web.utills.KeyGeneratorUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -35,6 +39,8 @@ public class ApplyServiceImpl implements ApplyService {
     private final JobRepository jobRepository;
     private final UserRepository userRepository;
     private final ResumeService resumeService;
+    private final MessageProducer messageProducer;
+    private final FileService fileService;
     @Override
     public ApiResponse<String> applyWithExistingCv(ApplyCvWithExistingRequest request, Principal principal) {
         var job = jobRepository.findById(request.getJobId());
@@ -86,11 +92,17 @@ public class ApplyServiceImpl implements ApplyService {
             resume.setCreateDate(LocalDateTime.now());
 
             String key = KeyGeneratorUtil.generateKey();
-            byte[] data = resumeService.toByteArray(request.getCvFile().getInputStream());
-            resumeService.uploadResumeToCloud(data, key, request.getCvFile().getOriginalFilename());;
+            resume.setKeyCf(key);
+            resume.setFileName(request.getCvFile().getOriginalFilename());
 
-            resume.setFileName(request.getCvFile().getName());
+            byte[] data = resumeService.toByteArray(request.getCvFile().getInputStream());
+            String rawText = fileService.extractTextFromFile(request.getCvFile().getInputStream());
+
             resumeRepository.save(resume);
+
+            // Đẩy upload và AI processing vào message queue
+            messageProducer.uploadToCloud(new CloudUploadMessage(data, key, request.getCvFile().getOriginalFilename()));
+            messageProducer.processAI(new ResumeParsingMessage(rawText, user.get().getId(), resume.getId()));
 
             Apply apply = new Apply();
             apply.setJob(job.get());
@@ -99,9 +111,9 @@ public class ApplyServiceImpl implements ApplyService {
             apply.setApplyDate(LocalDateTime.now());
 
             applyRepository.save(apply);
-            return new ApiResponse<>("Not implemented.", null, HttpStatus.NOT_IMPLEMENTED.value());
+            return new ApiResponse<>("Ứng tuyển thành công", null, HttpStatus.OK.value());
         }catch (Exception e){
-            return new ApiResponse<>("Lỗi hệ thống", null, HttpStatus.INTERNAL_SERVER_ERROR.value());
+            throw new RuntimeException("Lỗi hệ thống: " + e.getMessage(), e);
         }
     }
 

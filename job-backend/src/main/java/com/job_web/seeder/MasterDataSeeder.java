@@ -6,11 +6,15 @@ import com.job_web.data.AddressRepository;
 import com.job_web.data.HirerRepository;
 import com.job_web.data.JobRepository;
 import com.job_web.data.UserRepository;
+import com.job_web.dto.job.JdDataContext;
 import com.job_web.dto.job.JobDTOJson;
+import com.job_web.dto.job.VectorizeJdRequest;
 import com.job_web.models.Address;
 import com.job_web.models.Hirer;
 import com.job_web.models.Job;
 import com.job_web.models.User;
+import com.job_web.service.ai.ApiService;
+import com.job_web.service.support.HtmlParserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -79,6 +83,8 @@ public class MasterDataSeeder implements CommandLineRunner {
     private final AddressRepository addressRepository;
     private final PasswordEncoder passwordEncoder;
     private final JobRepository jobRepository;
+    private final ApiService apiService;
+    private final HtmlParserService htmlParserService;
     private final Random random = new Random();
     @Override
     @Transactional
@@ -96,7 +102,7 @@ public class MasterDataSeeder implements CommandLineRunner {
         if (jobRepository.count() == 0) {
             log.info("Tiến hành đọc file JSON và tạo dữ liệu Job...");
             var jobsJson = convertJsonFileToList("C:/Users/DELL/Downloads/job_data_500.json");
-            jobsJson.addAll(convertJsonFileToList("C:/Users/DELL/Downloads/job_data_vn_300 .json"));
+            jobsJson.addAll(convertJsonFileToList("C:/Users/DELL/Downloads/job_data_vn_300.json"));
             List<Hirer> finalHirers = hirers;
             List<Job> jobEntities = jobsJson.stream()
                     .map(dto -> convertJob(dto, finalHirers))
@@ -104,6 +110,9 @@ public class MasterDataSeeder implements CommandLineRunner {
 
             jobRepository.saveAll(jobEntities);
             log.info("✅ Đã lưu {} công việc vào database.", jobEntities.size());
+
+            // Vectorize tất cả các JD đã lưu
+//            vectorizeJobs(jobEntities);
         }
         log.info("✅ Hoàn tất khởi tạo Master Data.");
     }
@@ -297,5 +306,82 @@ public class MasterDataSeeder implements CommandLineRunner {
             }
             default -> "Thỏa thuận";
         };
+    }
+
+    /**
+     * Vectorize danh sách các Job đã lưu
+     */
+    private void vectorizeJobs(List<Job> jobs) {
+        log.info("Bắt đầu vectorize {} công việc...", jobs.size());
+        int successCount = 0;
+        int failCount = 0;
+
+        for (Job job : jobs) {
+            try {
+                VectorizeJdRequest request = createVectorizeJdRequest(job);
+                apiService.vectorizeJd(request);
+                successCount++;
+            } catch (Exception e) {
+                failCount++;
+                log.warn("Không thể vectorize job ID {}: {}", job.getId(), e.getMessage());
+            }
+        }
+
+        log.info("✅ Hoàn tất vectorize: {} thành công, {} thất bại", successCount, failCount);
+    }
+
+    /**
+     * Tạo VectorizeJdRequest từ Job entity
+     */
+    private VectorizeJdRequest createVectorizeJdRequest(Job job) {
+        VectorizeJdRequest request = new VectorizeJdRequest();
+        request.setJobId(job.getId());
+        request.setUserId(job.getHirer().getId());
+        request.setRequiredYearsExperience(job.getYearOfExperience());
+        request.setDeadlineDate(LocalDate.from(job.getExpiredDate()));
+
+        // Tạo JdDataContext với text đã được trích xuất từ HTML
+        JdDataContext dataContext = new JdDataContext();
+        dataContext.setSkillsAndProjectsContext(extractSkillsContext(job));
+        dataContext.setExperienceContext(extractExperienceContext(job));
+        request.setData(dataContext);
+
+        return request;
+    }
+
+    /**
+     * Trích xuất context về skills từ Job
+     */
+    private String extractSkillsContext(Job job) {
+        StringBuilder sb = new StringBuilder();
+
+        if (job.getSkill() != null && !job.getSkill().isBlank()) {
+            sb.append(htmlParserService.parseHtml(job.getSkill()));
+        }
+
+        if (job.getMoreDetail() != null && !job.getMoreDetail().isBlank()) {
+            if (!sb.isEmpty()) sb.append("\n");
+            sb.append(htmlParserService.parseHtml(job.getMoreDetail()));
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * Trích xuất context về experience/requirements từ Job
+     */
+    private String extractExperienceContext(Job job) {
+        StringBuilder sb = new StringBuilder();
+
+        if (job.getDescription() != null && !job.getDescription().isBlank()) {
+            sb.append(htmlParserService.parseHtml(job.getDescription()));
+        }
+
+        if (job.getRequireDetails() != null && !job.getRequireDetails().isBlank()) {
+            if (!sb.isEmpty()) sb.append("\n");
+            sb.append(htmlParserService.parseHtml(job.getRequireDetails()));
+        }
+
+        return sb.toString();
     }
 }

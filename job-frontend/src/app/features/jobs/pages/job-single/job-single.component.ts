@@ -4,7 +4,7 @@ import { take } from 'rxjs';
 import { HomeService } from '../../../home/services/home.service';
 import { JobDetailViewModel } from '../../../../shared/models/jobs/job-api-response.model';
 import { JobCardModel } from '../../../../shared/models/jobs/job-card.model';
-import { JobServiceService } from '../../services/job-service.service';
+import { JobService } from '../../services/job.service';
 import { SafeHtmlPipe } from '../../../../shared/pipes/safe-html.pipe';
 
 @Component({
@@ -31,7 +31,7 @@ export class JobSingleComponent implements OnInit {
   relatedJobs: JobCardModel[] = [];
 
   constructor(
-    private jobSerivce: JobServiceService,
+    private jobSerivce: JobService,
     private route: ActivatedRoute,
     private homeService: HomeService
   ) {}
@@ -71,8 +71,8 @@ export class JobSingleComponent implements OnInit {
         next: (response) => {
           this.jobDetail = response.data;
         },
-        error: (error) => {
-          console.error('Error fetching job details:', error);
+        error: (err) => {
+          console.error('Error fetching job details:', err);
         },
       });
   }

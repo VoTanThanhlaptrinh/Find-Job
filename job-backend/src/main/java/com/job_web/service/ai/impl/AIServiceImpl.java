@@ -1,17 +1,14 @@
 package com.job_web.service.ai.impl;
 
 import com.job_web.dto.ai.ResumeModel;
-import com.job_web.dto.ai.VerificationResult;
 import com.job_web.service.ai.AIService;
 import com.job_web.service.ai.ResumeParserAgent;
-import com.job_web.service.ai.ResumeVerifierAgent;
 
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.service.AiServices;
 
 import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,7 +18,6 @@ import org.springframework.stereotype.Service;
 public class AIServiceImpl implements AIService {
     private  ChatModel model;
     private ResumeParserAgent parserAgent;
-    private ResumeVerifierAgent verifierAgent;
     private static final int MAX_RETRIES = 1;
     private static final int PASS_THRESHOLD = 80;
     @Value("${application.service.impl.deepseek.api-key}")
@@ -38,31 +34,18 @@ public class AIServiceImpl implements AIService {
                 .logResponses(true)
                 .build();
         this.parserAgent = AiServices.create(ResumeParserAgent.class, model);
-        this.verifierAgent = AiServices.create(ResumeVerifierAgent.class, model);
     }
 
-    private ResumeModel parser(String rawText, String feedback){
+    private ResumeModel parser(String rawText){
+
         if(parserAgent == null){
             parserAgent = AiServices.create(ResumeParserAgent.class, model);
         }
-        return parserAgent.parse(rawText, feedback);
-    }
-
-    private VerificationResult verify(ResumeModel profile, String rawText){
-        if(verifierAgent == null){
-            verifierAgent = AiServices.create(ResumeVerifierAgent.class, model);
-        }
-        return verifierAgent.verify(profile, rawText);
+        return parserAgent.parse(rawText);
     }
 
     @Override
     public ResumeModel processResume(String rawText) {
-        log.info(apiKey);
-        var bestResume = parser(rawText, "");
-        var bestVerify = verify(bestResume, rawText);
-        if (bestVerify.getConfidenceScore() >= PASS_THRESHOLD) {
-            return bestResume;
-        }
-        return bestResume;
+        return parser(rawText);
     }
 }

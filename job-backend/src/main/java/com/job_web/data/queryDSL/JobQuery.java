@@ -1,9 +1,6 @@
 package com.job_web.data.queryDSL;
 
-import com.job_web.dto.job.AddressJobCount;
-import com.job_web.dto.job.JobApply;
-import com.job_web.dto.job.JobCardView;
-import com.job_web.dto.job.JobResponse;
+import com.job_web.dto.job.*;
 import com.job_web.models.EntityStatus;
 import com.job_web.models.Job;
 import com.job_web.models.QAddress;
@@ -28,6 +25,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -50,6 +48,24 @@ public class JobQuery {
                         addressIsActiveOrMissing(address),
                         cityName == null ? null : address.city.eq(cityName)
                 )
+                .fetch();
+    }
+
+    public List<JobCardView> findMatchJobs(MatchJobsResponse matchs) {
+        var jobIds = matchs.data().stream().map(JobMatchItem::jobId).toList();
+        QJob job = QJob.job;
+        QAddress address = QAddress.address;
+        return queryFactory
+                .select(jobCardProjection(job, address))
+                .from(job)
+                .leftJoin(job.address, address)
+                .where(
+                        job.id.in(jobIds),
+                        job.status.eq(ACTIVE_STATUS),
+                        job.expiredDate.after(LocalDateTime.now()),
+                        addressIsActiveOrMissing(address)
+                )
+                .orderBy(job.createDate.desc())
                 .fetch();
     }
 
@@ -185,7 +201,7 @@ public class JobQuery {
         if (times != null && !times.isEmpty()) {
             filterBuilder.and(job.time.in(times));
         }
-        if(title != null){
+        if (title != null) {
             var lower = title.toLowerCase();
             filterBuilder.and(job.title.lower().containsIgnoreCase(lower));
         }
@@ -281,22 +297,14 @@ public class JobQuery {
         return total == null ? 0L : total;
     }
 
-    public Page<JobApply> listJobUserApplied(Pageable pageable, String email) {
+    public Page<JobCardView> listJobUserApplied(Pageable pageable, String email) {
         QApply apply = QApply.apply;
         QJob job = QJob.job;
         QUser user = QUser.user;
         QAddress address = QAddress.address;
 
-        JPAQuery<JobApply> contentQuery = queryFactory
-                .select(com.querydsl.core.types.Projections.constructor(
-                        JobApply.class,
-                        job.id,
-                        job.title,
-                        job.description,
-                        address.city,
-                        job.salary,
-                        job.time
-                ))
+        JPAQuery<JobCardView> contentQuery = queryFactory
+                .select(jobCardProjection(job,address))
                 .from(apply)
                 .join(apply.user, user)
                 .join(apply.job, job)

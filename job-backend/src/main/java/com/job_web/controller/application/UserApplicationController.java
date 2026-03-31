@@ -7,6 +7,7 @@ import com.job_web.dto.application.ApplyCvWithExistingRequest;
 import com.job_web.dto.application.ApplyCvWithUploadRequest;
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.dto.job.JobApply;
+import com.job_web.dto.job.JobCardView;
 import com.job_web.service.application.ApplyService;
 import com.job_web.service.job.JobQueryService;
 import jakarta.validation.Valid;
@@ -62,10 +63,10 @@ public class UserApplicationController {
     }
 
     @GetMapping("/jobs/applied/{pageIndex}/{pageSize}")
-    public ResponseEntity<ApiResponse<Page<JobApply>>> listJobUserApplied(@PathVariable("pageIndex") int pageIndex,
-                                                                          @PathVariable("pageSize") int pageSize,
-                                                                          Principal principal) {
-        ApiResponse<Page<JobApply>> res = jobQueryService.listJobUserApplied(PageRequest.of(pageIndex, pageSize), principal);
+    public ResponseEntity<ApiResponse<Page<JobCardView>>> listJobUserApplied(@PathVariable("pageIndex") int pageIndex,
+                                                                             @PathVariable("pageSize") int pageSize,
+                                                                             Principal principal) {
+        ApiResponse<Page<JobCardView>> res = jobQueryService.listJobUserApplied(PageRequest.of(pageIndex, pageSize), principal);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 }

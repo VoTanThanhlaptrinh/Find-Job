@@ -10,7 +10,11 @@ public interface ResumeParserAgent {
     Bạn là một chuyên gia phân tích dữ liệu cho hệ thống Semantic Search tuyển dụng. 
     Nhiệm vụ của bạn là đọc nội dung CV gốc, tính toán các chỉ số và tổng hợp văn bản thành các khối nội dung giàu ngữ nghĩa.
 
-    YÊU CẦU TRÍCH XUẤT:
+    QUY TẮC NGÔN NGỮ TỐI QUAN TRỌNG:
+    - BẮT BUỘC phản hồi và trích xuất bằng ĐÚNG NGÔN NGỮ GỐC của CV. Tuyệt đối KHÔNG dịch thuật (vietsub) nội dung.
+    - Nếu CV viết bằng Tiếng Anh, toàn bộ nội dung trích xuất ở các trường văn bản phải là Tiếng Anh. Nếu CV Tiếng Việt, dùng Tiếng Việt.
+
+    YÊU CẦU TRÍCH XUẤT (Tuân thủ nghiêm ngặt các trường dữ liệu sau):
     1. yearOfExperience (Số năm kinh nghiệm):
        - Phân tích các mốc thời gian làm việc tại các công ty/tổ chức để tính tổng số năm làm việc.
        - CHỈ tính kinh nghiệm làm việc chuyên nghiệp (Full-time, Part-time, Internship tại doanh nghiệp).
@@ -18,19 +22,22 @@ public interface ResumeParserAgent {
        - Trả về MỘT SỐ NGUYÊN duy nhất. Làm tròn theo quy tắc toán học (vd: 1.5 năm -> 2, dưới 1 năm -> 0).
 
     2. skillsAndProjectsContext: 
-       - Tổng hợp tất cả kỹ năng cứng và các dự án (cá nhân, đồ án môn học). 
-       - Viết dưới dạng các câu mô tả ngắn gọn nhưng đủ ngữ cảnh. 
-       - Ví dụ: 'Sử dụng Java và Spring Boot để xây dựng RESTful API; Thành thạo Angular và Tailwind CSS trong phát triển giao diện; Có kinh nghiệm triển khai hệ thống với Docker.'
+       - Tổng hợp TẤT CẢ kỹ năng (cứng và mềm), công cụ, phần mềm sử dụng và các dự án vào chung một khối văn bản. 
+       - Viết dưới dạng các câu mô tả ngắn gọn, nối tiếp nhau bằng ngôn ngữ gốc của CV.
+       - TUYỆT ĐỐI BỎ QUA các thông tin về trường lớp, học vấn (Education).
 
     3. experienceContext: 
-       - Tổng hợp toàn bộ quá trình làm việc tại các công ty/tổ chức. 
-       - Nếu không có kinh nghiệm đi làm, hãy trả về chính xác chuỗi: 'Chưa có kinh nghiệm làm việc chuyên nghiệp'.
-       - Định dạng tiêu chuẩn: 'Làm việc tại [Công ty] với vị trí [Vị trí] trong [Thời gian]. Trách nhiệm chính bao gồm: [Mô tả].'
+       - Tổng hợp toàn bộ quá trình làm việc chuyên nghiệp.
+       - Định dạng tiêu chuẩn (linh hoạt theo ngôn ngữ CV): 
+         + Nếu CV Tiếng Việt: 'Làm việc tại [Công ty] với vị trí [Vị trí] từ [Thời gian]. Trách nhiệm chính: [Mô tả].'
+         + Nếu CV Tiếng Anh: 'Worked at [Company] as [Position] from [Time]. Main responsibilities: [Description].'
+       - Nếu không có kinh nghiệm đi làm, trả về câu tương ứng với ngôn ngữ CV (VD: 'Chưa có kinh nghiệm làm việc chuyên nghiệp' hoặc 'No professional work experience').
 
-    QUY TẮC NGHIÊM NGẶT:
-    - Giữ nguyên các thuật ngữ kỹ thuật bằng tiếng Anh (ví dụ: RESTful, Database, Framework).
-    - Không sử dụng các ký tự đặc biệt (như icon, emoji) làm nhiễu văn bản.
-    - Đảm bảo khối văn bản có tính logic, rành mạch để model Sentence-BERT tạo Vector chính xác nhất.
+    QUY TẮC NGHIÊM NGẶT KHÁC:
+    - Đa ngành nghề: Phân tích khách quan cho MỌI NGÀNH NGHỀ (Kỹ thuật, Kinh tế, Dịch vụ, Y tế, Giáo dục...). Không tự suy diễn các kỹ năng hay thuật ngữ không có trong CV.
+    - Giữ nguyên các thuật ngữ chuyên môn: (ví dụ: RESTful, Digital Marketing, CPR, B2B, AutoCAD, Kế toán tổng hợp).
+    - Không sử dụng các ký tự đặc biệt (như icon, emoji, gạch đầu dòng phức tạp) làm nhiễu văn bản.
+    - Đảm bảo khối văn bản có tính logic, rành mạch để mô hình Sentence-BERT tạo Vector ngữ nghĩa (Embedding) chính xác nhất.
     """)
     @UserMessage("""
     Hãy thực hiện trích xuất dữ liệu dựa trên nội dung CV sau đây:
@@ -38,9 +45,6 @@ public interface ResumeParserAgent {
     === NỘI DUNG CV GỐC ===
     {{cv_text}}
     =======================
-
-    Ghi chú bổ sung / Yêu cầu sửa lỗi: 
-    {{feedback}}
     """)
-    ResumeModel parse(@V("cv_text") String rawText, @V("feedback") String feedback);
+    ResumeModel parse(@V("cv_text") String rawText);
 }

@@ -67,7 +67,7 @@ public class JobQueryServiceImpl implements JobQueryService {
     }
 
     @Override
-    public ApiResponse<Page<JobApply>> listJobUserApplied(Pageable pageable, Principal principal) {
+    public ApiResponse<Page<JobCardView>> listJobUserApplied(Pageable pageable, Principal principal) {
         if (principal == null) {
             return new ApiResponse<>("Ban chua dang nhap", null, HttpStatus.UNAUTHORIZED.value());
         }
