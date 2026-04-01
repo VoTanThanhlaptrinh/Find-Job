@@ -24,15 +24,12 @@ public class FileServiceImpl implements FileService {
     private static final String OCR_API_URL = "https://api.ocr.space/parse/image";
 
     private final RestClient restClient;
-    private final String ocrApiKey;
+    @Value("${spring.ocr.api-key}")
+    private String ocrApiKey;
     private final ObjectMapper objectMapper;
 
-    public FileServiceImpl(
-            RestClient.Builder restClientBuilder,
-            @Value("${spring.ocr.api-key}") String ocrApiKey
-    ) {
+    public FileServiceImpl(RestClient.Builder restClientBuilder) {
         this.restClient = restClientBuilder.build();
-        this.ocrApiKey = ocrApiKey;
         this.objectMapper = new ObjectMapper();
     }
 
@@ -64,9 +61,7 @@ public class FileServiceImpl implements FileService {
 
             // Build multipart body
             MultipartBodyBuilder bodyBuilder = new MultipartBodyBuilder();
-            bodyBuilder.part("file", fileResource)
-                    .filename(fileName)
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM);
+            bodyBuilder.part("file", fileResource).filename(fileName).contentType(MediaType.APPLICATION_OCTET_STREAM);
             bodyBuilder.part("language", "eng");
             bodyBuilder.part("isOverlayRequired", "false");
             bodyBuilder.part("detectOrientation", "true");
@@ -74,13 +69,7 @@ public class FileServiceImpl implements FileService {
             bodyBuilder.part("OCREngine", "2");
 
             // Gọi OCR.space API
-            String response = restClient.post()
-                    .uri(OCR_API_URL)
-                    .header("apikey", ocrApiKey)
-                    .contentType(MediaType.MULTIPART_FORM_DATA)
-                    .body(bodyBuilder.build())
-                    .retrieve()
-                    .body(String.class);
+            String response = restClient.post().uri(OCR_API_URL).header("apikey", ocrApiKey).contentType(MediaType.MULTIPART_FORM_DATA).body(bodyBuilder.build()).retrieve().body(String.class);
 
             return parseOcrResponse(response);
 
@@ -95,9 +84,7 @@ public class FileServiceImpl implements FileService {
             JsonNode root = objectMapper.readTree(response);
             // Kiểm tra lỗi từ OCR.space
             if (root.has("IsErroredOnProcessing") && root.get("IsErroredOnProcessing").asBoolean()) {
-                String errorMessage = root.has("ErrorMessage")
-                        ? root.get("ErrorMessage").toString()
-                        : "Unknown OCR error";
+                String errorMessage = root.has("ErrorMessage") ? root.get("ErrorMessage").toString() : "Unknown OCR error";
                 log.error("OCR.space returned error: {}", errorMessage);
                 return "";
             }
