@@ -16,6 +16,9 @@
             "outputPath": "dist/job-frontend",
             "index": "src/index.html",
             "browser": "src/main.ts",
+            "externalDependencies": [
+              "quill-delta", "event-source-polyfill" 
+            ],
             "polyfills": [
               "zone.js"
             ],

@@ -26,7 +26,7 @@ import { hirerGuard } from './core/guards/hirer-guard.guard';
 import { RecruiterLoginComponent } from './features/recruiter/pages/recruiter-login/recruiter-login.component';
 import { RecruiterRegisterComponent } from './features/recruiter/pages/recruiter-register/recruiter-register.component';
 import { recruiterDashboardRoutes } from './features/recruiter/pages/recruiter-dashboard/recruiter-dashboard.routes';
-import { ApplySuccessModalComponent } from './shared/components/apply-success/apply-success-modal.component';
+import { ApplySuccessComponent } from './shared/components/apply-success/apply-success.component';
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'recruiter/login', component: RecruiterLoginComponent },
@@ -66,5 +66,5 @@ export const routes: Routes = [
   ,
   { path: 'single/:id', component: JobSingleComponent },
   { path: 'apply-cv/:id', component: ApplyCvComponent },
-  { path: 'apply-success', component: ApplySuccessModalComponent },
+  { path: 'apply-success', component: ApplySuccessComponent },
 ];
