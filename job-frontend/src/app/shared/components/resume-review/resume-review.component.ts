@@ -1,6 +1,7 @@
 import { Component, ElementRef, HostListener, Input, inject } from '@angular/core';
-import { ResumeService } from '../../../core/services/resume.service';
+import { ResumeContext, ResumeService } from '../../../core/services/resume.service';
 import { ResumeReviewInput } from '../../models/jobs/resume-review-input.model';
+import { NotifyMessageService } from '../../../core/services/notify-message.service';
 
 @Component({
   selector: 'app-resume-review',
@@ -11,10 +12,14 @@ import { ResumeReviewInput } from '../../models/jobs/resume-review-input.model';
 export class ResumeReviewComponent {
   private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly resumeService = inject(ResumeService);
+  private readonly notifyService = inject(NotifyMessageService);
 
   @Input({ required: true }) resume!: ResumeReviewInput;
+  @Input() context: ResumeContext = 'user';
   isMenuOpen = false;
   isDeleting = false;
+  isLoadingView = false;
+  isLoadingDownload = false;
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
@@ -39,19 +44,44 @@ export class ResumeReviewComponent {
   }
 
   onViewResume(): void {
-    this.closeMenu();
-    const url = this.resumeService.getResumeResourceUrl(this.resume.id, this.resume.fileName, 'inline');
-    window.open(url, '_blank', 'noopener,noreferrer');
+    if (this.isLoadingView) {
+      return;
+    }
+
+    this.isLoadingView = true;
+    this.resumeService.getResumeViewUrl(this.resume.id, this.context).subscribe({
+      next: (url) => {
+        window.open(url, '_blank', 'noopener,noreferrer');
+        this.isLoadingView = false;
+      },
+      error: () => {
+        this.notifyService.error('Không thể xem CV. Vui lòng thử lại.');
+        this.isLoadingView = false;
+      }
+    });
   }
 
   onDownloadResume(): void {
-    this.closeMenu();
-    const link = document.createElement('a');
-    link.href = this.resumeService.getResumeResourceUrl(this.resume.id, this.resume.fileName, 'attachment');
-    link.download = this.resume.fileName;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    link.click();
+    if (this.isLoadingDownload) {
+      return;
+    }
+
+    this.isLoadingDownload = true;
+    this.resumeService.getResumeDownloadUrl(this.resume.id, this.context).subscribe({
+      next: (url) => {
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = this.resume.fileName;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.click();
+        this.isLoadingDownload = false;
+      },
+      error: () => {
+        this.notifyService.error('Không thể tải CV. Vui lòng thử lại.');
+        this.isLoadingDownload = false;
+      }
+    });
   }
 
   onDeleteResume(): void {

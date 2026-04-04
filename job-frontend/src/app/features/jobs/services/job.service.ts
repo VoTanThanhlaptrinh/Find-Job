@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { computed, Injectable, signal } from '@angular/core';
 import { Observable, take } from 'rxjs';
 import { UtilitiesService } from '../../../core/services/utilities.service';
@@ -99,9 +99,12 @@ export class JobService {
   }
 
   getHirerJobPost(pageIndex: number, pageSize: number): Observable<HirerJobListApiResponse> {
+    let params = new HttpParams()
+      .set('page', pageIndex)
+      .set('size', pageSize);
     return this.http.get<HirerJobListApiResponse>(
-      `${this.url}/hirer/jobs/posted/${pageIndex}/${pageSize}`,
-      { withCredentials: true }
+      `${this.url}/hirer/jobs/posted`,
+      { params, withCredentials: true }
     ).pipe(take(1));
   }
 
@@ -117,9 +120,12 @@ export class JobService {
   }
 
   listJobUserApplied(pageIndex: number, pageSize: number): Observable<JobListApiResponse> {
+    let params = new HttpParams()
+      .set('page', pageIndex)
+      .set('size', pageSize);
     return this.http.get<JobListApiResponse>(
-      `${this.url}/jobs/applied/${pageIndex}/${pageSize}`,
-      { withCredentials: true }
+      `${this.url}/jobs/applied`,
+      { params, withCredentials: true }
     ).pipe(take(1));
   }
 }

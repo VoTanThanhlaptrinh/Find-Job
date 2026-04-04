@@ -1,13 +1,14 @@
 package com.job_web.controller.application;
 
-import java.security.Principal;
 import java.util.List;
 
 import com.job_web.dto.application.ResumeDetailDTO;
-import com.job_web.dto.application.ResumeDTO;
 import com.job_web.dto.application.ResumeUploadDTO;
+import com.job_web.dto.application.ResumeUrlDTO;
 import com.job_web.dto.application.ResumeView;
 import com.job_web.dto.common.ApiResponse;
+import com.job_web.models.CurrentUser;
+import com.job_web.models.User;
 import com.job_web.service.application.ResumeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,29 +31,47 @@ public class UserResumeController {
     private final ResumeService resumeService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<ResumeView>>> getListResumeOfUser(Principal principal) {
-        if(principal == null){
+    public ResponseEntity<ApiResponse<List<ResumeView>>> getListResumeOfUser(@CurrentUser User currentUser) {
+        if(currentUser == null){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>("Not login", null, HttpStatus.BAD_REQUEST.value()));
         }
-        ApiResponse<List<ResumeView>> res = resumeService.getListResumeOfUser(principal);
+        ApiResponse<List<ResumeView>> res = resumeService.getListResumeOfUser(currentUser);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<ResumeDetailDTO>> getResumeDetail(@PathVariable("id") long id, Principal principal) {
-        ApiResponse<ResumeDetailDTO> res = resumeService.getResumeDetail(id, principal);
+    public ResponseEntity<ApiResponse<ResumeDetailDTO>> getResumeDetail(@PathVariable("id") long id, @CurrentUser User currentUser) {
+        ApiResponse<ResumeDetailDTO> res = resumeService.getResumeDetail(id, currentUser);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    /**
+     * Lấy Pre-signed URL để xem resume trực tiếp trên trình duyệt (inline).
+     */
+    @GetMapping("/{id}/view")
+    public ResponseEntity<ApiResponse<ResumeUrlDTO>> getResumeViewUrl(@PathVariable("id") long id, @CurrentUser User currentUser) {
+        ApiResponse<ResumeUrlDTO> res = resumeService.getResumeViewUrl(id, currentUser);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    /**
+     * Lấy Pre-signed URL để tải resume về (attachment).
+     */
+    @GetMapping("/{id}/download")
+    public ResponseEntity<ApiResponse<ResumeUrlDTO>> getResumeDownloadUrl(@PathVariable("id") long id, @CurrentUser User currentUser) {
+        ApiResponse<ResumeUrlDTO> res = resumeService.getResumeDownloadUrl(id, currentUser);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<ApiResponse<ResumeView>> uploadResume(@Valid @ModelAttribute ResumeUploadDTO resumeUploadDTO,
                                                             BindingResult bindingResult,
-                                                            Principal principal) {
+                                                            @CurrentUser User currentUser) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, HttpStatus.BAD_REQUEST.value()));
         }
-        var res = resumeService.createResume(resumeUploadDTO, principal);
+        var res = resumeService.createResume(resumeUploadDTO, currentUser);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
@@ -60,19 +79,18 @@ public class UserResumeController {
     public ResponseEntity<ApiResponse<String>> updateResume(@PathVariable("id") long id,
                                                             @Valid @ModelAttribute ResumeUploadDTO resumeUploadDTO,
                                                             BindingResult bindingResult,
-                                                            Principal principal) {
+                                                            @CurrentUser User currentUser) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, HttpStatus.BAD_REQUEST.value()));
         }
-        ApiResponse<String> res = resumeService.updateResume(id, resumeUploadDTO, principal);
+        ApiResponse<String> res = resumeService.updateResume(id, resumeUploadDTO, currentUser);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<String>> deleteResume(@PathVariable("id") long id, Principal principal) {
-        ApiResponse<String> res = resumeService.deleteResume(id, principal);
+    public ResponseEntity<ApiResponse<String>> deleteResume(@PathVariable("id") long id, @CurrentUser User currentUser) {
+        ApiResponse<String> res = resumeService.deleteResume(id, currentUser);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 }
-

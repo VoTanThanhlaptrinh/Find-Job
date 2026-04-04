@@ -4,32 +4,30 @@ import com.job_web.dto.auth.ForgotPassDTO;
 import com.job_web.dto.auth.LoginDTO;
 import com.job_web.dto.auth.RegistationForm;
 import com.job_web.dto.auth.ResetDTO;
-import com.job_web.dto.common.ApiResponse;
+import com.job_web.models.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.security.Principal;
-
 public interface AuthService {
-    ApiResponse<String> register(RegistationForm registationForm);
+    String register(RegistationForm registationForm);
 
-    ApiResponse<String> sendLinkActivate(String email);
+    void sendLinkActivate(String email);
 
-    ApiResponse<String> activeAccount(String token);
+    void activeAccount(String token);
 
-    ApiResponse<String> login(LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response);
+    String login(LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response);
 
-    ApiResponse<String> refreshToken(HttpServletRequest request, HttpServletResponse response);
+    String refreshToken(HttpServletRequest request, HttpServletResponse response);
 
-    ApiResponse<String> logout(HttpServletRequest request, HttpServletResponse response);
+    void logout(HttpServletRequest request, HttpServletResponse response);
 
-    ApiResponse<String> sendCodeForgotPassword(HttpServletRequest request, String email);
+    void sendCodeForgotPassword(HttpServletRequest request, String email);
 
-    ApiResponse<String> forgotPassword(ForgotPassDTO forgotPassDTO);
+    String forgotPassword(ForgotPassDTO forgotPassDTO);
 
-    ApiResponse<String> checkRandom(String random);
+    void checkRandom(String random);
 
-    ApiResponse<String> resetPassword(ResetDTO resetDTO);
+    void resetPassword(ResetDTO resetDTO);
 
-    ApiResponse<String> checkLogin(Principal principal);
+    String checkLogin(User user);
 }

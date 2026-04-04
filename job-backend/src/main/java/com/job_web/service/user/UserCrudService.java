@@ -1,18 +1,17 @@
 package com.job_web.service.user;
 
-import com.job_web.dto.common.ApiResponse;
 import com.job_web.dto.user.UserCrudDTO;
 import com.job_web.dto.user.UserResponseDTO;
 import org.springframework.data.domain.Page;
 
 public interface UserCrudService {
-    ApiResponse<String> createUser(UserCrudDTO userDTO);
+    void createUser(UserCrudDTO userDTO);
 
-    ApiResponse<UserResponseDTO> getUserByEmail(String emal);
+    UserResponseDTO getUserByEmail(String email);
 
-    ApiResponse<Page<UserResponseDTO>> getUsers(int pageIndex, int pageSize);
+    Page<UserResponseDTO> getUsers(int page, int size);
 
-    ApiResponse<String> updateUser(long id, UserCrudDTO userDTO);
+    void updateUser(Long id, UserCrudDTO userDTO);
 
-    ApiResponse<String> deleteUser(long id);
+    void deleteUser(Long id);
 }

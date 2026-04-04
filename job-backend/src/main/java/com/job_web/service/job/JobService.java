@@ -1,23 +1,18 @@
 package com.job_web.service.job;
 
-import com.job_web.dto.common.ApiResponse;
 import com.job_web.dto.job.JobDTO;
 import com.job_web.dto.job.JobDetailView;
-
-import java.security.Principal;
+import com.job_web.models.User;
 
 public interface JobService {
-    ApiResponse<JobDetailView> getJobDetailById(String id);
+    JobDetailView getJobDetailById(Long id);
 
-    ApiResponse<Boolean> checkExistJob(String id);
+    Boolean checkExistJob(Long id);
 
-    ApiResponse<String> createJob(JobDTO jobDTO, Principal principal);
+    void createJob(JobDTO jobDTO, User user);
 
-    ApiResponse<String> updateJob(long id, JobDTO jobDTO, Principal principal);
+    void updateJob(Long id, JobDTO jobDTO, User user);
 
-    ApiResponse<String> deleteJob(long id, Principal principal);
+    void deleteJob(Long id, User user);
 
 }
-
-
-
