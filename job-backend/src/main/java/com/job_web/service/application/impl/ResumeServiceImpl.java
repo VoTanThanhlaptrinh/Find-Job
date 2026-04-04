@@ -7,6 +7,7 @@ import com.job_web.dto.ai.ResumeParsingMessage;
 import com.job_web.dto.application.ResumeDTO;
 import com.job_web.dto.application.ResumeDetailDTO;
 import com.job_web.dto.application.ResumeUploadDTO;
+import com.job_web.dto.application.ResumeUrlDTO;
 import com.job_web.dto.message.ApiMessage;
 import com.job_web.dto.message.CloudUploadMessage;
 import com.job_web.dto.common.ApiResponse;
@@ -17,6 +18,7 @@ import com.job_web.models.User;
 import com.job_web.service.ai.AIService;
 import com.job_web.service.application.ResumeService;
 import com.job_web.service.support.FileService;
+import com.job_web.service.support.S3PresignedUrlService;
 import com.job_web.utills.KeyGeneratorUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,8 +49,12 @@ public class ResumeServiceImpl implements ResumeService {
     private final FileService fileService;
     private final MessageProducer producer;
     private final AIService aiService;
+    private final S3PresignedUrlService s3PresignedUrlService;
+
     @Value("${cloudflare.r2.bucket-name}")
     private String bucketName;
+
+    private static final int DEFAULT_URL_EXPIRATION_MINUTES = 30;
 
     @Override
     public ApiResponse<List<ResumeView>> getListResumeOfUser(Principal principal) {
@@ -186,6 +192,90 @@ public class ResumeServiceImpl implements ResumeService {
         }
         buffer.flush();
         return buffer.toByteArray();
+    }
+
+    @Override
+    public ApiResponse<ResumeUrlDTO> getResumeViewUrl(long id, Principal principal) {
+        if (principal == null) {
+            return new ApiResponse<>("You are not logged in.", null, HttpStatus.UNAUTHORIZED.value());
+        }
+        Optional<Resume> cvOpt = resumeRepository.findById(id);
+        if (cvOpt.isEmpty()) {
+            return new ApiResponse<>("Resume not found.", null, HttpStatus.NOT_FOUND.value());
+        }
+        Resume cv = cvOpt.get();
+        if (cv.getUser() == null || !principal.getName().equals(cv.getUser().getEmail())) {
+            return new ApiResponse<>("You do not have permission to view this resume.", null, HttpStatus.FORBIDDEN.value());
+        }
+
+        try {
+            String url = s3PresignedUrlService.generateViewUrl(cv.getKeyCf(), DEFAULT_URL_EXPIRATION_MINUTES);
+            ResumeUrlDTO urlDTO = new ResumeUrlDTO(cv.getId(), cv.getFileName(), url, DEFAULT_URL_EXPIRATION_MINUTES);
+            return new ApiResponse<>("success", urlDTO, HttpStatus.OK.value());
+        } catch (Exception e) {
+            log.error("Error generating view URL for resume id: {}", id, e);
+            return new ApiResponse<>("Failed to generate view URL.", null, HttpStatus.INTERNAL_SERVER_ERROR.value());
+        }
+    }
+
+    @Override
+    public ApiResponse<ResumeUrlDTO> getResumeDownloadUrl(long id, Principal principal) {
+        if (principal == null) {
+            return new ApiResponse<>("You are not logged in.", null, HttpStatus.UNAUTHORIZED.value());
+        }
+        Optional<Resume> cvOpt = resumeRepository.findById(id);
+        if (cvOpt.isEmpty()) {
+            return new ApiResponse<>("Resume not found.", null, HttpStatus.NOT_FOUND.value());
+        }
+        Resume cv = cvOpt.get();
+        if (cv.getUser() == null || !principal.getName().equals(cv.getUser().getEmail())) {
+            return new ApiResponse<>("You do not have permission to download this resume.", null, HttpStatus.FORBIDDEN.value());
+        }
+
+        try {
+            String url = s3PresignedUrlService.generateDownloadUrl(cv.getKeyCf(), cv.getFileName(), DEFAULT_URL_EXPIRATION_MINUTES);
+            ResumeUrlDTO urlDTO = new ResumeUrlDTO(cv.getId(), cv.getFileName(), url, DEFAULT_URL_EXPIRATION_MINUTES);
+            return new ApiResponse<>("success", urlDTO, HttpStatus.OK.value());
+        } catch (Exception e) {
+            log.error("Error generating download URL for resume id: {}", id, e);
+            return new ApiResponse<>("Failed to generate download URL.", null, HttpStatus.INTERNAL_SERVER_ERROR.value());
+        }
+    }
+
+    @Override
+    public ApiResponse<ResumeUrlDTO> getResumeViewUrlForHirer(long id) {
+        Optional<Resume> cvOpt = resumeRepository.findById(id);
+        if (cvOpt.isEmpty()) {
+            return new ApiResponse<>("Resume not found.", null, HttpStatus.NOT_FOUND.value());
+        }
+        Resume cv = cvOpt.get();
+
+        try {
+            String url = s3PresignedUrlService.generateViewUrl(cv.getKeyCf(), DEFAULT_URL_EXPIRATION_MINUTES);
+            ResumeUrlDTO urlDTO = new ResumeUrlDTO(cv.getId(), cv.getFileName(), url, DEFAULT_URL_EXPIRATION_MINUTES);
+            return new ApiResponse<>("success", urlDTO, HttpStatus.OK.value());
+        } catch (Exception e) {
+            log.error("Error generating view URL for resume id: {}", id, e);
+            return new ApiResponse<>("Failed to generate view URL.", null, HttpStatus.INTERNAL_SERVER_ERROR.value());
+        }
+    }
+
+    @Override
+    public ApiResponse<ResumeUrlDTO> getResumeDownloadUrlForHirer(long id) {
+        Optional<Resume> cvOpt = resumeRepository.findById(id);
+        if (cvOpt.isEmpty()) {
+            return new ApiResponse<>("Resume not found.", null, HttpStatus.NOT_FOUND.value());
+        }
+        Resume cv = cvOpt.get();
+
+        try {
+            String url = s3PresignedUrlService.generateDownloadUrl(cv.getKeyCf(), cv.getFileName(), DEFAULT_URL_EXPIRATION_MINUTES);
+            ResumeUrlDTO urlDTO = new ResumeUrlDTO(cv.getId(), cv.getFileName(), url, DEFAULT_URL_EXPIRATION_MINUTES);
+            return new ApiResponse<>("success", urlDTO, HttpStatus.OK.value());
+        } catch (Exception e) {
+            log.error("Error generating download URL for resume id: {}", id, e);
+            return new ApiResponse<>("Failed to generate download URL.", null, HttpStatus.INTERNAL_SERVER_ERROR.value());
+        }
     }
 
     private String determineContentType(String fileName) {

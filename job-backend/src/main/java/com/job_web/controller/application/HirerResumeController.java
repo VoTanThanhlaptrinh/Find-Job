@@ -1,6 +1,7 @@
 package com.job_web.controller.application;
 
 import com.job_web.dto.application.ResumeDTO;
+import com.job_web.dto.application.ResumeUrlDTO;
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.models.Resume;
 import com.job_web.service.application.ResumeService;
@@ -29,13 +30,21 @@ public class HirerResumeController {
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-//    @GetMapping("/{id}/download")
-//    public ResponseEntity<Resource> downloadResume(@PathVariable("id") long id) {
-//        Resume resume = resumeService.findById(id);
-//        if (resume == null) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-//        }
-//        ByteArrayResource byteArrayResource = new ByteArrayResource(resume.getData());
-//        return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM).body(byteArrayResource);
-//    }
+    /**
+     * Lấy Pre-signed URL để xem resume trực tiếp trên trình duyệt (inline) - dành cho Hirer.
+     */
+    @GetMapping("/{id}/view")
+    public ResponseEntity<ApiResponse<ResumeUrlDTO>> getResumeViewUrl(@PathVariable("id") long id) {
+        ApiResponse<ResumeUrlDTO> res = resumeService.getResumeViewUrlForHirer(id);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    /**
+     * Lấy Pre-signed URL để tải resume về (attachment) - dành cho Hirer.
+     */
+    @GetMapping("/{id}/download")
+    public ResponseEntity<ApiResponse<ResumeUrlDTO>> getResumeDownloadUrl(@PathVariable("id") long id) {
+        ApiResponse<ResumeUrlDTO> res = resumeService.getResumeDownloadUrlForHirer(id);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
 }

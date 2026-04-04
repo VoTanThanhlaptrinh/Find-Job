@@ -6,6 +6,7 @@ import java.util.List;
 import com.job_web.dto.application.ResumeDetailDTO;
 import com.job_web.dto.application.ResumeDTO;
 import com.job_web.dto.application.ResumeUploadDTO;
+import com.job_web.dto.application.ResumeUrlDTO;
 import com.job_web.dto.application.ResumeView;
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.service.application.ResumeService;
@@ -41,6 +42,24 @@ public class UserResumeController {
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<ResumeDetailDTO>> getResumeDetail(@PathVariable("id") long id, Principal principal) {
         ApiResponse<ResumeDetailDTO> res = resumeService.getResumeDetail(id, principal);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    /**
+     * Lấy Pre-signed URL để xem resume trực tiếp trên trình duyệt (inline).
+     */
+    @GetMapping("/{id}/view")
+    public ResponseEntity<ApiResponse<ResumeUrlDTO>> getResumeViewUrl(@PathVariable("id") long id, Principal principal) {
+        ApiResponse<ResumeUrlDTO> res = resumeService.getResumeViewUrl(id, principal);
+        return ResponseEntity.status(res.getStatus()).body(res);
+    }
+
+    /**
+     * Lấy Pre-signed URL để tải resume về (attachment).
+     */
+    @GetMapping("/{id}/download")
+    public ResponseEntity<ApiResponse<ResumeUrlDTO>> getResumeDownloadUrl(@PathVariable("id") long id, Principal principal) {
+        ApiResponse<ResumeUrlDTO> res = resumeService.getResumeDownloadUrl(id, principal);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, Injectable, NgZone, signal } from '@angular/core';
-import { Observable, take } from 'rxjs';
+import { map, Observable, take } from 'rxjs';
 import { UtilitiesService } from './utilities.service';
 import { ResumeReviewInput } from '../../shared/models/jobs/resume-review-input.model';
 import { ApiResponse } from '../../shared/models/api-response.model';
@@ -8,6 +8,9 @@ import { NotifyMessageService } from './notify-message.service';
 import { TokenService } from './token.service';
 import { EventSourcePolyfill } from 'event-source-polyfill';
 import { ResumePreview } from '../../shared/models/jobs/resume-preview.model';
+import { ResumeUrlDTO } from '../../shared/models/jobs/resume-url-dto.model';
+
+export type ResumeContext = 'user' | 'hirer';
 
 export interface UploadingFileState {
     fileName: string;
@@ -55,6 +58,26 @@ export class ResumeService {
         const encodedFileName = encodeURIComponent(fileName);
         const encodedResumeId = encodeURIComponent(String(resumeId));
         return `${this.url}/${encodedResumeId}?mode=${mode}&fileName=${encodedFileName}`;
+    }
+
+    getResumeViewUrl(resumeId: number, context: ResumeContext = 'user'): Observable<string> {
+        const prefix = context === 'hirer' ? 'hirer' : 'user';
+        return this.http.get<ApiResponse<ResumeUrlDTO>>(
+            `${this.url}/${prefix}/resumes/${encodeURIComponent(resumeId)}/view`
+        ).pipe(
+            take(1),
+            map(response => response.data.url)
+        );
+    }
+
+    getResumeDownloadUrl(resumeId: number, context: ResumeContext = 'user'): Observable<string> {
+        const prefix = context === 'hirer' ? 'hirer' : 'user';
+        return this.http.get<ApiResponse<ResumeUrlDTO>>(
+            `${this.url}/${prefix}/resumes/${encodeURIComponent(resumeId)}/download`
+        ).pipe(
+            take(1),
+            map(response => response.data.url)
+        );
     }
 
     deleteResume(resumeId: number): Observable<unknown> {
