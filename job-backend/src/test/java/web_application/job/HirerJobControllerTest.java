@@ -48,8 +48,7 @@ class HirerJobControllerTest {
         @DisplayName("HJ01: Tao job thanh cong voi quyen HIRER")
         @WithMockUser(username = "hirer@test.com", roles = "HIRER")
         void createJob_Success() throws Exception {
-            ApiResponse<String> response = new ApiResponse<>("Tao job thanh cong", null, HttpStatus.CREATED.value());
-            when(jobService.createJob(any(JobDTO.class), any())).thenReturn(response);
+            org.mockito.Mockito.doNothing().when(jobService).createJob(any(JobDTO.class), any());
 
             mockMvc.perform(multipart(BASE_URL)
                             .param("jobName", "Java Developer")

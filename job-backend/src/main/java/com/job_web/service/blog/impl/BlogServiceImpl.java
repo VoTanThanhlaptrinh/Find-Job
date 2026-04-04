@@ -3,7 +3,6 @@ package com.job_web.service.blog.impl;
 import com.job_web.data.BlogRepository;
 import com.job_web.data.CommentRepository;
 import com.job_web.data.LikeRepository;
-import com.job_web.data.UserRepository;
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.dto.blog.BlogDTO;
 import com.job_web.models.Blog;
@@ -17,7 +16,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -27,32 +25,24 @@ import java.util.Optional;
 public class BlogServiceImpl implements BlogService {
     private final BlogRepository blogRepository;
     private final CommentRepository commentRepository;
-    private final UserRepository userRepository;
     private final LikeRepository likeRepository;
+
     @Override
-    public ApiResponse<String> postBlog(BlogDTO blogDTO) {
+    public ApiResponse<String> postBlog(BlogDTO blogDTO, User user) {
         Blog blog = blogDTO.toBlog();
-        Optional<User> user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
-        if(user.isEmpty()) {
-            return new ApiResponse<>("không tìm thấy user",null, HttpStatus.NOT_FOUND.value());
-        }
-        blog.setAuthor(user.get());
+        blog.setAuthor(user);
         blogRepository.save(blog);
-        return new ApiResponse<>("success",null, HttpStatus.CREATED.value());
+        return new ApiResponse<>("success", null, HttpStatus.CREATED.value());
     }
 
     @Override
-    public ApiResponse<String> updateBlog(long id, BlogDTO blogDTO) {
-        Optional<User> user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
-        if (user.isEmpty()) {
-            return new ApiResponse<>("không tìm thấy user", null, HttpStatus.NOT_FOUND.value());
-        }
+    public ApiResponse<String> updateBlog(long id, BlogDTO blogDTO, User user) {
         Optional<Blog> blogOpt = blogRepository.findBlogById(id);
         if (blogOpt.isEmpty()) {
             return new ApiResponse<>("không tìm thấy blog", null, HttpStatus.NOT_FOUND.value());
         }
         Blog blog = blogOpt.get();
-        if (blog.getAuthor() != null && blog.getAuthor().getId() != user.get().getId()) {
+        if (blog.getAuthor() != null && blog.getAuthor().getId() != user.getId()) {
             return new ApiResponse<>("Không có quyền chỉnh sửa", null, HttpStatus.FORBIDDEN.value());
         }
         blogDTO.applyTo(blog);
@@ -85,29 +75,21 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public ApiResponse<String> comment(Comment comment) {
-        Optional<User> user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
-        if(user.isEmpty()) {
-            return new ApiResponse<>("không tìm thấy user",null, HttpStatus.NOT_FOUND.value());
-        }
-        comment.setUser(user.get());
+    public ApiResponse<String> comment(Comment comment, User user) {
+        comment.setUser(user);
         comment.markActive();
         commentRepository.save(comment);
-        return new ApiResponse<>("success",null, HttpStatus.CREATED.value());
+        return new ApiResponse<>("success", null, HttpStatus.CREATED.value());
     }
 
     @Override
-    public ApiResponse<String> like(final long id) {
-        Optional<User> user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+    public ApiResponse<String> like(final long id, User user) {
         Optional<Blog> blog = blogRepository.findBlogById(id);
 
-        if(user.isEmpty()) {
-            return new ApiResponse<>("không tìm thấy user",null, HttpStatus.NOT_FOUND.value());
-        }
         if(blog.isEmpty()) {
             return new ApiResponse<>("không tìm thấy blog",null, HttpStatus.NOT_FOUND.value());
         }
-        Optional<Like> like = likeRepository.findLatestByUserIdAndBlogId(user.get().getId(), blog.get().getId());
+        Optional<Like> like = likeRepository.findLatestByUserIdAndBlogId(user.getId(), blog.get().getId());
         like.ifPresentOrElse(
                 l -> {
                     l.markActive();
@@ -115,7 +97,7 @@ public class BlogServiceImpl implements BlogService {
                 },
                 () -> {
                     Like like1 = new Like();
-                    like1.setUser(user.get());
+                    like1.setUser(user);
                     like1.setBlog(blog.get());
                     like1.markActive();
                     likeRepository.save(like1);
@@ -125,17 +107,13 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public ApiResponse<String> unlike(long id) {
-        Optional<User> user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+    public ApiResponse<String> unlike(long id, User user) {
         Optional<Blog> blog = blogRepository.findBlogById(id);
 
-        if(user.isEmpty()) {
-            return new ApiResponse<>("không tìm thấy user",null, HttpStatus.NOT_FOUND.value());
-        }
         if(blog.isEmpty()) {
             return new ApiResponse<>("không tìm thấy blog",null, HttpStatus.NOT_FOUND.value());
         }
-        Optional<Like> like = likeRepository.findLatestByUserIdAndBlogId(user.get().getId(), blog.get().getId());
+        Optional<Like> like = likeRepository.findLatestByUserIdAndBlogId(user.getId(), blog.get().getId());
         like.ifPresent(l -> {
             l.markDeleted();
             likeRepository.save(l);
@@ -151,6 +129,3 @@ public class BlogServiceImpl implements BlogService {
     }
 
 }
-
-
-

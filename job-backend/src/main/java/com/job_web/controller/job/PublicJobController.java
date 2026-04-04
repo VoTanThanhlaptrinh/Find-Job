@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -29,27 +30,29 @@ public class PublicJobController {
     private final JobQueryService jobQueryService;
     private final ApiService apiService;
 
-    @GetMapping("/newest/{pageIndex}/{pageSize}")
-    public ResponseEntity<ApiResponse<Page<JobCardView>>> getListJobNewest(@PathVariable int pageIndex, @PathVariable int pageSize) {
-        ApiResponse<Page<JobCardView>> res = jobQueryService.getListJobNewest(pageIndex, pageSize);
-        return ResponseEntity.status(res.getStatus()).body(res);
+    @GetMapping("/newest")
+    public ResponseEntity<ApiResponse<Page<JobCardView>>> getListJobNewest(
+            @RequestParam(defaultValue = "0") int page, 
+            @RequestParam(defaultValue = "10") int size) {
+        Page<JobCardView> data = jobQueryService.getListJobNewest(page, size);
+        return ResponseEntity.ok(new ApiResponse<>("success", data, HttpStatus.OK.value()));
     }
 
     @GetMapping("/count")
     public ResponseEntity<ApiResponse<Integer>> getAmount() {
-        ApiResponse<Integer> res = jobQueryService.getAmount();
-        return ResponseEntity.status(res.getStatus()).body(res);
+        Integer data = jobQueryService.getAmount();
+        return ResponseEntity.ok(new ApiResponse<>("success", data, HttpStatus.OK.value()));
     }
 
-    @GetMapping("/addressCount")
+    @GetMapping("/address-count")
     public ResponseEntity<ApiResponse<List<AddressJobCount>>> getAddressCount() {
-        ApiResponse<List<AddressJobCount>> res = jobQueryService.getAddressJobCount();
-        return ResponseEntity.status(res.getStatus()).body(res);
+        List<AddressJobCount> data = jobQueryService.getAddressJobCount();
+        return ResponseEntity.ok(new ApiResponse<>("success", data, HttpStatus.OK.value()));
     }
 
     @PostMapping("/filter")
     public ResponseEntity<ApiResponse<Page<JobCardView>>> filterWithAddressTimeSalary(@RequestBody JobFilterDTO jobFilterDTO) {
-        ApiResponse<Page<JobCardView>> res = jobQueryService.filterBetterSalaryAndHasAddressAndInTimes(
+        Page<JobCardView> data = jobQueryService.filterBetterSalaryAndHasAddressAndInTimes(
                 jobFilterDTO.getPageIndex(),
                 jobFilterDTO.getPageSize(),
                 jobFilterDTO.getMin(),
@@ -57,25 +60,24 @@ public class PublicJobController {
                 jobFilterDTO.getAddress(),
                 jobFilterDTO.getTimes(),
                 jobFilterDTO.getTitle());
-        return ResponseEntity.status(res.getStatus()).body(res);
+        return ResponseEntity.ok(new ApiResponse<>("success", data, HttpStatus.OK.value()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<JobDetailView>> getJobDetail(@PathVariable String id) {
-        ApiResponse<JobDetailView> res = jobService.getJobDetailById(id);
-        return ResponseEntity.status(res.getStatus()).body(res);
+    public ResponseEntity<ApiResponse<JobDetailView>> getJobDetail(@PathVariable Long id) {
+        JobDetailView data = jobService.getJobDetailById(id);
+        return ResponseEntity.ok(new ApiResponse<>("success", data, HttpStatus.OK.value()));
     }
 
     @GetMapping("/{id}/exists")
-    public ResponseEntity<ApiResponse<Boolean>> checkApplyJob(@PathVariable String id) {
-        ApiResponse<Boolean> res = jobService.checkExistJob(id);
-        return ResponseEntity.status(res.getStatus()).body(res);
+    public ResponseEntity<ApiResponse<Boolean>> checkApplyJob(@PathVariable Long id) {
+        Boolean data = jobService.checkExistJob(id);
+        return ResponseEntity.ok(new ApiResponse<>("success", data, HttpStatus.OK.value()));
     }
 
     @GetMapping("/match/{cvId}")
     public ResponseEntity<ApiResponse<List<JobCardView>>> getMatchedJobs(@PathVariable Long cvId) {
         List<JobCardView> jobs = apiService.matchJobs(cvId);
-        ApiResponse<List<JobCardView>> res = new ApiResponse<>("success", jobs, HttpStatus.OK.value());
-        return ResponseEntity.ok(res);
+        return ResponseEntity.ok(new ApiResponse<>("success", jobs, HttpStatus.OK.value()));
     }
 }

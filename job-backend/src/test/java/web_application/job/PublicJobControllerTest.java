@@ -64,8 +64,7 @@ class PublicJobControllerTest {
             Page<JobCardView> page = new PageImpl<>(List.of(
                     new JobCardView(1L, "Java Developer", "Da Nang", "1000-1500", "Full-time")
             ));
-            ApiResponse<Page<JobCardView>> response = new ApiResponse<>("success", page, HttpStatus.OK.value());
-            when(jobQueryService.getListJobNewest(eq(0), eq(10))).thenReturn(response);
+            when(jobQueryService.getListJobNewest(eq(0), eq(10))).thenReturn(page);
 
             mockMvc.perform(get(BASE_URL + "/newest/0/10"))
                     .andExpect(status().isOk())
@@ -89,11 +88,10 @@ class PublicJobControllerTest {
                     List.of("Full-time"),
                     "Java"
             );
-            ApiResponse<Page<JobCardView>> response = new ApiResponse<>("success", Page.empty(), HttpStatus.OK.value());
             when(jobQueryService.filterBetterSalaryAndHasAddressAndInTimes(
                     eq(0), eq(10), eq(1000), eq(2000),
                     eq(List.of("Ho Chi Minh")), eq(List.of("Full-time")), eq("Java")
-            )).thenReturn(response);
+            )).thenReturn(Page.empty());
 
             mockMvc.perform(post(BASE_URL + "/filter")
                             .contentType(MediaType.APPLICATION_JSON)

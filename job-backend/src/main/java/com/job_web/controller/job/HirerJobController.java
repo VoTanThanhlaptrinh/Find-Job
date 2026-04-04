@@ -1,10 +1,10 @@
 package com.job_web.controller.job;
 
-import java.security.Principal;
-
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.dto.job.JobDTO;
 import com.job_web.dto.job.JobResponse;
+import com.job_web.models.CurrentUser;
+import com.job_web.models.User;
 import com.job_web.service.job.JobQueryService;
 import com.job_web.service.job.JobService;
 import jakarta.validation.Valid;
@@ -13,7 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -21,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -32,46 +32,38 @@ public class HirerJobController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<String>> post(@Valid @ModelAttribute JobDTO job,
-                                                    BindingResult bindingResult,
-                                                    Principal principal) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, HttpStatus.BAD_REQUEST.value()));
-        }
-        ApiResponse<String> res = jobService.createJob(job, principal);
-        return ResponseEntity.status(res.getStatus()).body(res);
+                                                    @CurrentUser User currentUser) {
+        jobService.createJob(job, currentUser);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ApiResponse<>("Tạo việc làm thành công", null, HttpStatus.CREATED.value()));
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse<String>> update(@PathVariable("id") long id,
+    public ResponseEntity<ApiResponse<String>> update(@PathVariable("id") Long id,
                                                       @Valid @ModelAttribute JobDTO job,
-                                                      BindingResult bindingResult,
-                                                      Principal principal) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, HttpStatus.BAD_REQUEST.value()));
-        }
-        ApiResponse<String> res = jobService.updateJob(id, job, principal);
-        return ResponseEntity.status(res.getStatus()).body(res);
+                                                      @CurrentUser User currentUser) {
+        jobService.updateJob(id, job, currentUser);
+        return ResponseEntity.ok(new ApiResponse<>("Cập nhật việc làm thành công", null, HttpStatus.OK.value()));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<String>> delete(@PathVariable("id") long id, Principal principal) {
-        ApiResponse<String> res = jobService.deleteJob(id, principal);
-        return ResponseEntity.status(res.getStatus()).body(res);
+    public ResponseEntity<ApiResponse<String>> delete(@PathVariable("id") Long id, @CurrentUser User currentUser) {
+        jobService.deleteJob(id, currentUser);
+        return ResponseEntity.ok(new ApiResponse<>("Xóa việc làm thành công", null, HttpStatus.OK.value()));
     }
 
-    @GetMapping("/posted/{pageIndex}/{pageSize}")
-    public ResponseEntity<ApiResponse<Page<JobResponse>>> getHirerJobPost(@PathVariable int pageIndex,
-                                                                          @PathVariable int pageSize,
-                                                                          Principal principal) {
-        ApiResponse<Page<JobResponse>> res = jobQueryService.getHirerJobPost(pageIndex, pageSize, principal);
-        return ResponseEntity.status(res.getStatus()).body(res);
+    @GetMapping("/posted")
+    public ResponseEntity<ApiResponse<Page<JobResponse>>> getHirerJobPost(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @CurrentUser User currentUser) {
+        Page<JobResponse> data = jobQueryService.getHirerJobPost(page, size, currentUser.getEmail());
+        return ResponseEntity.ok(new ApiResponse<>("success", data, HttpStatus.OK.value()));
     }
 
     @GetMapping("/posted/count")
-    public ResponseEntity<ApiResponse<Long>> countHirerJobPost(Principal principal) {
-        ApiResponse<Long> res = jobQueryService.countHirerJobPost(principal);
-        return ResponseEntity.status(res.getStatus()).body(res);
+    public ResponseEntity<ApiResponse<Long>> countHirerJobPost(@CurrentUser User currentUser) {
+        Long data = jobQueryService.countHirerJobPost(currentUser.getEmail());
+        return ResponseEntity.ok(new ApiResponse<>("success", data, HttpStatus.OK.value()));
     }
 }

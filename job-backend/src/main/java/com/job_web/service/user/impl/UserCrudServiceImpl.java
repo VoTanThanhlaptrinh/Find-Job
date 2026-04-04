@@ -1,19 +1,17 @@
 package com.job_web.service.user.impl;
 
 import com.job_web.data.UserRepository;
-import com.job_web.dto.common.ApiResponse;
 import com.job_web.dto.user.UserCrudDTO;
 import com.job_web.dto.user.UserResponseDTO;
+import com.job_web.exception.BadRequestException;
+import com.job_web.exception.ResourceNotFoundException;
 import com.job_web.models.User;
 import com.job_web.service.user.UserCrudService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,60 +20,47 @@ public class UserCrudServiceImpl implements UserCrudService {
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
-    public ApiResponse<String> createUser(UserCrudDTO userDTO) {
-        Optional<User> existing = userRepository.findByEmail(userDTO.getEmail());
-        if (existing.isPresent()) {
-            return new ApiResponse<>("Email đã tồn tại", null, HttpStatus.BAD_REQUEST.value());
+    public void createUser(UserCrudDTO userDTO) {
+        if (userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
+            throw new BadRequestException("Email đã tồn tại");
         }
         User user = new User();
         applyDtoToUser(user, userDTO, true);
         userRepository.save(user);
-        return new ApiResponse<>("Thành công", null, HttpStatus.CREATED.value());
     }
 
     @Override
-    public ApiResponse<UserResponseDTO> getUserByEmail(String email) {
+    public UserResponseDTO getUserByEmail(String email) {
         return userRepository.findByEmail(email)
-                .map(user -> new ApiResponse<>("success", toResponse(user), HttpStatus.OK.value()))
-                .orElseGet(() -> new ApiResponse<>("Không tìm thấy user", null, HttpStatus.NOT_FOUND.value()));
+                .map(this::toResponse)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy user"));
     }
 
     @Override
-    public ApiResponse<Page<UserResponseDTO>> getUsers(int pageIndex, int pageSize) {
-        Page<UserResponseDTO> page = userRepository.findAll(PageRequest.of(pageIndex, pageSize)).map(this::toResponse);
-        return new ApiResponse<>("success", page, HttpStatus.OK.value());
+    public Page<UserResponseDTO> getUsers(int page, int size) {
+        return userRepository.findAll(PageRequest.of(page, size)).map(this::toResponse);
     }
 
     @Override
-    public ApiResponse<String> updateUser(long id, UserCrudDTO userDTO) {
-        Optional<User> userOpt = userRepository.findById(id);
-        if (userOpt.isEmpty()) {
-            return new ApiResponse<>("Không tìm thấy user", null, HttpStatus.NOT_FOUND.value());
-        }
-        User user = userOpt.get();
-        if (!user.getEmail().equals(userDTO.getEmail())) {
-            Optional<User> existEmail = userRepository.findByEmail(userDTO.getEmail());
-            if (existEmail.isPresent()) {
-                return new ApiResponse<>("Email đã tồn tại", null, HttpStatus.BAD_REQUEST.value());
-            }
+    public void updateUser(Long id, UserCrudDTO userDTO) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy user"));
+
+        if (!user.getEmail().equals(userDTO.getEmail()) && userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
+            throw new BadRequestException("Email đã tồn tại");
         }
         applyDtoToUser(user, userDTO, false);
         userRepository.save(user);
-        return new ApiResponse<>("Thành công", null, HttpStatus.OK.value());
     }
 
     @Override
-    public ApiResponse<String> deleteUser(long id) {
-        Optional<User> userOpt = userRepository.findById(id);
-        if (userOpt.isEmpty()) {
-            return new ApiResponse<>("Không tìm thấy user", null, HttpStatus.NOT_FOUND.value());
-        }
-        User user = userOpt.get();
+    public void deleteUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy user"));
         user.markDeleted();
         user.setActive(false);
         user.setEnabled(false);
         userRepository.save(user);
-        return new ApiResponse<>("Thành công", null, HttpStatus.OK.value());
     }
 
     private void applyDtoToUser(User user, UserCrudDTO dto, boolean isCreate) {

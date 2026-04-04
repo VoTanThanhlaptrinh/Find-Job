@@ -5,6 +5,8 @@ import com.job_web.dto.blog.LikeDTO;
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.models.Blog;
 import com.job_web.models.Comment;
+import com.job_web.models.CurrentUser;
+import com.job_web.models.User;
 import com.job_web.service.blog.BlogService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -40,24 +42,26 @@ public class BlogController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<String>> postBlog(@RequestBody @Valid BlogDTO blogDTO, BindingResult bindingResult) {
+    public ResponseEntity<ApiResponse<String>> postBlog(@RequestBody @Valid BlogDTO blogDTO, BindingResult bindingResult,
+                                                        @CurrentUser User currentUser) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                     new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, HttpStatus.BAD_REQUEST.value()));
         }
-        ApiResponse<String> res = blogService.postBlog(blogDTO);
+        ApiResponse<String> res = blogService.postBlog(blogDTO, currentUser);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
     @PutMapping("/{blogId}")
     public ResponseEntity<ApiResponse<String>> updateBlog(@PathVariable long blogId,
                                                           @RequestBody @Valid BlogDTO blogDTO,
-                                                          BindingResult bindingResult) {
+                                                          BindingResult bindingResult,
+                                                          @CurrentUser User currentUser) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                     new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, HttpStatus.BAD_REQUEST.value()));
         }
-        ApiResponse<String> res = blogService.updateBlog(blogId, blogDTO);
+        ApiResponse<String> res = blogService.updateBlog(blogId, blogDTO, currentUser);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
@@ -74,32 +78,35 @@ public class BlogController {
     }
 
     @PostMapping("/comments")
-    public ResponseEntity<ApiResponse<String>> commentBlog(@RequestBody @Valid Comment comment, BindingResult bindingResult) {
+    public ResponseEntity<ApiResponse<String>> commentBlog(@RequestBody @Valid Comment comment, BindingResult bindingResult,
+                                                           @CurrentUser User currentUser) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                     new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, HttpStatus.BAD_REQUEST.value()));
         }
-        ApiResponse<String> res = blogService.comment(comment);
+        ApiResponse<String> res = blogService.comment(comment, currentUser);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
     @PostMapping("/likes")
-    public ResponseEntity<ApiResponse<String>> likeBlog(@RequestBody @Valid LikeDTO likeDTO, BindingResult bindingResult) {
+    public ResponseEntity<ApiResponse<String>> likeBlog(@RequestBody @Valid LikeDTO likeDTO, BindingResult bindingResult,
+                                                        @CurrentUser User currentUser) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                     new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, HttpStatus.BAD_REQUEST.value()));
         }
-        ApiResponse<String> res = blogService.like(likeDTO.getId());
+        ApiResponse<String> res = blogService.like(likeDTO.getId(), currentUser);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
     @PostMapping("/likes/remove")
-    public ResponseEntity<ApiResponse<String>> unlikeBlog(@RequestBody @Valid LikeDTO likeDTO, BindingResult bindingResult) {
+    public ResponseEntity<ApiResponse<String>> unlikeBlog(@RequestBody @Valid LikeDTO likeDTO, BindingResult bindingResult,
+                                                          @CurrentUser User currentUser) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                     new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, HttpStatus.BAD_REQUEST.value()));
         }
-        ApiResponse<String> res = blogService.unlike(likeDTO.getId());
+        ApiResponse<String> res = blogService.unlike(likeDTO.getId(), currentUser);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 }

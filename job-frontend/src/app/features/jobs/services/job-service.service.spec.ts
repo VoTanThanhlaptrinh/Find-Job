@@ -53,7 +53,11 @@ describe('JobService', () => {
         expect(res).toEqual(mockResponse);
       });
 
-      const req = httpMock.expectOne(`http://localhost:8080/api/jobs/applied/${pageIndex}/${pageSize}`);
+      const req = httpMock.expectOne(request => 
+        request.url === `http://localhost:8080/api/jobs/applied` && 
+        request.params.get('page') === pageIndex.toString() &&
+        request.params.get('size') === pageSize.toString()
+      );
       expect(req.request.method).toBe('GET');
       expect(req.request.withCredentials).toBeTrue();
       req.flush(mockResponse);
@@ -70,7 +74,11 @@ describe('JobService', () => {
         }
       });
 
-      const req = httpMock.expectOne(`http://localhost:8080/api/jobs/applied/${pageIndex}/${pageSize}`);
+      const req = httpMock.expectOne(request => 
+        request.url === `http://localhost:8080/api/jobs/applied` && 
+        request.params.get('page') === pageIndex.toString() &&
+        request.params.get('size') === pageSize.toString()
+      );
       req.flush('Server Error', { status: 500, statusText: 'Internal Server Error' });
     });
   });

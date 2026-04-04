@@ -1,14 +1,12 @@
 package com.job_web.service.application.impl;
 
 import com.job_web.data.ResumeRepository;
-import com.job_web.data.UserRepository;
 import com.job_web.data.queryDSL.ResumeDSL;
 import com.job_web.dto.ai.ResumeParsingMessage;
 import com.job_web.dto.application.ResumeDTO;
 import com.job_web.dto.application.ResumeDetailDTO;
 import com.job_web.dto.application.ResumeUploadDTO;
 import com.job_web.dto.application.ResumeUrlDTO;
-import com.job_web.dto.message.ApiMessage;
 import com.job_web.dto.message.CloudUploadMessage;
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.dto.application.ResumeView;
@@ -23,8 +21,6 @@ import com.job_web.utills.KeyGeneratorUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -34,7 +30,6 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,7 +39,6 @@ import java.util.Optional;
 public class ResumeServiceImpl implements ResumeService {
     private final ResumeRepository resumeRepository;
     private final ResumeDSL resumeDSL;
-    private final UserRepository userRepository;
     private final S3Client s3Client;
     private final FileService fileService;
     private final MessageProducer producer;
@@ -57,8 +51,8 @@ public class ResumeServiceImpl implements ResumeService {
     private static final int DEFAULT_URL_EXPIRATION_MINUTES = 30;
 
     @Override
-    public ApiResponse<List<ResumeView>> getListResumeOfUser(Principal principal) {
-        var resumes = resumeDSL.getListResumeOfUser(principal != null ? principal.getName() : "");
+    public ApiResponse<List<ResumeView>> getListResumeOfUser(User user) {
+        var resumes = resumeDSL.getListResumeOfUser(user != null ? user.getEmail() : "");
         String message = resumes.isEmpty() ? "The user has not uploaded any resumes yet." : "success";
         return new ApiResponse<>(message, resumes, HttpStatus.OK.value());
     }
@@ -69,8 +63,8 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public ApiResponse<ResumeDetailDTO> getResumeDetail(long id, Principal principal) {
-        if (principal == null) {
+    public ApiResponse<ResumeDetailDTO> getResumeDetail(long id, User user) {
+        if (user == null) {
             return new ApiResponse<>("You are not logged in.", null, HttpStatus.UNAUTHORIZED.value());
         }
         Optional<Resume> cvOpt = resumeRepository.findById(id);
@@ -78,7 +72,7 @@ public class ResumeServiceImpl implements ResumeService {
             return new ApiResponse<>("Resume not found.", null, HttpStatus.NOT_FOUND.value());
         }
         Resume cv = cvOpt.get();
-        if (cv.getUser() == null || !principal.getName().equals(cv.getUser().getEmail())) {
+        if (cv.getUser() == null || !user.getEmail().equals(cv.getUser().getEmail())) {
             return new ApiResponse<>("You do not have permission to access this resume.", null, HttpStatus.FORBIDDEN.value());
         }
         ResumeDetailDTO detail = new ResumeDetailDTO(cv.getId(), cv.getFileName(), cv.getCreateDate());
@@ -86,16 +80,12 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public ApiResponse<ResumeView> createResume(ResumeUploadDTO resumeUploadDTO, Principal principal) {
-        if (principal == null) {
+    public ApiResponse<ResumeView> createResume(ResumeUploadDTO resumeUploadDTO, User user) {
+        if (user == null) {
             return new ApiResponse<>("You are not logged in.", null, HttpStatus.UNAUTHORIZED.value());
         }
-        Optional<User> userOpt = userRepository.findByEmail(principal.getName());
-        if (userOpt.isEmpty()) {
-            return new ApiResponse<>("User not found.", null, HttpStatus.NOT_FOUND.value());
-        }
         Resume cv = new Resume();
-        cv.setUser(userOpt.get());
+        cv.setUser(user);
         cv.setFileName(resumeUploadDTO.getFile().getOriginalFilename());
         String key = KeyGeneratorUtil.generateKey();
         cv.setKeyCf(key);
@@ -117,13 +107,13 @@ public class ResumeServiceImpl implements ResumeService {
 
         producer.uploadToCloud(new CloudUploadMessage(data, key, resumeUploadDTO.getFile().getOriginalFilename()));
         resumeRepository.save(cv);
-        producer.processAI(new ResumeParsingMessage(rawText, userOpt.get().getId(), cv.getId()));
+        producer.processAI(new ResumeParsingMessage(rawText, user.getId(), cv.getId()));
         return new ApiResponse<>("success", new ResumeView(cv.getId(), cv.getFileName(), cv.getCreateDate()), HttpStatus.CREATED.value());
     }
 
     @Override
-    public ApiResponse<String> updateResume(long id, ResumeUploadDTO resumeUploadDTO, Principal principal) {
-        if (principal == null) {
+    public ApiResponse<String> updateResume(long id, ResumeUploadDTO resumeUploadDTO, User user) {
+        if (user == null) {
             return new ApiResponse<>("You are not logged in.", null, HttpStatus.UNAUTHORIZED.value());
         }
         Optional<Resume> cvOpt = resumeRepository.findById(id);
@@ -131,7 +121,7 @@ public class ResumeServiceImpl implements ResumeService {
             return new ApiResponse<>("Resume not found.", null, HttpStatus.NOT_FOUND.value());
         }
         Resume cv = cvOpt.get();
-        if (cv.getUser() == null || !principal.getName().equals(cv.getUser().getEmail())) {
+        if (cv.getUser() == null || !user.getEmail().equals(cv.getUser().getEmail())) {
             return new ApiResponse<>("You do not have permission to edit this resume.", null, HttpStatus.FORBIDDEN.value());
         }
         cv.setFileName(resumeUploadDTO.getFile().getOriginalFilename());
@@ -151,8 +141,8 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public ApiResponse<String> deleteResume(long id, Principal principal) {
-        if (principal == null) {
+    public ApiResponse<String> deleteResume(long id, User user) {
+        if (user == null) {
             return new ApiResponse<>("You are not logged in.", null, HttpStatus.UNAUTHORIZED.value());
         }
         Optional<Resume> cvOpt = resumeRepository.findById(id);
@@ -160,7 +150,7 @@ public class ResumeServiceImpl implements ResumeService {
             return new ApiResponse<>("Resume not found.", null, HttpStatus.NOT_FOUND.value());
         }
         Resume cv = cvOpt.get();
-        if (cv.getUser() == null || !principal.getName().equals(cv.getUser().getEmail())) {
+        if (cv.getUser() == null || !user.getEmail().equals(cv.getUser().getEmail())) {
             return new ApiResponse<>("You do not have permission to delete this resume.", null, HttpStatus.FORBIDDEN.value());
         }
         cv.markDeleted();
@@ -173,7 +163,7 @@ public class ResumeServiceImpl implements ResumeService {
         String contentType = determineContentType(originalName);
 
         PutObjectRequest request = PutObjectRequest.builder()
-                .bucket(bucketName) // Chỉ định đúng bucket thứ 2 của bạn ở đây
+                .bucket(bucketName)
                 .key(key)
                 .contentType(contentType)
                 .build();
@@ -185,7 +175,7 @@ public class ResumeServiceImpl implements ResumeService {
     public byte[] toByteArray(InputStream inputStream) throws IOException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         int nRead;
-        byte[] data = new byte[8192]; // Tạo mảng đệm 8KB
+        byte[] data = new byte[8192];
 
         while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
             buffer.write(data, 0, nRead);
@@ -195,8 +185,8 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public ApiResponse<ResumeUrlDTO> getResumeViewUrl(long id, Principal principal) {
-        if (principal == null) {
+    public ApiResponse<ResumeUrlDTO> getResumeViewUrl(long id, User user) {
+        if (user == null) {
             return new ApiResponse<>("You are not logged in.", null, HttpStatus.UNAUTHORIZED.value());
         }
         Optional<Resume> cvOpt = resumeRepository.findById(id);
@@ -204,7 +194,7 @@ public class ResumeServiceImpl implements ResumeService {
             return new ApiResponse<>("Resume not found.", null, HttpStatus.NOT_FOUND.value());
         }
         Resume cv = cvOpt.get();
-        if (cv.getUser() == null || !principal.getName().equals(cv.getUser().getEmail())) {
+        if (cv.getUser() == null || !user.getEmail().equals(cv.getUser().getEmail())) {
             return new ApiResponse<>("You do not have permission to view this resume.", null, HttpStatus.FORBIDDEN.value());
         }
 
@@ -219,8 +209,8 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public ApiResponse<ResumeUrlDTO> getResumeDownloadUrl(long id, Principal principal) {
-        if (principal == null) {
+    public ApiResponse<ResumeUrlDTO> getResumeDownloadUrl(long id, User user) {
+        if (user == null) {
             return new ApiResponse<>("You are not logged in.", null, HttpStatus.UNAUTHORIZED.value());
         }
         Optional<Resume> cvOpt = resumeRepository.findById(id);
@@ -228,7 +218,7 @@ public class ResumeServiceImpl implements ResumeService {
             return new ApiResponse<>("Resume not found.", null, HttpStatus.NOT_FOUND.value());
         }
         Resume cv = cvOpt.get();
-        if (cv.getUser() == null || !principal.getName().equals(cv.getUser().getEmail())) {
+        if (cv.getUser() == null || !user.getEmail().equals(cv.getUser().getEmail())) {
             return new ApiResponse<>("You do not have permission to download this resume.", null, HttpStatus.FORBIDDEN.value());
         }
 
@@ -289,6 +279,6 @@ public class ResumeServiceImpl implements ResumeService {
         if (lowerCaseName.endsWith(".png")) return "image/png";
         if (lowerCaseName.endsWith(".jpg") || lowerCaseName.endsWith(".jpeg")) return "image/jpeg";
 
-        return "application/octet-stream"; // Mặc định nếu không nhận diện được
+        return "application/octet-stream";
     }
 }

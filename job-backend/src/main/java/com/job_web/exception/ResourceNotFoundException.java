@@ -1,15 +1,12 @@
 package com.job_web.exception;
 
-public class ResourceNotFoundException extends RuntimeException {
+import org.springframework.http.HttpStatus;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+public class ResourceNotFoundException extends AppException {
 
-	public ResourceNotFoundException(String message) {
-		super(message);
-	}
+    private static final long serialVersionUID = 1L;
+
+    public ResourceNotFoundException(String message) {
+        super(message, HttpStatus.NOT_FOUND);
+    }
 }
-
-

@@ -1,9 +1,11 @@
 package com.job_web.service.account.impl;
 
 import com.job_web.data.UserRepository;
-import com.job_web.dto.common.ApiResponse;
 import com.job_web.dto.message.MailMessage;
 import com.job_web.dto.profile.UserInfo;
+import com.job_web.exception.AppException;
+import com.job_web.exception.BadRequestException;
+import com.job_web.exception.UnauthorizedException;
 import com.job_web.message.MessageProducer;
 import com.job_web.models.User;
 import com.job_web.service.account.AccountService;
@@ -12,12 +14,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -36,64 +35,43 @@ public class AccountServiceImpl implements AccountService {
     private String textOauth;
 
     @Override
-    public ApiResponse<UserInfo> getDetailUser(Principal principal) {
-        if (principal == null) {
-            return new ApiResponse<>("Chưa đăng nhập", null, HttpStatus.BAD_REQUEST.value());
-        }
-        User userLogin = userRepository.findByEmail(principal.getName()).orElseThrow(RuntimeException::new);
-        return new ApiResponse<>("success", UserInfo.fromUser(userLogin), HttpStatus.OK.value());
+    public UserInfo getDetailUser(User user) {
+        return UserInfo.fromUser(user);
     }
 
     @Override
-    public ApiResponse<String> changePassword(String newPassword, String oldPassword) {
-        User userLogin = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (!encoder.matches(oldPassword, userLogin.getPassword())) {
-            return new ApiResponse<>("password hiện tại không khớp", null, HttpStatus.BAD_REQUEST.value());
+    public void changePassword(String newPassword, String oldPassword, User user) {
+        if (!encoder.matches(oldPassword, user.getPassword())) {
+            throw new BadRequestException("password hiện tại không khớp");
         }
-        userLogin.setPassword(encoder.encode(newPassword));
-        userRepository.save(userLogin);
-        return new ApiResponse<>("success", null, HttpStatus.OK.value());
+        user.setPassword(encoder.encode(newPassword));
+        userRepository.save(user);
     }
 
     @Override
-    public ApiResponse<String> updateInfo(UserInfo userInfo, Principal principal) {
-        Optional<User> user = userRepository.findByEmail(principal.getName());
-        if (user.isEmpty()) {
-            return new ApiResponse<>("Không tìm thấy user trong hệ thống", null, HttpStatus.BAD_REQUEST.value());
-        }
-        User userLogin = user.get();
-        userInfo.update(userLogin);
-        userRepository.save(userLogin);
-        return new ApiResponse<>("Cập nhật thành công", null, HttpStatus.OK.value());
+    public void updateInfo(UserInfo userInfo, User user) {
+        userInfo.update(user);
+        userRepository.save(user);
     }
 
     @Override
-    public ApiResponse<String> checkOauth2(Principal principal) {
-        if (principal == null) {
-            return new ApiResponse<>("Bạn chưa đăng nhập", null, HttpStatus.UNAUTHORIZED.value());
-        }
-        Optional<User> user = userRepository.findByEmail(principal.getName());
-        if (user.isEmpty()) {
-            return new ApiResponse<>("Tài khoản này không tồn tại trong hệ thống",
-                    principal.getName(), HttpStatus.BAD_REQUEST.value());
-        }
-        if (user.get().isOauth2Enabled() && (user.get().getPassword() == null || user.get().getPassword().isEmpty())) {
+    public boolean checkOauth2(User user) {
+        if (user.isOauth2Enabled() && (user.getPassword() == null || user.getPassword().isEmpty())) {
             String random = UUID.randomUUID().toString();
             String link = String.format("http://localhost:4200/reset-pass/%s", random);
 
-            String text = String.format(textOauth, principal.getName(), link);
-            MailMessage mailMessage = new MailMessage(principal.getName(), subjectOauth, text);
-            verifyService.add("random:" + random, principal.getName(), 60 * 60);
-            verifyService.add(random, principal.getName(), 60 * 60);
+            String text = String.format(textOauth, user.getEmail(), link);
+            MailMessage mailMessage = new MailMessage(user.getEmail(), subjectOauth, text);
+            verifyService.add("random:" + random, user.getEmail(), 60 * 60);
+            verifyService.add(random, user.getEmail(), 60 * 60);
             try {
                 mailProducer.sendMail(mailMessage);
             } catch (Exception e) {
                 log.trace(e.getMessage(), e);
-                return new ApiResponse<>("Gửi email thất bại", null, HttpStatus.INTERNAL_SERVER_ERROR.value());
+                throw new AppException("Gửi email thất bại", HttpStatus.INTERNAL_SERVER_ERROR);
             }
-            return new ApiResponse<>("Tài khoản của bạn chưa có mật khẩu, bạn cần xác thực để tạo mới",
-                    principal.getName(), HttpStatus.OK.value());
+            return false;
         }
-        return new ApiResponse<>("không có vấn đề", principal.getName(), 301);
+        return true;
     }
 }

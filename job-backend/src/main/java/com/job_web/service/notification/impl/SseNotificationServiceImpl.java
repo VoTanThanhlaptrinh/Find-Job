@@ -3,6 +3,7 @@ package com.job_web.service.notification.impl;
 import com.job_web.data.ResumeRepository;
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.models.Resume;
+import com.job_web.models.User;
 import com.job_web.service.notification.SseNotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,14 +27,14 @@ public class SseNotificationServiceImpl implements SseNotificationService {
     private final Map<Long, SseEmitter> emitters = new ConcurrentHashMap<>();
 
     @Override
-    public ApiResponse<SseEmitter> subscribe(Long resumeId, Principal principal) {
+    public ApiResponse<SseEmitter> subscribe(Long resumeId, User user) {
         // Kiểm tra đăng nhập
-        if (principal == null) {
+        if (user == null) {
             return new ApiResponse<>("You are not logged in.", null, HttpStatus.UNAUTHORIZED.value());
         }
         
         // Kiểm tra quyền sở hữu resume
-        if (!isResumeOwnedByUser(resumeId, principal.getName())) {
+        if (!isResumeOwnedByUser(resumeId, user.getEmail())) {
             return new ApiResponse<>("You do not have permission to access this resume.", null, HttpStatus.FORBIDDEN.value());
         }
         
@@ -73,7 +73,7 @@ public class SseNotificationServiceImpl implements SseNotificationService {
             emitters.remove(resumeId);
             return new ApiResponse<>("Failed to establish SSE connection.", null, HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
-        log.info("SSE client subscribed for resumeId: {} by user: {}", resumeId, principal.getName());
+        log.info("SSE client subscribed for resumeId: {} by user: {}", resumeId, user.getEmail());
         return new ApiResponse<>("success", emitter, HttpStatus.OK.value());
     }
 

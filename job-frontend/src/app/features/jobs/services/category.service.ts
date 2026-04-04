@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { computed, Injectable, signal } from '@angular/core';
 import { finalize, Observable, take } from 'rxjs';
 import { UtilitiesService } from '../../../core/services/utilities.service';
@@ -74,8 +74,11 @@ export class CategoryService {
 
   listJobsNewest(pageIndex: number, pageSize: number) {
     this.startJobsLoading();
+    let params = new HttpParams()
+      .set('page', pageIndex)
+      .set('size', pageSize);
     this.http.get<ApiResponse<PagedPayload<JobCardModel>>>(
-      `${this.url}/jobs/newest/${pageIndex}/${pageSize}`
+      `${this.url}/jobs/newest`, { params }
     ).pipe(
       take(1),
       finalize(() => this.finishJobsLoading())
@@ -94,7 +97,7 @@ export class CategoryService {
   }
 
   getAddressCount() {
-    this.http.get<JobAddressCountApiResponse>(`${this.url}/jobs/addressCount`).pipe(take(1)).subscribe({
+    this.http.get<JobAddressCountApiResponse>(`${this.url}/jobs/address-count`).pipe(take(1)).subscribe({
       next: (response) => {
         this.addressData.set(response.data);
       },

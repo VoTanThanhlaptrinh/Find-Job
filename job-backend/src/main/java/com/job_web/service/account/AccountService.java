@@ -1,17 +1,11 @@
 package com.job_web.service.account;
 
-import com.job_web.dto.common.ApiResponse;
 import com.job_web.dto.profile.UserInfo;
-
-import java.security.Principal;
+import com.job_web.models.User;
 
 public interface AccountService {
-	ApiResponse<UserInfo> getDetailUser(Principal principal);
-	ApiResponse<String> changePassword(String newPassword, String oldPassword);
-	ApiResponse<String> updateInfo( UserInfo userInfo, Principal principal);
-
-	ApiResponse<String> checkOauth2(Principal principal);
+    UserInfo getDetailUser(User user);
+    void changePassword(String newPassword, String oldPassword, User user);
+    void updateInfo(UserInfo userInfo, User user);
+    boolean checkOauth2(User user);
 }
-
-
-
