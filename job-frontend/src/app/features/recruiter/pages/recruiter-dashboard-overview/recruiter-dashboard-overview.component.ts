@@ -1,23 +1,40 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
 
 type DashboardMetric = {
-  title: string;
+  titleKey: string;
   value: string;
-  trend: string;
+  trendKey: string;
 };
 
 @Component({
   selector: 'app-recruiter-dashboard-overview',
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   templateUrl: './recruiter-dashboard-overview.component.html',
   styleUrl: './recruiter-dashboard-overview.component.css',
 })
 export class RecruiterDashboardOverviewComponent {
   readonly metrics: DashboardMetric[] = [
-    { title: 'Việc làm đang mở', value: '12', trend: '+2 tuần này' },
-    { title: 'Ứng viên mới', value: '34', trend: '+8 hôm nay' },
-    { title: 'Phỏng vấn đã lên lịch', value: '9', trend: '+3 trong 7 ngày' },
-    { title: 'Tỉ lệ phản hồi', value: '86%', trend: '+4%' },
+    {
+      titleKey: 'recruiterOverview.metrics.openJobsTitle',
+      value: '12',
+      trendKey: 'recruiterOverview.metrics.openJobsTrend',
+    },
+    {
+      titleKey: 'recruiterOverview.metrics.newCandidatesTitle',
+      value: '34',
+      trendKey: 'recruiterOverview.metrics.newCandidatesTrend',
+    },
+    {
+      titleKey: 'recruiterOverview.metrics.interviewsTitle',
+      value: '9',
+      trendKey: 'recruiterOverview.metrics.interviewsTrend',
+    },
+    {
+      titleKey: 'recruiterOverview.metrics.responseRateTitle',
+      value: '86%',
+      trendKey: 'recruiterOverview.metrics.responseRateTrend',
+    },
   ];
 }

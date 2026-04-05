@@ -3,11 +3,11 @@
   <div class="container">
     <div class="row d-flex align-this.jobDetails-center justify-content-center">
       <div class="about-content col-lg-12">
-        <h1 class="text-white">Job Details</h1>
+        <h1 class="text-white">{{ 'jobSingle.title' | t }}</h1>
         <p class="text-white link-nav">
-          <a routerLink="/">Home</a>
+          <a routerLink="/">{{ 'jobSingle.home' | t }}</a>
           <span class="lnr lnr-arrow-right"></span>
-          <a [routerLink]="['/single', this.jobId]">Job Details</a>
+          <a [routerLink]="['/single', this.jobId]">{{ 'jobSingle.title' | t }}</a>
         </p>
       </div>
     </div>
@@ -37,7 +37,11 @@
                   <a href="#"><span class="lnr lnr-heart"></span></a>
                 </li>
                 <li>
-                  <a [routerLink]="['/apply-cv', this.jobId]">Ứng tuyển</a>
+                  @if (hasApplied) {
+                    <a aria-disabled="true" style="pointer-events: none; opacity: 0.8">{{ 'jobSingle.applied' | t }}</a>
+                  } @else {
+                    <a [routerLink]="['/apply-cv', this.jobId]">{{ 'jobSingle.applyNow' | t }}</a>
+                  }
                 </li>
               </ul>
             </div>
@@ -59,17 +63,17 @@
           <div [innerHTML]="jobDetail.description | safeHtml"></div>
         </div>
         <div class="single-post job-details">
-          <h4 class="single-title">Experience Requirements</h4>
+          <h4 class="single-title">{{ 'jobSingle.experienceRequirements' | t }}</h4>
           <div [innerHTML]="jobDetail.requireDetails | safeHtml"></div>
         </div>
         <div class="single-post job-details">
-          <h4 class="single-title">Job Skills</h4>
+          <h4 class="single-title">{{ 'jobSingle.jobSkills' | t }}</h4>
           <div [innerHTML]="jobDetail.skill | safeHtml"></div>
         </div>
       </div>
       <div class="col-lg-4 sidebar">
         <div class="single-slidebar">
-          <h4>Jobs by Location</h4>
+          <h4>{{ 'jobSingle.jobsByLocation' | t }}</h4>
           <ul class="cat-list">
             <li>
               <a class="justify-content-between d-flex">
@@ -117,7 +121,7 @@
         </div>
 
         <div class="single-slidebar">
-          <h4>Carrer Advice Blog</h4>
+          <h4>{{ 'jobSingle.careerAdviceBlog' | t }}</h4>
           <div class="blog-list">
             <div class="single-blog" style="background: #000 url(assets/web_css/img/blog1.jpg)">
               <a>

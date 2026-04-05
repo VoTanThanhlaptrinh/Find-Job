@@ -6,13 +6,13 @@
     >
       <div class="banner-content col-lg-12">
         <h1 class="text-white">
-          <span>1500+</span> Công việc đã được đăng ở tuần trước
+          <span>1500+</span> {{ 'home.hero.jobsPosted' | t }}
         </h1>
         <div class="h-10"></div>
         <app-search-form></app-search-form>
         <p class="text-white">
-          <span>Tìm kiếm theo tags:</span> Công nghệ, Kinh doanh, Tư vấn, IT
-          Company, Thiết kế, Lập trình
+          <span>{{ 'home.hero.searchByTags' | t }}</span>
+          {{ 'home.hero.tags' | t }}
         </p>
       </div>
     </div>
@@ -24,36 +24,33 @@
     <div class="row">
       <div class="col-lg-3 col-md-6">
         <div class="single-feature">
-          <h4>Searching</h4>
+          <h4>{{ 'home.features.searchingTitle' | t }}</h4>
           <p>
-            Tìm kiếm thông minh, lọc hàng ngàn công việc phù hợp chỉ trong giây
-            lát.
+            {{ 'home.features.searchingDesc' | t }}
           </p>
         </div>
       </div>
       <div class="col-lg-3 col-md-6">
         <div class="single-feature">
-          <h4>Applying</h4>
+          <h4>{{ 'home.features.applyingTitle' | t }}</h4>
           <p>
-            Ứng tuyển nhanh chóng với một chạm, kết nối thẳng tới nhà tuyển dụng
-            hàng đầu.
+            {{ 'home.features.applyingDesc' | t }}
           </p>
         </div>
       </div>
       <div class="col-lg-3 col-md-6">
         <div class="single-feature">
-          <h4>Security</h4>
+          <h4>{{ 'home.features.securityTitle' | t }}</h4>
           <p>
-            Thông tin cá nhân của bạn luôn được bảo mật tuyệt đối và an toàn.
+            {{ 'home.features.securityDesc' | t }}
           </p>
         </div>
       </div>
       <div class="col-lg-3 col-md-6">
         <div class="single-feature">
-          <h4>Notifications</h4>
+          <h4>{{ 'home.features.notificationsTitle' | t }}</h4>
           <p>
-            Nhận thông báo việc làm mới nhất và trạng thái hồ sơ theo thời gian
-            thực.
+            {{ 'home.features.notificationsDesc' | t }}
           </p>
         </div>
       </div>
@@ -68,9 +65,9 @@
     <div class="row d-flex justify-content-center">
       <div class="menu-content pb-60 col-lg-10">
         <div class="title text-center">
-          <h1 class="mb-10">Danh mục công việc nổi bậc</h1>
+          <h1 class="mb-10">{{ 'home.categories.title' | t }}</h1>
           <p>
-            Những người cực kỳ yêu thích hệ thống thân thiện với môi trường.
+            {{ 'home.categories.subtitle' | t }}
           </p>
         </div>
       </div>
@@ -81,7 +78,7 @@
           <a>
             <img src="assets/web_css/img/o1.png" alt="" />
           </a>
-          <p>Kế toán</p>
+          <p>{{ 'home.categories.accounting' | t }}</p>
         </div>
       </div>
       <div class="col-lg-2 col-md-4 col-sm-6">
@@ -89,7 +86,7 @@
           <a>
             <img src="assets/web_css/img/o2.png" alt="" />
           </a>
-          <p>Lập trình</p>
+          <p>{{ 'home.categories.programming' | t }}</p>
         </div>
       </div>
       <div class="col-lg-2 col-md-4 col-sm-6">
@@ -97,7 +94,7 @@
           <a>
             <img src="assets/web_css/img/o3.png" alt="" />
           </a>
-          <p>Kỹ thuật</p>
+          <p>{{ 'home.categories.engineering' | t }}</p>
         </div>
       </div>
       <div class="col-lg-2 col-md-4 col-sm-6">
@@ -105,7 +102,7 @@
           <a>
             <img src="assets/web_css/img/o4.png" alt="" />
           </a>
-          <p>Truyền thông</p>
+          <p>{{ 'home.categories.media' | t }}</p>
         </div>
       </div>
       <div class="col-lg-2 col-md-4 col-sm-6">
@@ -113,7 +110,7 @@
           <a>
             <img src="assets/web_css/img/o5.png" alt="" />
           </a>
-          <p>Tư vấn</p>
+          <p>{{ 'home.categories.consulting' | t }}</p>
         </div>
       </div>
       <div class="col-lg-2 col-md-4 col-sm-6">
@@ -121,7 +118,7 @@
           <a>
             <img src="assets/web_css/img/o6.png" alt="" />
           </a>
-          <p>Quản lý</p>
+          <p>{{ 'home.categories.management' | t }}</p>
         </div>
       </div>
     </div>
@@ -135,10 +132,10 @@
     <div class="row justify-content-center d-flex">
       <div class="col-lg-8 post-list w-full">
         <ul class="cat-list">
-          <li><a href="#">Recent</a></li>
-          <li><a href="#">Full Time</a></li>
-          <li><a href="#">Intern</a></li>
-          <li><a href="#">Part Time</a></li>
+          <li><a href="#">{{ 'home.tabs.recent' | t }}</a></li>
+          <li><a href="#">{{ 'home.tabs.fullTime' | t }}</a></li>
+          <li><a href="#">{{ 'home.tabs.intern' | t }}</a></li>
+          <li><a href="#">{{ 'home.tabs.partTime' | t }}</a></li>
         </ul>
 
         <!-- Nếu có công việc -->
@@ -153,20 +150,20 @@
             }
           </div>
         } @else {
-          <div class="alert alert-info text-center">Không có công việc nào</div>
+          <div class="alert alert-info text-center">{{ 'home.emptyJobs' | t }}</div>
         }
 
         <a
           [routerLink]="['/category']"
           class="text-uppercase loadmore-btn mx-auto d-block mt-4"
         >
-          Tải thêm việc
+          {{ 'home.loadMoreJobs' | t }}
         </a>
       </div>
 
       <div class="col-lg-4 sidebar">
         <div class="single-slidebar">
-          <h4>Công việc theo vị trí</h4>
+          <h4>{{ 'home.jobsByLocation' | t }}</h4>
           <ul class="cat-list">
             <li>
               <a class="justify-content-between d-flex">
@@ -213,7 +210,7 @@
           </ul>
         </div>
         <div class="single-slidebar">
-          <h4>Bài viết</h4>
+          <h4>{{ 'home.recentPosts' | t }}</h4>
           <div class="blog-list">
             <div
               class="single-blog"

@@ -1,11 +1,14 @@
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
 import { TokenService } from '../../../../core/services/token.service';
+import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
 
 @Component({
   selector: 'app-login-callback',
+  imports: [TranslatePipe, RouterLink],
+  standalone: true,
   templateUrl: './login-callback.component.html',
   styleUrls: ['./login-callback.component.css'],
 })

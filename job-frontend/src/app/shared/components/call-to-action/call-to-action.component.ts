@@ -1,20 +1,20 @@
 import { Component, Input } from '@angular/core';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-call-to-action',
   standalone: true,
-  imports: [],
+  imports: [TranslatePipe],
   templateUrl: './call-to-action.component.html',
   styleUrl: './call-to-action.component.css',
 })
 export class CallToActionComponent {
   @Input() sectionId = 'join';
   @Input() withTopMargin = false;
-  @Input() title = 'Tham gia vào chúng tôi mà không có bất kỳ do dự nào';
-  @Input() description =
-    'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.';
+  @Input() title?: string;
+  @Input() description?: string;
   @Input() candidateHref = '/login';
   @Input() employerHref = '/login';
-  @Input() candidateText = 'Tôi là ứng viên';
-  @Input() employerText = 'Tôi là nhà tuyển dụng';
+  @Input() candidateText?: string;
+  @Input() employerText?: string;
 }

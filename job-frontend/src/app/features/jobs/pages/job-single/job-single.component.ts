@@ -6,10 +6,13 @@ import { JobDetailViewModel } from '../../../../shared/models/jobs/job-api-respo
 import { JobCardModel } from '../../../../shared/models/jobs/job-card.model';
 import { JobService } from '../../services/job.service';
 import { SafeHtmlPipe } from '../../../../shared/pipes/safe-html.pipe';
+import { AuthService } from '../../../../core/services/auth.service';
+import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
+import { I18nService } from '../../../../core/i18n/i18n.service';
 
 @Component({
   selector: 'app-job-single',
-  imports: [RouterModule, SafeHtmlPipe],
+  imports: [RouterModule, SafeHtmlPipe, TranslatePipe],
   standalone: true,
   templateUrl: './job-single.component.html',
   styleUrl: './job-single.component.css',
@@ -29,11 +32,14 @@ export class JobSingleComponent implements OnInit {
     expiredDate: '',
   };
   relatedJobs: JobCardModel[] = [];
+  hasApplied = false;
 
   constructor(
     private jobSerivce: JobService,
     private route: ActivatedRoute,
-    private homeService: HomeService
+    private homeService: HomeService,
+    private authService: AuthService,
+    private i18nService: I18nService,
   ) {}
 
   carouselOptions = {
@@ -56,10 +62,10 @@ export class JobSingleComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    
     this.route.params.subscribe((params) => {
       this.jobId = params['id'];
       this.getDetailJob(this.jobId);
+      this.checkApplyStatus();
     });
   }
 
@@ -77,7 +83,29 @@ export class JobSingleComponent implements OnInit {
       });
   }
 
+  checkApplyStatus(): void {
+    const parsedJobId = Number(this.jobId);
+
+    if (!this.authService.isLoggedIn() || Number.isNaN(parsedJobId) || parsedJobId <= 0) {
+      this.hasApplied = false;
+      return;
+    }
+
+    this.jobSerivce
+      .checkApplyJob(parsedJobId)
+      .pipe(take(1))
+      .subscribe({
+        next: (response) => {
+          this.hasApplied = response.data;
+        },
+        error: () => {
+          this.hasApplied = false;
+        },
+      });
+  }
+
   formatMoney(value: number): string {
-    return `${value.toLocaleString('vi-VN')} VND`;
+    const locale = this.i18nService.currentLanguage === 'vi' ? 'vi-VN' : 'en-US';
+    return `${value.toLocaleString(locale)} VND`;
   }
 }

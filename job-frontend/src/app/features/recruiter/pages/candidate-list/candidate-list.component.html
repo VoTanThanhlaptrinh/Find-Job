@@ -1,1 +1,70 @@
-<p>candidate-list works!</p>
+<section class="space-y-4 p-3 sm:p-4">
+  <header class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+    <h1 class="text-xl font-semibold text-slate-900">{{ 'candidateList.title' | t }}</h1>
+    <p class="mt-1 text-sm text-slate-600">{{ 'candidateList.subtitle' | t }}</p>
+  </header>
+
+  <div class="grid gap-3 sm:grid-cols-3">
+    <article class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <p class="text-sm text-slate-500">{{ 'candidateList.totalCandidates' | t }}</p>
+      <p class="mt-2 text-2xl font-semibold text-slate-900">{{ candidates.length }}</p>
+    </article>
+    <article class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <p class="text-sm text-slate-500">{{ 'candidateList.interviewing' | t }}</p>
+      <p class="mt-2 text-2xl font-semibold text-slate-900">{{ interviewingCount }}</p>
+    </article>
+    <article class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <p class="text-sm text-slate-500">{{ 'candidateList.newThisWeek' | t }}</p>
+      <p class="mt-2 text-2xl font-semibold text-slate-900">{{ newThisWeekCount }}</p>
+    </article>
+  </div>
+
+  @if (candidates.length > 0) {
+    <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <table class="min-w-full divide-y divide-slate-200">
+        <thead class="bg-slate-50">
+          <tr>
+            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
+              {{ 'candidateList.table.name' | t }}
+            </th>
+            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
+              {{ 'candidateList.table.role' | t }}
+            </th>
+            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
+              {{ 'candidateList.table.experience' | t }}
+            </th>
+            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
+              {{ 'candidateList.table.status' | t }}
+            </th>
+            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
+              {{ 'candidateList.table.action' | t }}
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200 bg-white">
+          @for (candidate of candidates; track trackByCandidate($index, candidate)) {
+            <tr class="hover:bg-slate-50">
+              <td class="px-4 py-3 text-sm font-medium text-slate-900">{{ candidate.name }}</td>
+              <td class="px-4 py-3 text-sm text-slate-700">{{ candidate.role }}</td>
+              <td class="px-4 py-3 text-sm text-slate-700">{{ candidate.experience }}</td>
+              <td class="px-4 py-3 text-sm">
+                <span class="rounded-full px-2.5 py-1 text-xs font-medium" [ngClass]="statusClass(candidate.status)">
+                  {{ ('candidateList.status.' + candidate.status) | t }}
+                </span>
+              </td>
+              <td class="px-4 py-3 text-sm">
+                <button type="button" class="rounded-lg border border-slate-300 px-3 py-1.5 text-slate-700 hover:bg-slate-100">
+                  {{ 'candidateList.viewProfile' | t }}
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <div class="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center text-sm text-slate-600">
+      {{ 'candidateList.empty' | t }}
+    </div>
+  }
+</section>

@@ -10,18 +10,19 @@
   <div class="container">
     <div class="flex justify-between items-center">
       <div id="logo">
-        <a href="/" aria-label="Trang chủ" title="Trang chủ"
-          ><img
+        <a href="/" [attr.aria-label]="'header.home' | t" [title]="'header.home' | t"
+          ><img title="img"
             src="assets/web_css/img/logo.png"
-            alt="Logo trang chủ"
-            title="Trang chủ"
+            [attr.alt]="'header.logoAlt' | t"
+            [title]="'header.home' | t"
         /></a>
       </div>
       <div class="lg:hidden">
-        <button
+        <button title="btn"
           type="button"
           class="flex h-10 w-10 flex-col items-center justify-center gap-1 rounded-lg border border-white/35 bg-black/35"
-          aria-label="Mở menu"
+          [attr.aria-label]="'header.openMenu' | t"
+          [attr.title]="'header.openMenu' | t"
           (click)="toggleMobileMenu()"
         >
           <span class="block h-0.5 w-5 bg-white"></span>
@@ -37,25 +38,43 @@
           >
             <ng-container>
               <c-nav-item class="menu-active">
-                <a cNavLink href="/">Trang chủ</a>
+                <a cNavLink href="/">{{ 'header.home' | t }}</a>
               </c-nav-item>
               <c-nav-item>
-                <a cNavLink href="/category">Tìm việc</a>
+                <a cNavLink href="/category">{{ 'header.jobs' | t }}</a>
               </c-nav-item>
             </ng-container>
 
             <c-nav-item>
-              <a cNavLink href="/blogHome">Blog</a>
+              <a cNavLink href="/blogHome">{{ 'header.blog' | t }}</a>
             </c-nav-item>
             <c-nav-item>
-              <a cNavLink href="/contact">Liên hệ</a>
+              <a cNavLink href="/contact">{{ 'header.contact' | t }}</a>
             </c-nav-item>
             <c-nav-item>
-              <a cNavLink href="/about">Thông tin</a>
+              <a cNavLink href="/about">{{ 'header.about' | t }}</a>
             </c-nav-item>
+
+            <div class="ml-4 flex items-center gap-2">
+              <span class="text-sm font-semibold" [ngClass]="currentLanguage === 'en' ? 'text-blue-600' : 'text-gray-400'">EN</span>
+              <button
+                type="button"
+                class="relative inline-flex h-6 w-12 cursor-pointer items-center rounded-full border-2 border-transparent bg-slate-300 transition-colors duration-200 ease-in-out focus:outline-none"
+                [ngClass]="currentLanguage === 'vi' ? 'bg-blue-600' : 'bg-slate-300'"
+                (click)="switchLanguage(currentLanguage === 'vi' ? 'en' : 'vi')"
+                title="Chuyển ngôn ngữ / Switch language"
+              >
+                <span
+                  class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                  [ngClass]="currentLanguage === 'vi' ? 'translate-x-6' : 'translate-x-0'"
+                ></span>
+              </button>
+              <span class="text-sm font-semibold" [ngClass]="currentLanguage === 'vi' ? 'text-blue-600' : 'text-gray-400'">VI</span>
+            </div>
+
             @if (isLoggedIn) {
               <div class="text-slate-50">
-                <button matButton [matMenuTriggerFor]="menu">Tài khoản</button>
+                <button matButton [matMenuTriggerFor]="menu">{{ 'header.account' | t }}</button>
                 <mat-menu
                   #menu="matMenu"
                   class="bg-white rounded-xl! shadow-md!"
@@ -65,14 +84,14 @@
                     (click)="goInfor()"
                     class="text-slate-50 hover:bg-gray-200!"
                   >
-                    Thông tin tài khoản
+                    {{ 'header.accountInfo' | t }}
                   </button>
                   <button
                     mat-menu-item
                     (click)="logout()"
                     class="text-slate-50 hover:bg-gray-200!"
                   >
-                    Đăng xuất
+                    {{ 'header.logout' | t }}
                   </button>
                 </mat-menu>
               </div>
@@ -84,22 +103,22 @@
                   <c-nav-item
                     class="bg-white rounded-lg border-blue-900 border-2! px-2 py-1"
                   >
-                    <a cNavLink href="/login" class="text-black!">Đăng nhập</a>
+                    <a cNavLink href="/login" class="text-black!">{{ 'header.login' | t }}</a>
                   </c-nav-item>
                 } @else {
                   <c-nav-item class="rounded-lg bg-blue-500 px-2 py-1">
-                    <a cNavLink href="/login">Đăng nhập</a>
+                    <a cNavLink href="/login">{{ 'header.login' | t }}</a>
                   </c-nav-item>
                 }
                 @if (isRegisterPage) {
                   <c-nav-item
                     class="bg-white rounded-lg border-blue-900 border-2! px-2 py-1"
                   >
-                    <a cNavLink href="/register" class="text-black!">Đăng ký</a>
+                    <a cNavLink href="/register" class="text-black!">{{ 'header.register' | t }}</a>
                   </c-nav-item>
                 } @else {
                   <c-nav-item class="rounded-lg bg-blue-500 px-2 py-1">
-                    <a cNavLink href="/register">Đăng ký</a>
+                    <a cNavLink href="/register">{{ 'header.register' | t }}</a>
                   </c-nav-item>
                 }
               </ng-container>
@@ -122,7 +141,7 @@
 
 <aside
   role="dialog"
-  aria-label="Menu điều hướng"
+  [attr.aria-label]="'header.navigationMenu' | t"
   class="fixed right-0 top-0 z-50 flex h-screen w-[min(82vw,320px)] flex-col bg-white p-4 shadow-[-6px_0_18px_rgba(0,0,0,0.15)] transition-transform duration-200 ease-out lg:hidden"
   [class.translate-x-0]="isMobileMenuOpen"
   [class.translate-x-full]="!isMobileMenuOpen"
@@ -130,7 +149,8 @@
   <button
     type="button"
     class="ml-auto border-none bg-transparent text-[30px] leading-none text-slate-900"
-    aria-label="Đóng menu"
+    [attr.aria-label]="'header.closeMenu' | t"
+    [attr.title]="'header.closeMenu' | t"
     (click)="closeMobileMenu()"
   >
     ×
@@ -141,32 +161,52 @@
       routerLink="/"
       class="rounded-[10px] px-3 py-2.5 font-semibold text-slate-900 hover:bg-slate-100"
       (click)="closeMobileMenu()"
-      >Trang chủ</a
+      >{{ 'header.home' | t }}</a
     >
     <a
       routerLink="/category"
       class="rounded-[10px] px-3 py-2.5 font-semibold text-slate-900 hover:bg-slate-100"
       (click)="closeMobileMenu()"
-      >Tìm việc</a
+      >{{ 'header.jobs' | t }}</a
     >
     <a
       routerLink="/blogHome"
       class="rounded-[10px] px-3 py-2.5 font-semibold text-slate-900 hover:bg-slate-100"
       (click)="closeMobileMenu()"
-      >Blog</a
+      >{{ 'header.blog' | t }}</a
     >
     <a
       routerLink="/contact"
       class="rounded-[10px] px-3 py-2.5 font-semibold text-slate-900 hover:bg-slate-100"
       (click)="closeMobileMenu()"
-      >Liên hệ</a
+      >{{ 'header.contact' | t }}</a
     >
     <a
       routerLink="/about"
       class="rounded-[10px] px-3 py-2.5 font-semibold text-slate-900 hover:bg-slate-100"
       (click)="closeMobileMenu()"
-      >Thông tin</a
+      >{{ 'header.about' | t }}</a
     >
+
+    <div class="mt-4 mb-2 flex flex-col items-center gap-2">
+      <span class="text-sm font-medium text-slate-700">{{ 'header.switchLanguage' | t }}</span>
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-semibold" [ngClass]="currentLanguage === 'en' ? 'text-blue-600' : 'text-gray-400'">EN</span>
+        <button
+          type="button"
+          class="relative inline-flex h-7 w-14 cursor-pointer items-center rounded-full border-2 border-transparent bg-slate-300 transition-colors duration-200 ease-in-out focus:outline-none"
+          [ngClass]="currentLanguage === 'vi' ? 'bg-blue-600' : 'bg-slate-300'"
+          (click)="switchLanguage(currentLanguage === 'vi' ? 'en' : 'vi')"
+          title="Chuyển ngôn ngữ / Switch language"
+        >
+          <span
+            class="pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+            [ngClass]="currentLanguage === 'vi' ? 'translate-x-7' : 'translate-x-0'"
+          ></span>
+        </button>
+        <span class="text-sm font-semibold" [ngClass]="currentLanguage === 'vi' ? 'text-blue-600' : 'text-gray-400'">VI</span>
+      </div>
+    </div>
   </nav>
   <div class="border bg-gray-600 h-0.5 w-full"></div>
   @if (isLoggedIn) {
@@ -176,14 +216,14 @@
         class="rounded-[10px] border-none bg-blue-600 px-3 py-2.5 text-center font-semibold text-white"
         (click)="goInfor(); closeMobileMenu()"
       >
-        Thông tin tài khoản
+        {{ 'header.accountInfo' | t }}
       </button>
       <button
         type="button"
         class="rounded-[10px] border-none bg-red-600 px-3 py-2.5 text-center font-semibold text-white"
         (click)="logout(); closeMobileMenu()"
       >
-        Đăng xuất
+        {{ 'header.logout' | t }}
       </button>
     </div>
   } @else {
@@ -192,13 +232,13 @@
         routerLink="/login"
         class="rounded-[10px] bg-blue-600 px-3 py-2.5 text-center font-semibold text-blue-400"
         (click)="closeMobileMenu()"
-        >Đăng nhập</a
+        >{{ 'header.login' | t }}</a
       >
       <a
         routerLink="/register"
         class="rounded-[10px] bg-blue-600 px-3 py-2.5 text-center font-semibold text-blue-400"
         (click)="closeMobileMenu()"
-        >Đăng ký</a
+        >{{ 'header.register' | t }}</a
       >
     </div>
   }

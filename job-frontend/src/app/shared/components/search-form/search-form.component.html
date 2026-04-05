@@ -1,27 +1,32 @@
 <form action="#" class="serach-form-area" method="post">
     <div class="row justify-content-center form-wrap">
       <div class="col-lg-6 form-cols">
+        <label for="search-title" class="sr-only">{{ 'searchForm.jobPlaceholder' | t }}</label>
         <input
+          id="search-title"
           type="text"
           class="form-control"
           name="title"
-          placeholder="Công việc bạn đang tìm là gì?"
+          [placeholder]="'searchForm.jobPlaceholder' | t"
+          [attr.aria-label]="'searchForm.jobPlaceholder' | t"
+          [attr.title]="'searchForm.jobPlaceholder' | t"
         />
       </div>
       <div class="col-lg-4 form-cols ">
         <div class="default-select" id="default-selects">
-          <select title="area" class="form-control">
-            <option value="1">Khu vực</option>
-            <option value="2">TP Hồ Chí Minh</option>
-            <option value="3">Hà Nội</option>
-            <option value="4">Đà Nẵng</option>
-            <option value="5">Cần Thơ</option>
+          <label for="search-area" class="sr-only">{{ 'searchForm.area' | t }}</label>
+          <select id="search-area" title="area" class="form-control">
+            <option value="1">{{ 'searchForm.area' | t }}</option>
+            <option value="2">{{ 'searchForm.areaHCM' | t }}</option>
+            <option value="3">{{ 'searchForm.areaHN' | t }}</option>
+            <option value="4">{{ 'searchForm.areaDN' | t }}</option>
+            <option value="5">{{ 'searchForm.areaCT' | t }}</option>
           </select>
         </div>
       </div>
       <div class="col-lg-2 form-cols">
         <button type="submit" class="btn btn-info">
-          <span class="lnr lnr-magnifier"></span> Tìm kiếm
+          <span class="lnr lnr-magnifier"></span> {{ 'searchForm.search' | t }}
         </button>
       </div>
     </div>

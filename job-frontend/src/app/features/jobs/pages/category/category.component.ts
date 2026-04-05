@@ -12,6 +12,8 @@ import {
 } from '../../../../shared/models/jobs/job-api-response.model';
 import { CategoryService } from '../../services/category.service';
 import { JobCardModel } from '../../../../shared/models/jobs/job-card.model';
+import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
+import { I18nService } from '../../../../core/i18n/i18n.service';
 
 @Component({
   selector: 'app-category',
@@ -22,6 +24,7 @@ import { JobCardModel } from '../../../../shared/models/jobs/job-card.model';
     JobCardComponent,
     SkeletonJobCardComponent,
     CallToActionComponent,
+    TranslatePipe,
   ],
   standalone: true,
   templateUrl: './category.component.html',
@@ -36,15 +39,18 @@ export class CategoryComponent implements OnInit {
   selectedAddresses = new Set<string>();
   selectedTypes = new Set<string>();
   jobTypes = [
-    { label: 'Full time', checked: false },
-    { label: 'Part time', checked: false },
-    { label: 'Remote', checked: false },
-    { label: 'Hybrid', checked: false },
+    { id: 'fullTime', value: 'Full time', checked: false },
+    { id: 'partTime', value: 'Part time', checked: false },
+    { id: 'remote', value: 'Remote', checked: false },
+    { id: 'hybrid', value: 'Hybrid', checked: false },
   ];
 
   private searchSubject = new Subject<string>();
   title: string = '';
-  constructor(private category: CategoryService) {
+  constructor(
+    private category: CategoryService,
+    private i18nService: I18nService,
+  ) {
     effect(() => {
       this.addressCount = this.category.addressCount();
       this.jobs = this.category.jobs();
@@ -91,7 +97,8 @@ export class CategoryComponent implements OnInit {
   }
 
   formatMoney(value: number): string {
-    return `${value.toLocaleString('vi-VN')} VND`;
+    const locale = this.i18nService.currentLanguage === 'vi' ? 'vi-VN' : 'en-US';
+    return `${value.toLocaleString(locale)} VND`;
   }
 
   onFilterChange(event: Event): void {
@@ -112,7 +119,7 @@ export class CategoryComponent implements OnInit {
       }
     }
 
-    if (this.jobTypes.some((item) => item.label === value)) {
+    if (this.jobTypes.some((item) => item.value === value)) {
       if (checked) {
         this.selectedTypes.add(value);
       } else {
