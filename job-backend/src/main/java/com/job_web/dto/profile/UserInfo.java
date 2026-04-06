@@ -9,19 +9,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public record UserInfo(
-        @NotNull(message = "TÃªn Ä‘áº§y Ä‘á»§ khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        @NotNull(message = "{validation.fullname.required}")
         String fullName,
 
-        @NotNull(message = "NgÃ y sinh khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        @NotNull(message = "{validation.dob.required}")
         LocalDate dateOfBirth,
 
-        @NotNull(message = "Äá»‹a chá»‰ khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        @NotNull(message = "{validation.address.required}")
         String address,
 
-        @NotNull(message = "Sá»‘ Ä‘iá»‡n thoáº¡i khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        @NotNull(message = "{validation.phone.required}")
         String mobile
 ) {
-    @AssertTrue(message = "khÃ´ng pháº£i Ä‘inh dáº¡ng sá»‘ Ä‘iá»‡n thoáº¡i")
+    @AssertTrue(message = "{validation.phone.invalid}")
     public boolean isMobile() {
         Pattern pattern = Pattern.compile("^\\d{10}$");
         Matcher matcher = pattern.matcher(mobile);

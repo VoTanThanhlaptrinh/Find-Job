@@ -42,7 +42,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void changePassword(String newPassword, String oldPassword, User user) {
         if (!encoder.matches(oldPassword, user.getPassword())) {
-            throw new BadRequestException("password hiện tại không khớp");
+            throw new BadRequestException("auth.password.current_mismatch");
         }
         user.setPassword(encoder.encode(newPassword));
         userRepository.save(user);
@@ -68,7 +68,7 @@ public class AccountServiceImpl implements AccountService {
                 mailProducer.sendMail(mailMessage);
             } catch (Exception e) {
                 log.trace(e.getMessage(), e);
-                throw new AppException("Gửi email thất bại", HttpStatus.INTERNAL_SERVER_ERROR);
+                throw new AppException("auth.email.send_failed", HttpStatus.INTERNAL_SERVER_ERROR);
             }
             return false;
         }

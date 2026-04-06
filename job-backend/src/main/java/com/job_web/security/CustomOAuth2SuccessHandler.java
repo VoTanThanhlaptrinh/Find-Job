@@ -46,18 +46,17 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
             user.setEmail(Objects.requireNonNull(principal.getAttribute("email")).toString());
             user.setFullName(Objects.requireNonNull(principal.getAttribute("name")).toString());
             user.setActive(true);
-            user.setRole("USER");
+            user.setRole("ROLE_USER");
             user.setEnabled(true);
             user.setOauth2Enabled(true);
             userRepository.save(user);
         }
         UsernamePasswordAuthenticationToken  usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                user.getEmail(), "", principal.getAuthorities());
+                user, null, user.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 
         String token = jwtService.generateToken(user);
         String refreshToken = refreshTokenService.createRefreshToken(user.getEmail());
-        System.out.println(refreshToken);
         ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
                 .secure(isSecure)

@@ -4,6 +4,7 @@ import com.job_web.dto.common.ApiResponse;
 import com.job_web.models.CurrentUser;
 import com.job_web.models.User;
 import com.job_web.service.notification.SseNotificationService;
+import com.job_web.utills.MessageUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,6 @@ public class SseNotificationController {
             @PathVariable Long resumeId,
             @RequestBody String message) {
         sseNotificationService.sendNotification(resumeId, message);
-        return ResponseEntity.ok(new ApiResponse<>("Notification sent", null, HttpStatus.OK.value()));
+        return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("notification.sent"), null, HttpStatus.OK.value()));
     }
 }

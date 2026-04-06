@@ -22,7 +22,7 @@ public class UserCrudServiceImpl implements UserCrudService {
     @Override
     public void createUser(UserCrudDTO userDTO) {
         if (userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
-            throw new BadRequestException("Email đã tồn tại");
+            throw new BadRequestException("account.email.exists");
         }
         User user = new User();
         applyDtoToUser(user, userDTO, true);
@@ -33,7 +33,7 @@ public class UserCrudServiceImpl implements UserCrudService {
     public UserResponseDTO getUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .map(this::toResponse)
-                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy user"));
+                .orElseThrow(() -> new ResourceNotFoundException("auth.user.not_found"));
     }
 
     @Override
@@ -44,10 +44,10 @@ public class UserCrudServiceImpl implements UserCrudService {
     @Override
     public void updateUser(Long id, UserCrudDTO userDTO) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy user"));
+                .orElseThrow(() -> new ResourceNotFoundException("auth.user.not_found"));
 
         if (!user.getEmail().equals(userDTO.getEmail()) && userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
-            throw new BadRequestException("Email đã tồn tại");
+            throw new BadRequestException("account.email.exists");
         }
         applyDtoToUser(user, userDTO, false);
         userRepository.save(user);
@@ -56,7 +56,7 @@ public class UserCrudServiceImpl implements UserCrudService {
     @Override
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy user"));
+                .orElseThrow(() -> new ResourceNotFoundException("auth.user.not_found"));
         user.markDeleted();
         user.setActive(false);
         user.setEnabled(false);

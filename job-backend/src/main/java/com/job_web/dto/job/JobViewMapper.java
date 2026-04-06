@@ -33,7 +33,8 @@ public final class JobViewMapper {
                 job.getTime(),
                 job.getRequireDetails(),
                 job.getSkill(),
-                expiredDate
+                expiredDate,
+                job.getHeadcount()
         );
     }
 
@@ -45,7 +46,8 @@ public final class JobViewMapper {
                 job.getAddress(),
                 job.getSalary(),
                 job.getTime(),
-                job.getApplies()
+                job.getApplies(),
+                job.getHeadcount()
         );
     }
 

@@ -10,42 +10,42 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 
 public record UserCrudDTO(
-        @NotBlank(message = "TÃªn Ä‘áº§y Ä‘á»§ khÃ´ng Ä‘Æ°á»£c rá»—ng")
-        @Size(max = 255, message = "TÃªn Ä‘áº§y Ä‘á»§ tá»‘i Ä‘a 255 kÃ½ tá»±")
+        @NotBlank(message = "{validation.fullname.required}")
+        @Size(max = 255, message = "{validation.fullname.max}")
         String fullName,
 
-        @NotBlank(message = "Email khÃ´ng Ä‘Æ°á»£c rá»—ng")
-        @Email(message = "KhÃ´ng pháº£i Email")
+        @NotBlank(message = "{validation.email.required}")
+        @Email(message = "{validation.email}")
         String email,
 
-        @NotBlank(message = "Máº­t kháº©u khÃ´ng Ä‘Æ°á»£c rá»—ng")
-        @Size(min = 8, message = "Máº­t kháº©u khÃ´ng Ä‘Æ°á»£c dÆ°á»›i 8 kÃ½ tá»±")
+        @NotBlank(message = "{validation.password.required}")
+        @Size(min = 8, message = "{validation.password.min}")
         String password,
 
-        @NotBlank(message = "Vai trÃ² khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        @NotBlank(message = "{validation.role.required}")
         String role,
 
-        @NotNull(message = "NgÃ y sinh khÃ´ng Ä‘Æ°á»£c rá»—ng")
-        @Past(message = "NgÃ y sinh pháº£i trÆ°á»›c hÃ´m nay")
+        @NotNull(message = "{validation.dob.required}")
+        @Past(message = "{validation.dob.past}")
         LocalDate dateOfBirth,
 
-        @NotBlank(message = "Äá»‹a chá»‰ khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        @NotBlank(message = "{validation.address.required}")
         String address,
 
-        @NotBlank(message = "Sá»‘ Ä‘iá»‡n thoáº¡i khÃ´ng Ä‘Æ°á»£c rá»—ng")
-        @Pattern(regexp = "^\\d{10}$", message = "KhÃ´ng pháº£i Ä‘á»‹nh dáº¡ng sá»‘ Ä‘iá»‡n thoáº¡i")
+        @NotBlank(message = "{validation.phone.required}")
+        @Pattern(regexp = "^\\d{10}$", message = "{validation.phone.invalid}")
         String mobile,
 
-        @NotNull(message = "Tráº¡ng thÃ¡i kÃ­ch hoáº¡t khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        @NotNull(message = "{validation.active.required}")
         Boolean active,
 
-        @NotNull(message = "Tráº¡ng thÃ¡i khÃ³a tÃ i khoáº£n khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        @NotNull(message = "{validation.locked.required}")
         Boolean accountLocked,
 
-        @NotNull(message = "Tráº¡ng thÃ¡i enable khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        @NotNull(message = "{validation.enabled.required}")
         Boolean enabled,
 
-        @NotNull(message = "Tráº¡ng thÃ¡i OAuth2 khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        @NotNull(message = "{validation.oauth2.required}")
         Boolean oauth2Enabled
 ) {
     public String getFullName() {

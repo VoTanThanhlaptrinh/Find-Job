@@ -3,10 +3,10 @@ package com.job_web.dto.auth;
 import jakarta.validation.constraints.NotNull;
 
 public record ForgotPassDTO(
-        @NotNull(message = "email rá»—ng")
+        @NotNull(message = "{validation.email.required}")
         String email,
 
-        @NotNull(message = "mÃ£ xÃ¡c thá»±c rá»—ng")
+        @NotNull(message = "{validation.code.required}")
         String code
 ) {
     public String getEmail() {

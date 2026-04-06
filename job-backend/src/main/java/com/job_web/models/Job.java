@@ -55,6 +55,7 @@ public class Job extends StatusEntity {
 	@JoinColumn(name = "address_id") // Khớp với cột address_id trong ảnh bạn gửi
 	private Address address;
 	private String logo;
+	private Integer headcount;
 	public void addApplication(Apply apply) {
 		if(applies == null) {
 			applies = new LinkedList<>();

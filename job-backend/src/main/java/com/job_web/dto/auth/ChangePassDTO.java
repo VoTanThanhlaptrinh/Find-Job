@@ -5,17 +5,17 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record ChangePassDTO(
-        @NotNull(message = "password hiá»‡n táº¡i khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        @NotNull(message = "{validation.old_password.required}")
         String oldPass,
 
-        @NotNull(message = "password má»›i khÃ´ng Ä‘Æ°á»£c rá»—ng")
-        @Size(min = 8, message = "máº­t kháº©u tá»‘i thiá»ƒu 8 kÃ½ tá»±")
+        @NotNull(message = "{validation.new_password.required}")
+        @Size(min = 8, message = "{validation.password.min}")
         String newPass,
 
-        @NotNull(message = "password nháº­p láº¡i khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        @NotNull(message = "{validation.confirm_password.required}")
         String confirmPass
 ) {
-    @AssertTrue(message = "password má»›i vÃ  password nháº­p láº¡i pháº£i khá»›p nhau")
+    @AssertTrue(message = "{validation.new_password.mismatch}")
     public boolean isPasswordsMatch() {
         return newPass != null && newPass.equals(confirmPass);
     }

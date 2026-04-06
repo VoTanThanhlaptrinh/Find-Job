@@ -30,6 +30,7 @@ export class JobSingleComponent implements OnInit {
     requireDetails: '',
     skill: '',
     expiredDate: '',
+    headcount: 0
   };
   relatedJobs: JobCardModel[] = [];
   hasApplied = false;

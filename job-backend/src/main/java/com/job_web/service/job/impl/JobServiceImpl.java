@@ -28,7 +28,7 @@ public class JobServiceImpl implements JobService {
     @Override
     public JobDetailView getJobDetailById(Long id) {
         Job job = jobRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Công việc không tồn tại"));
+                .orElseThrow(() -> new ResourceNotFoundException("job.not_found"));
         return JobViewMapper.toJobDetailView(job);
     }
 
@@ -41,13 +41,13 @@ public class JobServiceImpl implements JobService {
     @Transactional
     public void createJob(JobDTO jobDTO, User user) {
         Hirer hirer = hirerRepository.findHirerByUserIs(user)
-                .orElseThrow(() -> new ForbiddenException("Tài khoản này không đủ thông tin để đăng tuyển"));
+                .orElseThrow(() -> new ForbiddenException("message.forbidden"));
 
         Address address = addressRepository.findById(jobDTO.getAddressId())
-                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy địa chỉ phù hợp"));
+                .orElseThrow(() -> new ResourceNotFoundException("message.not_found"));
 
         if (!hirer.isExistAddress(address)) {
-            throw new ForbiddenException("Địa chỉ này không thuộc về tài khoản đang sử dụng");
+            throw new ForbiddenException("job.address.forbidden");
         }
 
         Job job = jobDTO.toJob();
@@ -60,20 +60,20 @@ public class JobServiceImpl implements JobService {
     @Transactional
     public void updateJob(Long id, JobDTO jobDTO, User user) {
         Job job = jobRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy công việc"));
+                .orElseThrow(() -> new ResourceNotFoundException("job.not_found"));
 
         Hirer hirer = hirerRepository.findHirerByUserIs(user)
-                .orElseThrow(() -> new ForbiddenException("Tài khoản này không đủ thông tin để đăng tuyển"));
+                .orElseThrow(() -> new ForbiddenException("message.forbidden"));
 
         if (job.getHirer() == null || job.getHirer().getId() != hirer.getId()) {
-            throw new ForbiddenException("Bạn không có quyền chỉnh sửa công việc này");
+            throw new ForbiddenException("job.edit.forbidden");
         }
 
         Address address = addressRepository.findById(jobDTO.getAddressId())
-                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy địa chỉ phù hợp"));
+                .orElseThrow(() -> new ResourceNotFoundException("message.not_found"));
 
         if (!hirer.isExistAddress(address)) {
-            throw new ForbiddenException("Địa chỉ này không thuộc về tài khoản đang sử dụng");
+            throw new ForbiddenException("job.address.forbidden");
         }
 
         jobDTO.updateJob(job);
@@ -86,13 +86,13 @@ public class JobServiceImpl implements JobService {
     @Transactional
     public void deleteJob(Long id, User user) {
         Job job = jobRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy công việc"));
+                .orElseThrow(() -> new ResourceNotFoundException("job.not_found"));
 
         Hirer hirer = hirerRepository.findHirerByUserIs(user)
-                .orElseThrow(() -> new ForbiddenException("Tài khoản này không đủ thông tin để đăng tuyển"));
+                .orElseThrow(() -> new ForbiddenException("message.forbidden"));
 
         if (job.getHirer() == null || job.getHirer().getId() != hirer.getId()) {
-            throw new ForbiddenException("Bạn không có quyền xóa công việc này");
+            throw new ForbiddenException("job.delete.forbidden");
         }
 
         job.markDeleted();

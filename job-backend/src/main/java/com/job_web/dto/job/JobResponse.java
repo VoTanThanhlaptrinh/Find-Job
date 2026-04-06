@@ -13,4 +13,5 @@ public class JobResponse {
     private final double salary;
     private final String time;
     private final int applies;
+    private final Integer headcount;
 }

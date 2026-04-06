@@ -49,6 +49,7 @@ export interface JobDetailViewModel {
   requireDetails: string;
   skill: string;
   expiredDate: string;
+  headcount: number;
 }
 
 export interface HirerJobViewModel {
@@ -59,6 +60,7 @@ export interface HirerJobViewModel {
   salary: number;
   time: string;
   applies: number;
+  headcount: number;
 }
 
 export interface JobFilterPayload {

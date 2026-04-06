@@ -5,10 +5,10 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.web.multipart.MultipartFile;
 
 public record ResumeUploadDTO(
-        @NotNull(message = "Resume file must not be empty.")
+        @NotNull(message = "{validation.resume.file.required}")
         MultipartFile file
 ) {
-    @AssertTrue(message = "Only PDF, DOC, or DOCX files are allowed.")
+    @AssertTrue(message = "{validation.resume.type.invalid}")
     public boolean isValidType() {
         if (file == null) {
             return true;
@@ -28,7 +28,7 @@ public record ResumeUploadDTO(
         return byContentType || byExtension;
     }
 
-    @AssertTrue(message = "Maximum resume size is 5 MB.")
+    @AssertTrue(message = "{validation.file.maxSize}")
     public boolean isValidSize() {
         return file == null || file.getSize() <= 5 * 1024 * 1024;
     }

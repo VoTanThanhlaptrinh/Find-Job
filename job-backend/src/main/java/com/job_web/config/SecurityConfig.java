@@ -32,6 +32,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.job_web.security.JwtFilter;
+import com.job_web.security.RateLimitFilter;
 import com.job_web.security.VerifyRecoveryFillter;
 import com.job_web.service.security.impl.UserRepositoryDetailsService;
 
@@ -43,6 +44,7 @@ import lombok.AllArgsConstructor;
 public class SecurityConfig {
 
     private final JwtFilter jwtAuthFilter;
+    private final RateLimitFilter rateLimitFilter;
     private UserRepositoryDetailsService userDetailsService;
     private VerifyRecoveryFillter verifyRecoveryFillter;
     private CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
@@ -52,12 +54,20 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
+                        // 1. Các endpoint Public để trên cùng
                         .requestMatchers(ApiConstants.PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.GET, ApiConstants.PUBLIC_GET_ENDPOINTS).permitAll()
-                        .requestMatchers(ApiConstants.HIRER_ENDPOINTS).hasAnyAuthority("ROLE_HIRER","HIRER")
-                        .requestMatchers(ApiConstants.USER_ENDPOINTS).hasAnyAuthority("USER", "ROLE_USER")
+
+                        // 2. Các endpoint Yêu cầu Role cụ thể đưa lên TRƯỚC
+                        .requestMatchers(ApiConstants.HIRER_ENDPOINTS).hasAnyAuthority("ROLE_HIRER", "HIRER")
+                        .requestMatchers(ApiConstants.USER_ENDPOINTS).hasAnyAuthority("ROLE_USER", "USER")
+
+                        // 3. Các endpoint Yêu cầu đăng nhập nói chung đưa xuống DƯỚI
+                        .requestMatchers(ApiConstants.AUTHENTICATED_ENDPOINTS).authenticated()
                         .anyRequest().authenticated()
-                ).addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                )
+                .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(verifyRecoveryFillter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(o -> o
                         .successHandler(customOAuth2SuccessHandler)
@@ -73,11 +83,13 @@ public class SecurityConfig {
     UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of("http://localhost:4200", "https://findjob-xi.vercel.app")); // không dùng "*"
+        config.setAllowedOrigins(List.of("""
+                http://localhost:4200""", """
+                https://findjob-xi.vercel.app"""));
         config.setAllowCredentials(true);
         config.setAllowedMethods(List.of("GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"));
         config.setAllowedHeaders(List.of("Content-Type", "Authorization"));
-        config.setExposedHeaders(List.of("Set-Cookie"));
+        config.setExposedHeaders(List.of("Set-Cookie", "X-RateLimit-Limit", "X-RateLimit-Remaining", "X-RateLimit-Reset", "Retry-After"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);

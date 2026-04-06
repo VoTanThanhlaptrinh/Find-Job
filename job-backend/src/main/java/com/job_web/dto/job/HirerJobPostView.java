@@ -7,6 +7,7 @@ public record HirerJobPostView(
         String address,
         double salary,
         String time,
-        int applies
+        int applies,
+        Integer headcount
 ) {
 }

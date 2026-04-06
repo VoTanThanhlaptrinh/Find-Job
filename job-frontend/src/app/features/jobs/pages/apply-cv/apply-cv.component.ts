@@ -21,7 +21,6 @@ type CvMode = 'existing' | 'upload';
 type ApplyCvFormGroup = FormGroup<{
   cvMode: FormControl<CvMode>;
   existingCvId: FormControl<number>;
-  email: FormControl<string>;
   coverLetter: FormControl<string>;
 }>;
 
@@ -54,7 +53,6 @@ export class ApplyCvComponent implements OnInit {
     this.applyCvForm = this.fb.nonNullable.group({
       cvMode: this.fb.nonNullable.control<CvMode>('existing', Validators.required),
       existingCvId: this.fb.nonNullable.control(this.previousCvOptions[0]?.id ?? 0, Validators.required),
-      email: this.fb.nonNullable.control('', [Validators.required, Validators.email]),
       coverLetter: this.fb.nonNullable.control('', [Validators.maxLength(1000)])
     });
 
@@ -239,7 +237,6 @@ export class ApplyCvComponent implements OnInit {
       const payload: ApplyCvWithExistingRequest = {
         jobId: this.jobId,
         existingCvId,
-        email: formValue.email,
         coverLetter: formValue.coverLetter
       };
 
@@ -253,7 +250,6 @@ export class ApplyCvComponent implements OnInit {
     const payload: ApplyCvWithUploadRequest = {
       jobId: this.jobId,
       cvFile: this.selectedFile,
-      email: formValue.email,
       coverLetter: formValue.coverLetter
     };
 

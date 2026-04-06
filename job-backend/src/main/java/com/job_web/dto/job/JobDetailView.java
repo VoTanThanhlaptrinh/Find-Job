@@ -9,6 +9,7 @@ public record JobDetailView(
         String time,
         String requireDetails,
         String skill,
-        String expiredDate
+        String expiredDate,
+        Integer headcount
 ) {
 }

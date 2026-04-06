@@ -4,14 +4,14 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 public record ApplyCvWithExistingRequest(
-        @NotBlank(message = "Job ID is required.")
+        @NotBlank(message = "{validation.apply.jobId.required}")
         Long jobId,
 
-        @NotBlank(message = "Existing CV ID is required.")
+        @NotBlank(message = "{validation.apply.existingCvId.required}")
         Long existingCvId,
 
-        @NotBlank(message = "Email is required.")
-        @Email(message = "Email is invalid.")
+        @NotBlank(message = "{validation.email.required}")
+        @Email(message = "{validation.email.invalid}")
         String email,
 
         String coverLetter

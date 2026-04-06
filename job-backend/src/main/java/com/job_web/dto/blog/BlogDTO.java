@@ -5,14 +5,14 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record BlogDTO(
-        @NotBlank(message = "TiÃªu Ä‘á» khÃ´ng Ä‘Æ°á»£c rá»—ng")
-        @Size(max = 255, message = "TiÃªu Ä‘á» tá»‘i Ä‘a 255 kÃ½ tá»±")
+        @NotBlank(message = "{validation.blog.title.required}")
+        @Size(max = 255, message = "{validation.blog.title.max}")
         String title,
 
-        @NotBlank(message = "MÃ´ táº£ khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        @NotBlank(message = "{validation.blog.description.required}")
         String description,
 
-        @NotBlank(message = "Ná»™i dung khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        @NotBlank(message = "{validation.blog.content.required}")
         String content
 ) {
     public Blog toBlog() {

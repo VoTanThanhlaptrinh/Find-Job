@@ -5,17 +5,17 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record ResetDTO(
-        @Size(min = 8, message = "Máº­t kháº©u khÃ´ng Ä‘Æ°á»£c dÆ°á»›i 8 kÃ½ tá»±")
-        @NotBlank(message = "Máº­t kháº©u má»›i khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        @Size(min = 8, message = "{validation.password.min}")
+        @NotBlank(message = "{validation.new_password.required}")
         String newPass,
 
-        @NotBlank(message = "XÃ¡c nháº­n máº­t kháº©u má»›i khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        @NotBlank(message = "{validation.confirm_password.required}")
         String confirmPass,
 
-        @NotBlank(message = "MÃ£ xÃ¡c nháº­n khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        @NotBlank(message = "{validation.verification_code.required}")
         String random
 ) {
-    @AssertTrue(message = "Máº­t kháº©u má»›i vÃ  máº­t kháº©u xÃ¡c nháº­n khÃ´ng giá»‘ng nhau")
+    @AssertTrue(message = "{validation.new_password.mismatch}")
     public boolean isValid() {
         return newPass.equals(confirmPass);
     }

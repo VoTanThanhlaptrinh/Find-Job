@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import com.job_web.service.security.JwtService;
@@ -30,6 +31,8 @@ public class JwtServiceImpl implements JwtService {
 	@Value("${application.service.impl.expiration}")
 	private long jwtExpiration;
 	private final JwtFamilyService jwtFamilyService;
+	private final UserDetailsService userDetailsService;
+
 	public String generateToken(UserDetails userDetails) {
 		try{
 			HashMap<String, Object> claims = new HashMap<>();
@@ -43,8 +46,11 @@ public class JwtServiceImpl implements JwtService {
 			throw new RuntimeException(e);
 		}
 	}
+
 	public String generateToken(String username) {
-		return gerenateToken(new HashMap<>(), username);
+		// Load user to get roles for JWT
+		UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+		return generateToken(userDetails);
 	}
 
 	public String extractUsername(String token) {

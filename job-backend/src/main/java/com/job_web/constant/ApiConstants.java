@@ -19,6 +19,15 @@ public class ApiConstants {
             "/api/blogs/**"
     };
 
+    // 3. Các API yêu cầu đăng nhập (bất kỳ role nào)
+    public static final String[] AUTHENTICATED_ENDPOINTS = {
+            "/api/account/profile",
+            "/api/account/password",
+            "/api/account/oauth2",
+            "/api/notifications/**",
+            "/api/blogs"            // POST blog
+    };
+
     // 4. Các API yêu cầu quyền HIRER
     public static final String[] HIRER_ENDPOINTS = {
             "/api/hirer/**",

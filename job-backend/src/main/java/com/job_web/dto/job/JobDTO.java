@@ -13,37 +13,40 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 
 public record JobDTO(
-        @NotBlank(message = "Ten cong viec khong duoc rong")
+        @NotBlank(message = "{validation.job.name.required}")
         String jobName,
 
-        @Positive(message = "Dia diem cong viec khong duoc rong")
+        @Positive(message = "{validation.job.address.required}")
         long addressId,
 
-        @NotBlank(message = "Loai cong viec khong duoc rong")
+        @NotBlank(message = "{validation.job.type.required}")
         String jobType,
 
         @Size(max = 255)
         String salary,
-        @Size(min = 0, max = 5000, message = "Do dai thong tin toi da 5000 ky tu")
-        @NotBlank(message = "Mo ta cong viec khong duoc rong")
+        @Size(min = 0, max = 5000, message = "{validation.job.maxLength}")
+        @NotBlank(message = "{validation.job.description.required}")
         String jobDescription,
-        @Size(min = 0, max = 5000, message = "Do dai thong tin toi da 5000 ky tu")
-        @NotBlank(message = "Yeu cau cong viec khong duoc rong")
+        @Size(min = 0, max = 5000, message = "{validation.job.maxLength}")
+        @NotBlank(message = "{validation.job.requirement.required}")
         String jobRequirement,
-        @NotBlank(message = "Yeu cau ve ky nang, cong cu khong duoc rong")
-        @Size(min = 0, max = 5000, message = "Do dai thong tin toi da 5000 ky tu")
+        @NotBlank(message = "{validation.job.skill.required}")
+        @Size(min = 0, max = 5000, message = "{validation.job.maxLength}")
         String jobSkill,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-        @NotNull(message = "Thoi gian nop CV khong duoc rong")
+        @NotNull(message = "{validation.job.deadline.required}")
         LocalDate deadlineCV,
 
-        @Positive(message = "Can thong tin nguoi dang cong viec")
+        @Positive(message = "{validation.job.hirer.required}")
         long hirerId,
 
-        @Size(min = 0, max = 5000, message = "Thong tin them toi da 5000 ky tu")
-        String moreDetail
+        @Size(min = 0, max = 5000, message = "{validation.job.maxLength}")
+        String moreDetail,
+
+        @Min(value = 1, message = "{validation.job.headcount.min}")
+        Integer headcount
 ) {
-    @AssertTrue(message = "Han nop CV phai sau it nhat mot ngay so voi hom nay")
+    @AssertTrue(message = "{validation.job.deadline.future}")
     public boolean isDeadlineValid() {
         return deadlineCV != null && deadlineCV.isAfter(LocalDate.now());
     }
@@ -56,6 +59,9 @@ public record JobDTO(
         job.setTitle(jobName);
         if(moreDetail != null && !moreDetail.isEmpty()){
             job.setMoreDetail(moreDetail);
+        }
+        if(headcount != null && headcount > 0){
+            job.setHeadcount(headcount);
         }
     }
 
@@ -99,5 +105,9 @@ public record JobDTO(
 
     public String getMoreDetail() {
         return moreDetail;
+    }
+
+    public Integer getHeadcount() {
+        return headcount;
     }
 }

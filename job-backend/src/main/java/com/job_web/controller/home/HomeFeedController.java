@@ -6,6 +6,7 @@ import com.job_web.dto.common.ApiResponse;
 import com.job_web.dto.job.HomeInitView;
 import com.job_web.dto.job.JobCardView;
 import com.job_web.dto.job.JobViewMapper;
+import com.job_web.utills.MessageUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -29,7 +30,7 @@ public class HomeFeedController {
     public ResponseEntity<ApiResponse<List<JobCardView>>> getInit() {
         PageRequest pageRequest = PageRequest.of(0,10, Sort.by("createDate").descending());
         PageRequest blogByTime = PageRequest.of(0, 3, Sort.by("amountLike").descending());
-        return ResponseEntity.ok(new ApiResponse<>("Load dữ liệu thành công", jobRepository.findJobs(LocalDateTime.now(), "ACTIVE",pageRequest), 200));
+        return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("job.load.success"), jobRepository.findJobs(LocalDateTime.now(), "ACTIVE",pageRequest), 200));
     }
     @GetMapping()
     public ResponseEntity<String> home(){

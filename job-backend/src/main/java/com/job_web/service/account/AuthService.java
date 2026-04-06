@@ -9,13 +9,17 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 public interface AuthService {
-    String register(RegistationForm registationForm);
+    String registerUser(RegistationForm registationForm);
+
+    String registerHirer(RegistationForm registationForm);
 
     void sendLinkActivate(String email);
 
     void activeAccount(String token);
 
-    String login(LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response);
+    String loginUser(LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response);
+
+    String loginHirer(LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response);
 
     String refreshToken(HttpServletRequest request, HttpServletResponse response);
 
