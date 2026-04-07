@@ -5,7 +5,7 @@
   </header>
 
   <div class="metric-grid">
-    @for (metric of metrics; track metric.titleKey) {
+    @for (metric of metrics(); track metric.titleKey) {
       <article class="metric-card">
         <p class="metric-title">{{ metric.titleKey | t }}</p>
         <p class="metric-value">{{ metric.value }}</p>

@@ -10,7 +10,7 @@ import { CategoryComponent } from './features/jobs/pages/category/category.compo
 import { InforComponent } from './features/auth/candidate/infor/infor.component';
 import { ChangePassComponent } from './features/auth/candidate/change-pass/change-pass.component';
 import { CvUiComponent } from './features/auth/candidate/cv-ui/cv-ui.component';
-import { HistoryApplyComponent } from './features/auth/candidate/apply-history/history-apply.component';
+import { HistoryApplyComponent } from './features/auth/candidate/history-apply/history-apply.component';
 import { ProfileComponent } from './features/auth/candidate/profile/profile.component';
 import { RecommendedJobsComponent } from './features/auth/candidate/recommended-jobs/recommended-jobs.component';
 import { VerifyComponent } from './features/auth/pages/verify/verify.component';

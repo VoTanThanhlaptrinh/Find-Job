@@ -2,6 +2,7 @@ package web_application.security;
 
 import com.job_web.security.JwtFilter;
 import com.job_web.service.security.JwtService;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.AfterEach;
@@ -15,14 +16,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.util.AntPathMatcher;
 
 import java.io.IOException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 class JwtFilterTest {
@@ -38,8 +39,6 @@ class JwtFilterTest {
 
     @Test
     void bearerTokenOverridesExistingAuthentication() throws ServletException, IOException {
-        ReflectionTestUtils.setField(jwtFilter, "pathMatcher", new AntPathMatcher());
-
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setServletPath("/api/user/applications/jobs/800/status");
         request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer valid-token");
@@ -71,5 +70,39 @@ class JwtFilterTest {
         assertThat(SecurityContextHolder.getContext().getAuthentication().getAuthorities())
                 .extracting("authority")
                 .containsExactly("ROLE_USER");
+    }
+
+    @Test
+    void publicAuthEndpointSkipsJwtValidation() throws ServletException, IOException {
+        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/api/auth/hirer/login");
+        request.setServletPath("/api/auth/hirer/login");
+        request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer invalid-token");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        FilterChain filterChain = mock(FilterChain.class);
+
+        when(jwtService.extractUsername("invalid-token")).thenThrow(new JwtException("invalid"));
+
+        jwtFilter.doFilter(request, response, filterChain);
+
+        verify(filterChain).doFilter(request, response);
+        verifyNoInteractions(userDetailsService);
+        assertThat(response.getStatus()).isEqualTo(200);
+    }
+
+    @Test
+    void publicGetEndpointSkipsJwtValidation() throws ServletException, IOException {
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/api/jobs/1");
+        request.setServletPath("/api/jobs/1");
+        request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer invalid-token");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        FilterChain filterChain = mock(FilterChain.class);
+
+        when(jwtService.extractUsername("invalid-token")).thenThrow(new JwtException("invalid"));
+
+        jwtFilter.doFilter(request, response, filterChain);
+
+        verify(filterChain).doFilter(request, response);
+        verifyNoInteractions(userDetailsService);
+        assertThat(response.getStatus()).isEqualTo(200);
     }
 }

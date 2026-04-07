@@ -53,15 +53,17 @@ export interface JobDetailViewModel {
 }
 
 export interface HirerJobViewModel {
-  id: string | number;
+  id: number;
   title: string;
   description: string;
   address: string;
-  salary: number;
+  salary: string;
   time: string;
   applies: number;
   headcount: number;
 }
+
+export type HirerJobPostView = HirerJobViewModel;
 
 export interface JobFilterPayload {
   pageIndex: number;
@@ -78,5 +80,5 @@ export type JobAddressCountApiResponse = ApiResponse<AddressCountViewModel[]>;
 export type JobDetailApiResponse = ApiResponse<JobDetailViewModel>;
 export type JobExistsApiResponse = ApiResponse<boolean>;
 export type JobSubmitApiResponse = ApiResponse<string | null>;
-export type HirerJobListApiResponse = ApiResponse<PagedPayload<HirerJobViewModel>>;
+export type HirerJobListApiResponse = ApiResponse<PagedPayload<HirerJobPostView>>;
 export type HirerJobCountApiResponse = ApiResponse<number>;

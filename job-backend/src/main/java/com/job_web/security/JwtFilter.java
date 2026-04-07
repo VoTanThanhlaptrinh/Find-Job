@@ -1,12 +1,7 @@
 package com.job_web.security;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Pattern;
-
 import com.job_web.constant.ApiConstants;
-import com.job_web.service.security.RefreshTokenService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -36,19 +31,32 @@ import lombok.RequiredArgsConstructor;
 public class JwtFilter extends OncePerRequestFilter {
 	private final JwtService jwtService;
 	private final UserDetailsService userDetailsService;
-	private AntPathMatcher pathMatcher;
+	private final AntPathMatcher pathMatcher = new AntPathMatcher();
+
+	@Override
+	protected boolean shouldNotFilter(HttpServletRequest request) {
+		String url = request.getServletPath();
+		if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+			return true;
+		}
+		for (String publicEndpoint : ApiConstants.PUBLIC_ENDPOINTS) {
+			if (pathMatcher.match(publicEndpoint, url)) {
+				return true;
+			}
+		}
+		if ("GET".equalsIgnoreCase(request.getMethod())) {
+			for (String publicGetEndpoint : ApiConstants.PUBLIC_GET_ENDPOINTS) {
+				if (pathMatcher.match(publicGetEndpoint, url)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 	@Override
 	protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		String url = request.getServletPath();
-		for (String allowedOrigin : ApiConstants.PUBLIC_ENDPOINTS) {
-			if (pathMatcher.match(allowedOrigin, url)) {
-				filterChain.doFilter(request, response);
-				return;
-			}
-		}
 		String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 		String jwt;
 		String userEmail;
@@ -89,11 +97,6 @@ public class JwtFilter extends OncePerRequestFilter {
 			return;
 		}
 		filterChain.doFilter(request, response);
-	}
-
-	@Override
-	protected void initFilterBean() throws ServletException {
-		pathMatcher = new AntPathMatcher();
 	}
 }
 

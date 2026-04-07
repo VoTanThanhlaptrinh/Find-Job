@@ -16,29 +16,7 @@ interface CompanyAddress {
   styleUrl: './company-address.component.css',
 })
 export class CompanyAddressComponent {
-  addresses: CompanyAddress[] = [
-    {
-      id: 1,
-      locationName: 'Tru so Ha Noi',
-      // contactName: 'Nguyen Minh Anh',
-      // phone: '0901 234 567',
-      fullAddress: 'Tang 8, Toa nha Green Office, 12 Duy Tan, Cau Giay, Ha Noi'
-    },
-    {
-      id: 2,
-      locationName: 'Van phong Da Nang',
-      // contactName: 'Tran Hoang Long',
-      // phone: '0912 888 222',
-      fullAddress: 'Lo A23, Khu cong nghe cao, Quan Ngu Hanh Son, Da Nang'
-    },
-    {
-      id: 3,
-      locationName: 'Chi nhanh TP.HCM',
-      // contactName: 'Le Bao Nhi',
-      // phone: '0987 111 333',
-      fullAddress: '15 Nguyen Thi Minh Khai, Phuong Da Kao, Quan 1, TP.HCM'
-    }
-  ];
+  addresses: CompanyAddress[] = [];
 
   openMenuId: number | null = null;
 

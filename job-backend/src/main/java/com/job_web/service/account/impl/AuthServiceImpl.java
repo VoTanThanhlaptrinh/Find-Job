@@ -122,7 +122,6 @@ public class AuthServiceImpl implements AuthService {
                                HttpServletRequest request,
                                HttpServletResponse response,
                                String expectedRole) {
-        validateRequestRole(loginDTO, expectedRole);
         String ip = getClientIP(request);
         if (spamService.checkIpSpamLogin(ip)) {
             throw new AppException(spamService.getMessageLoginSpam(ip), HttpStatus.TOO_MANY_REQUESTS);
@@ -294,14 +293,6 @@ public class AuthServiceImpl implements AuthService {
         hirer.setModifiedDate(now);
         hirer.setAddresses(new ArrayList<>());
         hirerRepository.save(hirer);
-    }
-
-    private void validateRequestRole(LoginDTO loginDTO, String expectedRole) {
-        String requestRole = RoleConstants.normalizeRole(loginDTO.getRole());
-        String normalizedExpectedRole = RoleConstants.normalizeRole(expectedRole);
-        if (!normalizedExpectedRole.equals(requestRole)) {
-            throw new BadRequestException(getInvalidRequestRoleMessage(expectedRole));
-        }
     }
 
     private void validateAccountRole(User user, String expectedRole) {

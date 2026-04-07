@@ -17,12 +17,7 @@
     <article class="job-list-wrap">
       @for (job of jobs; track job.id) {
         <section class="job-item-box">
-          <app-job-card [job]="mapJobToCard(job)" detailRoute="/single"></app-job-card>
-
-          <div class="job-meta-row">
-            <span class="meta-pill">{{ 'recruiterJobList.headcount' | t }}: {{ job.headcount }}</span>
-            <span class="meta-pill">{{ 'recruiterJobList.applies' | t }}: {{ job.applies }}</span>
-          </div>
+          <app-hirer-job-card [job]="job" detailRoute="/recruiter/dashboard/jobs/detail"></app-hirer-job-card>
 
           <div class="actions">
             <a class="action-link" [routerLink]="['/recruiter/dashboard/candidates']" [queryParams]="{ jobId: job.id }">
@@ -43,7 +38,32 @@
   }
 
   <div class="pagination-wrap">
+    <div class="page-size-wrap">
+      <label for="page-size">Rows</label>
+      <select id="page-size" class="page-size-select" [value]="currentPageSize" (change)="onPageSizeChange($event)">
+        @for (size of pageSizeOptions; track size) {
+          <option [value]="size">{{ size }}</option>
+        }
+      </select>
+    </div>
+
     <button type="button" class="page-btn" (click)="goPrevPage()" [disabled]="!canGoPrev">{{ 'recruiterJobList.prevPage' | t }}</button>
+
+    <div class="page-numbers">
+      @for (page of pageButtons; track page) {
+        <button
+          type="button"
+          class="page-number-btn"
+          [class.active]="page === currentPage"
+          [disabled]="page === currentPage"
+          (click)="goToPage(page)">
+          {{ page }}
+        </button>
+      }
+    </div>
+
     <button type="button" class="page-btn" (click)="goNextPage()" [disabled]="!canGoNext">{{ 'recruiterJobList.nextPage' | t }}</button>
+
+    <span class="page-state">Page {{ currentPage }} / {{ totalPages }}</span>
   </div>
 </section>

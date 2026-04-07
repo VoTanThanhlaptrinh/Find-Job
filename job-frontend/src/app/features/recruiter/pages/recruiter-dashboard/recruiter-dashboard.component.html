@@ -1,19 +1,54 @@
 <section
   class="h-screen w-full overflow-hidden bg-linear-to-br from-slate-100 via-sky-50 to-rose-50 p-3 sm:p-4"
 >
+  <div class="mb-2 flex items-center justify-between rounded-2xl border border-slate-200 bg-white/80 p-2 shadow-sm lg:hidden">
+    <button
+      type="button"
+      class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-700"
+      (click)="toggleMobileSidebar()"
+      aria-label="Toggle sidebar"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+    </button>
+    <span class="text-sm font-semibold text-slate-800">{{ 'recruiterDashboard.menuTitle' | t }}</span>
+    <span class="w-10"></span>
+  </div>
+
+  @if (isMobileSidebarOpen()) {
+    <button
+      type="button"
+      aria-label="Close sidebar"
+      class="fixed inset-0 z-30 bg-slate-900/45 lg:hidden"
+      (click)="closeMobileSidebar()"
+    ></button>
+  }
+
   <div class="flex h-full w-full gap-3 lg:flex-row lg:gap-4">
     <div
-      class="hidden lg:flex min-h-[97vh] w-full max-w-2xs items-center justify-center"
+      class="recruiter-sidebar-shell min-h-[97vh] w-full max-w-2xs items-center justify-center"
+      [class.recruiter-sidebar-open]="isMobileSidebarOpen()"
     >
       <div
         class="relative flex h-full w-full max-w-[20rem] flex-col rounded-3xl bg-white bg-clip-border border border-slate-50 text-slate-700 shadow-xl"
       >
-        <div class="p-4 mb-2">
+        <div class="p-4 mb-2 flex items-center justify-between">
           <h5
             class="block font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-slate-900"
           >
             {{ 'recruiterDashboard.menuTitle' | t }}
           </h5>
+          <button
+            type="button"
+            class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-700 lg:hidden"
+            (click)="closeMobileSidebar()"
+            aria-label="Close sidebar"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
         </div>
 
         <nav
@@ -21,6 +56,7 @@
         >
           <a
             routerLink="overview"
+            (click)="closeMobileSidebar()"
             routerLinkActive="bg-sky-50 text-sky-700 font-semibold shadow-sm border border-gray-600"
             class="flex cursor-pointer items-center gap-4 w-full p-3 transition-all rounded-lg hover:bg-slate-100 hover:text-slate-900"
           >
@@ -85,6 +121,7 @@
             <div class="flex flex-col gap-1 pl-6 pr-0 py-1 mt-1">
               <a
                 routerLink="jobs"
+                (click)="closeMobileSidebar()"
                 routerLinkActive="bg-sky-50 text-sky-700 font-semibold shadow-sm border border-gray-600 "
                 class="flex items-center w-full p-2.5 transition-all rounded-lg text-slate-700 hover:bg-slate-100 hover:text-sky-700 cursor-pointer"
               >
@@ -93,6 +130,7 @@
               </a>
               <a
                 routerLink="jobs/post-job"
+                (click)="closeMobileSidebar()"
                 routerLinkActive="bg-sky-50 text-sky-700 font-semibold shadow-sm border border-gray-600 "
                 class="flex items-center w-full p-2.5 transition-all rounded-lg text-slate-700 hover:bg-slate-100 hover:text-sky-700 cursor-pointer"
               >
@@ -101,6 +139,7 @@
               </a>
               <a
                 routerLink="candidates"
+                (click)="closeMobileSidebar()"
                 routerLinkActive="bg-sky-50 text-sky-700 font-semibold shadow-sm border border-gray-600 "
                 class="flex items-center w-full p-2.5 transition-all rounded-lg text-slate-700 hover:bg-slate-100 hover:text-sky-700 cursor-pointer"
               >
@@ -153,6 +192,7 @@
             <div class="flex flex-col gap-1 pl-6 pr-0 py-1 mt-1">
               <a
                 routerLink="company-address"
+                (click)="closeMobileSidebar()"
                 routerLinkActive="bg-sky-50 text-sky-700 font-semibold shadow-sm border border-gray-600 "
                 class="flex items-center w-full p-2.5 transition-all rounded-lg text-slate-700 hover:bg-slate-100 hover:text-sky-700 cursor-pointer"
               >
