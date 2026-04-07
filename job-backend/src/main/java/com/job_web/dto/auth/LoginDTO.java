@@ -3,13 +3,13 @@ package com.job_web.dto.auth;
 import jakarta.validation.constraints.NotBlank;
 
 public record LoginDTO(
-        @NotBlank(message = "Báº¡n pháº£i chá»n vai trÃ² cá»§a tÃ i khoáº£n Ä‘Äƒng nháº­p")
+        @NotBlank(message = "{validation.role.required}")
         String role,
 
-        @NotBlank(message = "username khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        @NotBlank(message = "{validation.username.required}")
         String username,
 
-        @NotBlank(message = "password khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        @NotBlank(message = "{validation.password.required}")
         String password
 ) {
     public String getRole() {

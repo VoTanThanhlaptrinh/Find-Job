@@ -286,6 +286,9 @@ public class MasterDataSeeder implements CommandLineRunner {
         // Set ngày tạo
         job.setCreateDate(LocalDateTime.now());
 
+        // 6. Set Headcount (Số lượng tuyển: 1 - 10)
+        job.setHeadcount(1 + random.nextInt(10));
+
         return job;
     }
     private String generateRandomSalary() {

@@ -5,6 +5,7 @@ import com.job_web.dto.common.ApiResponse;
 import com.job_web.models.Resume;
 import com.job_web.models.User;
 import com.job_web.service.notification.SseNotificationService;
+import com.job_web.utills.MessageUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -30,12 +31,12 @@ public class SseNotificationServiceImpl implements SseNotificationService {
     public ApiResponse<SseEmitter> subscribe(Long resumeId, User user) {
         // Kiểm tra đăng nhập
         if (user == null) {
-            return new ApiResponse<>("You are not logged in.", null, HttpStatus.UNAUTHORIZED.value());
+            return new ApiResponse<>(MessageUtils.getMessage("message.unauthorized"), null, HttpStatus.UNAUTHORIZED.value());
         }
         
         // Kiểm tra quyền sở hữu resume
         if (!isResumeOwnedByUser(resumeId, user.getEmail())) {
-            return new ApiResponse<>("You do not have permission to access this resume.", null, HttpStatus.FORBIDDEN.value());
+            return new ApiResponse<>(MessageUtils.getMessage("resume.access.forbidden"), null, HttpStatus.FORBIDDEN.value());
         }
         
         // Đóng emitter cũ nếu có
@@ -71,10 +72,10 @@ public class SseNotificationServiceImpl implements SseNotificationService {
         } catch (IOException e) {
             log.error("Error sending initial SSE event for resumeId: {}", resumeId, e);
             emitters.remove(resumeId);
-            return new ApiResponse<>("Failed to establish SSE connection.", null, HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return new ApiResponse<>(MessageUtils.getMessage("notification.sse.failed"), null, HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
         log.info("SSE client subscribed for resumeId: {} by user: {}", resumeId, user.getEmail());
-        return new ApiResponse<>("success", emitter, HttpStatus.OK.value());
+        return new ApiResponse<>(MessageUtils.getMessage("message.success"), emitter, HttpStatus.OK.value());
     }
 
     @Override

@@ -10,6 +10,7 @@ import com.job_web.models.CurrentUser;
 import com.job_web.models.User;
 import com.job_web.service.application.ApplyService;
 import com.job_web.service.job.JobQueryService;
+import com.job_web.utills.MessageUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -69,6 +70,6 @@ public class UserApplicationController {
             @RequestParam(defaultValue = "10") int size,
             @CurrentUser User currentUser) {
         Page<JobCardView> data = jobQueryService.listJobUserApplied(PageRequest.of(page, size), currentUser.getEmail());
-        return ResponseEntity.ok(new ApiResponse<>("success", data, HttpStatus.OK.value()));
+        return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("message.success"), data, HttpStatus.OK.value()));
     }
 }

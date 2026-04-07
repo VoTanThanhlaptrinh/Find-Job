@@ -5,6 +5,7 @@ import { FooterComponent } from './core/layout/footer/footer.component';
 import { filter } from 'rxjs/operators';
 import { LayoutVisibilityService } from './core/services/layout-visibility.service';
 import { AuthService } from './core/services/auth.service';
+import { I18nService } from './core/i18n/i18n.service';
 
 @Component({
   selector: 'app-root',
@@ -21,7 +22,8 @@ export class AppComponent implements OnInit {
   constructor(
     private router: Router,
     private layoutVisibilityService: LayoutVisibilityService,
-    private authService: AuthService
+    private authService: AuthService,
+    private i18nService: I18nService,
   ) {
     this.updateHeaderVisibility(this.router.url);
 
@@ -34,6 +36,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.i18nService.initialize();
   }
 
   private updateHeaderVisibility(url: string): void {

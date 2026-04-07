@@ -10,6 +10,7 @@ import com.job_web.models.Comment;
 import com.job_web.models.Like;
 import com.job_web.models.User;
 import com.job_web.service.blog.BlogService;
+import com.job_web.utills.MessageUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,46 +33,48 @@ public class BlogServiceImpl implements BlogService {
         Blog blog = blogDTO.toBlog();
         blog.setAuthor(user);
         blogRepository.save(blog);
-        return new ApiResponse<>("success", null, HttpStatus.CREATED.value());
+        return new ApiResponse<>(MessageUtils.getMessage("blog.create.success"), null, HttpStatus.CREATED.value());
     }
 
     @Override
     public ApiResponse<String> updateBlog(long id, BlogDTO blogDTO, User user) {
         Optional<Blog> blogOpt = blogRepository.findBlogById(id);
         if (blogOpt.isEmpty()) {
-            return new ApiResponse<>("không tìm thấy blog", null, HttpStatus.NOT_FOUND.value());
+            return new ApiResponse<>(MessageUtils.getMessage("blog.not_found"), null, HttpStatus.NOT_FOUND.value());
         }
         Blog blog = blogOpt.get();
         if (blog.getAuthor() != null && blog.getAuthor().getId() != user.getId()) {
-            return new ApiResponse<>("Không có quyền chỉnh sửa", null, HttpStatus.FORBIDDEN.value());
+            return new ApiResponse<>(MessageUtils.getMessage("blog.edit.forbidden"), null, HttpStatus.FORBIDDEN.value());
         }
         blogDTO.applyTo(blog);
         blogRepository.save(blog);
-        return new ApiResponse<>("success", null, HttpStatus.OK.value());
+        return new ApiResponse<>(MessageUtils.getMessage("blog.update.success"), null, HttpStatus.OK.value());
     }
 
     @Override
     public ApiResponse<String> deleteBlog(long id) {
         Optional<Blog> blogOpt = blogRepository.findBlogById(id);
         if (blogOpt.isEmpty()) {
-            return new ApiResponse<>("không tìm thấy blog", null, HttpStatus.NOT_FOUND.value());
+            return new ApiResponse<>(MessageUtils.getMessage("blog.not_found"), null, HttpStatus.NOT_FOUND.value());
         }
         Blog blog = blogOpt.get();
         blog.markDeleted();
         blogRepository.save(blog);
-        return new ApiResponse<>("success", null, HttpStatus.OK.value());
+        return new ApiResponse<>(MessageUtils.getMessage("blog.delete.success"), null, HttpStatus.OK.value());
     }
 
     @Override
     public ApiResponse<Page<Blog>> getBlogs(final int pageIndex, final int pageSize) {
         Pageable pageable = PageRequest.of(pageIndex, pageSize);
         Page<Blog> blogs = blogRepository.findAll(pageable);
-        return new ApiResponse<>("success",blogs, HttpStatus.OK.value());
+        return new ApiResponse<>(MessageUtils.getMessage("blog.get.success"), blogs, HttpStatus.OK.value());
     }
 
     @Override
     public ApiResponse<Blog> getBlogById(long id) {
-        return blogRepository.findBlogById(id).map(blog -> new ApiResponse<>("success",blog,HttpStatus.OK.value())).orElseGet(() ->  new ApiResponse<>("error",null,HttpStatus.NOT_FOUND.value()));
+        return blogRepository.findBlogById(id)
+                .map(blog -> new ApiResponse<>(MessageUtils.getMessage("blog.get.success"), blog, HttpStatus.OK.value()))
+                .orElseGet(() -> new ApiResponse<>(MessageUtils.getMessage("blog.not_found"), null, HttpStatus.NOT_FOUND.value()));
     }
 
     @Override
@@ -79,15 +82,15 @@ public class BlogServiceImpl implements BlogService {
         comment.setUser(user);
         comment.markActive();
         commentRepository.save(comment);
-        return new ApiResponse<>("success", null, HttpStatus.CREATED.value());
+        return new ApiResponse<>(MessageUtils.getMessage("blog.comment.success"), null, HttpStatus.CREATED.value());
     }
 
     @Override
     public ApiResponse<String> like(final long id, User user) {
         Optional<Blog> blog = blogRepository.findBlogById(id);
 
-        if(blog.isEmpty()) {
-            return new ApiResponse<>("không tìm thấy blog",null, HttpStatus.NOT_FOUND.value());
+        if (blog.isEmpty()) {
+            return new ApiResponse<>(MessageUtils.getMessage("blog.not_found"), null, HttpStatus.NOT_FOUND.value());
         }
         Optional<Like> like = likeRepository.findLatestByUserIdAndBlogId(user.getId(), blog.get().getId());
         like.ifPresentOrElse(
@@ -103,29 +106,29 @@ public class BlogServiceImpl implements BlogService {
                     likeRepository.save(like1);
                 }
         );
-        return new ApiResponse<>("success",null, HttpStatus.OK.value());
+        return new ApiResponse<>(MessageUtils.getMessage("blog.like.success"), null, HttpStatus.OK.value());
     }
 
     @Override
     public ApiResponse<String> unlike(long id, User user) {
         Optional<Blog> blog = blogRepository.findBlogById(id);
 
-        if(blog.isEmpty()) {
-            return new ApiResponse<>("không tìm thấy blog",null, HttpStatus.NOT_FOUND.value());
+        if (blog.isEmpty()) {
+            return new ApiResponse<>(MessageUtils.getMessage("blog.not_found"), null, HttpStatus.NOT_FOUND.value());
         }
         Optional<Like> like = likeRepository.findLatestByUserIdAndBlogId(user.getId(), blog.get().getId());
         like.ifPresent(l -> {
             l.markDeleted();
             likeRepository.save(l);
         });
-        return new ApiResponse<>("success",null, HttpStatus.OK.value());
+        return new ApiResponse<>(MessageUtils.getMessage("blog.unlike.success"), null, HttpStatus.OK.value());
     }
 
     @Override
     public ApiResponse<Page<Comment>> getComments(int pageIndex, int pageSize) {
         Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by("createDate").descending());
         Page<Comment> comments = commentRepository.findAll(pageable);
-        return new ApiResponse<>("success",comments, HttpStatus.OK.value());
+        return new ApiResponse<>(MessageUtils.getMessage("blog.get.success"), comments, HttpStatus.OK.value());
     }
 
 }

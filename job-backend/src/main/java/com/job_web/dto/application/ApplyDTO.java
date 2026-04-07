@@ -5,17 +5,17 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.web.multipart.MultipartFile;
 
 public record ApplyDTO(
-        @NotNull(message = "Job ID is required.")
+        @NotNull(message = "{validation.apply.jobId.required}")
         String jobId,
 
-        @NotNull(message = "Resume file is required.")
+        @NotNull(message = "{validation.apply.file.required}")
         MultipartFile file
 ) {
     public boolean isValidFileSize() {
         return file != null && file.getSize() <= 5 * 1024 * 1024;
     }
 
-    @AssertTrue(message = "Maximum file size is 5 MB.")
+    @AssertTrue(message = "{validation.file.maxSize}")
     public boolean getValidFileSize() {
         return isValidFileSize();
     }

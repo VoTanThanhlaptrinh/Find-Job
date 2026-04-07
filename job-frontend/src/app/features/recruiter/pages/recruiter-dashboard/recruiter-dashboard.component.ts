@@ -1,10 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
 
 @Component({
   selector: 'app-recruiter-dashboard',
-  imports: [RouterOutlet,RouterLink],
+  imports: [RouterOutlet, RouterLink, TranslatePipe],
   templateUrl: './recruiter-dashboard.component.html',
   styleUrl: './recruiter-dashboard.component.css',
 })

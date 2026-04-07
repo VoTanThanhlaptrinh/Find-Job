@@ -1,5 +1,6 @@
 package com.job_web.dto.auth;
 
+import com.job_web.constant.RoleConstants;
 import com.job_web.custom.EmailExist;
 import com.job_web.models.User;
 import jakarta.validation.constraints.AssertTrue;
@@ -9,45 +10,38 @@ import jakarta.validation.constraints.Size;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 public record RegistationForm(
-        @NotBlank(message = "Báº¡n pháº£i chá»n vai trÃ² cá»§a tÃ i khoáº£n Ä‘Äƒng nháº­p")
-        String role,
-
-        @NotBlank(message = "TÃªn Ä‘áº§y Ä‘á»§ khÃ´ng Ä‘Æ°á»£c rá»—ng")
-        @Size(max = 255, message = "TÃªn Ä‘áº§y Ä‘á»§ chá»‰ Ä‘Æ°á»£c tá»‘i Ä‘a 255 kÃ½ tá»±")
+        @NotBlank(message = "{validation.fullname.required}")
+        @Size(max = 255, message = "{validation.fullname.max}")
         String fullName,
 
-        @NotBlank(message = "TÃªn tÃ i khoáº£n khÃ´ng Ä‘Æ°á»£c rá»—ng")
-        @Email(message = "KhÃ´ng pháº£i Email")
+        @NotBlank(message = "{validation.username.required}")
+        @Email(message = "{validation.email}")
         @EmailExist
         String username,
 
-        @NotBlank(message = "Máº­t kháº©u khÃ´ng Ä‘Æ°á»£c rá»—ng")
-        @Size(min = 8, message = "Máº­t kháº©u khÃ´ng Ä‘Æ°á»£c dÆ°á»›i 8 kÃ½ tá»±")
+        @NotBlank(message = "{validation.password.required}")
+        @Size(min = 8, message = "{validation.password.min}")
         String password,
 
-        @NotBlank(message = "xÃ¡c nháº­n máº­t kháº©u khÃ´ng Ä‘Æ°á»£c rá»—ng")
+        @NotBlank(message = "{validation.confirm_password.required}")
         String confirmPassword
 ) {
-    @AssertTrue(message = "Máº­t kháº©u vÃ  xÃ¡c nháº­n máº­t kháº©u khÃ´ng khá»›p")
+    @AssertTrue(message = "{validation.password.mismatch}")
     public boolean isPasswordMatch() {
         return password != null && password.equals(confirmPassword);
     }
 
-    public User toUser(PasswordEncoder passwordEncoder) {
+    public User toUser(PasswordEncoder passwordEncoder, String role) {
         User user = new User();
         user.setPassword(passwordEncoder.encode(password));
         user.setEmail(username);
         user.setFullName(fullName);
         user.setAddress("");
+        user.setRole(RoleConstants.normalizeRole(role));
         user.setMobile("");
-        user.setRole(role);
         user.setActive(false);
         user.setEnabled(true);
         return user;
-    }
-
-    public String getRole() {
-        return role;
     }
 
     public String getFullName() {

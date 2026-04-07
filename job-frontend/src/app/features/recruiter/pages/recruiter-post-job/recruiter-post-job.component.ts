@@ -30,6 +30,7 @@ export class PostJobComponent {
     location: new FormControl('', [Validators.required]),
     jobType: new FormControl('Full Time', [Validators.required]),
     salary: new FormControl('', [Validators.required, Validators.min(2000000)]),
+    headCount: new FormControl('', [Validators.required, Validators.min(1)]),
     jobDescription: new FormControl('', [Validators.required]),
     jobRequirement: new FormControl('', [Validators.required]),
     jobSkill: new FormControl('', [Validators.required]),

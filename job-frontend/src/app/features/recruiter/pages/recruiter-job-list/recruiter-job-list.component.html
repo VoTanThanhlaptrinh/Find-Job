@@ -1,40 +1,49 @@
 <section class="jobs-page">
   <header class="jobs-head">
     <div>
-      <h1>Danh sách công việc đăng tải</h1>
-      <p>Quản lý các tin tuyển dụng đã đăng từ một nơi duy nhất.</p>
+      <h1>{{ 'recruiterJobList.title' | t }}</h1>
+      <p>{{ 'recruiterJobList.subtitle' | t }}</p>
+      <p>{{ 'recruiterJobList.totalPostedJobs' | t }}: {{ totalPostedJobs }}</p>
     </div>
 
-    <a class="post-link" routerLink="/recruiter/dashboard/jobs/post-job">Đăng tải công việc</a>
+    <a class="post-link" routerLink="/recruiter/dashboard/jobs/post-job">{{ 'recruiterJobList.postJob' | t }}</a>
   </header>
 
-  <article class="jobs-table-wrap">
-    <table class="jobs-table">
-      <thead>
-      <tr>
-        <th>Vị trí</th>
-        <th>Địa điểm</th>
-        <th>Trạng thái</th>
-        <th>Ứng viên</th>
-      </tr>
-      </thead>
-      <tbody>
-        @for (job of jobs; track job.title) {
-          <tr>
-            <td>{{ job.title }}</td>
-            <td>{{ job.location }}</td>
-            <td>
-              <span class="status" [class.pause]="job.status === 'Tạm dừng'">{{ job.status }}</span>
-            </td>
-            <td>{{ job.applied }}</td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  </article>
+  @if (isLoading) {
+    <article class="empty-white">
+      <h2>{{ 'recruiterJobList.loading' | t }}</h2>
+    </article>
+  } @else if (jobs.length > 0) {
+    <article class="job-list-wrap">
+      @for (job of jobs; track job.id) {
+        <section class="job-item-box">
+          <app-job-card [job]="mapJobToCard(job)" detailRoute="/single"></app-job-card>
 
-  <article class="empty-white">
-    <h2>Khu vực nội dung bổ sung</h2>
-    <div class="white-box"></div>
-  </article>
+          <div class="job-meta-row">
+            <span class="meta-pill">{{ 'recruiterJobList.headcount' | t }}: {{ job.headcount }}</span>
+            <span class="meta-pill">{{ 'recruiterJobList.applies' | t }}: {{ job.applies }}</span>
+          </div>
+
+          <div class="actions">
+            <a class="action-link" [routerLink]="['/recruiter/dashboard/candidates']" [queryParams]="{ jobId: job.id }">
+              {{ 'recruiterJobList.viewCandidates' | t }}
+            </a>
+            <button type="button" class="delete-btn" (click)="deleteJob(job.id)">
+              {{ 'recruiterJobList.delete' | t }}
+            </button>
+          </div>
+        </section>
+      }
+    </article>
+  } @else {
+    <article class="empty-white">
+      <h2>{{ 'recruiterJobList.empty' | t }}</h2>
+      <div class="white-box"></div>
+    </article>
+  }
+
+  <div class="pagination-wrap">
+    <button type="button" class="page-btn" (click)="goPrevPage()" [disabled]="!canGoPrev">{{ 'recruiterJobList.prevPage' | t }}</button>
+    <button type="button" class="page-btn" (click)="goNextPage()" [disabled]="!canGoNext">{{ 'recruiterJobList.nextPage' | t }}</button>
+  </div>
 </section>

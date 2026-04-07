@@ -12,7 +12,7 @@
           <h5
             class="block font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-slate-900"
           >
-            Menu Hệ Thống
+            {{ 'recruiterDashboard.menuTitle' | t }}
           </h5>
         </div>
 
@@ -38,7 +38,7 @@
             </svg>
             <span
               class="block font-sans text-base antialiased font-medium leading-relaxed"
-              >Dashboard</span
+              >{{ 'recruiterDashboard.dashboard' | t }}</span
             >
           </a>
 
@@ -63,7 +63,7 @@
                 </svg>
                 <span
                   class="block font-sans text-base antialiased font-medium leading-relaxed text-sky-700"
-                  >Công việc</span
+                  >{{ 'recruiterDashboard.jobsGroup' | t }}</span
                 >
               </div>
               <svg
@@ -89,7 +89,7 @@
                 class="flex items-center w-full p-2.5 transition-all rounded-lg text-slate-700 hover:bg-slate-100 hover:text-sky-700 cursor-pointer"
               >
                 <div class="mr-3 w-1.5 h-1.5 bg-slate-400 rounded-full"></div>
-                Danh sách công việc
+                {{ 'recruiterDashboard.jobList' | t }}
               </a>
               <a
                 routerLink="jobs/post-job"
@@ -97,7 +97,15 @@
                 class="flex items-center w-full p-2.5 transition-all rounded-lg text-slate-700 hover:bg-slate-100 hover:text-sky-700 cursor-pointer"
               >
                 <div class="mr-3 w-1.5 h-1.5 bg-slate-400 rounded-full"></div>
-                Đăng tải công việc
+                {{ 'recruiterDashboard.postJob' | t }}
+              </a>
+              <a
+                routerLink="candidates"
+                routerLinkActive="bg-sky-50 text-sky-700 font-semibold shadow-sm border border-gray-600 "
+                class="flex items-center w-full p-2.5 transition-all rounded-lg text-slate-700 hover:bg-slate-100 hover:text-sky-700 cursor-pointer"
+              >
+                <div class="mr-3 w-1.5 h-1.5 bg-slate-400 rounded-full"></div>
+                {{ 'candidateList.title' | t }}
               </a>
             </div>
           </details>
@@ -123,7 +131,7 @@
                 </svg>
                 <span
                   class="block font-sans text-base antialiased font-medium leading-relaxed text-sky-700"
-                  >Công Ty</span
+                  >{{ 'recruiterDashboard.companyGroup' | t }}</span
                 >
               </div>
               <svg
@@ -149,7 +157,7 @@
                 class="flex items-center w-full p-2.5 transition-all rounded-lg text-slate-700 hover:bg-slate-100 hover:text-sky-700 cursor-pointer"
               >
                 <div class="mr-3 w-1.5 h-1.5 bg-slate-400 rounded-full"></div>
-                Danh sách địa chỉ công ty
+                {{ 'recruiterDashboard.companyAddressList' | t }}
               </a>
             </div>
           </details>
@@ -158,6 +166,7 @@
 
           <a
             href="javascript:void(0)"
+            (click)="onLogout()"
             class="flex cursor-pointer items-center gap-4 w-full p-3 mt-auto transition-all rounded-lg text-red-500 hover:bg-red-50 hover:text-red-700"
           >
             <svg
@@ -174,7 +183,7 @@
             </svg>
             <span
               class="block font-sans text-base antialiased font-medium leading-relaxed"
-              >Đăng xuất</span
+              >{{ 'recruiterDashboard.logout' | t }}</span
             >
           </a>
         </nav>

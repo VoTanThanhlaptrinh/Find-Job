@@ -6,15 +6,11 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.web.multipart.MultipartFile;
 
 public record ApplyCvWithUploadRequest(
-        @NotBlank(message = "Job ID is required.")
+        @NotNull(message = "{validation.apply.jobId.required}")
         Long jobId,
 
-        @NotNull(message = "CV file is required.")
+        @NotNull(message = "{validation.apply.cvFile.required}")
         MultipartFile cvFile,
-
-        @NotBlank(message = "Email is required.")
-        @Email(message = "Email is invalid.")
-        String email,
 
         String coverLetter
 ) {
@@ -24,10 +20,6 @@ public record ApplyCvWithUploadRequest(
 
     public MultipartFile getCvFile() {
         return cvFile;
-    }
-
-    public String getEmail() {
-        return email;
     }
 
     public String getCoverLetter() {

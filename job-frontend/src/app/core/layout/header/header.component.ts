@@ -8,10 +8,13 @@ import { AuthService } from '../../services/auth.service';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatButtonModule} from '@angular/material/button';
 import { RouterLink } from "@angular/router";
+import { I18nService } from '../../i18n/i18n.service';
+import { AppLanguage } from '../../i18n/translations';
+import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, MatButtonModule, MatMenuModule, RouterLink],
+  imports: [CommonModule, MatButtonModule, MatMenuModule, RouterLink, TranslatePipe],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -22,7 +25,8 @@ export class HeaderComponent {
   isScrolled = false;
 
   constructor(
-    private auth: AuthService
+    private auth: AuthService,
+    private i18nService: I18nService,
   ) {}
 
   logout(): void {
@@ -64,5 +68,13 @@ export class HeaderComponent {
 
   get isAuthReady(): boolean {
     return this.auth.isAuthReady();
+  }
+
+  get currentLanguage(): AppLanguage {
+    return this.i18nService.currentLanguage;
+  }
+
+  switchLanguage(language: AppLanguage): void {
+    this.i18nService.setLanguage(language);
   }
 }

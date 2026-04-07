@@ -16,6 +16,7 @@ export class ResumeReviewComponent {
 
   @Input({ required: true }) resume!: ResumeReviewInput;
   @Input() context: ResumeContext = 'user';
+  @Input() allowDelete = true;
   isMenuOpen = false;
   isDeleting = false;
   isLoadingView = false;

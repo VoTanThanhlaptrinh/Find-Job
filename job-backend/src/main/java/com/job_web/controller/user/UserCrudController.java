@@ -6,6 +6,7 @@ import com.job_web.dto.user.UserResponseDTO;
 import com.job_web.models.CurrentUser;
 import com.job_web.models.User;
 import com.job_web.service.user.UserCrudService;
+import com.job_web.utills.MessageUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -31,7 +32,7 @@ public class UserCrudController {
     public ResponseEntity<ApiResponse<String>> create(@Valid @RequestBody UserCrudDTO userDTO) {
         userCrudService.createUser(userDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ApiResponse<>("Thành công", null, HttpStatus.CREATED.value()));
+                .body(new ApiResponse<>(MessageUtils.getMessage("message.success"), null, HttpStatus.CREATED.value()));
     }
 
     @GetMapping("/page")
@@ -39,29 +40,29 @@ public class UserCrudController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         Page<UserResponseDTO> data = userCrudService.getUsers(page, size);
-        return ResponseEntity.ok(new ApiResponse<>("success", data, HttpStatus.OK.value()));
+        return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("message.success"), data, HttpStatus.OK.value()));
     }
 
     @GetMapping
     public ResponseEntity<ApiResponse<UserResponseDTO>> detail(@CurrentUser User currentUser) {
         if(currentUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ApiResponse<>("Unauthorized", null, HttpStatus.UNAUTHORIZED.value()));
+                    .body(new ApiResponse<>(MessageUtils.getMessage("message.unauthorized"), null, HttpStatus.UNAUTHORIZED.value()));
         }
         UserResponseDTO data = userCrudService.getUserByEmail(currentUser.getEmail());
-        return ResponseEntity.ok(new ApiResponse<>("success", data, HttpStatus.OK.value()));
+        return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("message.success"), data, HttpStatus.OK.value()));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<String>> update(@PathVariable("id") Long id,
                                                       @Valid @RequestBody UserCrudDTO userDTO) {
         userCrudService.updateUser(id, userDTO);
-        return ResponseEntity.ok(new ApiResponse<>("Thành công", null, HttpStatus.OK.value()));
+        return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("message.success"), null, HttpStatus.OK.value()));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<String>> delete(@PathVariable("id") Long id) {
         userCrudService.deleteUser(id);
-        return ResponseEntity.ok(new ApiResponse<>("Thành công", null, HttpStatus.OK.value()));
+        return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("message.success"), null, HttpStatus.OK.value()));
     }
 }

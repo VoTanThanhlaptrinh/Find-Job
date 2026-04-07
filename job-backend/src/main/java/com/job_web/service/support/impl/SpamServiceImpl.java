@@ -1,6 +1,7 @@
 package com.job_web.service.support.impl;
 
 import com.job_web.service.support.SpamService;
+import com.job_web.utills.MessageUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,6 +9,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.Locale;
 import java.util.Objects;
 
 @Slf4j
@@ -34,12 +36,12 @@ public class SpamServiceImpl implements SpamService {
         int attempts = getAttempts(key);
 
         if (attempts >= maxAttempts * 2) {
-            blockIP.opsForValue().set(blockKey, "Bạn bị chặn vì spam, thời hạn 1 ngày tính từ thông báo này", Duration.ofSeconds(timeoutSecond));
+            blockIP.opsForValue().set(blockKey, MessageUtils.getMessage("spam.blocked.long", Locale.ENGLISH), Duration.ofSeconds(timeoutSecond));
             return;
         }
 
         if (attempts >= maxAttempts) {
-            blockIP.opsForValue().set(blockKey, "Bạn bị chặn vì spam, thời hạn 10 phút tính từ thông báo này", Duration.ofSeconds(timeoutFirst));
+            blockIP.opsForValue().set(blockKey, MessageUtils.getMessage("spam.blocked.short", Locale.ENGLISH), Duration.ofSeconds(timeoutFirst));
             return;
         }
 
@@ -68,12 +70,12 @@ public class SpamServiceImpl implements SpamService {
         log.info("Email spam attempts for {}: {}", ip, attempts);
 
         if (attempts >= maxAttempts * 2) {
-            blockIP.opsForValue().set(blockKey, "Bạn bị chặn vì spam, thời hạn 1 ngày tính từ thông báo này", Duration.ofSeconds(timeoutSecond));
+            blockIP.opsForValue().set(blockKey, MessageUtils.getMessage("spam.blocked.long", Locale.ENGLISH), Duration.ofSeconds(timeoutSecond));
             return;
         }
 
         if (attempts >= maxAttempts) {
-            blockIP.opsForValue().set(blockKey, "Bạn bị chặn vì spam, thời hạn 10 phút tính từ thông báo này", Duration.ofSeconds(timeoutFirst));
+            blockIP.opsForValue().set(blockKey, MessageUtils.getMessage("spam.blocked.short", Locale.ENGLISH), Duration.ofSeconds(timeoutFirst));
             return;
         }
 
@@ -105,6 +107,3 @@ public class SpamServiceImpl implements SpamService {
         return value != null ? Integer.parseInt(value.toString()) : 0;
     }
 }
-
-
-

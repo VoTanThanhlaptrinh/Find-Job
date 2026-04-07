@@ -5,10 +5,10 @@
         <div class="row d-flex align-items-center justify-content-center">
             <div class="about-content col-lg-12">
                 <h1 class="text-white">
-                    Contact Us
+                    {{ 'contact.bannerTitle' | t }}
                 </h1>
-                <p class="text-white"><a href="index.html">Home </a> <span class="lnr lnr-arrow-right"></span> <a
-                        href="contact.html"> Contact Us</a></p>
+                <p class="text-white"><a href="/">{{ 'contact.breadcrumbHome' | t }}</a> <span class="lnr lnr-arrow-right"></span> <a
+                        href="/contact">{{ 'contact.breadcrumbCurrent' | t }}</a></p>
             </div>
         </div>
     </div>
@@ -20,21 +20,61 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-4 d-flex flex-column">
-                <a class="contact-btns" href="#">Submit Your CV</a>
-                <a class="contact-btns" href="#">Post New Job</a>
-                <a class="contact-btns" href="#">Create New Account</a>
+                <a class="contact-btns" href="#">{{ 'contact.submitCv' | t }}</a>
+                <a class="contact-btns" href="#">{{ 'contact.postJob' | t }}</a>
+                <a class="contact-btns" href="#">{{ 'contact.createAccount' | t }}</a>
             </div>
             <div class="col-lg-8">
                 <form class="form-area " id="myForm" action="mail.php" method="post" class="contact-form text-right">
                     <div class="row">
                         <div class="col-lg-12 form-group">
-                            <input name="name" placeholder="Enter your name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your name'" class="common-input mb-20 form-control" required="" type="text">
+                            <label for="contact-name" class="sr-only">{{ 'contact.namePlaceholder' | t }}</label>
+                            <input
+                              id="contact-name"
+                              name="name"
+                              [placeholder]="'contact.namePlaceholder' | t"
+                              [attr.aria-label]="'contact.namePlaceholder' | t"
+                              [attr.title]="'contact.namePlaceholder' | t"
+                              class="common-input mb-20 form-control"
+                              required=""
+                              type="text"
+                            >
 
-                            <input name="email" placeholder="Enter email address" pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{1,63}$" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter email address'" class="common-input mb-20 form-control" required="" type="email">
+                            <label for="contact-email" class="sr-only">{{ 'contact.emailPlaceholder' | t }}</label>
+                            <input
+                              id="contact-email"
+                              name="email"
+                              [placeholder]="'contact.emailPlaceholder' | t"
+                              [attr.aria-label]="'contact.emailPlaceholder' | t"
+                              [attr.title]="'contact.emailPlaceholder' | t"
+                              pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{1,63}$"
+                              class="common-input mb-20 form-control"
+                              required=""
+                              type="email"
+                            >
 
-                            <input name="subject" placeholder="Enter your subject" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your subject'" class="common-input mb-20 form-control" required="" type="text">
-                            <textarea class="common-textarea mt-10 form-control" name="message" placeholder="Messege" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Messege'" required=""></textarea>
-                            <button class="primary-btn mt-20 text-white" style="float: right;">Send Message</button>
+                            <label for="contact-subject" class="sr-only">{{ 'contact.subjectPlaceholder' | t }}</label>
+                            <input
+                              id="contact-subject"
+                              name="subject"
+                              [placeholder]="'contact.subjectPlaceholder' | t"
+                              [attr.aria-label]="'contact.subjectPlaceholder' | t"
+                              [attr.title]="'contact.subjectPlaceholder' | t"
+                              class="common-input mb-20 form-control"
+                              required=""
+                              type="text"
+                            >
+                            <label for="contact-message" class="sr-only">{{ 'contact.messagePlaceholder' | t }}</label>
+                            <textarea
+                              id="contact-message"
+                              class="common-textarea mt-10 form-control"
+                              name="message"
+                              [placeholder]="'contact.messagePlaceholder' | t"
+                              [attr.aria-label]="'contact.messagePlaceholder' | t"
+                              [attr.title]="'contact.messagePlaceholder' | t"
+                              required=""
+                            ></textarea>
+                            <button class="primary-btn mt-20 text-white" style="float: right;">{{ 'contact.sendMessage' | t }}</button>
                             <div class="mt-20 alert-msg" style="text-align: left;"></div>
                         </div>
                     </div>

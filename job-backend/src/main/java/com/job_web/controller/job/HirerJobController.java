@@ -7,6 +7,7 @@ import com.job_web.models.CurrentUser;
 import com.job_web.models.User;
 import com.job_web.service.job.JobQueryService;
 import com.job_web.service.job.JobService;
+import com.job_web.utills.MessageUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -35,7 +36,7 @@ public class HirerJobController {
                                                     @CurrentUser User currentUser) {
         jobService.createJob(job, currentUser);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ApiResponse<>("Tạo việc làm thành công", null, HttpStatus.CREATED.value()));
+                .body(new ApiResponse<>(MessageUtils.getMessage("job.create.success"), null, HttpStatus.CREATED.value()));
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -43,13 +44,13 @@ public class HirerJobController {
                                                       @Valid @ModelAttribute JobDTO job,
                                                       @CurrentUser User currentUser) {
         jobService.updateJob(id, job, currentUser);
-        return ResponseEntity.ok(new ApiResponse<>("Cập nhật việc làm thành công", null, HttpStatus.OK.value()));
+        return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("job.update.success"), null, HttpStatus.OK.value()));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<String>> delete(@PathVariable("id") Long id, @CurrentUser User currentUser) {
         jobService.deleteJob(id, currentUser);
-        return ResponseEntity.ok(new ApiResponse<>("Xóa việc làm thành công", null, HttpStatus.OK.value()));
+        return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("job.delete.success"), null, HttpStatus.OK.value()));
     }
 
     @GetMapping("/posted")
@@ -58,12 +59,12 @@ public class HirerJobController {
             @RequestParam(defaultValue = "10") int size,
             @CurrentUser User currentUser) {
         Page<JobResponse> data = jobQueryService.getHirerJobPost(page, size, currentUser.getEmail());
-        return ResponseEntity.ok(new ApiResponse<>("success", data, HttpStatus.OK.value()));
+        return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("message.success"), data, HttpStatus.OK.value()));
     }
 
     @GetMapping("/posted/count")
     public ResponseEntity<ApiResponse<Long>> countHirerJobPost(@CurrentUser User currentUser) {
         Long data = jobQueryService.countHirerJobPost(currentUser.getEmail());
-        return ResponseEntity.ok(new ApiResponse<>("success", data, HttpStatus.OK.value()));
+        return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("message.success"), data, HttpStatus.OK.value()));
     }
 }

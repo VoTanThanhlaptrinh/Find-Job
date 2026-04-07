@@ -8,15 +8,18 @@
     <div class="row justify-content-center d-flex">
       <div class="col-lg-4 sidebar">
         <div class="single-slidebar">
-          <h4>Phân loại công việc theo tên</h4>
+          <h4>{{ 'category.filterByTitle' | t }}</h4>
           <div
             class="flex w-full items-center gap-2 px-2 py-2 bg-white cursor-pointer rounded-xl shadow-md border"
           >
+            <label for="category-title" class="sr-only">{{ 'category.titlePlaceholder' | t }}</label>
             <input
-              title="text"
+              id="category-title"
+              [attr.title]="'category.titlePlaceholder' | t"
+              [attr.aria-label]="'category.titlePlaceholder' | t"
               class="w-full outline-none border-none focus:ring-0"
               type="text"
-              placeholder="Nhập tên công việc bạn muốn tìm"
+              [placeholder]="'category.titlePlaceholder' | t"
               value=""
               name="title"
               [ngModel]="title"
@@ -25,18 +28,20 @@
           </div>
         </div>
         <div class="single-slidebar">
-          <h4>Phân loại công việc theo vị trí</h4>
+          <h4>{{ 'category.filterByLocation' | t }}</h4>
           <div class="list-group cat-list overflow-y-auto max-h-75">@for (item of addressCount; track item.city) {
               <div class="list-group-item flex justify-between">
                 <div class="form-check flex w-full items-center gap-2">
                   <input
-                    title="checkbox"
+                    [id]="'city-filter-' + $index"
+                    [attr.title]="item.city"
+                    [attr.aria-label]="item.city"
                     class="form-check-input"
                     type="checkbox"
                     value="{{ item.city }}"
                     (change)="onFilterChange($event)"
                   />
-                  <label class="form-check-label">{{ item.city }}</label>
+                  <label class="form-check-label" [attr.for]="'city-filter-' + $index">{{ item.city }}</label>
                 </div>
                 <span>{{ item.count }}</span>
               </div>
@@ -44,17 +49,21 @@
         </div>
 
         <div class="single-slidebar">
-          <h4>Loại công việc</h4>
-          <div class="list-group cat-list">@for (job of jobTypes; track job.label) {
+          <h4>{{ 'category.jobType' | t }}</h4>
+          <div class="list-group cat-list">@for (job of jobTypes; track job.id) {
               <div class="list-group-item flex flex-col justify-between">
                 <label class="form-switch">
+                  <label [attr.for]="'job-type-' + job.id" class="sr-only">{{ ('category.jobTypeOptions.' + job.id) | t }}</label>
                   <input
+                    [id]="'job-type-' + job.id"
                     type="checkbox"
                     [checked]="job.checked"
-                    value="{{ job.label }}"
+                    value="{{ job.value }}"
+                    [attr.title]="('category.jobTypeOptions.' + job.id) | t"
+                    [attr.aria-label]="('category.jobTypeOptions.' + job.id) | t"
                     (change)="onFilterChange($event)"
                   />
-                  <span>{{ job.label }}</span>
+                  <span>{{ ('category.jobTypeOptions.' + job.id) | t }}</span>
                   <span class="slider round"></span>
                 </label>
               </div>
@@ -75,7 +84,7 @@
                 detailRoute="/single"
               ></app-job-card>
             } @empty {
-              <div>There are no items.</div>
+              <div>{{ 'category.empty' | t }}</div>
             }
           }
         </div>
@@ -86,7 +95,7 @@
           [showFirstLastButtons]="true"
           [pageIndex]="pageIndex"
           (page)="handlePage($event)"
-          aria-label="Select page"
+          [attr.aria-label]="'category.paginatorLabel' | t"
         >
         </mat-paginator>
       </div>

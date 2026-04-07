@@ -82,7 +82,6 @@ export class JobService {
     const formData = new FormData();
     formData.append('jobId', payload.jobId.toString());
     formData.append('cvFile', payload.cvFile);
-    formData.append('email', payload.email);
     formData.append('coverLetter', payload.coverLetter);
 
     return this.http.post<ApplyCvWithUploadResponse>(
@@ -96,6 +95,21 @@ export class JobService {
     return this.http.post<JobSubmitApiResponse>(`${this.url}/hirer/jobs`, form, {
       withCredentials: true,
     }).pipe(take(1));
+  }
+
+  updateHirerJob(id: number, form: FormData): Observable<JobSubmitApiResponse> {
+    return this.http.put<JobSubmitApiResponse>(
+      `${this.url}/hirer/jobs/${encodeURIComponent(String(id))}`,
+      form,
+      { withCredentials: true }
+    ).pipe(take(1));
+  }
+
+  deleteHirerJob(id: number): Observable<JobSubmitApiResponse> {
+    return this.http.delete<JobSubmitApiResponse>(
+      `${this.url}/hirer/jobs/${encodeURIComponent(String(id))}`,
+      { withCredentials: true }
+    ).pipe(take(1));
   }
 
   getHirerJobPost(pageIndex: number, pageSize: number): Observable<HirerJobListApiResponse> {

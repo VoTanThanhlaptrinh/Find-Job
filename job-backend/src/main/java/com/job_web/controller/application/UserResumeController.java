@@ -10,6 +10,7 @@ import com.job_web.dto.common.ApiResponse;
 import com.job_web.models.CurrentUser;
 import com.job_web.models.User;
 import com.job_web.service.application.ResumeService;
+import com.job_web.utills.MessageUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,7 +34,7 @@ public class UserResumeController {
     @GetMapping
     public ResponseEntity<ApiResponse<List<ResumeView>>> getListResumeOfUser(@CurrentUser User currentUser) {
         if(currentUser == null){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>("Not login", null, HttpStatus.BAD_REQUEST.value()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(MessageUtils.getMessage("message.unauthorized"), null, HttpStatus.BAD_REQUEST.value()));
         }
         ApiResponse<List<ResumeView>> res = resumeService.getListResumeOfUser(currentUser);
         return ResponseEntity.status(res.getStatus()).body(res);

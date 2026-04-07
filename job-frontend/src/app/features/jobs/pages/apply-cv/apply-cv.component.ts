@@ -14,19 +14,20 @@ import {
 } from '../../../../shared/models/jobs/apply-cv.model';
 import { ResumeReviewInput } from '../../../../shared/models/jobs/resume-review-input.model';
 import { ResumeReviewComponent } from '../../../../shared/components/resume-review/resume-review.component';
+import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
+import { I18nService } from '../../../../core/i18n/i18n.service';
 
 type CvMode = 'existing' | 'upload';
 type ApplyCvFormGroup = FormGroup<{
   cvMode: FormControl<CvMode>;
   existingCvId: FormControl<number>;
-  email: FormControl<string>;
   coverLetter: FormControl<string>;
 }>;
 
 @Component({
   selector: 'app-apply-cv',
   standalone: true,
-  imports: [RouterModule, ReactiveFormsModule, ResumeReviewComponent],
+  imports: [RouterModule, ReactiveFormsModule, ResumeReviewComponent, TranslatePipe],
   templateUrl: './apply-cv.component.html',
   styleUrl: './apply-cv.component.css'
 })
@@ -46,12 +47,12 @@ export class ApplyCvComponent implements OnInit {
     private route: ActivatedRoute,
     private jobService: JobService,
     public resumeService: ResumeService,
-    private notifyService: NotifyMessageService
+    private notifyService: NotifyMessageService,
+    private i18nService: I18nService,
   ) {
     this.applyCvForm = this.fb.nonNullable.group({
       cvMode: this.fb.nonNullable.control<CvMode>('existing', Validators.required),
       existingCvId: this.fb.nonNullable.control(this.previousCvOptions[0]?.id ?? 0, Validators.required),
-      email: this.fb.nonNullable.control('', [Validators.required, Validators.email]),
       coverLetter: this.fb.nonNullable.control('', [Validators.maxLength(1000)])
     });
 
@@ -71,21 +72,38 @@ export class ApplyCvComponent implements OnInit {
   ngOnInit(): void {
     this.resumeService.getUserResumes();
     this.route.params.pipe(take(1)).subscribe(params => {
-      this.jobId = params['id'];
+      const parsedJobId = Number(params['id']);
+
+      if (Number.isNaN(parsedJobId) || parsedJobId <= 0) {
+        this.notifyService.error(this.i18nService.translate('applyCv.errors.invalidJobLink'));
+        this.router.navigate(['/']);
+        return;
+      }
+
+      this.jobId = parsedJobId;
+      this.checkApplyJob();
     });
   }
 
   checkApplyJob(): void {
     this.jobService.checkApplyJob(this.jobId).pipe(take(1)).subscribe({
       next: (response) => {
-        if (!response.data) {
-          this.router.navigate(['/']);
+        if (response.data) {
+          this.notifyService.info(this.i18nService.translate('applyCv.notifications.alreadyApplied'));
+          this.router.navigate(['/single', this.jobId]);
+        }
+      },
+      error: (error: { status?: number }) => {
+        if (error?.status === 401) {
+          this.notifyService.warning(this.i18nService.translate('applyCv.errors.loginRequired'));
+          this.router.navigate(['/login']);
         }
       }
     });
   }
   formatMoney(val: number): string {
-    return val.toLocaleString('vi-VN') + '₫';
+    const locale = this.i18nService.currentLanguage === 'vi' ? 'vi-VN' : 'en-US';
+    return `${val.toLocaleString(locale)} VND`;
   }
 
   get cvMode(): CvMode {
@@ -173,24 +191,24 @@ export class ApplyCvComponent implements OnInit {
   onSubmit(): void {
     if (this.applyCvForm.invalid) {
       this.applyCvForm.markAllAsTouched();
-      this.notifyService.error('Vui lòng kiểm tra lại thông tin form.');
+      this.notifyService.error(this.i18nService.translate('applyCv.errors.invalidForm'));
       return;
     }
 
     const payload = this.buildApplyCvPayload();
     if (!payload) {
-      this.notifyService.error('Không thể tạo dữ liệu nộp hồ sơ. Vui lòng thử lại.');
+      this.notifyService.error(this.i18nService.translate('applyCv.errors.cannotBuildPayload'));
       return;
     }
 
     if (this.isMode('existing')) {
       this.jobService.submitApplyCvExisting(payload as ApplyCvWithExistingRequest).subscribe({
         next: (response: ApplyCvResponse) => {
-          this.notifyService.success(response.message || 'Nộp hồ sơ thành công!');
-          this.router.navigate(['/jobs', this.jobId]);
+          this.notifyService.success(response.message || this.i18nService.translate('applyCv.notifications.success'));
+          this.router.navigate(['/single', this.jobId]);
         },
         error: (error: any) => {
-           this.notifyService.error(error.error?.message || 'Có lỗi xảy ra khi nộp hồ sơ.');
+           this.notifyService.error(error.error?.message || this.i18nService.translate('applyCv.errors.submitFailed'));
         }
       });
       return;
@@ -198,11 +216,11 @@ export class ApplyCvComponent implements OnInit {
 
     this.jobService.submitApplyCvUpload(payload as ApplyCvWithUploadRequest).subscribe({
       next: (response: ApplyCvResponse) => {
-        this.notifyService.success(response.message || 'Nộp hồ sơ thành công!');
-        this.router.navigate(['/jobs', this.jobId]);
+        this.notifyService.success(response.message || this.i18nService.translate('applyCv.notifications.success'));
+        this.router.navigate(['/single', this.jobId]);
       },
       error: (error: any) => {
-        this.notifyService.error(error.error?.message || 'Có lỗi xảy ra khi tải CV lên.');
+        this.notifyService.error(error.error?.message || this.i18nService.translate('applyCv.errors.uploadFailed'));
       }
     });
   }
@@ -219,7 +237,6 @@ export class ApplyCvComponent implements OnInit {
       const payload: ApplyCvWithExistingRequest = {
         jobId: this.jobId,
         existingCvId,
-        email: formValue.email,
         coverLetter: formValue.coverLetter
       };
 
@@ -233,7 +250,6 @@ export class ApplyCvComponent implements OnInit {
     const payload: ApplyCvWithUploadRequest = {
       jobId: this.jobId,
       cvFile: this.selectedFile,
-      email: formValue.email,
       coverLetter: formValue.coverLetter
     };
 

@@ -8,6 +8,7 @@ import { DownloadAreaComponent } from '../../../../shared/components/download-ar
 import { JobCardComponent } from '../../../../shared/components/job-card/job-card.component';
 import { SearchFormComponent } from '../../../../shared/components/search-form/search-form.component';
 import { JobCardModel } from '../../../../shared/models/jobs/job-card.model';
+import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
 
 @Component({
   selector: 'app-home',
@@ -18,6 +19,7 @@ import { JobCardModel } from '../../../../shared/models/jobs/job-card.model';
     JobCardComponent,
     CallToActionComponent,
     DownloadAreaComponent,
+    TranslatePipe,
   ],
   standalone: true,
   templateUrl: './home.component.html',
