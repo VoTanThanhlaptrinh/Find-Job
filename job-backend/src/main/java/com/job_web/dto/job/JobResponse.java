@@ -10,8 +10,8 @@ public class JobResponse {
     private final String title;
     private final String description;
     private final String address;
-    private final double salary;
+    private final String salary;
     private final String time;
     private final int applies;
-    private final Integer headcount;
+    private final int headcount;
 }

@@ -41,25 +41,18 @@ public class UserResumeController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<ResumeDetailDTO>> getResumeDetail(@PathVariable("id") long id, @CurrentUser User currentUser) {
+    public ResponseEntity<ApiResponse<ResumeDetailDTO>> getResumeDetail(@PathVariable long id, @CurrentUser User currentUser) {
         ApiResponse<ResumeDetailDTO> res = resumeService.getResumeDetail(id, currentUser);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    /**
-     * Lấy Pre-signed URL để xem resume trực tiếp trên trình duyệt (inline).
-     */
     @GetMapping("/{id}/view")
-    public ResponseEntity<ApiResponse<ResumeUrlDTO>> getResumeViewUrl(@PathVariable("id") long id, @CurrentUser User currentUser) {
+    public ResponseEntity<ApiResponse<ResumeUrlDTO>> getResumeViewUrl(@PathVariable long id, @CurrentUser User currentUser) {
         ApiResponse<ResumeUrlDTO> res = resumeService.getResumeViewUrl(id, currentUser);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
-
-    /**
-     * Lấy Pre-signed URL để tải resume về (attachment).
-     */
     @GetMapping("/{id}/download")
-    public ResponseEntity<ApiResponse<ResumeUrlDTO>> getResumeDownloadUrl(@PathVariable("id") long id, @CurrentUser User currentUser) {
+    public ResponseEntity<ApiResponse<ResumeUrlDTO>> getResumeDownloadUrl(@PathVariable long id, @CurrentUser User currentUser) {
         ApiResponse<ResumeUrlDTO> res = resumeService.getResumeDownloadUrl(id, currentUser);
         return ResponseEntity.status(res.getStatus()).body(res);
     }

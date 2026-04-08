@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
+import { RecruiterJobsService } from '../../services/recruiter-jobs.service';
 
 type DashboardMetric = {
   titleKey: string;
@@ -15,26 +16,37 @@ type DashboardMetric = {
   styleUrl: './recruiter-dashboard-overview.component.css',
 })
 export class RecruiterDashboardOverviewComponent {
-  readonly metrics: DashboardMetric[] = [
+  private readonly recruiterJobsService = inject(RecruiterJobsService);
+  private readonly openJobsCount = signal<number | null>(null);
+
+  readonly metrics = computed<DashboardMetric[]>(() => [
     {
       titleKey: 'recruiterOverview.metrics.openJobsTitle',
-      value: '12',
+      value: this.openJobsCount() === null ? 'Khong co du lieu' : String(this.openJobsCount()),
       trendKey: 'recruiterOverview.metrics.openJobsTrend',
     },
     {
       titleKey: 'recruiterOverview.metrics.newCandidatesTitle',
-      value: '34',
+      value: 'Khong co du lieu',
       trendKey: 'recruiterOverview.metrics.newCandidatesTrend',
     },
     {
       titleKey: 'recruiterOverview.metrics.interviewsTitle',
-      value: '9',
+      value: 'Khong co du lieu',
       trendKey: 'recruiterOverview.metrics.interviewsTrend',
     },
     {
       titleKey: 'recruiterOverview.metrics.responseRateTitle',
-      value: '86%',
+      value: 'Khong co du lieu',
       trendKey: 'recruiterOverview.metrics.responseRateTrend',
     },
-  ];
+  ]);
+
+  constructor() {
+    this.recruiterJobsService.loadPostedJobCount();
+
+    effect(() => {
+      this.openJobsCount.set(this.recruiterJobsService.postedJobsTotalCount$());
+    });
+  }
 }

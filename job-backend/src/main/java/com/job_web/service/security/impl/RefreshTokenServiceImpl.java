@@ -1,13 +1,11 @@
 package com.job_web.service.security.impl;
 
-import java.time.Instant;
+import java.time.Duration;
 import java.util.Optional;
-import java.util.UUID;
 
 import com.job_web.service.security.JwtFamilyService;
 import com.job_web.service.security.JwtService;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.job_web.data.UserRepository;
@@ -23,12 +21,12 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 	private final JwtService jwtService;
 	private final JwtFamilyService jwtFamilyService;
 	@Value("${application.service.impl.timeLimit}")
-	private long timeLimit;
+	private long refreshTokenTtlSeconds;
 	@Override
 	public String createRefreshToken(String username) {
 		Optional<User> user = userRepository.findByEmail(username);
 		if (user.isPresent()) {
-			return jwtService.generateRefreshToken(user.get());
+			return jwtService.generateRefreshToken(user.get(), Duration.ofSeconds(refreshTokenTtlSeconds).toMillis());
 		} else {
 			throw new RuntimeException("username not found");
 		}
@@ -60,7 +58,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 		try {
 			String familyId = jwtService.extractFamily(token);
 			String username = jwtService.extractUsername(token);
-			return jwtService.generateRefreshToken(username,familyId);
+			return jwtService.generateRefreshToken(username, familyId, Duration.ofSeconds(refreshTokenTtlSeconds).toMillis());
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

@@ -17,8 +17,8 @@ public interface JwtService {
 	 boolean isTokenValid(String token, UserDetails userDetails);
 	 String extractJTI(String token);
 	 boolean isTokenExpired(String token);
-	 String generateRefreshToken(UserDetails user);
-	String generateRefreshToken(String username, String familyId);
+	 String generateRefreshToken(UserDetails user, long expirationMillis);
+	String generateRefreshToken(String username, String familyId, long expirationMillis);
 
 	String extractFamily(String token);
 }

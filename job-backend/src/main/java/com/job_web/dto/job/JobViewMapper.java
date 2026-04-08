@@ -1,8 +1,6 @@
 package com.job_web.dto.job;
 
-import com.job_web.models.Address;
 import com.job_web.models.Job;
-import org.springframework.data.domain.Page;
 
 import java.time.ZoneOffset;
 
@@ -14,7 +12,7 @@ public final class JobViewMapper {
         return new JobCardView(
                 job.getId(),
                 job.getTitle(),
-                formatAddress(job.getAddress()),
+                extractCity(job),
                 job.getSalary(),
                 job.getTime()
         );
@@ -27,7 +25,7 @@ public final class JobViewMapper {
         return new JobDetailView(
                 job.getId(),
                 job.getTitle(),
-                formatAddress(job.getAddress()),
+                extractStreet(job),
                 job.getDescription(),
                 job.getSalary(),
                 job.getTime(),
@@ -51,25 +49,17 @@ public final class JobViewMapper {
         );
     }
 
-    private static String formatAddress(Address address) {
-        if (address == null) {
+    private static String extractCity(Job job) {
+        if (job.getAddress() == null || job.getAddress().getCity() == null) {
             return "";
         }
-
-        StringBuilder builder = new StringBuilder();
-        appendAddressPart(builder, address.getStreet());
-        appendAddressPart(builder, address.getDistrict());
-        appendAddressPart(builder, address.getCity());
-        return builder.toString();
+        return job.getAddress().getCity();
     }
 
-    private static void appendAddressPart(StringBuilder builder, String value) {
-        if (value == null || value.isBlank()) {
-            return;
+    private static String extractStreet(Job job) {
+        if (job.getAddress() == null || job.getAddress().getStreet() == null) {
+            return "";
         }
-        if (builder.length() > 0) {
-            builder.append(", ");
-        }
-        builder.append(value);
+        return job.getAddress().getStreet();
     }
 }

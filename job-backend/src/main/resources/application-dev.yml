@@ -39,19 +39,23 @@ application:
       host-name: 127.0.0.1
       username:
       port: 6379
-      password: Thanhdeptrai123
+      password: ${REDIS_PASSWORD}
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/job_portal_web?verifyServerCertificate=false&useSSL=true
-    username: root
-    password: Aibietdau123
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
 
   jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: create-drop
-    show-sql: true
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
 
   rabbitmq:
     host: localhost
@@ -71,7 +75,7 @@ spring:
           # Khoảng thời gian chờ giữa các lần thử (2 giây)
           initial-interval: 2s
 
-  mail: # Đã đưa ra ngoài
+  mail:
     host: smtp.gmail.com
     port: 465
     default-encoding: UTF-8
@@ -84,7 +88,7 @@ spring:
           ssl:
             enable: true
 
-  security: # Đã đưa ra ngoài
+  security:
     oauth2:
       client:
         registration:
@@ -100,7 +104,7 @@ spring:
             scope:
               - email
               - public_profile
-      resource-server: # Đã sửa từ "resource server" thành "resource-server"
+      resource-server:
         jwt:
           jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
   ocr:

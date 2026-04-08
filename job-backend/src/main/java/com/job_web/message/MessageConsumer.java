@@ -1,5 +1,6 @@
 package com.job_web.message;
 
+import com.job_web.data.ResumeRepository;
 import com.job_web.dto.ai.ResumeParsingMessage;
 import com.job_web.dto.ai.ResumeRequest;
 import com.job_web.dto.message.ApiMessage;
@@ -27,7 +28,6 @@ public class MessageConsumer {
     private final ApiService apiService;
     private final ResumeService resumeService;
     private final SseNotificationService sseNotificationService;
-
 	@RabbitListener(queues = "mailQueue")
     public void receiveMail(@Payload MailMessage message) {
         mailService.sendMessage(message.getTo(), message.getSubject(), message.getContent());
@@ -37,7 +37,6 @@ public class MessageConsumer {
         try {
             var res = aiService.processResume(message.rawText());
             log.info(res.toString());
-            // Gửi SSE notification khi AI xử lý xong
             apiService.vectorizeCv(new ResumeRequest(message.userId(), message.cvId(),res));
             sseNotificationService.sendNotification(message.cvId(), "completed");
         } catch (Exception e) {

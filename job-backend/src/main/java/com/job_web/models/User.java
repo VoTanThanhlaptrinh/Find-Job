@@ -31,7 +31,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @EntityListeners(AuditingEntityListener.class)
 @Entity
-@Table(indexes = {
+@Table(name= "users",indexes = {
 		@Index(name = "mulitIndex1", columnList = "id, email"),})
 @SQLRestriction("status <> 'DELETED'")
 public class User extends StatusEntity implements UserDetails, Principal {
