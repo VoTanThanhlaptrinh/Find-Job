@@ -1,5 +1,6 @@
 package com.job_web.controller.job;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.job_web.dto.common.ApiResponse;
@@ -29,7 +30,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class PublicJobController {
     private final JobService jobService;
     private final JobQueryService jobQueryService;
-    private final ApiService apiService;
 
     @GetMapping("/newest")
     public ResponseEntity<ApiResponse<Page<JobCardView>>> getListJobNewest(
@@ -78,7 +78,7 @@ public class PublicJobController {
 
     @GetMapping("/match/{cvId}")
     public ResponseEntity<ApiResponse<List<JobCardView>>> getMatchedJobs(@PathVariable Long cvId) {
-        List<JobCardView> jobs = apiService.matchJobs(cvId);
+        List<JobCardView> jobs = jobService.matchJobs(cvId);
         return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("message.success"), jobs, HttpStatus.OK.value()));
     }
 }

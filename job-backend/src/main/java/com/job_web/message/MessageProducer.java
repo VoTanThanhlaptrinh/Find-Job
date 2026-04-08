@@ -22,17 +22,6 @@ public class MessageProducer {
 		rabbitTemplate.convertAndSend("parsingExchange", "parsingRoutingKey", message);
 	}
 
-	/**
-	 * Fire-and-forget: Gửi message vào queue cho ApiService xử lý async
-	 * Dùng cho: vectorizeCv, vectorizeJd
-	 */
-	public void processApiAsync(ApiMessage message) {
-		rabbitTemplate.convertAndSend("apiExchange", "apiRoutingKey", message);
-	}
-
-	/**
-	 * Upload file lên Cloudflare R2 async
-	 */
 	public void uploadToCloud(CloudUploadMessage message) {
 		rabbitTemplate.convertAndSend("cloudUploadExchange", "cloudUploadRoutingKey", message);
 	}

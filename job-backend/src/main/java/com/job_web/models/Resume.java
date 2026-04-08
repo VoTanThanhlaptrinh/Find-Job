@@ -28,8 +28,13 @@ public class Resume extends StatusEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonIgnore
 	private User user;
+	private int yoe;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "address_id")
+	private Address address;
 	private String keyCf;
 	private String fileName;
+	private String title;
     @CreatedDate
     private LocalDateTime createDate;
     @LastModifiedDate

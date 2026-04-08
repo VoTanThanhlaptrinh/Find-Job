@@ -18,9 +18,9 @@ public class HirerApplicationController {
     private final ApplyService applyService;
 
     @GetMapping("/jobs/{jobId}/candidates/{pageIndex}/{pageSize}")
-    public ResponseEntity<ApiResponse<Page<CandidateDTO>>> getAllCandidateAppliedJob(@PathVariable("pageIndex") int pageIndex,
-                                                                                     @PathVariable("pageSize") int pageSize,
-                                                                                     @PathVariable("jobId") long jobId) {
+    public ResponseEntity<ApiResponse<Page<CandidateDTO>>> getAllCandidateAppliedJob(@PathVariable int pageIndex,
+                                                                                     @PathVariable int pageSize,
+                                                                                     @PathVariable long jobId) {
         ApiResponse<Page<CandidateDTO>> res = applyService.getAllCandidateAppliedJob(pageIndex, pageSize, jobId);
         return ResponseEntity.status(res.getStatus()).body(res);
     }

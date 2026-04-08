@@ -21,12 +21,25 @@ public interface ResumeParserAgent {
        - KHÔNG tính thời gian làm đồ án môn học hay dự án cá nhân.
        - Trả về MỘT SỐ NGUYÊN duy nhất. Làm tròn theo quy tắc toán học (vd: 1.5 năm -> 2, dưới 1 năm -> 0).
 
-    2. skillsAndProjectsContext: 
+    2. title (Chức danh/Vị trí mong muốn):
+       - Trích xuất tên chức danh hoặc vị trí công việc mà ứng viên đang tìm kiếm hoặc tự giới thiệu.
+       - Thường nằm ở phần đầu CV, tiêu đề, hoặc mục "Objective", "Career Goal", "Vị trí ứng tuyển", "Mục tiêu nghề nghiệp".
+       - Ví dụ: "Backend Developer", "Kế toán trưởng", "Marketing Executive", "UI/UX Designer", "Nhân viên kinh doanh".
+       - Nếu không tìm thấy rõ ràng, trả về null.
+
+    3. city (Thành phố/Tỉnh):
+       - Trích xuất tên thành phố hoặc tỉnh nơi ứng viên sinh sống hoặc mong muốn làm việc.
+       - Thường nằm ở phần thông tin cá nhân (Personal Info), địa chỉ (Address), hoặc mục "Location".
+       - CHỈ lấy tên thành phố/tỉnh (ví dụ: "Hồ Chí Minh", "Hà Nội", "Đà Nẵng", "Ho Chi Minh City", "Hanoi").
+       - KHÔNG lấy địa chỉ chi tiết (số nhà, đường, phường, quận).
+       - Nếu không tìm thấy, trả về null.
+
+    4. skillsAndProjectsContext: 
        - Tổng hợp TẤT CẢ kỹ năng (cứng và mềm), công cụ, phần mềm sử dụng và các dự án vào chung một khối văn bản. 
        - Viết dưới dạng các câu mô tả ngắn gọn, nối tiếp nhau bằng ngôn ngữ gốc của CV.
        - TUYỆT ĐỐI BỎ QUA các thông tin về trường lớp, học vấn (Education).
 
-    3. experienceContext: 
+    5. experienceContext: 
        - Tổng hợp toàn bộ quá trình làm việc chuyên nghiệp.
        - Định dạng tiêu chuẩn (linh hoạt theo ngôn ngữ CV): 
          + Nếu CV Tiếng Việt: 'Làm việc tại [Công ty] với vị trí [Vị trí] từ [Thời gian]. Trách nhiệm chính: [Mô tả].'

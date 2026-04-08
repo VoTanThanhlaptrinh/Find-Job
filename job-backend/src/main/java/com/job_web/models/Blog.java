@@ -36,7 +36,7 @@ public class Blog extends StatusEntity {
 	private String title;
 	@Column(columnDefinition = "TEXT")
 	private String description;
-	@Column(columnDefinition = "MEDIUMTEXT")
+	@Column(columnDefinition = "TEXT")
 	private String content;
 	private int amountLike;
 

@@ -172,7 +172,6 @@ public class MasterDataSeeder implements CommandLineRunner {
     private List<Address> seedAddresses(List<Hirer> hirers) {
         List<Address> addresses = new ArrayList<>();
         List<List<Address>> hirerAddresses = new ArrayList<>();
-        long nextId = 1L;
 
         for (int i = 0; i < hirers.size(); i++) {
             List<Address> ownedAddresses = new ArrayList<>();
@@ -183,9 +182,7 @@ public class MasterDataSeeder implements CommandLineRunner {
                 LocalDateTime createdAt = LocalDateTime.now().minusDays(20L + addressIndex);
 
                 Address address = new Address();
-                address.setId(nextId++);
                 address.setCity(template.city());
-                address.setDistrict(template.district());
                 address.setStreet(template.street());
                 address.setCreateDate(createdAt);
                 address.setUpdateDate(createdAt.plusDays(1));
@@ -216,7 +213,7 @@ public class MasterDataSeeder implements CommandLineRunner {
     }
 
     private String formatAddress(Address address) {
-        return address.getStreet() + ", " + address.getDistrict() + ", " + address.getCity();
+        return address.getStreet() + ", " + address.getCity();
     }
 
     private String uniqueEmail(String baseEmail) {
@@ -232,7 +229,10 @@ public class MasterDataSeeder implements CommandLineRunner {
         return email;
     }
 
-    private record AddressSeed(String city, String district, String street) {
+    private record AddressSeed(String city, String street) {
+        private AddressSeed(String city, String ignoredDistrict, String street) {
+            this(city, street);
+        }
     }
     public List<JobDTOJson> convertJsonFileToList(String filePath) {
         ObjectMapper objectMapper = new ObjectMapper();

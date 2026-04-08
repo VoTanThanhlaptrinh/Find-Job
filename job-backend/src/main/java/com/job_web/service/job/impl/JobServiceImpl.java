@@ -3,6 +3,7 @@ package com.job_web.service.job.impl;
 import com.job_web.data.AddressRepository;
 import com.job_web.data.HirerRepository;
 import com.job_web.data.JobRepository;
+import com.job_web.dto.job.JobCardView;
 import com.job_web.dto.job.JobDTO;
 import com.job_web.dto.job.JobDetailView;
 import com.job_web.dto.job.JobViewMapper;
@@ -14,8 +15,11 @@ import com.job_web.models.Job;
 import com.job_web.models.User;
 import com.job_web.service.job.JobService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.actuate.metrics.data.DefaultRepositoryTagsProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +28,7 @@ public class JobServiceImpl implements JobService {
     private final JobRepository jobRepository;
     private final HirerRepository hirerRepository;
     private final AddressRepository addressRepository;
+    private final DefaultRepositoryTagsProvider repositoryTagsProvider;
 
     @Override
     public JobDetailView getJobDetailById(Long id) {
@@ -97,5 +102,10 @@ public class JobServiceImpl implements JobService {
 
         job.markDeleted();
         jobRepository.save(job);
+    }
+
+    @Override
+    public List<JobCardView> matchJobs(long cvId) {
+        return jobRepository.matchJobs(cvId);
     }
 }
