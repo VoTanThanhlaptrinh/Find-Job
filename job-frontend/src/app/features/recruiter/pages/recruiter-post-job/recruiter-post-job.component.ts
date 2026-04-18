@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import { Component, effect } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -7,11 +7,11 @@ import {
   ReactiveFormsModule, ValidationErrors,
   Validators
 } from '@angular/forms';
-import {JobService} from '../../../jobs/services/job.service';
-import {RouterLink} from '@angular/router';
-import {QuillModule} from 'ngx-quill';
-import {CommonModule} from '@angular/common';
-import {NotifyMessageService} from '../../../../core/services/notify-message.service';
+import { RouterLink } from '@angular/router';
+import { QuillModule } from 'ngx-quill';
+import { CommonModule } from '@angular/common';
+import { NotifyMessageService } from '../../../../core/services/notify-message.service';
+import { RecruiterJobsService } from '../../services/recruiter-jobs.service';
 @Component({
   selector: 'app-post-job',
   imports: [FormsModule
@@ -24,7 +24,7 @@ import {NotifyMessageService} from '../../../../core/services/notify-message.ser
 
 export class PostJobComponent {
   messageType: boolean | undefined = undefined;
-  message: string = '';
+  message = '';
   postJobFG = new FormGroup({
     jobName: new FormControl('', [Validators.required]),
     location: new FormControl('', [Validators.required]),
@@ -41,8 +41,34 @@ export class PostJobComponent {
     image: new FormControl<File | null>(null, Validators.required)
   });
 
-  constructor(private jobService: JobService
-              ,private notify: NotifyMessageService) {
+  constructor(
+    private readonly recruiterJobsService: RecruiterJobsService,
+    private readonly notify: NotifyMessageService
+  ) {
+    effect(() => {
+      const actionTick = this.recruiterJobsService.actionTick$();
+      const actionType = this.recruiterJobsService.lastActionType$();
+      if (actionTick === 0 || actionType !== 'create') {
+        return;
+      }
+
+      const isSuccess = this.recruiterJobsService.lastActionSuccess$();
+      const message = this.recruiterJobsService.lastActionMessage$();
+      this.messageType = isSuccess;
+      this.message = message;
+
+      if (isSuccess) {
+        this.notify.showMessage(message, '', 'success');
+        this.postJobFG.reset({
+          jobType: 'Full Time',
+          deadlineCV: null,
+          image: null
+        });
+        return;
+      }
+
+      this.notify.showMessage(message, '', 'error');
+    });
   }
   onSubmit() {
     if(this.postJobFG.invalid){
@@ -55,22 +81,14 @@ export class PostJobComponent {
       if (val !== null && val !== undefined) {
           if (val instanceof File) {
             formData.append(key, val, val.name);
-          }
-          if (val instanceof Date) {
-            formData.append(key,val.toISOString().split('T')[0]);
-          }else{
+          } else if (val instanceof Date) {
+            formData.append(key, val.toISOString().split('T')[0]);
+          } else {
             formData.append(key, val);
           }
       }
     });
-    this.jobService.doPostJob(formData).subscribe({
-      next: res =>{
-        this.messageType = (res.status === 200);
-        this.notify.showMessage(res.message,'','success')
-      }, error: err => {
-        this.notify.showMessage(err?.error?.message,'','error')
-      }
-    })
+    this.recruiterJobsService.createJob(formData);
   }
   onFilePicked(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
@@ -80,6 +98,10 @@ export class PostJobComponent {
   }
   get f() {
     return this.postJobFG.controls;
+  }
+
+  get isSubmitting(): boolean {
+    return this.recruiterJobsService.isSubmittingJob$();
   }
 }
 export function minDatePlusOne(control: AbstractControl): ValidationErrors | null {

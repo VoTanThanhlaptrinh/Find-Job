@@ -1,0 +1,53 @@
+<section class="detail-page">
+  <div class="back-row">
+    <a routerLink="/recruiter/dashboard/jobs" class="back-link">{{ 'recruiterJobList.title' | t }}</a>
+  </div>
+
+  @if (isLoading()) {
+    <article class="state-card">
+      <h2>{{ 'recruiterJobList.loading' | t }}</h2>
+    </article>
+  } @else if (loadError()) {
+    <article class="state-card error">
+      <h2>{{ loadError() }}</h2>
+    </article>
+  } @else {
+    <article class="hero-card">
+      <div>
+        <h1>{{ jobDetail().title }}</h1>
+        <p class="address">{{ jobDetail().address }}</p>
+      </div>
+      <div class="salary">{{ formatMoney(jobDetail().salary) }}</div>
+    </article>
+
+    <div class="meta-grid">
+      <div class="meta-item">
+        <span class="label">{{ 'recruiterJobList.headcount' | t }}</span>
+        <span class="value">{{ jobDetail().headcount }}</span>
+      </div>
+      <div class="meta-item">
+        <span class="label">{{ 'jobSingle.expiredDate' | t }}</span>
+        <span class="value">{{ jobDetail().expiredDate || '-' }}</span>
+      </div>
+      <div class="meta-item full">
+        <span class="label">{{ 'jobSingle.time' | t }}</span>
+        <span class="value">{{ jobDetail().time }}</span>
+      </div>
+    </div>
+
+    <article class="content-card">
+      <h3>{{ 'jobSingle.jobDescription' | t }}</h3>
+      <div [innerHTML]="jobDetail().description | safeHtml"></div>
+    </article>
+
+    <article class="content-card">
+      <h3>{{ 'jobSingle.experienceRequirements' | t }}</h3>
+      <div [innerHTML]="jobDetail().requireDetails | safeHtml"></div>
+    </article>
+
+    <article class="content-card">
+      <h3>{{ 'jobSingle.jobSkills' | t }}</h3>
+      <div [innerHTML]="jobDetail().skill | safeHtml"></div>
+    </article>
+  }
+</section>

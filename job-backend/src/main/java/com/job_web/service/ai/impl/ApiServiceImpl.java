@@ -1,95 +1,77 @@
 package com.job_web.service.ai.impl;
 
-import com.job_web.data.queryDSL.JobQuery;
 import com.job_web.dto.ai.ResumeRequest;
-import com.job_web.dto.common.ApiResponse;
-import com.job_web.dto.job.JobCardView;
-import com.job_web.dto.job.JobDTO;
-import com.job_web.dto.job.MatchJobsResponse;
 import com.job_web.dto.job.VectorizeJdRequest;
 import com.job_web.service.ai.ApiService;
-import com.job_web.service.job.JobQueryService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.web.client.RestClientBuilderConfigurer;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
-import java.net.http.HttpClient;
-import java.util.List;
-
+@Slf4j
 @Service
 public class ApiServiceImpl implements ApiService {
     private final RestClient restClient;
-    @Autowired
-    private JobQuery jobQuery;
-    public ApiServiceImpl(RestClient.Builder restClientBuilder,@Value("${spring.ai.agent.base-url}") String baseUrl){
+
+    private static final String MDC_USER_ID = "userId";
+    private static final String MDC_CV_ID = "cvId";
+    private static final String MDC_JOB_ID = "jobId";
+
+    public ApiServiceImpl(RestClient.Builder restClientBuilder, @Value("${spring.ai.agent.base-url}") String baseUrl) {
         this.restClient = restClientBuilder
                 .baseUrl(baseUrl)
                 .build();
     }
+
     @Override
     public void vectorizeCv(ResumeRequest request) {
-        restClient.post()
-                .uri("/vectorize-resume/")
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(request)
-                .retrieve()
-                .toBodilessEntity(); // toBodilessEntity() vì ta không cần quan tâm body trả về
+        try {
+            MDC.put(MDC_USER_ID, String.valueOf(request.userId()));
+            MDC.put(MDC_CV_ID, String.valueOf(request.cvId()));
+
+            log.info("Dispatching CV vectorization to AI agent for user: {}, cv: {}",
+                    request.userId(), request.cvId());
+
+            long startTime = System.currentTimeMillis();
+
+            restClient.post()
+                    .uri("/vectorize-resume/")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(request)
+                    .retrieve()
+                    .toBodilessEntity();
+
+            long duration = System.currentTimeMillis() - startTime;
+            log.info("CV vectorization completed in {}ms for user: {}, cv: {}",
+                    duration, request.userId(), request.cvId());
+        } finally {
+            MDC.remove(MDC_USER_ID);
+            MDC.remove(MDC_CV_ID);
+        }
     }
 
     @Override
     public void vectorizeJd(VectorizeJdRequest request) {
-        restClient.post()
-                .uri("/vectorize-jd/")
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(request)
-                .retrieve()
-                .toBodilessEntity();
-    }
+        try {
+            MDC.put(MDC_JOB_ID, String.valueOf(request.getJobId()));
 
+            log.info("Dispatching JD vectorization to AI agent for job: {}", request.getJobId());
 
-    @Override
-    public List<JobCardView> matchJobs(Long cvId) {
+            long startTime = System.currentTimeMillis();
 
-        var res = restClient.get()
-                .uri("/match-jobs/"+cvId)
-                .retrieve()
-                .toEntity(MatchJobsResponse.class);
-        if(res.getBody() == null){
-            return List.of();
+            restClient.post()
+                    .uri("/vectorize-jd/")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(request)
+                    .retrieve()
+                    .toBodilessEntity();
+
+            long duration = System.currentTimeMillis() - startTime;
+            log.info("JD vectorization completed in {}ms for job: {}", duration, request.getJobId());
+        } finally {
+            MDC.remove(MDC_JOB_ID);
         }
-        return jobQuery.findMatchJobs(res.getBody());
-    }
-
-    @Override
-    public void updateJd(JobDTO request) {
-        restClient.put()
-                .uri("/update-jd/")
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(request)
-                .retrieve()
-                .toBodilessEntity();
-    }
-
-
-
-    @Override
-    public void deleteJd(Long jobId) {
-        restClient.delete()
-                .uri("/delete-jd/{jobId}", jobId)
-                .retrieve()
-                .toBodilessEntity();
-    }
-
-    @Override
-    public void deleteCv(Long cvId) {
-        restClient.delete()
-                .uri("/delete-resume/{cvId}", cvId)
-                .retrieve()
-                .toBodilessEntity();
     }
 }

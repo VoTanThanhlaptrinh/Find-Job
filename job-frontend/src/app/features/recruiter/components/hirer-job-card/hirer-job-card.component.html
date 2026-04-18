@@ -1,0 +1,29 @@
+<article class="hirer-card">
+  <header class="hirer-card-head">
+    <div>
+      <a class="job-title-link" [routerLink]="[detailRoute, job.id]">
+        <h3>{{ job.title }}</h3>
+      </a>
+      <p class="job-address">{{ job.address }}</p>
+    </div>
+    <div class="salary-badge">{{ job.salary }}</div>
+  </header>
+
+  <!-- <p class="job-description">{{ shortDescription }}</p> -->
+
+  <div class="meta-row">
+    <span class="meta-pill">{{ job.time }}</span>
+    <span class="meta-pill">{{ 'recruiterJobList.headcount' | t }}: {{ job.headcount }}</span>
+    <span class="meta-pill">{{ 'recruiterJobList.applies' | t }}: {{ job.applies }}</span>
+  </div>
+
+  <div class="progress-wrap" [attr.aria-label]="'applies-progress'">
+    <div class="progress-head">
+      <span>{{ 'recruiterJobList.applies' | t }}</span>
+      <span>{{ job.applies }}/{{ job.headcount }}</span>
+    </div>
+    <div class="progress-track">
+      <span class="progress-fill" [style.width.%]="appliesRate"></span>
+    </div>
+  </div>
+</article>

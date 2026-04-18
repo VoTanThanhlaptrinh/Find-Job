@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ═══════════════════════════════════════════════════════════════════════════════
+  LOGBACK CONFIGURATION — Job Portal Backend (com.job_web)
+  ═══════════════════════════════════════════════════════════════════════════════
+
+  Architecture:
+    DEV  → Console only (color-coded, human-readable)
+    PROD → Console + Rolling File (compressed .gz, 30-day retention)
+
+  MDC Variables (injected automatically into every log line):
+    traceId  — Set by RequestLoggingFilter (X-Correlation-ID or UUID)
+    userId   — Set by Service layer methods
+    jobId    — Set by Service layer methods
+    cvId     — Set by Service layer methods
+
+  Stack Trace Strategy:
+    - Max 15 lines depth
+    - Filters out Spring, Tomcat, CGLIB, Hibernate proxies
+    - Root cause and com.job_web frames always visible
+  ═══════════════════════════════════════════════════════════════════════════════
+-->
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <!-- SHARED PROPERTIES                                                  -->
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+
+    <!-- Application name — used in log file paths -->
+    <property name="APP_NAME" value="job-portal"/>
+
+    <!-- Log directory — override via JVM arg: -DLOG_DIR=/var/log/app -->
+    <property name="LOG_DIR" value="${LOG_DIR:-logs}"/>
+
+    <!--
+      MDC Pattern Block (reused across all appenders):
+        traceId  = end-to-end request correlation
+        userId   = business entity (set in Service layer, empty at Controller)
+        jobId    = business entity
+        cvId     = business entity
+        N/A      = shown when traceId is missing (e.g., async consumers)
+        (empty)  = shown when userId/jobId/cvId are not set for this context
+    -->
+    <property name="MDC_PATTERN"
+              value="[traceId=%X{traceId:-N/A}] [userId=%X{userId:-}] [jobId=%X{jobId:-}] [cvId=%X{cvId:-}]"/>
+
+    <!--
+      Stack Trace Filter Pattern:
+      ════════════════════════════════════════════════════════════════════════
+      Syntax: %ex{DEPTH, EXCLUDED_PACKAGE_1, EXCLUDED_PACKAGE_2, ...}
+
+        DEPTH = 15
+          Only print the first 15 frames of each exception.
+          This is enough to see the root cause + our code path without
+          flooding disk with 200+ Spring/Tomcat internal frames.
+
+        EXCLUDED PACKAGES:
+          org.springframework    — Spring Framework internals (MVC, AOP, TX)
+          org.apache.tomcat      — Tomcat connector & NIO internals
+          org.apache.catalina    — Tomcat servlet container
+          org.apache.coyote      — Tomcat HTTP protocol handler
+          org.hibernate          — Hibernate ORM proxy/session internals
+          net.sf.cglib           — CGLIB dynamic proxy bytecode
+          sun.reflect            — JDK reflection internals
+          java.lang.reflect      — JDK reflection API
+
+        RESULT: Stack traces show ONLY:
+          1. The exception message
+          2. com.job_web.* frames (OUR code)
+          3. Root cause (Caused by:)
+          4. Up to 15 frames total
+      ════════════════════════════════════════════════════════════════════════
+    -->
+    <property name="STACKTRACE_FILTER"
+              value="%ex{15,org.springframework,org.apache.tomcat,org.apache.catalina,org.apache.coyote,org.hibernate,net.sf.cglib,sun.reflect,java.lang.reflect}" />
+
+
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <!-- DEV PROFILE — Console Appender Only                                -->
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <springProfile name="dev">
+
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <!--
+                  DEV pattern breakdown:
+                    %clr(...)          — ANSI color coding per log level
+                    %d{HH:mm:ss.SSS}  — Time only (date unnecessary in dev)
+                    [%thread]          — Thread name (useful for async debugging)
+                    MDC_PATTERN        — traceId, userId, jobId, cvId
+                    %-5level           — Level padded to 5 chars (INFO , WARN , ERROR)
+                    %logger{36}        — Shortened class name (max 36 chars)
+                    %msg               — Log message
+                    STACKTRACE_FILTER  — Filtered stack trace (replaces default %n%ex)
+                -->
+                <pattern>%clr(%d{HH:mm:ss.SSS}){faint} %clr([%thread]){magenta} %clr(${MDC_PATTERN}){cyan}
+                    %clr(%-5level){highlight} %clr(%logger{36}){blue} %clr(-){faint} %msg%n${STACKTRACE_FILTER}%nopex
+                </pattern>
+            </encoder>
+        </appender>
+
+        <!-- DEV log levels -->
+        <logger name="com.job_web" level="DEBUG"/>
+        <logger name="com.job_web.security.RequestLoggingFilter" level="DEBUG"/>
+
+        <!-- Suppress noisy framework loggers in dev -->
+        <logger name="org.springframework" level="WARN"/>
+        <logger name="org.hibernate.SQL" level="DEBUG"/>
+        <logger name="org.hibernate.type.descriptor.sql" level="TRACE"/>
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+
+
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <!-- PROD PROFILE — Console + Rolling File Appender                     -->
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <springProfile name="prod">
+
+        <!-- ── Production Console (structured, no colors for log aggregators) ── -->
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <!--
+                  PROD console pattern:
+                    No ANSI colors — clean output for Docker/CloudWatch/ELK.
+                    Full date+time for timestamp correlation.
+                -->
+                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] ${MDC_PATTERN} %-5level %logger{36} -
+                    %msg%n${STACKTRACE_FILTER}%nopex
+                </pattern>
+            </encoder>
+        </appender>
+
+        <!-- ── Rolling File Appender ── -->
+        <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+            <!-- Active log file path -->
+            <file>${LOG_DIR}/${APP_NAME}.log</file>
+
+            <encoder>
+                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] ${MDC_PATTERN} %-5level %logger{36} -
+                    %msg%n${STACKTRACE_FILTER}%nopex
+                </pattern>
+                <charset>UTF-8</charset>
+            </encoder>
+
+            <!--
+              Rolling Policy: SizeAndTimeBasedRollingPolicy
+              ════════════════════════════════════════════════════════════════
+              - Rolls over daily (%d{yyyy-MM-dd})
+              - Also rolls within the same day if file exceeds maxFileSize
+              - %i = index for intra-day rolls (0, 1, 2...)
+              - .gz = automatic GZIP compression of rolled files
+              ════════════════════════════════════════════════════════════════
+            -->
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <!--
+                  Archive pattern:
+                    logs/job-portal.2026-04-18.0.log.gz
+                    logs/job-portal.2026-04-18.1.log.gz  (if >10MB in same day)
+                -->
+                <fileNamePattern>${LOG_DIR}/${APP_NAME}.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+
+                <!--
+                  maxFileSize: Maximum size of a single log file before rolling.
+                  Prevents any single file from becoming too large to grep/tail.
+                  Adjust based on traffic: 10MB for moderate, 50MB for high-traffic.
+                -->
+                <maxFileSize>10MB</maxFileSize>
+
+                <!--
+                  maxHistory: Number of DAYS of log archives to keep.
+                  Older .gz files are automatically deleted.
+                  30 days = ~1 month of searchable history.
+                -->
+                <maxHistory>30</maxHistory>
+
+                <!--
+                  totalSizeCap: Maximum total disk usage for ALL archived logs.
+                  Safety net to prevent disk exhaustion even if daily volume spikes.
+                  1GB = hard ceiling regardless of maxHistory.
+                -->
+                <totalSizeCap>1GB</totalSizeCap>
+            </rollingPolicy>
+        </appender>
+
+        <!-- PROD log levels -->
+        <logger name="com.job_web" level="INFO"/>
+        <logger name="com.job_web.security.RequestLoggingFilter" level="INFO"/>
+
+        <!-- Suppress framework noise in production -->
+        <logger name="org.springframework" level="WARN"/>
+        <logger name="org.hibernate" level="WARN"/>
+        <logger name="org.apache" level="WARN"/>
+        <logger name="io.jsonwebtoken" level="WARN"/>
+
+        <root level="WARN">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+        </root>
+    </springProfile>
+
+</configuration>

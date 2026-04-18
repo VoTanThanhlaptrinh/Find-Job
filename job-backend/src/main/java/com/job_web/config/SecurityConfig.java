@@ -33,6 +33,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.job_web.security.JwtFilter;
 import com.job_web.security.RateLimitFilter;
+import com.job_web.security.RequestLoggingFilter;
 import com.job_web.security.VerifyRecoveryFillter;
 import com.job_web.service.security.impl.UserRepositoryDetailsService;
 
@@ -45,6 +46,7 @@ public class SecurityConfig {
 
     private final JwtFilter jwtAuthFilter;
     private final RateLimitFilter rateLimitFilter;
+    private final RequestLoggingFilter requestLoggingFilter;
     private UserRepositoryDetailsService userDetailsService;
     private VerifyRecoveryFillter verifyRecoveryFillter;
     private CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
@@ -66,6 +68,7 @@ public class SecurityConfig {
                         .requestMatchers(ApiConstants.AUTHENTICATED_ENDPOINTS).authenticated()
                         .anyRequest().authenticated()
                 )
+                .addFilterBefore(requestLoggingFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(verifyRecoveryFillter, UsernamePasswordAuthenticationFilter.class)
@@ -88,8 +91,8 @@ public class SecurityConfig {
                 https://findjob-xi.vercel.app"""));
         config.setAllowCredentials(true);
         config.setAllowedMethods(List.of("GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"));
-        config.setAllowedHeaders(List.of("Content-Type", "Authorization"));
-        config.setExposedHeaders(List.of("Set-Cookie", "X-RateLimit-Limit", "X-RateLimit-Remaining", "X-RateLimit-Reset", "Retry-After"));
+        config.setAllowedHeaders(List.of("Content-Type", "Authorization", "X-Correlation-ID"));
+        config.setExposedHeaders(List.of("Set-Cookie", "X-Correlation-ID", "X-RateLimit-Limit", "X-RateLimit-Remaining", "X-RateLimit-Reset", "Retry-After"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);

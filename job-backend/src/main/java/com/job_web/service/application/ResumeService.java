@@ -28,37 +28,11 @@ public interface ResumeService {
     void uploadResumeToCloud(byte[] data, String key, String originalName);
     byte[] toByteArray(InputStream inputStream) throws IOException;
 
-    /**
-     * Lấy Pre-signed URL để xem resume trực tiếp (inline) trên trình duyệt.
-     *
-     * @param id   ID của resume
-     * @param user Đối tượng User đang đăng nhập
-     * @return ApiResponse chứa ResumeUrlDTO với URL xem resume
-     */
     ApiResponse<ResumeUrlDTO> getResumeViewUrl(long id, User user);
 
-    /**
-     * Lấy Pre-signed URL để tải resume về (attachment).
-     *
-     * @param id   ID của resume
-     * @param user Đối tượng User đang đăng nhập
-     * @return ApiResponse chứa ResumeUrlDTO với URL tải resume
-     */
     ApiResponse<ResumeUrlDTO> getResumeDownloadUrl(long id, User user);
 
-    /**
-     * Lấy Pre-signed URL để xem resume (dành cho Hirer).
-     *
-     * @param id ID của resume
-     * @return ApiResponse chứa ResumeUrlDTO với URL xem resume
-     */
     ApiResponse<ResumeUrlDTO> getResumeViewUrlForHirer(long id);
 
-    /**
-     * Lấy Pre-signed URL để tải resume (dành cho Hirer).
-     *
-     * @param id ID của resume
-     * @return ApiResponse chứa ResumeUrlDTO với URL tải resume
-     */
     ApiResponse<ResumeUrlDTO> getResumeDownloadUrlForHirer(long id);
 }

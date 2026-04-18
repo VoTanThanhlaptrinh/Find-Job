@@ -115,7 +115,7 @@ class AuthServiceImplRoleFlowTest {
     @Test
     @DisplayName("AS02: User login tu endpoint USER nhung gui role HIRER thi bi chan")
     void loginUser_InvalidRequestRole() {
-        LoginDTO dto = new LoginDTO("HIRER", "user@test.com", "password123");
+        LoginDTO dto = new LoginDTO( "user@test.com", "password123");
 
         BadRequestException ex = assertThrows(BadRequestException.class,
                 () -> authService.loginUser(dto, request, new MockHttpServletResponse()));
@@ -127,7 +127,7 @@ class AuthServiceImplRoleFlowTest {
     @Test
     @DisplayName("AS03: Hirer login endpoint nhung tai khoan USER thi bi chan theo role")
     void loginHirer_UserAccountRejected() {
-        LoginDTO dto = new LoginDTO("HIRER", "user@test.com", "password123");
+        LoginDTO dto = new LoginDTO("user@test.com", "password123");
         User user = new User();
         user.setEmail("user@test.com");
         user.setRole(RoleConstants.ROLE_USER);

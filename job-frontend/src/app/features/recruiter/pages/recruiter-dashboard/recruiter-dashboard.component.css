@@ -1,0 +1,29 @@
+:host {
+	display: block;
+}
+
+.recruiter-sidebar-shell {
+	position: fixed;
+	left: 0;
+	top: 0;
+	z-index: 40;
+	width: 18.5rem;
+	max-width: calc(100vw - 2rem);
+	padding: 0.75rem;
+	transform: translateX(calc(-100% - 1rem));
+	transition: transform 220ms ease;
+}
+
+.recruiter-sidebar-open {
+	transform: translateX(0);
+}
+
+@media (min-width: 1024px) {
+	.recruiter-sidebar-shell {
+		position: static;
+		width: 100%;
+		max-width: 20rem;
+		padding: 0;
+		transform: translateX(0);
+	}
+}

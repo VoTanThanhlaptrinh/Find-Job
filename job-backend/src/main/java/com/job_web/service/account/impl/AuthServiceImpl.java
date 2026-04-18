@@ -28,6 +28,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
@@ -59,6 +60,8 @@ public class AuthServiceImpl implements AuthService {
     private final JwtService jwtService;
     private final Environment environment;
 
+    private static final String MDC_USER_ID = "userId";
+
     @Value("${app.cookie.secure}")
     private boolean isSecure;
 
@@ -84,15 +87,23 @@ public class AuthServiceImpl implements AuthService {
     public void sendLinkActivate(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new BadRequestException("auth.user.not_found"));
-        String link = createLink(user);
 
-        String text = String.format(textVerify, link);
-        MailMessage mailMessage = new MailMessage(email, subjectVerify, text);
         try {
-            messageProducer.sendMail(mailMessage);
-        } catch (Exception e) {
-            log.trace(e.getMessage(), e);
-            throw new AppException("auth.email.send_failed", HttpStatus.INTERNAL_SERVER_ERROR);
+            MDC.put(MDC_USER_ID, String.valueOf(user.getId()));
+
+            String link = createLink(user);
+            String text = String.format(textVerify, link);
+            MailMessage mailMessage = new MailMessage(email, subjectVerify, text);
+
+            try {
+                messageProducer.sendMail(mailMessage);
+                log.info("Activation email dispatched for user: {}", user.getId());
+            } catch (Exception e) {
+                log.warn("Failed to send activation email for user: {}", user.getId());
+                throw new AppException("auth.email.send_failed", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } finally {
+            MDC.remove(MDC_USER_ID);
         }
     }
 
@@ -102,9 +113,18 @@ public class AuthServiceImpl implements AuthService {
         String[] values = StringUtils.delimitedListToStringArray(activate, "|");
         User user = userRepository.findByEmail(values[0])
                 .orElseThrow(() -> new BadRequestException("auth.user.not_found"));
-                
-        if (!jwtService.isTokenValid(token, user)) {
-            throw new BadRequestException("auth.token.expired");
+
+        try {
+            MDC.put(MDC_USER_ID, String.valueOf(user.getId()));
+
+            if (!jwtService.isTokenValid(token, user)) {
+                log.warn("Account activation failed — expired token for user: {}", user.getId());
+                throw new BadRequestException("auth.token.expired");
+            }
+
+            log.info("Account activated successfully for user: {}", user.getId());
+        } finally {
+            MDC.remove(MDC_USER_ID);
         }
     }
 
@@ -122,32 +142,45 @@ public class AuthServiceImpl implements AuthService {
                                HttpServletRequest request,
                                HttpServletResponse response,
                                String expectedRole) {
-        validateRequestRole(loginDTO, expectedRole);
         String ip = getClientIP(request);
         if (spamService.checkIpSpamLogin(ip)) {
+            log.warn("Login rate-limited for IP: {}", ip);
             throw new AppException(spamService.getMessageLoginSpam(ip), HttpStatus.TOO_MANY_REQUESTS);
         }
+
         User user = userRepository.findByEmail(loginDTO.getUsername())
                 .orElseThrow(() -> new ResourceNotFoundException("auth.email.not_found"));
 
-        validateAccountRole(user, expectedRole);
+        try {
+            MDC.put(MDC_USER_ID, String.valueOf(user.getId()));
 
-        if (!encoder.matches(loginDTO.getPassword(), user.getPassword())) {
-            spamService.addIpSpamLogin(ip);
-            throw new BadRequestException("auth.login.wrong_password");
+            log.info("Login attempt for user: {} with role: {}", user.getId(), expectedRole);
+
+            validateAccountRole(user, expectedRole);
+
+            if (!encoder.matches(loginDTO.getPassword(), user.getPassword())) {
+                spamService.addIpSpamLogin(ip);
+                log.warn("Login failed — wrong password for user: {}", user.getId());
+                throw new BadRequestException("auth.login.wrong_password");
+            }
+
+            spamService.deleteIpSpamLogin(ip);
+            String accessToken = jwtService.generateToken(user);
+            String refreshToken = refreshTokenService.createRefreshToken(loginDTO.getUsername());
+            ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
+                    .httpOnly(true)
+                    .secure(isSecure)
+                    .path("/")
+                    .sameSite("Lax")
+                    .maxAge(Duration.ofDays(7).getSeconds())
+                    .build();
+            response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+            log.info("Login successful for user: {} with role: {}", user.getId(), expectedRole);
+            return accessToken;
+        } finally {
+            MDC.remove(MDC_USER_ID);
         }
-        spamService.deleteIpSpamLogin(ip);
-        String accessToken = jwtService.generateToken(user);
-        String refreshToken = refreshTokenService.createRefreshToken(loginDTO.getUsername());
-        ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
-                .httpOnly(true)
-                .secure(isSecure)
-                .path("/")
-                .sameSite("Lax")
-                .maxAge(Duration.ofDays(7).getSeconds())
-                .build();
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-        return accessToken;
     }
 
     @Override
@@ -173,8 +206,11 @@ public class AuthServiceImpl implements AuthService {
                         .maxAge(Duration.ofDays(7).getSeconds())
                         .build();
                 response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+
+                log.info("Token refreshed successfully");
                 return accessToken;
             }
+            log.warn("Refresh token expired — session invalidated");
             throw new ResourceNotFoundException("auth.session.expired");
         }
         throw new ResourceNotFoundException("auth.refresh_token.not_found");
@@ -200,6 +236,8 @@ public class AuthServiceImpl implements AuthService {
             }
         }
         response.setHeader("Authorization", "");
+
+        log.info("User logged out — session and refresh token cleared");
     }
 
     @Override
@@ -209,33 +247,46 @@ public class AuthServiceImpl implements AuthService {
             throw new BadRequestException("auth.email.empty");
         }
         if (spamService.checkIpSpamEmail(ip)) {
+            log.warn("Forgot-password email rate-limited for IP: {}", ip);
             throw new BadRequestException(spamService.getMessageEmailSpam(ip));
         }
         spamService.addIpSpamEmail(ip);
 
-        if (userRepository.findByEmail(email).isEmpty()) {
-            throw new BadRequestException("auth.email.not_found");
-        }
-        String refCode = refService.getRef(6).toUpperCase();
-        String subject = MessageUtils.getMessage("auth.forgot_password.subject");
-        String body = MessageUtils.getMessage("auth.forgot_password.body", refCode);
-        MailMessage mailMessage = new MailMessage(email, subject, body);
-        messageProducer.sendMail(mailMessage);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new BadRequestException("auth.email.not_found"));
 
-        verifyService.add("ref-email:" + email, refCode, 60 * 5);
+        try {
+            MDC.put(MDC_USER_ID, String.valueOf(user.getId()));
+
+            String refCode = refService.getRef(6).toUpperCase();
+            String subject = MessageUtils.getMessage("auth.forgot_password.subject");
+            String body = MessageUtils.getMessage("auth.forgot_password.body", refCode);
+            MailMessage mailMessage = new MailMessage(email, subject, body);
+            messageProducer.sendMail(mailMessage);
+
+            verifyService.add("ref-email:" + email, refCode, 60 * 5);
+
+            log.info("Forgot-password verification code sent for user: {}", user.getId());
+        } finally {
+            MDC.remove(MDC_USER_ID);
+        }
     }
 
     @Override
     public String forgotPassword(ForgotPassDTO forgotPassDTO) {
         if (!verifyService.containsKey("ref-email:" + forgotPassDTO.getEmail())) {
+            log.warn("Forgot-password failed — verification code expired");
             throw new BadRequestException("auth.verification.code_expired");
         }
         if (!verifyService.getValue("ref-email:" + forgotPassDTO.getEmail()).equals(forgotPassDTO.getCode())) {
+            log.warn("Forgot-password failed — verification code mismatch");
             throw new BadRequestException("auth.verification.code_mismatch");
         }
         String random = UUID.randomUUID().toString();
         verifyService.add("random:" + random, forgotPassDTO.getEmail(), 5 * 60);
         verifyService.add(random, forgotPassDTO.getEmail(), 5 * 60);
+
+        log.info("Forgot-password verification succeeded — reset token generated");
         return random;
     }
 
@@ -245,6 +296,7 @@ public class AuthServiceImpl implements AuthService {
             throw new BadRequestException("auth.verification.code_not_found");
         }
         if (!verifyService.containsKey("random:" + random)) {
+            log.warn("Reset password random check failed — token not found or expired");
             throw new BadRequestException("auth.verification.email_required");
         }
     }
@@ -252,17 +304,26 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void resetPassword(ResetDTO resetDTO) {
         if (!verifyService.containsKey("random:" + resetDTO.getRandom())) {
+            log.warn("Password reset failed — reset token expired");
             throw new BadRequestException("auth.verification.code_expired");
         }
         String email = verifyService.getValue(resetDTO.getRandom()).toString();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new BadRequestException("auth.verification.failed"));
-                
-        user.setPassword(encoder.encode(resetDTO.getNewPass()));
-        userRepository.save(user);
-        verifyService.delete("ref-email:" + email);
-        verifyService.delete("random:" + resetDTO.getRandom());
-        verifyService.delete(resetDTO.getRandom());
+
+        try {
+            MDC.put(MDC_USER_ID, String.valueOf(user.getId()));
+
+            user.setPassword(encoder.encode(resetDTO.getNewPass()));
+            userRepository.save(user);
+            verifyService.delete("ref-email:" + email);
+            verifyService.delete("random:" + resetDTO.getRandom());
+            verifyService.delete(resetDTO.getRandom());
+
+            log.info("Password reset completed successfully for user: {}", user.getId());
+        } finally {
+            MDC.remove(MDC_USER_ID);
+        }
     }
 
     @Override
@@ -274,12 +335,25 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private String registerByRole(RegistationForm registationForm, String role) {
+        log.info("Registration started for role: {}", role);
+
         User user = registationForm.toUser(encoder, role);
         userRepository.saveAndFlush(user);
-        if (RoleConstants.ROLE_HIRER.equals(RoleConstants.normalizeRole(role))) {
-            createHirer(user);
+
+        try {
+            MDC.put(MDC_USER_ID, String.valueOf(user.getId()));
+
+            if (RoleConstants.ROLE_HIRER.equals(RoleConstants.normalizeRole(role))) {
+                createHirer(user);
+                log.info("Hirer profile created for user: {}", user.getId());
+            }
+
+            sendLinkActivate(user.getUsername());
+
+            log.info("Registration completed for user: {} with role: {}", user.getId(), role);
+        } finally {
+            MDC.remove(MDC_USER_ID);
         }
-        sendLinkActivate(user.getUsername());
         return user.getUsername();
     }
 
@@ -296,14 +370,6 @@ public class AuthServiceImpl implements AuthService {
         hirerRepository.save(hirer);
     }
 
-    private void validateRequestRole(LoginDTO loginDTO, String expectedRole) {
-        String requestRole = RoleConstants.normalizeRole(loginDTO.getRole());
-        String normalizedExpectedRole = RoleConstants.normalizeRole(expectedRole);
-        if (!normalizedExpectedRole.equals(requestRole)) {
-            throw new BadRequestException(getInvalidRequestRoleMessage(expectedRole));
-        }
-    }
-
     private void validateAccountRole(User user, String expectedRole) {
         String normalizedExpectedRole = RoleConstants.normalizeRole(expectedRole);
         boolean matched = user.getAuthorities().stream()
@@ -311,6 +377,8 @@ public class AuthServiceImpl implements AuthService {
                 .map(RoleConstants::normalizeRole)
                 .anyMatch(normalizedExpectedRole::equals);
         if (!matched) {
+            log.warn("Role mismatch — user: {} expected: {}, actual roles: {}",
+                    user.getId(), expectedRole, user.getRole());
             throw new ForbiddenException(getAccountRoleMismatchMessage(expectedRole));
         }
     }

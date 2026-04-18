@@ -34,18 +34,33 @@ public class AIServiceImpl implements AIService {
                 .logResponses(true)
                 .build();
         this.parserAgent = AiServices.create(ResumeParserAgent.class, model);
+        log.info("AI resume parser agent initialized with model: deepseek-chat");
     }
 
     private ResumeModel parser(String rawText){
 
         if(parserAgent == null){
             parserAgent = AiServices.create(ResumeParserAgent.class, model);
+            log.warn("ParserAgent was null — re-initialized at runtime");
         }
         return parserAgent.parse(rawText);
     }
 
     @Override
     public ResumeModel processResume(String rawText) {
-        return parser(rawText);
+        // MDC userId/cvId is already set by the caller (message consumer).
+        // rawText may contain PII (name, email, phone) — never log its content.
+        log.info("Starting AI resume parsing — input length: {} chars", rawText.length());
+
+        long startTime = System.currentTimeMillis();
+        ResumeModel result = parser(rawText);
+        long duration = System.currentTimeMillis() - startTime;
+
+        log.info("AI resume parsing completed in {}ms — extracted title: {}, yoe: {}",
+                duration,
+                result.title(),
+                result.yearOfExperience());
+
+        return result;
     }
 }

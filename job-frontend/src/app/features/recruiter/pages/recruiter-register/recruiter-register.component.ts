@@ -1,6 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { RecruiterAuthService } from '../../services/recruiter-auth.service';
 
 @Component({
   selector: 'app-recruiter-register',
@@ -12,6 +13,7 @@ import { Router, RouterLink } from '@angular/router';
 export class RecruiterRegisterComponent {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
+  private readonly recruiterAuth = inject(RecruiterAuthService);
 
   readonly form = this.fb.nonNullable.group({
     fullName: ['', [Validators.required, Validators.minLength(3)]],
@@ -22,6 +24,26 @@ export class RecruiterRegisterComponent {
     confirmPassword: ['', [Validators.required]],
     agreeTerms: [false, [Validators.requiredTrue]],
   });
+
+  constructor() {
+    effect(() => {
+      const isRegistered = this.recruiterAuth.registerSuccess$();
+      if (!isRegistered) {
+        return;
+      }
+
+      this.recruiterAuth.resetRegisterState();
+      this.router.navigate(['/recruiter/login']);
+    });
+  }
+
+  get isSubmitting(): boolean {
+    return this.recruiterAuth.isSubmittingAuth$();
+  }
+
+  get formError(): string | null {
+    return this.recruiterAuth.authError$();
+  }
 
   get isPasswordMismatch(): boolean {
     const password = this.form.controls.password.value;
@@ -35,6 +57,16 @@ export class RecruiterRegisterComponent {
       return;
     }
 
-    this.router.navigate(['/recruiter/dashboard']);
+    this.recruiterAuth.clearAuthError();
+
+    const { fullName, companyName, email, phone, password } = this.form.getRawValue();
+
+    this.recruiterAuth.register({
+      fullName,
+      companyName,
+      email,
+      phone,
+      password
+    });
   }
 }

@@ -5,6 +5,8 @@ import com.job_web.dto.application.ResumeUrlDTO;
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.models.Resume;
 import com.job_web.service.application.ResumeService;
+import jakarta.persistence.Entity;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -25,23 +27,17 @@ public class HirerResumeController {
     private final ResumeService resumeService;
 
     @GetMapping("/users/{email}")
-    public ResponseEntity<ApiResponse<List<ResumeDTO>>> listResumesByUser(@PathVariable("email") String email) {
+    public ResponseEntity<ApiResponse<List<ResumeDTO>>> listResumesByUser(@PathVariable @Email String email) {
         ApiResponse<List<ResumeDTO>> res = resumeService.getResumesByUser(email);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    /**
-     * Lấy Pre-signed URL để xem resume trực tiếp trên trình duyệt (inline) - dành cho Hirer.
-     */
     @GetMapping("/{id}/view")
     public ResponseEntity<ApiResponse<ResumeUrlDTO>> getResumeViewUrl(@PathVariable("id") long id) {
         ApiResponse<ResumeUrlDTO> res = resumeService.getResumeViewUrlForHirer(id);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    /**
-     * Lấy Pre-signed URL để tải resume về (attachment) - dành cho Hirer.
-     */
     @GetMapping("/{id}/download")
     public ResponseEntity<ApiResponse<ResumeUrlDTO>> getResumeDownloadUrl(@PathVariable("id") long id) {
         ApiResponse<ResumeUrlDTO> res = resumeService.getResumeDownloadUrlForHirer(id);

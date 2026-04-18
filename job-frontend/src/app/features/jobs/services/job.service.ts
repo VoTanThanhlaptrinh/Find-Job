@@ -26,9 +26,16 @@ import { ApiResponse } from '../../../shared/models/api-response.model';
 export class JobService {
   private recommendedJobs = signal<JobCardModel[]>([]);
   private isLoadingRecommendedJobs = signal<boolean>(false);
+  private appliedJobs = signal<JobCardModel[]>([]);
+  private isLoadingAppliedJobs = signal<boolean>(false);
+  private hasMoreAppliedJobs = signal<boolean>(true);
+  private nextAppliedJobsPage = signal<number>(0);
 
   readonly recommendedJobs$ = computed(() => this.recommendedJobs());
   readonly isLoadingRecommendedJobs$ = computed(() => this.isLoadingRecommendedJobs());
+  readonly appliedJobs$ = computed(() => this.appliedJobs());
+  readonly isLoadingAppliedJobs$ = computed(() => this.isLoadingAppliedJobs());
+  readonly hasMoreAppliedJobs$ = computed(() => this.hasMoreAppliedJobs());
 
   private url: string;
 
@@ -66,6 +73,49 @@ export class JobService {
   clearRecommendedJobs(): void {
     this.recommendedJobs.set([]);
   }
+
+  resetAppliedJobsPagination(): void {
+    this.appliedJobs.set([]);
+    this.hasMoreAppliedJobs.set(true);
+    this.nextAppliedJobsPage.set(0);
+    this.isLoadingAppliedJobs.set(false);
+  }
+
+  loadMoreAppliedJobs(pageSize: number = 10): void {
+    if (this.isLoadingAppliedJobs() || !this.hasMoreAppliedJobs()) {
+      return;
+    }
+
+    const pageToLoad = this.nextAppliedJobsPage();
+    this.isLoadingAppliedJobs.set(true);
+
+    this.listJobUserApplied(pageToLoad, pageSize)
+      .pipe(take(1))
+      .subscribe({
+        next: (response) => {
+          const content = response.data?.content ?? [];
+          const totalPages = response.data?.totalPages;
+          const currentPage = response.data?.number ?? pageToLoad;
+          const isLastPageFromApi = response.data?.last;
+
+          this.appliedJobs.update((currentJobs) => [...currentJobs, ...content]);
+
+          const isLastPage = typeof isLastPageFromApi === 'boolean'
+            ? isLastPageFromApi
+            : (typeof totalPages === 'number' ? currentPage >= totalPages - 1 : content.length < pageSize);
+
+          this.hasMoreAppliedJobs.set(!isLastPage && content.length > 0);
+          this.nextAppliedJobsPage.set(pageToLoad + 1);
+        },
+        error: () => {
+          this.hasMoreAppliedJobs.set(false);
+        },
+        complete: () => {
+          this.isLoadingAppliedJobs.set(false);
+        }
+      });
+  }
+
   submitApplyCvExisting(
     payload: ApplyCvWithExistingRequest
   ): Observable<ApplyCvWithExistingResponse> {

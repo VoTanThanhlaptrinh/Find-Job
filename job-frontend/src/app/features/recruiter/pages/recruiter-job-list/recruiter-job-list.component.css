@@ -138,6 +138,25 @@
   cursor: pointer;
 }
 
+.page-number-btn {
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 12px;
+  font-weight: 600;
+  min-width: 34px;
+  height: 32px;
+  padding: 0 8px;
+  cursor: pointer;
+}
+
+.page-number-btn.active {
+  border-color: #1d4ed8;
+  background: #1d4ed8;
+  color: #ffffff;
+}
+
 .delete-btn {
   border-color: #fecaca;
   color: #b91c1c;
@@ -145,7 +164,8 @@
 
 .action-link:hover,
 .delete-btn:hover,
-.page-btn:hover {
+.page-btn:hover,
+.page-number-btn:hover {
   background: #f8fafc;
 }
 
@@ -153,12 +173,52 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  flex-wrap: wrap;
   gap: 10px;
+}
+
+.page-size-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 4px;
+}
+
+.page-size-wrap label {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.page-size-select {
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 0 8px;
+}
+
+.page-numbers {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.page-state {
+  color: #64748b;
+  font-size: 12px;
+  margin-left: 4px;
 }
 
 .page-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.page-number-btn:disabled {
+  cursor: default;
 }
 
 .empty-white {

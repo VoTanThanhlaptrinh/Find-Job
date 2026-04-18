@@ -37,7 +37,7 @@ class RoleBasedAuthControllerTest {
     @Test
     @DisplayName("RA01: User login di dung luong /api/auth/user/login")
     void userLogin_UsesUserFlow() throws Exception {
-        LoginDTO dto = new LoginDTO("USER", "user@test.com", "password123");
+        LoginDTO dto = new LoginDTO( "user@test.com", "password123");
         when(authService.loginUser(any(LoginDTO.class), any(), any())).thenReturn("user-token");
 
         mockMvc.perform(post("/api/auth/user/login")
@@ -53,7 +53,7 @@ class RoleBasedAuthControllerTest {
     @Test
     @DisplayName("RA02: Hirer login di dung luong /api/auth/hirer/login")
     void hirerLogin_UsesHirerFlow() throws Exception {
-        LoginDTO dto = new LoginDTO("HIRER", "hirer@test.com", "password123");
+        LoginDTO dto = new LoginDTO( "hirer@test.com", "password123");
         when(authService.loginHirer(any(LoginDTO.class), any(), any())).thenReturn("hirer-token");
 
         mockMvc.perform(post("/api/auth/hirer/login")
