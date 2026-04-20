@@ -63,6 +63,7 @@ public class SecurityConfig {
                         // 2. Các endpoint Yêu cầu Role cụ thể đưa lên TRƯỚC
                         .requestMatchers(ApiConstants.HIRER_ENDPOINTS).hasAnyAuthority("ROLE_HIRER", "HIRER")
                         .requestMatchers(ApiConstants.USER_ENDPOINTS).hasAnyAuthority("ROLE_USER", "USER")
+                        .requestMatchers(ApiConstants.ADMIN_ENDPOINTS).hasAnyAuthority("ROLE_ADMIN", "ADMIN")
 
                         // 3. Các endpoint Yêu cầu đăng nhập nói chung đưa xuống DƯỚI
                         .requestMatchers(ApiConstants.AUTHENTICATED_ENDPOINTS).authenticated()

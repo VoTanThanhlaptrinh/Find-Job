@@ -27,6 +27,11 @@ public final class RoleConstants {
     public static final String ROLE_PREFIX = "ROLE_";
 
     /**
+     * Role for administrators.
+     */
+    public static final String ADMIN = "ADMIN";
+
+    /**
      * Full role name for users with prefix.
      */
     public static final String ROLE_USER = ROLE_PREFIX + USER;
@@ -37,9 +42,14 @@ public final class RoleConstants {
     public static final String ROLE_HIRER = ROLE_PREFIX + HIRER;
 
     /**
+     * Full role name for admins with prefix.
+     */
+    public static final String ROLE_ADMIN = ROLE_PREFIX + ADMIN;
+
+    /**
      * Set of valid roles that can be assigned during registration.
      */
-    public static final Set<String> VALID_ROLES = Set.of(USER, HIRER, ROLE_USER, ROLE_HIRER);
+    public static final Set<String> VALID_ROLES = Set.of(USER, HIRER, ADMIN, ROLE_USER, ROLE_HIRER, ROLE_ADMIN);
 
     /**
      * Check if a role is valid.
@@ -61,6 +71,9 @@ public final class RoleConstants {
         }
         if (upperRole.equals(HIRER)) {
             return ROLE_HIRER;
+        }
+        if (upperRole.equals(ADMIN)) {
+            return ROLE_ADMIN;
         }
         if (upperRole.startsWith(ROLE_PREFIX)) {
             return upperRole;
