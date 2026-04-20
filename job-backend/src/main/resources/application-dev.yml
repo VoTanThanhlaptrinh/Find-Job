@@ -40,6 +40,12 @@ application:
       username:
       port: 6379
       password: ${REDIS_PASSWORD}
+  ocr:
+    api-key: ${OCR_API_KEY}
+  ai:
+    agent:
+      base-url: https://votanthanh32004-job-portal-matching.hf.space
+
 
 spring:
   datasource:
