@@ -7,6 +7,7 @@ import {
   of,
   startWith,
   take,
+  timeout,
   throwError,
 } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
@@ -122,6 +123,7 @@ export class AuthService {
   }
   refreshToken() {
     return this.http.get<any>(`${this.url}/auth/refreshToken`, { withCredentials: true }).pipe(
+      timeout(8000),
       tap({
         next: (res) => {
           this.tokenService.setToken(res.data);
@@ -139,6 +141,9 @@ export class AuthService {
         this._authReady.set(true);
       })
     );
+  }
+  markAuthReady(): void {
+    this._authReady.set(true);
   }
   logout(): void {
     this.http

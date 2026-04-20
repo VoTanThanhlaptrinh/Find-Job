@@ -1,4 +1,5 @@
-import { APP_INITIALIZER, ApplicationConfig, importProvidersFrom, inject, provideAppInitializer, provideZoneChangeDetection } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { ApplicationConfig, importProvidersFrom, inject, PLATFORM_ID, provideAppInitializer, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
@@ -31,6 +32,13 @@ export const appConfig: ApplicationConfig = {
     provideHotToastConfig(),
     provideAppInitializer(() => {
       const authService = inject(AuthService);
+      const platformId = inject(PLATFORM_ID);
+
+      if (!isPlatformBrowser(platformId)) {
+        authService.markAuthReady();
+        return;
+      }
+
       return authService.refreshToken();
     }),
     provideAnimations(),

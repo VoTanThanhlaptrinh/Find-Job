@@ -1,0 +1,189 @@
+<main
+  class="flex-grow flex items-center justify-center p-6 md:p-12 lg:p-24 w-full h-screen bg-[#f8f5ff]"
+>
+  <div
+    class="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center"
+  >
+    <!-- Left Side: Branding & Decorative -->
+    <div class="hidden lg:flex flex-col justify-center h-full relative">
+      <!-- Asymmetric Background Blob -->
+      <div
+        class="absolute -left-12 -top-12 w-[120%] h-[120%] bg-[#f1efff] rounded-[40px] -z-10 rotate-[-3deg]"
+      ></div>
+      <div class="space-y-8 p-12">
+        <div class="flex items-center gap-3">
+          <i class="fi fi-rr-chart-pie-alt text-4xl text-[#0050d4] flex items-center justify-center"></i>
+          <h1
+            class="font-headline font-extrabold text-3xl tracking-tight text-[#282b51]"
+          >
+            EliteHire
+          </h1>
+        </div>
+        <div class="space-y-4">
+          <h2
+            class="font-headline text-5xl font-bold leading-[1.1] text-[#282b51] tracking-[-0.02em]"
+          >
+            Curate your<br />talent ecosystem.
+          </h2>
+          <p
+            class="font-body text-[#555881] text-lg max-w-md leading-relaxed"
+          >
+            Access the precision tools required to manage elite candidates and
+            streamline your hiring pipeline.
+          </p>
+        </div>
+        <!-- Decorative Graphic element -->
+        <div
+          class="relative w-full aspect-[4/3] mt-12 rounded-[24px] overflow-hidden bg-gradient-to-br from-[#7b9cff] to-[#d9daff] shadow-[0_12px_32px_-4px_rgba(40,43,81,0.08)]"
+        >
+          <div class="absolute inset-0 bg-white/40 backdrop-blur-[2px]"></div>
+          <!-- Abstract UI Shapes representing data/candidates -->
+          <div
+            class="absolute top-8 left-8 w-3/4 h-16 bg-[#ffffff]/80 backdrop-blur-md rounded-xl flex items-center px-6 gap-4 shadow-sm border border-white/50"
+          >
+            <div
+              class="w-10 h-10 rounded-full bg-[#0050d4]/20 flex items-center justify-center"
+            >
+              <i class="fi fi-rr-user text-[#0050d4] text-xl flex items-center justify-center"></i>
+            </div>
+            <div class="flex-1">
+              <div class="h-3 w-1/3 bg-[#282b51]/20 rounded-full mb-2"></div>
+              <div class="h-2 w-1/4 bg-[#282b51]/10 rounded-full"></div>
+            </div>
+            <div class="h-6 w-16 bg-[#0050d4]/10 rounded-full"></div>
+          </div>
+          <div
+            class="absolute top-28 right-8 w-2/3 h-16 bg-[#ffffff]/80 backdrop-blur-md rounded-xl flex items-center px-6 gap-4 shadow-sm border border-white/50"
+          >
+            <div
+              class="w-10 h-10 rounded-full bg-[#8e3a8a]/20 flex items-center justify-center"
+            >
+              <i class="fi fi-rr-star text-[#8e3a8a] text-xl flex items-center justify-center"></i>
+            </div>
+            <div class="flex-1">
+              <div class="h-3 w-1/2 bg-[#282b51]/20 rounded-full mb-2"></div>
+              <div class="h-2 w-1/3 bg-[#282b51]/10 rounded-full"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Right Side: Login Form -->
+    <div class="w-full max-w-md mx-auto">
+      <div
+        class="bg-[#ffffff] rounded-[24px] p-8 md:p-12 shadow-[0_12px_32px_-4px_rgba(40,43,81,0.08)] border border-[#a7aad7]/15 relative overflow-hidden"
+      >
+        <!-- Mobile Logo -->
+        <div class="lg:hidden flex items-center gap-2 mb-8">
+          <i class="fi fi-rr-chart-pie-alt text-3xl text-[#0050d4] flex items-center justify-center"></i>
+          <h1
+            class="font-headline font-extrabold text-2xl tracking-tight text-[#282b51]"
+          >
+            EliteHire
+          </h1>
+        </div>
+        <div class="mb-10">
+          <h2
+            class="font-headline text-3xl font-bold tracking-tight text-[#282b51] mb-2"
+          >
+            Welcome back
+          </h2>
+          <p class="font-body text-[#555881] text-sm">
+            Please enter your administrative credentials.
+          </p>
+        </div>
+        <form action="#" class="space-y-6" method="POST">
+          <!-- Email Input -->
+          <div class="space-y-2">
+            <label
+              class="block font-body text-sm font-medium text-[#282b51]"
+              for="email"
+              >Email Address</label
+            >
+            <div class="relative">
+              <div
+                class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+              >
+                <i class="fi fi-rr-envelope text-[#555881]/70 text-xl flex items-center justify-center"></i>
+              </div>
+              <input
+                autocomplete="email"
+                class="block w-full pl-11 pr-4 py-3 bg-[#f1efff] border-transparent rounded-lg text-[#282b51] placeholder-[#555881]/50 focus:bg-[#ffffff] focus:ring-0 focus:border-[#0050d4]/20 focus:outline-none transition-colors duration-200"
+                id="email"
+                name="email"
+                placeholder="admin@elitehire.com"
+                required=""
+                type="email"
+              />
+            </div>
+          </div>
+          <!-- Password Input -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <label
+                class="block font-body text-sm font-medium text-[#282b51]"
+                for="password"
+                >Password</label
+              >
+              <a
+                class="font-body text-sm font-medium text-[#0050d4] hover:text-[#0046bb] transition-colors"
+                href="#"
+                >Forgot Password?</a
+              >
+            </div>
+            <div class="relative">
+              <div
+                class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+              >
+                <i class="fi fi-rr-lock text-[#555881]/70 text-xl flex items-center justify-center"></i>
+              </div>
+              <input
+                autocomplete="current-password"
+                class="block w-full pl-11 pr-4 py-3 bg-[#f1efff] border-transparent rounded-lg text-[#282b51] placeholder-[#555881]/50 focus:bg-[#ffffff] focus:ring-0 focus:border-[#0050d4]/20 focus:outline-none transition-colors duration-200"
+                id="password"
+                name="password"
+                placeholder="••••••••"
+                required=""
+                type="password"
+              />
+            </div>
+          </div>
+          <!-- Remember Me -->
+          <div class="flex items-center">
+            <input
+              class="h-4 w-4 text-[#0050d4] bg-[#f1efff] border-transparent rounded focus:ring-[#0050d4]/20 focus:ring-offset-[#ffffff]"
+              id="remember-me"
+              name="remember-me"
+              type="checkbox"
+            />
+            <label
+              class="ml-2 block font-body text-sm text-[#555881]"
+              for="remember-me"
+            >
+              Remember me for 30 days
+            </label>
+          </div>
+          <!-- Submit Button -->
+          <button
+            class="w-full flex justify-center items-center py-3.5 px-4 rounded-md shadow-sm font-body text-sm font-semibold text-[#f1f2ff] bg-gradient-to-br from-[#0050d4] to-[#7b9cff] hover:from-[#0046bb] hover:to-[#0050d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0050d4] focus:ring-offset-[#ffffff] transition-all duration-300"
+            type="submit"
+          >
+            Sign In
+            <i class="fi fi-rr-arrow-right ml-2 text-xl flex items-center justify-center"></i>
+          </button>
+        </form>
+        <!-- Bottom Links -->
+        <div class="mt-8 text-center">
+          <p class="font-body text-sm text-[#555881]">
+            Need portal access?
+            <a
+              class="font-medium text-[#0050d4] hover:text-[#0046bb] transition-colors"
+              href="#"
+              >Contact IT Support</a
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

@@ -1,0 +1,13 @@
+<div [class]="containerClass">
+  <div class="flex justify-between items-start">
+    <span [class]="labelClass">{{ label }}</span>
+    <ng-content select="[metric-icon]"></ng-content>
+  </div>
+
+  <div [class]="valueRowClass">
+    <span [class]="valueClass">{{ value }}</span>
+    <span *ngIf="hint" [class]="hintClass">{{ hint }}</span>
+  </div>
+
+  <ng-content select="[metric-footer]"></ng-content>
+</div>

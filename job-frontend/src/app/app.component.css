@@ -5,6 +5,16 @@
 ::ng-deep .cdk-overlay-container {
   z-index: 2000 !important;
 }
-calendar-container-background-color{
-  background-color: #b0b0b0
+calendar-container-background-color {
+  background-color: #b0b0b0;
+}
+.material-symbols-outlined {
+  font-variation-settings:
+    "FILL" 0,
+    "wght" 400,
+    "GRAD" 0,
+    "opsz" 24;
+}
+.active-nav-indicator {
+  font-variation-settings: "FILL" 1;
 }

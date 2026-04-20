@@ -67,4 +67,8 @@ export const routes: Routes = [
   { path: 'single/:id', component: JobSingleComponent },
   { path: 'apply-cv/:id', component: ApplyCvComponent },
   { path: 'apply-success', component: ApplySuccessComponent },
+  {
+    path: 'admin',
+    loadChildren: () => import('./features/admin/admin.routes').then((m) => m.adminRoutes)
+  }
 ];
