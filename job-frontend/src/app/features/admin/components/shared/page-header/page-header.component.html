@@ -1,0 +1,13 @@
+<div [class]="wrapperClass">
+  <div>
+    <h1 [class]="titleClass">{{ title }}</h1>
+    <p *ngIf="description" [class]="descriptionClass">{{ description }}</p>
+  </div>
+
+  <button *ngIf="actionLabel" type="button" [class]="actionClass">
+    <span *ngIf="actionIcon" class="material-symbols-outlined text-lg">{{
+      actionIcon
+    }}</span>
+    <span>{{ actionLabel }}</span>
+  </button>
+</div>

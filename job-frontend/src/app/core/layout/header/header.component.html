@@ -10,7 +10,7 @@
   <div class="container">
     <div class="flex justify-between items-center">
       <div id="logo">
-        <a href="/" [attr.aria-label]="'header.home' | t" [title]="'header.home' | t"
+        <a routerLink="/" [attr.aria-label]="'header.home' | t" [title]="'header.home' | t"
           ><img title="img"
             src="assets/web_css/img/logo.png"
             [attr.alt]="'header.logoAlt' | t"
@@ -38,21 +38,21 @@
           >
             <ng-container>
               <c-nav-item class="menu-active">
-                <a cNavLink href="/">{{ 'header.home' | t }}</a>
+                <a cNavLink routerLink="/">{{ 'header.home' | t }}</a>
               </c-nav-item>
               <c-nav-item>
-                <a cNavLink href="/category">{{ 'header.jobs' | t }}</a>
+                <a cNavLink routerLink="/category">{{ 'header.jobs' | t }}</a>
               </c-nav-item>
             </ng-container>
 
             <c-nav-item>
-              <a cNavLink href="/blogHome">{{ 'header.blog' | t }}</a>
+              <a cNavLink routerLink="/blogHome">{{ 'header.blog' | t }}</a>
             </c-nav-item>
             <c-nav-item>
-              <a cNavLink href="/contact">{{ 'header.contact' | t }}</a>
+              <a cNavLink routerLink="/contact">{{ 'header.contact' | t }}</a>
             </c-nav-item>
             <c-nav-item>
-              <a cNavLink href="/about">{{ 'header.about' | t }}</a>
+              <a cNavLink routerLink="/about">{{ 'header.about' | t }}</a>
             </c-nav-item>
 
             <div class="ml-4 flex items-center gap-2">
@@ -103,22 +103,22 @@
                   <c-nav-item
                     class="bg-white rounded-lg border-blue-900 border-2! px-2 py-1"
                   >
-                    <a cNavLink href="/login" class="text-black!">{{ 'header.login' | t }}</a>
+                    <a cNavLink routerLink="/login" class="text-black!">{{ 'header.login' | t }}</a>
                   </c-nav-item>
                 } @else {
                   <c-nav-item class="rounded-lg bg-blue-500 px-2 py-1">
-                    <a cNavLink href="/login">{{ 'header.login' | t }}</a>
+                    <a cNavLink routerLink="/login">{{ 'header.login' | t }}</a>
                   </c-nav-item>
                 }
                 @if (isRegisterPage) {
                   <c-nav-item
                     class="bg-white rounded-lg border-blue-900 border-2! px-2 py-1"
                   >
-                    <a cNavLink href="/register" class="text-black!">{{ 'header.register' | t }}</a>
+                    <a cNavLink routerLink="/register" class="text-black!">{{ 'header.register' | t }}</a>
                   </c-nav-item>
                 } @else {
                   <c-nav-item class="rounded-lg bg-blue-500 px-2 py-1">
-                    <a cNavLink href="/register">{{ 'header.register' | t }}</a>
+                    <a cNavLink routerLink="/register">{{ 'header.register' | t }}</a>
                   </c-nav-item>
                 }
               </ng-container>

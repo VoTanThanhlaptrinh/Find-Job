@@ -13,7 +13,7 @@ export class LayoutVisibilityService {
     '/login-callback',
   ]);
 
-  private readonly hiddenLayoutPrefixes = ['/recruiter/'];
+  private readonly hiddenLayoutPrefixes = ['/recruiter/', '/admin/'];
 
   getLayoutVisibility(url: string): LayoutVisibility {
     const path = this.normalizePath(url);

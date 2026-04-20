@@ -12,6 +12,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface JobRepository extends JpaRepository<Job, Long> {
+    long countByStatus(String status);
+
+    @Query("""
+        SELECT j FROM Job j WHERE j.status = :status
+    """)
+    org.springframework.data.domain.Page<Job> findByStatus(String status, Pageable pageable);
+
     @Query("""
         SELECT new com.job_web.dto.job.JobCardView(
             j.id,
