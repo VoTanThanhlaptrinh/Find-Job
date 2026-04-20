@@ -19,7 +19,7 @@ public class ApiServiceImpl implements ApiService {
     private static final String MDC_CV_ID = "cvId";
     private static final String MDC_JOB_ID = "jobId";
 
-    public ApiServiceImpl(RestClient.Builder restClientBuilder, @Value("${spring.ai.agent.base-url}") String baseUrl) {
+    public ApiServiceImpl(RestClient.Builder restClientBuilder, @Value("${application.ai.agent.base-url}") String baseUrl) {
         this.restClient = restClientBuilder
                 .baseUrl(baseUrl)
                 .build();

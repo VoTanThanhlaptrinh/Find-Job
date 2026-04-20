@@ -24,7 +24,7 @@ public class FileServiceImpl implements FileService {
     private static final String OCR_API_URL = "https://api.ocr.space/parse/image";
 
     private final RestClient restClient;
-    @Value("${spring.ocr.api-key}")
+    @Value("${application.ocr.api-key}")
     private String ocrApiKey;
     private final ObjectMapper objectMapper;
 
