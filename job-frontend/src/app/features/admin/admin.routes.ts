@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 
-import { AdminLoginComponent } from './pages/admin-login/admin-login.component';
 import { LoginComponent } from './pages/login/login.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { BillingComponent } from './pages/billing/billing.component';
@@ -12,7 +11,6 @@ import { OverviewComponent } from './pages/overview/overview.component';
 export const adminRoutes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
-  { path: 'admin-login', component: AdminLoginComponent },
   { 
     path: '', 
     component: DashboardComponent,

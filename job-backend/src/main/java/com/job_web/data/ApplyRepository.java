@@ -30,11 +30,11 @@ public interface ApplyRepository extends CrudRepository<Apply, Long> {
                    r.file_name as file_name,
                    a.apply_date
             from apply a
-            join job j on a.job_id = j.id and j.status = 'ACTIVE'
-            join user u on a.user_id = u.id and u.status = 'ACTIVE'
-            join resume r on a.resume_id = r.id and r.status = 'ACTIVE'
+            join job j on a.job_id = j.id 
+            join user u on a.user_id = u.id
+            join resume r on a.resume_id = r.id 
             where j.id = ?1
-              and a.status = 'ACTIVE'
+              and a.status = 'ACTIVE' and j.status = 'ACTIVE'  and u.status = 'ACTIVE' and r.status = 'ACTIVE'
             """, nativeQuery = true)
     Page<CandidateDTO> getAllCandidateAppliedJob(long jobId, Pageable pageable);
 }

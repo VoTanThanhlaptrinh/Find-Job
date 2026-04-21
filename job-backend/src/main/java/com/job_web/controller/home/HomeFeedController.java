@@ -1,39 +1,31 @@
 package com.job_web.controller.home;
 
-import com.job_web.data.BlogRepository;
-import com.job_web.data.JobRepository;
 import com.job_web.dto.common.ApiResponse;
-import com.job_web.dto.job.HomeInitView;
 import com.job_web.dto.job.JobCardView;
-import com.job_web.dto.job.JobViewMapper;
+import com.job_web.service.cache.HomeCategoryCacheService;
 import com.job_web.utills.MessageUtils;
-import lombok.AllArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/home")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class HomeFeedController {
-    private JobRepository jobRepository;
-    private BlogRepository blogRepository;
+    private final HomeCategoryCacheService homeCategoryCacheService;
 
     @GetMapping("/init")
     public ResponseEntity<ApiResponse<List<JobCardView>>> getInit() {
-        PageRequest pageRequest = PageRequest.of(0,10, Sort.by("createDate").descending());
-        PageRequest blogByTime = PageRequest.of(0, 3, Sort.by("amountLike").descending());
-        return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("job.load.success"), jobRepository.findJobs(LocalDateTime.now(), "ACTIVE",pageRequest), 200));
+        List<JobCardView> data = homeCategoryCacheService.getHomeInitData();
+        return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("job.load.success"), data, 200));
     }
+
     @GetMapping()
-    public ResponseEntity<String> home(){
+    public ResponseEntity<String> home() {
         return ResponseEntity.ok("Hello world");
     }
 }

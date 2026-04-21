@@ -1,103 +1,285 @@
-<div class="relative min-h-screen overflow-hidden bg-slate-900 px-4 py-8 sm:px-6 lg:px-8">
-  <div class="absolute -left-16 top-20 h-72 w-72 rounded-full bg-cyan-400/30 blur-3xl"></div>
-  <div class="absolute -bottom-20 right-4 h-80 w-80 rounded-full bg-blue-500/25 blur-3xl"></div>
-  <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.16),transparent_55%)]"></div>
-
-  <div class="relative mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-6xl items-center justify-center">
-    <div class="grid w-full gap-8 lg:grid-cols-[460px_1fr]">
-      <section class="mx-auto w-full max-w-md rounded-[30px] border border-white/40 bg-white/90 p-6 shadow-2xl backdrop-blur-md sm:max-w-lg sm:p-8">
-        <div class="mb-6 flex items-center justify-center gap-2 text-slate-900">
-          <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white">RP</span>
-          <div>
-            <p class="text-sm font-bold tracking-wide">RECRUITER</p>
-            <p class="text-sm font-semibold">PORTAL</p>
+  <main
+    class="bg-re-surface font-body text-re-on-surface antialiased overflow-x-hidden"
+  >
+    <!-- Top Navigation Anchor (Manual Placement per Shell Visibility Rule) -->
+    <div role="banner"
+      class="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-md shadow-xl shadow-re-primary/5"
+    >
+      <div
+        class="flex items-center justify-between px-8 py-4 max-w-7xl mx-auto w-full"
+      >
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-re-primary text-2xl"
+            >flare</span
+          >
+          <span
+            class="font-headline font-bold text-2xl bg-gradient-to-r from-re-primary to-re-tertiary-container bg-clip-text text-transparent"
+            >Aura</span
+          >
+        </div>
+        <div class="hidden md:flex items-center gap-8">
+          <a
+            class="font-headline font-semibold tracking-tight text-re-primary border-b-2 border-re-primary"
+            href="#"
+            >Tuyển dụng</a
+          >
+          <a
+            class="font-headline font-semibold tracking-tight text-re-outline hover:text-re-on-surface transition-all duration-300"
+            href="#"
+            >Tính năng</a
+          >
+          <a
+            class="font-headline font-semibold tracking-tight text-re-outline hover:text-re-on-surface transition-all duration-300"
+            href="#"
+            >Bảng giá</a
+          >
+        </div>
+        <a
+          class="text-re-primary font-headline font-semibold hover:bg-re-surface-container-low px-6 py-2 re-rounded-full transition-transform active:scale-95"
+          href="#"
+          >Login</a
+        >
+      </div>
+    </div>
+    <div role="main" class="min-h-screen flex flex-col md:flex-row pt-16 md:pt-0">
+      <!-- Side 1: Atmospheric Experience -->
+      <section
+        class="md:w-5/12 atmospheric-glow flex flex-col items-center justify-center p-12 text-re-on-primary min-h-[353px] md:min-h-screen relative"
+      >
+        <!-- Glow Orbs -->
+        <div
+          class="glow-orb w-[400px] h-[400px] bg-re-secondary-container -top-20 -left-20"
+        ></div>
+        <div
+          class="glow-orb w-[300px] h-[300px] bg-re-tertiary-fixed-dim -bottom-10 -right-10"
+        ></div>
+        <div class="relative z-10 text-center md:text-left">
+          <div
+            class="inline-flex items-center justify-center w-20 h-20 re-rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 mb-8 mx-auto md:mx-0"
+          >
+            <span class="font-headline text-4xl font-extrabold tracking-tighter"
+              >RP</span
+            >
+          </div>
+          <h1
+            class="font-headline text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 leading-tight"
+          >
+            Tạo tài khoản<br />doanh nghiệp
+          </h1>
+          <p
+            class="text-re-primary-fixed font-light text-lg max-w-sm mx-auto md:mx-0 leading-relaxed opacity-90"
+          >
+            Bắt đầu hành trình tìm kiếm nhân tài với công nghệ AI tiên tiến và
+            trải nghiệm tuyển dụng tinh tế nhất.
+          </p>
+          <div class="mt-12 hidden md:block">
+            <div class="flex items-center gap-4 mb-6">
+              <div
+                class="w-12 h-12 re-rounded-full bg-white/10 flex items-center justify-center"
+              >
+                <span class="material-symbols-outlined text-white">bolt</span>
+              </div>
+              <div>
+                <p class="font-semibold text-white">Kết nối nhanh chóng</p>
+                <p class="text-sm text-re-primary-fixed/80">
+                  Tiếp cận 1M+ ứng viên tiềm năng
+                </p>
+              </div>
+            </div>
+            <div class="flex items-center gap-4">
+              <div
+                class="w-12 h-12 re-rounded-full bg-white/10 flex items-center justify-center"
+              >
+                <span class="material-symbols-outlined text-white"
+                  >analytics</span
+                >
+              </div>
+              <div>
+                <p class="font-semibold text-white">Phân tích chuyên sâu</p>
+                <p class="text-sm text-re-primary-fixed/80">
+                  Dữ liệu thị trường thời gian thực
+                </p>
+              </div>
+            </div>
           </div>
         </div>
-
-        <h1 class="text-center text-3xl font-semibold tracking-tight text-slate-900">Tạo Tài khoản Nhà tuyển dụng</h1>
-
-        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="mt-6 space-y-3">
-          <input
-            type="text"
-            formControlName="fullName"
-            placeholder="Họ và Tên"
-            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500"
-          />
-          <input
-            type="text"
-            formControlName="companyName"
-            placeholder="Tên Công ty"
-            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500"
-          />
-          <input
-            type="email"
-            formControlName="email"
-            placeholder="Email Công việc"
-            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500"
-          />
-          <input
-            type="tel"
-            formControlName="phone"
-            placeholder="Số điện thoại"
-            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500"
-          />
-          <input
-            type="password"
-            formControlName="password"
-            placeholder="Mật khẩu"
-            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500"
-          />
-          <input
-            type="password"
-            formControlName="confirmPassword"
-            placeholder="Xác nhận mật khẩu"
-            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500"
-          />
-
-          @if (isPasswordMismatch && (form.controls.confirmPassword.touched || form.controls.confirmPassword.dirty)) {
-            <p class="text-xs text-rose-600">Mật khẩu xác nhận chưa khớp.</p>
-          }
-
-          <label class="mt-2 inline-flex items-start gap-2 text-sm text-slate-700">
-            <input type="checkbox" formControlName="agreeTerms" class="mt-1 h-4 w-4 rounded border-slate-300 text-blue-600" />
-            Đồng ý với
-            <a href="#" class="font-semibold text-blue-600 hover:text-blue-700">Điều khoản</a>
-            và
-            <a href="#" class="font-semibold text-blue-600 hover:text-blue-700">Chính sách</a>
-          </label>
-
-          @if (form.controls.agreeTerms.touched && form.controls.agreeTerms.invalid) {
-            <p class="text-xs text-rose-600">Bạn cần đồng ý điều khoản để tiếp tục.</p>
-          }
-
-          <button
-            type="submit"
-            [disabled]="isSubmitting"
-            class="mt-1 w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold tracking-wide text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-70"
+        <div class="absolute bottom-12 left-12 right-12 hidden lg:block">
+          <div
+            class="p-6 re-rounded-2xl bg-white/5 backdrop-blur-md border border-white/10"
           >
-            ĐĂNG KÝ
-          </button>
-
-          @if (formError) {
-            <p class="text-xs text-rose-600">{{ formError }}</p>
-          }
-        </form>
-
-        <p class="mt-5 text-center text-sm text-slate-600">
-          Đã có tài khoản?
-          <a [routerLink]="['/recruiter/login']" class="font-semibold text-blue-600 hover:text-blue-700">Đăng nhập</a>
-        </p>
+            <p class="text-sm italic opacity-80">
+              "Aura đã thay đổi hoàn toàn cách chúng tôi tiếp cận nhân sự chất
+              lượng cao. Một giao diện tuyệt vời."
+            </p>
+            <div class="mt-4 flex items-center gap-3">
+              <img title="img"
+                class="w-8 h-8 re-rounded-full object-cover"
+                data-alt="Professional portrait of a male tech executive in a light blue shirt with soft studio lighting"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdY6Oi9b5hwNw1wGf7ssd2Q6uEpwwtIexlGnK4u1cOz2Y8nhKgHJfeieL8UOVyFd9nHOxoi_9h-F7MbY6HE010dpIq1W1oMVKV1GrtUTPGfWc-Rk3IYCB_L3cdBJkjGZEa9HrLwhJ-PhhknwQgHJhSAhYotcIE0xAzpNBr-fOzjjDKH9UEwORAJ8hCNO0hY0SrpTzTWi8JSuRtPt-v8H1y1AKeo--Ta-XdA-0pRJrwXpD7coryiqHxzudM7P_8vlpF3-O2Esx5bAk"
+              />
+              <span class="text-xs font-semibold"
+                >Giám đốc Nhân sự, TechCorp</span
+              >
+            </div>
+          </div>
+        </div>
       </section>
-
-      <section class="hidden lg:flex items-center justify-center">
-        <div class="max-w-xl rounded-4xl border border-white/30 bg-white/10 p-8 text-white backdrop-blur-md">
-          <h2 class="text-4xl font-semibold leading-tight">Xây dựng đội ngũ mạnh bằng dữ liệu tuyển dụng rõ ràng.</h2>
-          <p class="mt-5 text-sm leading-7 text-slate-200">
-            Tạo tài khoản nhà tuyển dụng và quản lý toàn bộ quy trình đăng tin, sàng lọc ứng viên,
-            theo dõi phỏng vấn trên cùng một dashboard.
-          </p>
+      <!-- Side 2: Registration Form -->
+      <section
+        class="md:w-7/12 flex items-center justify-center bg-re-surface p-6 md:p-12 lg:p-24"
+      >
+        <div class="w-full max-w-md">
+          <div class="mb-10 text-center md:text-left">
+            <h2 class="font-headline text-3xl font-bold text-re-on-surface mb-2">
+              Đăng ký ngay
+            </h2>
+            <p class="text-re-on-surface-variant font-body">
+              Xây dựng đội ngũ trong mơ của bạn ngay hôm nay.
+            </p>
+          </div>
+          <form class="space-y-6">
+            <div class="space-y-1">
+              <label
+                class="text-xs font-semibold uppercase tracking-wider text-re-outline px-1"
+                >Họ và tên</label
+              >
+              <input
+                class="w-full px-4 py-4 re-rounded-xl bg-re-surface-container-lowest border-none shadow-sm focus:ring-2 focus:ring-re-primary/20 focus:bg-white transition-all duration-300 placeholder:text-re-outline-variant text-re-on-surface"
+                placeholder="Nguyễn Văn A"
+                type="text"
+              />
+              <div class="h-[2px] w-full bg-re-outline-variant opacity-20"></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-1">
+                <label
+                  class="text-xs font-semibold uppercase tracking-wider text-re-outline px-1"
+                  >Tên công ty</label
+                >
+                <input
+                  class="w-full px-4 py-4 re-rounded-xl bg-re-surface-container-lowest border-none shadow-sm focus:ring-2 focus:ring-re-primary/20 transition-all placeholder:text-re-outline-variant"
+                  placeholder="Công ty Aura"
+                  type="text"
+                />
+                <div class="h-[2px] w-full bg-re-outline-variant opacity-20"></div>
+              </div>
+              <div class="space-y-1">
+                <label
+                  class="text-xs font-semibold uppercase tracking-wider text-re-outline px-1"
+                  >Số điện thoại</label
+                >
+                <input
+                  class="w-full px-4 py-4 re-rounded-xl bg-re-surface-container-lowest border-none shadow-sm focus:ring-2 focus:ring-re-primary/20 transition-all placeholder:text-re-outline-variant"
+                  placeholder="0901 234 567"
+                  type="tel"
+                />
+                <div class="h-[2px] w-full bg-re-outline-variant opacity-20"></div>
+              </div>
+            </div>
+            <div class="space-y-1">
+              <label
+                class="text-xs font-semibold uppercase tracking-wider text-re-outline px-1"
+                >Email công việc</label
+              >
+              <input
+                class="w-full px-4 py-4 re-rounded-xl bg-re-surface-container-lowest border-none shadow-sm focus:ring-2 focus:ring-re-primary/20 transition-all placeholder:text-re-outline-variant"
+                placeholder="name@company.com"
+                type="email"
+              />
+              <div class="h-[2px] w-full bg-re-outline-variant opacity-20"></div>
+            </div>
+            <div class="space-y-1 relative">
+              <label
+                class="text-xs font-semibold uppercase tracking-wider text-re-outline px-1"
+                >Mật khẩu</label
+              >
+              <div class="relative">
+                <input
+                  class="w-full px-4 py-4 re-rounded-xl bg-re-surface-container-lowest border-none shadow-sm focus:ring-2 focus:ring-re-primary/20 transition-all placeholder:text-re-outline-variant"
+                  placeholder="••••••••"
+                  type="password"
+                />
+                <button
+                  class="absolute right-4 top-1/2 -translate-y-1/2 text-re-outline"
+                  type="button"
+                >
+                  <span class="material-symbols-outlined">visibility</span>
+                </button>
+              </div>
+              <div class="h-[2px] w-full bg-re-outline-variant opacity-20"></div>
+            </div>
+            <div class="flex items-start gap-3 py-2">
+              <input
+                class="mt-1 w-5 h-5 re-rounded border-re-outline-variant text-re-primary focus:ring-re-primary"
+                id="terms"
+                type="checkbox"
+              />
+              <label
+                class="text-sm text-re-on-surface-variant leading-relaxed"
+                for="terms"
+              >
+                Tôi đồng ý với
+                <a class="text-re-primary font-medium hover:underline" href="#"
+                  >Điều khoản dịch vụ</a
+                >
+                và
+                <a class="text-re-primary font-medium hover:underline" href="#"
+                  >Chính sách bảo mật</a
+                >
+                của Aura.
+              </label>
+            </div>
+            <button
+              class="w-full py-5 bg-gradient-to-r from-re-primary to-re-primary-container text-white font-headline font-bold text-sm tracking-widest re-rounded-full shadow-lg shadow-re-primary/20 hover:shadow-re-primary/40 active:scale-[0.98] transition-all duration-300"
+              type="submit"
+            >
+              ĐĂNG KÝ DOANH NGHIỆP
+            </button>
+          </form>
+          <div class="mt-12 text-center">
+            <p class="text-re-on-surface-variant text-sm">
+              Đã có tài khoản doanh nghiệp?
+              <a
+                class="text-re-primary font-bold ml-1 hover:underline underline-offset-4"
+                href="#"
+                >Đăng nhập ngay</a
+              >
+            </p>
+          </div>
         </div>
       </section>
     </div>
-  </div>
-</div>
+    <!-- Footer Anchor -->
+    <div role="contentinfo" class="w-full border-t border-slate-100 bg-slate-50">
+      <div
+        class="flex flex-col md:flex-row justify-between items-center px-12 py-8 gap-4 max-w-7xl mx-auto"
+      >
+        <div class="flex items-center gap-2">
+          <span class="font-headline font-bold text-re-on-surface"
+            >Aura Recruitment</span
+          >
+          <span class="text-slate-400 text-sm">| Atmospheric Precision.</span>
+        </div>
+        <div class="flex gap-8">
+          <a
+            class="text-slate-400 text-sm hover:text-re-primary transition-colors font-body"
+            href="#"
+            >Privacy</a
+          >
+          <a
+            class="text-slate-400 text-sm hover:text-re-primary transition-colors font-body"
+            href="#"
+            >Terms</a
+          >
+          <a
+            class="text-slate-400 text-sm hover:text-re-primary transition-colors font-body"
+            href="#"
+            >Support</a
+          >
+        </div>
+        <p class="text-slate-400 text-xs font-body">
+          © 2024 Aura Recruitment. All rights reserved.
+        </p>
+      </div>
+    </div>
+  </main>

@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, effect, inject, signal } from '@angular/core';
-import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
 import { RecruiterJobsService } from '../../services/recruiter-jobs.service';
 
 type DashboardMetric = {
@@ -11,7 +10,7 @@ type DashboardMetric = {
 
 @Component({
   selector: 'app-recruiter-dashboard-overview',
-  imports: [CommonModule, TranslatePipe],
+  imports: [CommonModule],
   templateUrl: './recruiter-dashboard-overview.component.html',
   styleUrl: './recruiter-dashboard-overview.component.css',
 })

@@ -1,18 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
-import { ApplySuccessModalComponent } from './apply-success-modal.component';
+import { ApplySuccessComponent } from './apply-success.component';
 
-describe('ApplySuccessModalComponent', () => {
-  let component: ApplySuccessModalComponent;
-  let fixture: ComponentFixture<ApplySuccessModalComponent>;
+describe('ApplySuccessComponent', () => {
+  let component: ApplySuccessComponent;
+  let fixture: ComponentFixture<ApplySuccessComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ApplySuccessModalComponent]
-    })
-    .compileComponents();
+      imports: [ApplySuccessComponent],
+      providers: [provideRouter([])],
+    }).compileComponents();
 
-    fixture = TestBed.createComponent(ApplySuccessModalComponent);
+    fixture = TestBed.createComponent(ApplySuccessComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

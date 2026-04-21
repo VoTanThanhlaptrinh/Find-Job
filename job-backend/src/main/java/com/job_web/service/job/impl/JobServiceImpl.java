@@ -46,7 +46,6 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public Boolean checkExistJob(Long id) {
-        // Read-only — no logging needed.
         return jobRepository.findById(id).isPresent();
     }
 
@@ -155,7 +154,6 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public List<JobCardView> matchJobs(long cvId) {
-        // Read-only — no logging needed.
         return jobRepository.matchJobs(cvId);
     }
 }

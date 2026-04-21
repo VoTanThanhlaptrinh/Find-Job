@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#ddb7ff",
+                        "surface-tint": "#0053db",
+                        "on-tertiary-container": "#faecff",
+                        "inverse-primary": "#b4c5ff",
+                        "surface": "#f7f9fb",
+                        "on-secondary-fixed-variant": "#004c6e",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#004666",
+                        "secondary-fixed-dim": "#89ceff",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "surface-container": "#eceef0",
+                        "secondary-fixed": "#c9e6ff",
+                        "primary-fixed": "#dbe1ff",
+                        "outline-variant": "#c3c6d7",
+                        "on-tertiary-fixed-variant": "#6900b3",
+                        "on-primary-fixed": "#00174b",
+                        "on-primary-container": "#eeefff",
+                        "secondary": "#006591",
+                        "on-primary": "#ffffff",
+                        "inverse-surface": "#2d3133",
+                        "surface-variant": "#e0e3e5",
+                        "error-container": "#ffdad6",
+                        "on-secondary": "#ffffff",
+                        "tertiary-container": "#943fe2",
+                        "surface-container-low": "#f2f4f6",
+                        "on-surface-variant": "#434655",
+                        "surface-dim": "#d8dadc",
+                        "on-error-container": "#93000a",
+                        "background": "#f7f9fb",
+                        "on-background": "#191c1e",
+                        "tertiary-fixed": "#f0dbff",
+                        "on-tertiary-fixed": "#2c0051",
+                        "on-secondary-fixed": "#001e2f",
+                        "surface-container-highest": "#e0e3e5",
+                        "error": "#ba1a1a",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-container": "#39b8fd",
+                        "on-surface": "#191c1e",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#e6e8ea",
+                        "tertiary": "#7a1bc8",
+                        "outline": "#737686",
+                        "inverse-on-surface": "#eff1f3",
+                        "primary-container": "#2563eb",
+                        "surface-bright": "#f7f9fb",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "primary": "#004ac6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f7f9fb; }
+        .font-headline { font-family: 'Manrope', sans-serif; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="text-on-surface">
+<!-- Navigation Drawer -->
+<aside class="fixed left-0 top-0 h-screen w-72 flex flex-col py-8 bg-white dark:bg-slate-950 shadow-xl shadow-blue-900/5 z-50">
+<div class="px-8 mb-10">
+<span class="font-headline font-bold text-[#004ac6] text-xl tracking-tighter">RecruiterPortal</span>
+</div>
+<nav class="flex-1 space-y-1">
+<!-- Active Tab: Dashboard -->
+<a class="flex items-center gap-3 bg-gradient-to-r from-[#004ac6] to-[#943fe2] text-white rounded-full mx-4 my-1 px-4 py-3 transition-transform hover:translate-x-1" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-['Inter'] text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-slate-600 hover:bg-slate-50 rounded-full mx-4 my-1 px-4 py-3 transition-transform hover:translate-x-1" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-['Inter'] text-sm font-medium">Candidates</span>
+</a>
+<a class="flex items-center gap-3 text-slate-600 hover:bg-slate-50 rounded-full mx-4 my-1 px-4 py-3 transition-transform hover:translate-x-1" href="#">
+<span class="material-symbols-outlined">work</span>
+<span class="font-['Inter'] text-sm font-medium">Job Openings</span>
+</a>
+<a class="flex items-center gap-3 text-slate-600 hover:bg-slate-50 rounded-full mx-4 my-1 px-4 py-3 transition-transform hover:translate-x-1" href="#">
+<span class="material-symbols-outlined">mail</span>
+<span class="font-['Inter'] text-sm font-medium">Messages</span>
+</a>
+<a class="flex items-center gap-3 text-slate-600 hover:bg-slate-50 rounded-full mx-4 my-1 px-4 py-3 transition-transform hover:translate-x-1" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-['Inter'] text-sm font-medium">Analytics</span>
+</a>
+</nav>
+<div class="mt-auto px-6 py-4 flex items-center gap-3">
+<img class="w-10 h-10 rounded-full bg-primary-fixed text-primary font-bold flex items-center justify-center border-2 border-white shadow-sm" data-alt="Professional headshot of a smiling male recruiter with soft studio lighting and a clean neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXBi28HKusckULcWA8P7xuAYC75_kApmZwKnCzzXf3arqiSTIqMj7hTu00OgJ2BTPpI3StgYISanPwe2GEebvpB21XHjWRfPyBzs2t9PyZqSFDeA4U_xQCvritq0ZIHHQHh-rOovwj6hqiAEkvbGAwjO0BU5Iiw2CuoV8OTZRHRtIlDsiBiGd92Kgb_Ax0DD1vzzD58Ob8Ft0_anSwl9l0UCH_dcUIW9O_710ugKPRTXXXN_nwwxJEnr-9wlOklq4fCvknUtPtr6Y"/>
+<div class="overflow-hidden">
+<p class="font-headline font-bold text-sm text-on-surface truncate">Alex Rivers</p>
+<p class="text-xs text-slate-500 truncate">Senior Talent Partner</p>
+</div>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-72 min-h-screen">
+<!-- TopAppBar -->
+<header class="sticky top-0 z-40 bg-[#f7f9fb]/80 backdrop-blur-md flex items-center justify-between px-8 py-4 w-full shadow-sm shadow-blue-500/5">
+<div>
+<h1 class="font-headline font-extrabold text-2xl tracking-tighter text-[#004ac6]">Tổng quan Dashboard</h1>
+<p class="text-sm text-on-surface-variant font-body">Chào buổi sáng, Alex. Đây là những gì đang diễn ra hôm nay.</p>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-blue-50/50 transition-colors text-slate-500 scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 rounded-full hover:bg-blue-50/50 transition-colors text-slate-500 scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</header>
+<div class="p-8 space-y-8 max-w-7xl mx-auto">
+<!-- Abstract background glow -->
+<div class="fixed top-1/4 right-0 w-96 h-96 bg-primary-fixed/20 rounded-full blur-[120px] -z-10"></div>
+<div class="fixed bottom-1/4 left-80 w-64 h-64 bg-tertiary-fixed/30 rounded-full blur-[100px] -z-10"></div>
+<!-- Metrics Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest p-6 rounded-3xl shadow-sm shadow-blue-900/5 transition-transform hover:-translate-y-1">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-2xl bg-primary/5 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">work</span>
+</div>
+<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-600 flex items-center gap-1">
+                            +12% <span class="material-symbols-outlined text-[14px]">trending_up</span>
+</span>
+</div>
+<p class="text-on-surface-variant text-sm font-medium mb-1">Tổng công việc</p>
+<h3 class="font-headline text-3xl font-extrabold text-on-surface">48</h3>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest p-6 rounded-3xl shadow-sm shadow-blue-900/5 transition-transform hover:-translate-y-1">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-2xl bg-secondary-container/10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</div>
+<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-600 flex items-center gap-1">
+                            +5% <span class="material-symbols-outlined text-[14px]">trending_up</span>
+</span>
+</div>
+<p class="text-on-surface-variant text-sm font-medium mb-1">Đang tuyển dụng</p>
+<h3 class="font-headline text-3xl font-extrabold text-on-surface">12</h3>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest p-6 rounded-3xl shadow-sm shadow-blue-900/5 transition-transform hover:-translate-y-1">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-2xl bg-tertiary-fixed/40 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person_add</span>
+</div>
+<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-600 flex items-center gap-1">
+                            +24% <span class="material-symbols-outlined text-[14px]">trending_up</span>
+</span>
+</div>
+<p class="text-on-surface-variant text-sm font-medium mb-1">Ứng viên mới</p>
+<h3 class="font-headline text-3xl font-extrabold text-on-surface">156</h3>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-container-lowest p-6 rounded-3xl shadow-sm shadow-blue-900/5 transition-transform hover:-translate-y-1">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-2xl bg-error-container/20 flex items-center justify-center text-error">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">event_available</span>
+</div>
+<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-slate-50 text-slate-400 flex items-center gap-1">
+                            0% <span class="material-symbols-outlined text-[14px]">horizontal_rule</span>
+</span>
+</div>
+<p class="text-on-surface-variant text-sm font-medium mb-1">Phỏng vấn</p>
+<h3 class="font-headline text-3xl font-extrabold text-on-surface">8</h3>
+</div>
+</div>
+<!-- Dashboard Content Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Main Performance Section (Bento Card Large) -->
+<div class="lg:col-span-2 space-y-6">
+<div class="bg-surface-container-lowest rounded-3xl p-8 shadow-sm shadow-blue-900/5">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h2 class="font-headline text-xl font-bold text-on-surface">Hiệu suất tuyển dụng</h2>
+<p class="text-sm text-on-surface-variant">Tiến độ tuyển dụng các vị trí ưu tiên cao</p>
+</div>
+<button class="text-[#004ac6] text-sm font-semibold flex items-center gap-1">
+                                Xem tất cả <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<div class="space-y-6">
+<!-- Job Item 1 -->
+<div class="group">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 font-bold">UX</div>
+<div>
+<h4 class="font-headline font-bold text-on-surface">Senior Product Designer</h4>
+<p class="text-xs text-on-surface-variant">Hoàn thành 75% • 3 Ứng viên cuối</p>
+</div>
+</div>
+<span class="text-sm font-bold text-primary">8/12</span>
+</div>
+<div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-primary to-tertiary-container rounded-full" style="width: 75%"></div>
+</div>
+</div>
+<!-- Job Item 2 -->
+<div class="group">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 font-bold">BE</div>
+<div>
+<h4 class="font-headline font-bold text-on-surface">Node.js Developer (Middle)</h4>
+<p class="text-xs text-on-surface-variant">Hoàn thành 40% • Đang phỏng vấn sơ bộ</p>
+</div>
+</div>
+<span class="text-sm font-bold text-primary">4/10</span>
+</div>
+<div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-primary to-tertiary-container rounded-full" style="width: 40%"></div>
+</div>
+</div>
+<!-- Job Item 3 -->
+<div class="group">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 font-bold">MK</div>
+<div>
+<h4 class="font-headline font-bold text-on-surface">Growth Marketing Manager</h4>
+<p class="text-xs text-on-surface-variant">Hoàn thành 90% • Giai đoạn Offer</p>
+</div>
+</div>
+<span class="text-sm font-bold text-primary">9/10</span>
+</div>
+<div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-primary to-tertiary-container rounded-full" style="width: 90%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Pipeline Overview -->
+<div class="grid grid-cols-2 gap-6">
+<div class="bg-surface-container-lowest rounded-3xl p-6 shadow-sm shadow-blue-900/5 flex items-center gap-4">
+<div class="flex-1">
+<p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Thời gian tuyển trung bình</p>
+<h4 class="font-headline text-2xl font-bold">18 Ngày</h4>
+</div>
+<div class="w-12 h-12 rounded-full border-4 border-primary/20 border-t-primary flex items-center justify-center">
+<span class="text-[10px] font-bold text-primary">2.4%</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-3xl p-6 shadow-sm shadow-blue-900/5 flex items-center gap-4">
+<div class="flex-1">
+<p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Tỉ lệ chấp nhận Offer</p>
+<h4 class="font-headline text-2xl font-bold">92%</h4>
+</div>
+<div class="w-12 h-12 rounded-full border-4 border-tertiary-fixed-dim border-t-tertiary flex items-center justify-center">
+<span class="text-[10px] font-bold text-tertiary">↑</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Activity Feed (Timeline Side) -->
+<div class="lg:col-span-1">
+<div class="bg-surface-container-lowest rounded-3xl p-8 shadow-sm shadow-blue-900/5 h-full">
+<div class="flex items-center justify-between mb-8">
+<h2 class="font-headline text-xl font-bold text-on-surface">Hoạt động gần đây</h2>
+<button class="p-2 rounded-full hover:bg-slate-50 text-slate-400">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="relative space-y-8 before:absolute before:left-3 before:top-2 before:bottom-2 before:w-[2px] before:bg-slate-50">
+<!-- Timeline Item 1 -->
+<div class="relative pl-10">
+<div class="absolute left-0 top-1 w-6 h-6 rounded-full bg-primary flex items-center justify-center border-4 border-white shadow-sm ring-2 ring-primary/5">
+<span class="material-symbols-outlined text-[12px] text-white" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<p class="text-sm font-medium text-on-surface">Phỏng vấn hoàn tất: <span class="font-bold">Lê Minh Hùng</span></p>
+<p class="text-xs text-on-surface-variant mt-1">10 phút trước • Node.js Dev</p>
+</div>
+<!-- Timeline Item 2 -->
+<div class="relative pl-10">
+<div class="absolute left-0 top-1 w-6 h-6 rounded-full bg-tertiary flex items-center justify-center border-4 border-white shadow-sm ring-2 ring-tertiary/5">
+<span class="material-symbols-outlined text-[12px] text-white" style="font-variation-settings: 'FILL' 1;">add</span>
+</div>
+<p class="text-sm font-medium text-on-surface">Ứng viên mới đăng ký</p>
+<p class="text-xs text-on-surface-variant mt-1">2 giờ trước • 4 hồ sơ mới</p>
+</div>
+<!-- Timeline Item 3 -->
+<div class="relative pl-10">
+<div class="absolute left-0 top-1 w-6 h-6 rounded-full bg-secondary flex items-center justify-center border-4 border-white shadow-sm ring-2 ring-secondary/5">
+<span class="material-symbols-outlined text-[12px] text-white" style="font-variation-settings: 'FILL' 1;">send</span>
+</div>
+<p class="text-sm font-medium text-on-surface">Đã gửi Offer cho <span class="font-bold">Nguyễn Thu Hà</span></p>
+<p class="text-xs text-on-surface-variant mt-1">5 giờ trước • Product Designer</p>
+</div>
+<!-- Timeline Item 4 -->
+<div class="relative pl-10 opacity-60">
+<div class="absolute left-0 top-1 w-6 h-6 rounded-full bg-slate-300 flex items-center justify-center border-4 border-white shadow-sm ring-2 ring-slate-100">
+<span class="material-symbols-outlined text-[12px] text-white" style="font-variation-settings: 'FILL' 1;">description</span>
+</div>
+<p class="text-sm font-medium text-on-surface">Cập nhật JD</p>
+<p class="text-xs text-on-surface-variant mt-1">Hôm qua • Senior React Dev</p>
+</div>
+</div>
+<div class="mt-12 bg-primary-fixed/30 rounded-2xl p-4 flex items-center gap-4">
+<img class="w-12 h-12 rounded-xl object-cover" data-alt="Close up of a modern glowing digital interface icon representing artificial intelligence and data speed in a blue and purple neon style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFI-mDfzq88TViZHVbUgz1W_MZ9C1QgOww_Ti3m0oPfLryd4_psjl49ty3QuqxUSPFSC7x8CxHxcFB58LxoVLiSNWxg1y57DkvcA3nkXRDoChQ4MX5p3UushfONBKixNY8dSpvUotJTPfmYRYrj4U-_VsvJo04kO-fMkBrFRCpm3iMF0rMH1tBVhzXaVd6PiJRsZKimwUnEeaWPa84olOfhr8C-pFdsgDVwOzrMxhnuaPeycxvoZObzbyIDAUQ5I87u3G4VunojH8"/>
+<div>
+<h5 class="text-xs font-bold text-primary uppercase">Gợi ý AI</h5>
+<p class="text-xs text-primary/80 font-medium leading-relaxed">Có 3 ứng viên rất phù hợp với vị trí Senior UX Designer mới nộp hồ sơ.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB Action (Suppressed as per rules on detail/setting screens, but relevant for Dashboard Overview) -->
+<button class="fixed bottom-8 right-8 bg-gradient-to-r from-primary to-tertiary-container text-white px-6 py-4 rounded-full shadow-lg shadow-primary/30 flex items-center gap-2 hover:scale-105 active:scale-95 transition-all z-50">
+<span class="material-symbols-outlined">add</span>
+<span class="font-headline font-bold text-sm tracking-tight">Tạo tin tuyển dụng</span>
+</button>
+</body></html>

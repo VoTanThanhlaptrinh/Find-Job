@@ -1,55 +1,55 @@
 <!-- NavigationDrawer Shell -->
 <aside
-  class="fixed left-0 top-0 h-full flex flex-col p-4 z-50 w-64 bg-surface-container-low shadow-none transition-all duration-300 ease-in-out"
+  class="fixed left-0 top-0 h-full flex flex-col p-4 z-50 w-64 bg-ad-surface-container-low shadow-none transition-all duration-300 ease-in-out"
 >
   <div class="px-4 mb-8 mt-2 flex items-center gap-2">
     <div
-      class="w-8 h-8 bg-gradient-to-br from-primary to-[#7b9cff] rounded-xl flex items-center justify-center text-white font-bold"
+      class="w-8 h-8 bg-gradient-to-br from-ad-primary to-[#7b9cff] ad-rounded-xl flex items-center justify-center text-white font-bold"
     >
       E
     </div>
-    <h1 class="text-xl font-bold text-primary tracking-[-0.02em] font-manrope">
+    <h1 class="text-xl font-bold text-ad-primary tracking-[-0.02em] font-manrope">
       EliteHire
     </h1>
   </div>
   <nav class="flex-1 space-y-2">
     <!-- Active: Dashboard -->
     <a
-      class="flex items-center gap-3 px-4 py-3 text-[#282b51] hover:text-primary hover:bg-[#d9daff] rounded-full transition-all font-medium"
+      class="flex items-center gap-3 px-4 py-3 text-[#282b51] hover:text-ad-primary hover:bg-[#d9daff] ad-rounded-full transition-all font-medium"
       routerLink="/admin/dashboard"
-      routerLinkActive="!bg-[#ffffff] !text-primary !font-bold shadow-ambient"
+      routerLinkActive="!bg-[#ffffff] !text-ad-primary !font-bold shadow-ad-ambient"
     >
       <i class="fi fi-rr-apps text-lg"></i>
       <span class="font-inter text-sm">Dashboard</span>
     </a>
     <a
-      class="flex items-center gap-3 px-4 py-3 text-[#282b51] hover:text-primary hover:bg-[#d9daff] rounded-full transition-all font-medium"
+      class="flex items-center gap-3 px-4 py-3 text-[#282b51] hover:text-ad-primary hover:bg-[#d9daff] ad-rounded-full transition-all font-medium"
       routerLink="/admin/employers"
-      routerLinkActive="!bg-[#ffffff] !text-primary !font-bold shadow-ambient"
+      routerLinkActive="!bg-[#ffffff] !text-ad-primary !font-bold shadow-ad-ambient"
     >
       <i class="fi fi-rr-building text-lg"></i>
       <span class="font-inter text-sm">Employers</span>
     </a>
     <a
-      class="flex items-center gap-3 px-4 py-3 text-[#282b51] hover:text-primary hover:bg-[#d9daff] rounded-full transition-all font-medium"
+      class="flex items-center gap-3 px-4 py-3 text-[#282b51] hover:text-ad-primary hover:bg-[#d9daff] ad-rounded-full transition-all font-medium"
       routerLink="/admin/job-seekers"
-      routerLinkActive="!bg-[#ffffff] !text-primary !font-bold shadow-ambient"
+      routerLinkActive="!bg-[#ffffff] !text-ad-primary !font-bold shadow-ad-ambient"
     >
       <i class="fi fi-rr-users text-lg"></i>
       <span class="font-inter text-sm">Job Seekers</span>
     </a>
     <a
-      class="flex items-center gap-3 px-4 py-3 text-[#282b51] hover:text-primary hover:bg-[#d9daff] rounded-full transition-all font-medium"
+      class="flex items-center gap-3 px-4 py-3 text-[#282b51] hover:text-ad-primary hover:bg-[#d9daff] ad-rounded-full transition-all font-medium"
       routerLink="/admin/jobs"
-      routerLinkActive="!bg-[#ffffff] !text-primary !font-bold shadow-ambient"
+      routerLinkActive="!bg-[#ffffff] !text-ad-primary !font-bold shadow-ad-ambient"
     >
       <i class="fi fi-rr-briefcase text-lg"></i>
       <span class="font-inter text-sm">Jobs</span>
     </a>
     <a
-      class="flex items-center gap-3 px-4 py-3 text-[#282b51] hover:text-primary hover:bg-[#d9daff] rounded-full transition-all font-medium"
+      class="flex items-center gap-3 px-4 py-3 text-[#282b51] hover:text-ad-primary hover:bg-[#d9daff] ad-rounded-full transition-all font-medium"
       routerLink="/admin/billing"
-      routerLinkActive="!bg-[#ffffff] !text-primary !font-bold shadow-ambient"
+      routerLinkActive="!bg-[#ffffff] !text-ad-primary !font-bold shadow-ad-ambient"
     >
       <i class="fi fi-rr-credit-card text-lg"></i>
       <span class="font-inter text-sm">Packages/Billing</span>
@@ -57,15 +57,15 @@
   </nav>
   <div class="mt-auto">
     <div
-      class="flex items-center gap-3 p-3 bg-[#ffffff]/70 backdrop-blur-[24px] hover:bg-[#ffffff] rounded-full transition-all cursor-pointer shadow-glass"
+      class="flex items-center gap-3 p-3 bg-[#ffffff]/70 backdrop-blur-[24px] hover:bg-[#ffffff] ad-rounded-full transition-all cursor-pointer shadow-ad-glass"
     >
       <div
-        class="w-10 h-10 rounded-full overflow-hidden bg-primary-fixed flex items-center justify-center text-primary font-bold"
+        class="w-10 h-10 ad-rounded-full overflow-hidden bg-ad-primary-fixed flex items-center justify-center text-ad-primary font-bold"
       >
         AU
       </div>
       <div class="overflow-hidden">
-        <p class="text-sm font-bold text-on-surface truncate font-inter">
+        <p class="text-sm font-bold text-ad-on-surface truncate font-inter">
           Admin User
         </p>
         <p class="text-xs text-[#282b51] truncate font-inter">
@@ -76,20 +76,20 @@
   </div>
 </aside>
 <!-- TopAppBar Shell -->
-<header
-  class="fixed top-0 right-0 w-[calc(100%-16rem)] z-40 bg-[#ffffff]/70 backdrop-blur-[24px] flex items-center justify-between px-6 py-4 shadow-glass"
+<div role="banner"
+  class="fixed top-0 right-0 w-[calc(100%-16rem)] z-40 bg-[#ffffff]/70 backdrop-blur-[24px] flex items-center justify-between px-6 py-4 shadow-ad-glass"
 >
-  <h2 class="text-xl font-bold text-primary tracking-[-0.02em] font-manrope">
+  <h2 class="text-xl font-bold text-ad-primary tracking-[-0.02em] font-manrope">
     Overview
   </h2>
   <div class="flex items-center gap-4">
     <button
       title="btn"
-      class="hover:bg-primary-fixed text-primary rounded-full p-2 transition-all relative"
+      class="hover:bg-ad-primary-fixed text-ad-primary ad-rounded-full p-2 transition-all relative"
     >
       <i class="fi fi-rr-bell text-xl leading-none block"></i>
       <span
-        class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full"
+        class="absolute top-2 right-2 w-2 h-2 bg-ad-primary ad-rounded-full"
       ></span>
     </button>
     <div class="flex items-center gap-3 ml-4">
@@ -98,9 +98,8 @@
       >
     </div>
   </div>
-</header>
+</div>
 <!-- Main Content Canvas -->
-<main class="ml-64 pt-24 min-h-screen bg-surface px-8 pb-8 relative overflow-hidden">
+<div role="main" class="ml-64 pt-24 min-h-screen bg-ad-surface px-8 pb-8 relative overflow-hidden">
   <router-outlet></router-outlet>
-</main>
-
+</div>

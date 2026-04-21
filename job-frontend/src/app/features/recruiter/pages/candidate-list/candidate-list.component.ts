@@ -2,8 +2,6 @@ import { Component, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
-import { ResumeReviewComponent } from '../../../../shared/components/resume-review/resume-review.component';
 import {
   CandidateStatus,
   RecruiterCandidateViewModel,
@@ -13,11 +11,12 @@ import { NotifyMessageService } from '../../../../core/services/notify-message.s
 import { I18nService } from '../../../../core/i18n/i18n.service';
 import { RecruiterJobsService } from '../../services/recruiter-jobs.service';
 import { RecruiterResumeService } from '../../services/recruiter-resume.service';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-candidate-list',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, ResumeReviewComponent],
+  imports: [CommonModule],
   templateUrl: './candidate-list.component.html',
   styleUrl: './candidate-list.component.css'
 })
@@ -84,6 +83,26 @@ export class CandidateListComponent {
     return this.recruiterResumeService.candidateResumes$();
   }
 
+  get totalCandidates(): number {
+    return this.recruiterAccountService.candidatesTotal$();
+  }
+
+  get currentPage(): number {
+    return this.pageIndex() + 1;
+  }
+
+  get totalPages(): number {
+    return Math.max(this.recruiterAccountService.candidatesTotalPages$(), 1);
+  }
+
+  get canGoPrev(): boolean {
+    return this.pageIndex() > 0;
+  }
+
+  get canGoNext(): boolean {
+    return this.pageIndex() + 1 < Math.max(this.recruiterAccountService.candidatesTotalPages$(), 1);
+  }
+
   get isLoadingCandidates(): boolean {
     return this.recruiterAccountService.isLoadingCandidates$();
   }
@@ -127,6 +146,44 @@ export class CandidateListComponent {
     this.recruiterResumeService.loadResumesByCandidateEmail(candidate.email);
   }
 
+  goPrevPage(): void {
+    if (!this.canGoPrev) {
+      return;
+    }
+
+    this.pageIndex.update((value) => value - 1);
+  }
+
+  goNextPage(): void {
+    if (!this.canGoNext) {
+      return;
+    }
+
+    this.pageIndex.update((value) => value + 1);
+  }
+
+  openResumeView(resumeId: number): void {
+    this.recruiterResumeService.getRecruiterResumeViewUrl(resumeId).pipe(take(1)).subscribe({
+      next: (url) => {
+        this.openExternalUrl(url);
+      },
+      error: () => {
+        this.notify.error(this.i18nService.translate('recruiterCommon.errors.loadResumesFailed'));
+      }
+    });
+  }
+
+  downloadResume(resumeId: number): void {
+    this.recruiterResumeService.getRecruiterResumeDownloadUrl(resumeId).pipe(take(1)).subscribe({
+      next: (url) => {
+        this.openExternalUrl(url);
+      },
+      error: () => {
+        this.notify.error(this.i18nService.translate('recruiterCommon.errors.loadResumesFailed'));
+      }
+    });
+  }
+
   statusClass(status: CandidateStatus): string {
     switch (status) {
       case 'new':
@@ -139,5 +196,17 @@ export class CandidateListComponent {
       default:
         return 'bg-rose-100 text-rose-700';
     }
+  }
+
+  private openExternalUrl(url: string): void {
+    if (!url) {
+      return;
+    }
+
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    window.open(url, '_blank', 'noopener');
   }
 }

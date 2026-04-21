@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(AdminAuthController.class)
 @AutoConfigureMockMvc
-@Import(TestSecurityConfig.class)
+@Import({TestSecurityConfig.class, AdminAuthController.class, MessageUtils.class})
 class AdminAuthControllerTest {
 
     @Autowired

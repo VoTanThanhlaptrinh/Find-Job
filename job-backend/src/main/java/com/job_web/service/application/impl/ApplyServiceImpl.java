@@ -170,7 +170,6 @@ public class ApplyServiceImpl implements ApplyService {
 
     @Override
     public ApiResponse<Page<CandidateDTO>> getAllCandidateAppliedJob(int pageIndex, int pageSize, long jobId) {
-        // Read-only query — no MDC / no logging. RequestLoggingFilter covers HTTP layer.
         Page<CandidateDTO> page = applyRepository.getAllCandidateAppliedJob(jobId, PageRequest.of(pageIndex, pageSize));
         int status = page.isEmpty() ? HttpStatus.NOT_FOUND.value() : HttpStatus.OK.value();
         String message = status == 200 ? MessageUtils.getMessage("message.success") : MessageUtils.getMessage("message.not_found");

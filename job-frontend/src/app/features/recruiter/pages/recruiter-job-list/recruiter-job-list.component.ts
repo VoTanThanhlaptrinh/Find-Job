@@ -3,16 +3,12 @@ import { Component, effect, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { RecruiterJobsService, RecruiterJobViewModel } from '../../services/recruiter-jobs.service';
 import { NotifyMessageService } from '../../../../core/services/notify-message.service';
-import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
 import { I18nService } from '../../../../core/i18n/i18n.service';
-import { HirerJobCardComponent } from '../../components/hirer-job-card/hirer-job-card.component';
-
-
 
 @Component({
   selector: 'app-recruiter-job-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, TranslatePipe, HirerJobCardComponent],
+  imports: [CommonModule, RouterLink],
   templateUrl: './recruiter-job-list.component.html',
   styleUrl: './recruiter-job-list.component.css',
 })
@@ -144,5 +140,33 @@ export class RecruiterJobListComponent {
     }
 
     this.recruiterJobsService.deletePostedJob(normalizedId);
+  }
+
+  trackByJob(_: number, job: RecruiterJobViewModel): string | number {
+    return job.id;
+  }
+
+  statusClass(status?: string): string {
+    const normalized = (status ?? '').toLowerCase();
+    if (normalized.includes('active') || normalized.includes('open')) {
+      return 'bg-emerald-100 text-emerald-700';
+    }
+    if (normalized.includes('draft') || normalized.includes('pending')) {
+      return 'bg-amber-100 text-amber-700';
+    }
+    return 'bg-slate-100 text-slate-700';
+  }
+
+  formatStatus(status?: string): string {
+    if (!status) {
+      return 'Khong ro';
+    }
+
+    const normalized = status.trim();
+    if (normalized.length === 0) {
+      return 'Khong ro';
+    }
+
+    return normalized;
   }
 }

@@ -1,403 +1,129 @@
-<div class="max-w-7xl mx-auto">
-  <app-admin-page-header
-    title="Employers Management"
-    description="Review and manage organizational accounts and verification status."
-    actionLabel="Export CSV"
-    actionIcon="download"
-    titleClass="font-manrope font-bold text-2xl tracking-tight text-slate-900"
-    descriptionClass="text-slate-500 text-sm mt-1"
-  ></app-admin-page-header>
-  <!-- Metric Bar: Precision Curator Grid -->
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-    <app-admin-metric-card
-      label="Total Employers"
-      value="1,240"
-      hint="+12%"
-      containerClass="bg-white p-6 rounded-xl shadow-sm border border-slate-100 relative overflow-hidden flex flex-col justify-between h-32"
-    >
-      <span
-        metric-icon
-        class="material-symbols-outlined text-blue-600"
-        data-icon="business"
-        >business</span
-      >
-      <div metric-footer class="absolute bottom-0 right-0 w-24 h-12">
-        <div
-          class="w-full h-full opacity-10 border-b-2 border-r-2 border-blue-600 rounded-br-xl"
-        ></div>
+<main class="bg-ad-surface min-h-screen p-6 md:p-10 text-ad-on-surface">
+  <section class="max-w-7xl mx-auto space-y-6">
+    <header class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div>
+        <h1 class="text-2xl md:text-3xl font-bold">Employers</h1>
+        <p class="text-ad-on-surface-variant mt-1">Du lieu tu admin/employers APIs</p>
       </div>
-    </app-admin-metric-card>
-    <app-admin-metric-card
-      label="KYC Verified"
-      value="980"
-      hint="79%"
-      containerClass="bg-white p-6 rounded-xl shadow-sm border border-slate-100 relative overflow-hidden flex flex-col justify-between h-32"
-    >
-      <span
-        metric-icon
-        class="material-symbols-outlined text-emerald-500"
-        data-icon="verified"
-        >verified</span
-      >
-    </app-admin-metric-card>
-    <app-admin-metric-card
-      label="Pending KYC"
-      value="120"
-      hint="Needs Review"
-      hintClass="text-xs font-bold text-amber-500"
-      containerClass="bg-white p-6 rounded-xl shadow-sm border border-slate-100 relative overflow-hidden flex flex-col justify-between h-32"
-    >
-      <span
-        metric-icon
-        class="material-symbols-outlined text-amber-500"
-        data-icon="pending"
-        >pending</span
-      >
-    </app-admin-metric-card>
-    <app-admin-metric-card
-      label="Suspended"
-      value="140"
-      hint="Critical"
-      hintClass="text-xs font-bold text-red-500"
-      containerClass="bg-white p-6 rounded-xl shadow-sm border border-slate-100 relative overflow-hidden flex flex-col justify-between h-32"
-    >
-      <span
-        metric-icon
-        class="material-symbols-outlined text-red-500"
-        data-icon="block"
-        >block</span
-      >
-    </app-admin-metric-card>
-  </div>
-  <!-- Main Data Table Container -->
-  <div
-    class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden"
-  >
-    <div class="overflow-x-auto">
-      <table class="w-full text-left border-collapse">
-        <thead>
-          <tr class="bg-slate-50 border-b border-slate-100">
-            <th
-              class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-slate-500"
-            >
-              Company Name
-            </th>
-            <th
-              class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-slate-500"
-            >
-              Registration Date
-            </th>
-            <th
-              class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-slate-500 text-center"
-            >
-              Active Jobs
-            </th>
-            <th
-              class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-slate-500"
-            >
-              KYC Status
-            </th>
-            <th
-              class="px-8 py-4 text-xs font-bold uppercase tracking-widest text-slate-500 text-right"
-            >
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-100">
-          <!-- Row 1: Verified -->
-          <tr class="group hover:bg-slate-50 transition-colors cursor-pointer">
-            <td class="px-8 py-5">
-              <div class="flex items-center space-x-3">
-                <div
-                  class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center font-bold text-blue-700"
-                >
-                  NT
-                </div>
-                <div>
-                  <div class="font-bold text-slate-900">NexGen Tech</div>
-                  <div class="text-xs text-slate-500">SaaS &amp; FinTech</div>
-                </div>
-              </div>
-            </td>
-            <td class="px-8 py-5 text-sm font-medium text-slate-700">
-              Oct 12, 2023
-            </td>
-            <td class="px-8 py-5 text-center text-sm font-bold text-blue-600">
-              24
-            </td>
-            <td class="px-8 py-5">
-              <span
-                class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700"
-              >
-                <span
-                  class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"
-                ></span>
-                Verified
-              </span>
-            </td>
-            <td class="px-8 py-5 text-right">
-              <div class="flex justify-end space-x-2">
-                <button
-                  class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
-                  title="View Details"
-                >
-                  <span
-                    class="material-symbols-outlined text-xl"
-                    data-icon="visibility"
-                    >visibility</span
-                  >
-                </button>
-                <button
-                  class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
-                  title="Suspend"
-                >
-                  <span
-                    class="material-symbols-outlined text-xl"
-                    data-icon="block"
-                    >block</span
-                  >
-                </button>
-              </div>
-            </td>
-          </tr>
-          <!-- Row 2: Pending -->
-          <tr class="group hover:bg-slate-50 transition-colors cursor-pointer">
-            <td class="px-8 py-5">
-              <div class="flex items-center space-x-3">
-                <div
-                  class="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center font-bold text-indigo-700"
-                >
-                  SL
-                </div>
-                <div>
-                  <div class="font-bold text-slate-900">Skyline Logistics</div>
-                  <div class="text-xs text-slate-500">Global Shipping</div>
-                </div>
-              </div>
-            </td>
-            <td class="px-8 py-5 text-sm font-medium text-slate-700">
-              Nov 05, 2023
-            </td>
-            <td class="px-8 py-5 text-center text-sm font-bold text-blue-600">
-              8
-            </td>
-            <td class="px-8 py-5">
-              <span
-                class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700"
-              >
-                <span
-                  class="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1.5"
-                ></span>
-                Pending
-              </span>
-            </td>
-            <td class="px-8 py-5 text-right">
-              <div class="flex justify-end space-x-2">
-                <button
-                  class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
-                >
-                  <span
-                    class="material-symbols-outlined text-xl"
-                    data-icon="visibility"
-                    >visibility</span
-                  >
-                </button>
-                <button
-                  class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
-                >
-                  <span
-                    class="material-symbols-outlined text-xl"
-                    data-icon="block"
-                    >block</span
-                  >
-                </button>
-              </div>
-            </td>
-          </tr>
-          <!-- Row 3: Suspended -->
-          <tr class="group hover:bg-slate-50 transition-colors cursor-pointer">
-            <td class="px-8 py-5">
-              <div class="flex items-center space-x-3">
-                <div
-                  class="w-10 h-10 rounded-lg bg-slate-200 flex items-center justify-center font-bold text-slate-600"
-                >
-                  QC
-                </div>
-                <div>
-                  <div class="font-bold text-slate-900">Quantum Core</div>
-                  <div class="text-xs text-slate-500">Hardware Mfg.</div>
-                </div>
-              </div>
-            </td>
-            <td class="px-8 py-5 text-sm font-medium text-slate-700">
-              Aug 19, 2023
-            </td>
-            <td class="px-8 py-5 text-center text-sm font-bold text-blue-600">
-              0
-            </td>
-            <td class="px-8 py-5">
-              <span
-                class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-red-50 text-red-700"
-              >
-                <span class="w-1.5 h-1.5 rounded-full bg-red-500 mr-1.5"></span>
-                Suspended
-              </span>
-            </td>
-            <td class="px-8 py-5 text-right">
-              <div class="flex justify-end space-x-2">
-                <button
-                  class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
-                >
-                  <span
-                    class="material-symbols-outlined text-xl"
-                    data-icon="visibility"
-                    >visibility</span
-                  >
-                </button>
-                <button
-                  class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
-                  title="Restore"
-                >
-                  <span
-                    class="material-symbols-outlined text-xl"
-                    data-icon="restore_from_trash"
-                    >restore_from_trash</span
-                  >
-                </button>
-              </div>
-            </td>
-          </tr>
-          <!-- Row 4: Verified -->
-          <tr class="group hover:bg-slate-50 transition-colors cursor-pointer">
-            <td class="px-8 py-5">
-              <div class="flex items-center space-x-3">
-                <div
-                  class="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center font-bold text-emerald-700"
-                >
-                  AM
-                </div>
-                <div>
-                  <div class="font-bold text-slate-900">Apex Media</div>
-                  <div class="text-xs text-slate-500">Creative Agency</div>
-                </div>
-              </div>
-            </td>
-            <td class="px-8 py-5 text-sm font-medium text-slate-700">
-              Dec 01, 2023
-            </td>
-            <td class="px-8 py-5 text-center text-sm font-bold text-blue-600">
-              42
-            </td>
-            <td class="px-8 py-5">
-              <span
-                class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700"
-              >
-                <span
-                  class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"
-                ></span>
-                Verified
-              </span>
-            </td>
-            <td class="px-8 py-5 text-right">
-              <div class="flex justify-end space-x-2">
-                <button
-                  class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
-                >
-                  <span
-                    class="material-symbols-outlined text-xl"
-                    data-icon="visibility"
-                    >visibility</span
-                  >
-                </button>
-                <button
-                  class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
-                >
-                  <span
-                    class="material-symbols-outlined text-xl"
-                    data-icon="block"
-                    >block</span
-                  >
-                </button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <input
+        type="text"
+        placeholder="Tim employer..."
+        class="w-full md:w-80 bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2"
+        (input)="onSearch($event)"
+      />
+    </header>
+
+    <div *ngIf="isLoadingMetrics" class="bg-ad-surface-container-low p-4 ad-rounded-xl">Dang tai metrics...</div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4" *ngIf="metrics as data">
+      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl">
+        <p class="text-sm text-ad-on-surface-variant">Tong employers</p>
+        <p class="text-2xl font-bold mt-1">{{ data.totalEmployers }}</p>
+        <p class="text-xs text-ad-on-surface-variant mt-1">+{{ data.totalEmployersGrowthPct }}%</p>
+      </article>
+      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl">
+        <p class="text-sm text-ad-on-surface-variant">KYC verified</p>
+        <p class="text-2xl font-bold mt-1">{{ data.kycVerified }}</p>
+        <p class="text-xs text-ad-on-surface-variant mt-1">{{ data.kycVerifiedPct }}%</p>
+      </article>
+      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl">
+        <p class="text-sm text-ad-on-surface-variant">Pending KYC</p>
+        <p class="text-2xl font-bold mt-1">{{ data.pendingKyc }}</p>
+      </article>
+      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl">
+        <p class="text-sm text-ad-on-surface-variant">Suspended</p>
+        <p class="text-2xl font-bold mt-1">{{ data.suspended }}</p>
+      </article>
     </div>
-    <!-- Pagination Footer -->
-    <div
-      class="px-8 py-5 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between"
-    >
-      <span class="text-xs font-bold text-slate-500 uppercase tracking-widest"
-        >Showing 1 to 10 of 1,240 entries</span
-      >
-      <div class="flex items-center space-x-1">
-        <button
-          class="p-2 text-slate-400 hover:text-slate-900 disabled:opacity-30"
-          disabled=""
-        >
-          <span class="material-symbols-outlined" data-icon="chevron_left"
-            >chevron_left</span
-          >
-        </button>
-        <div class="flex space-x-1">
+
+    <section class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 ad-rounded-xl overflow-hidden">
+      <div *ngIf="isLoadingList" class="p-4">Dang tai danh sach employers...</div>
+
+      <div *ngIf="!isLoadingList && employers.length === 0" class="p-4 text-ad-on-surface-variant">
+        Khong co employer nao.
+      </div>
+
+      <div *ngIf="!isLoadingList && employers.length > 0" class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-ad-surface-container-low text-left">
+            <tr>
+              <th class="px-4 py-3">Name</th>
+              <th class="px-4 py-3">Industry</th>
+              <th class="px-4 py-3">Active jobs</th>
+              <th class="px-4 py-3">KYC</th>
+              <th class="px-4 py-3">Account</th>
+              <th class="px-4 py-3 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let employer of employers; trackBy: trackByEmployer" class="border-t border-ad-outline-variant/10">
+              <td class="px-4 py-3">
+                <button
+                  type="button"
+                  class="font-semibold text-ad-primary hover:underline"
+                  (click)="selectEmployer(employer.id)"
+                >
+                  {{ employer.name }}
+                </button>
+                <p class="text-xs text-ad-on-surface-variant mt-1">{{ employer.registrationDate }}</p>
+              </td>
+              <td class="px-4 py-3">{{ employer.industry }}</td>
+              <td class="px-4 py-3">{{ employer.activeJobs }}</td>
+              <td class="px-4 py-3">{{ employer.kycStatus }}</td>
+              <td class="px-4 py-3">{{ employer.accountStatus }}</td>
+              <td class="px-4 py-3 text-right space-x-2">
+                <button
+                  type="button"
+                  class="px-2 py-1 ad-rounded-lg text-xs bg-amber-100 text-amber-700"
+                  (click)="changeStatus(employer, 'suspend')"
+                >
+                  Suspend
+                </button>
+                <button
+                  type="button"
+                  class="px-2 py-1 ad-rounded-lg text-xs bg-emerald-100 text-emerald-700"
+                  (click)="changeStatus(employer, 'restore')"
+                >
+                  Restore
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <footer class="px-4 py-3 border-t border-ad-outline-variant/10 flex items-center justify-between text-sm">
+        <span>Trang {{ currentPage }} / {{ totalPages }} - Tong {{ totalItems }}</span>
+        <div class="space-x-2">
           <button
-            class="w-8 h-8 rounded-lg bg-blue-600 text-white text-xs font-bold shadow-sm"
+            type="button"
+            class="px-3 py-1.5 ad-rounded-lg border border-ad-outline-variant/30 disabled:opacity-40"
+            [disabled]="currentPage <= 1"
+            (click)="goPrevPage()"
           >
-            1
+            Truoc
           </button>
           <button
-            class="w-8 h-8 rounded-lg hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all"
+            type="button"
+            class="px-3 py-1.5 ad-rounded-lg border border-ad-outline-variant/30 disabled:opacity-40"
+            [disabled]="currentPage >= totalPages"
+            (click)="goNextPage()"
           >
-            2
-          </button>
-          <button
-            class="w-8 h-8 rounded-lg hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all"
-          >
-            3
-          </button>
-          <span class="px-1 text-slate-400 flex items-center justify-center w-8"
-            >...</span
-          >
-          <button
-            class="w-8 h-8 rounded-lg hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all"
-          >
-            124
+            Sau
           </button>
         </div>
-        <button class="p-2 text-slate-400 hover:text-slate-900">
-          <span class="material-symbols-outlined" data-icon="chevron_right"
-            >chevron_right</span
-          >
-        </button>
-      </div>
-    </div>
-  </div>
-  <!-- Advisory Notice: Glassmorphism Component -->
-  <div
-    class="mt-8 p-6 bg-blue-50 border border-blue-100 rounded-xl flex items-center justify-between"
-  >
-    <div class="flex items-center space-x-4">
-      <div
-        class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center"
-      >
-        <span class="material-symbols-outlined text-blue-600" data-icon="info"
-          >info</span
-        >
-      </div>
-      <div>
-        <h4 class="font-bold text-slate-900 text-sm">KYC Processing Queue</h4>
-        <p class="text-xs text-slate-600 mt-1">
-          There are currently 12 verification requests awaiting manual review by
-          the audit team.
-        </p>
-      </div>
-    </div>
-    <button
-      class="text-xs font-bold text-blue-600 hover:text-blue-700 hover:underline tracking-tight uppercase"
+      </footer>
+    </section>
+
+    <section
+      *ngIf="selectedEmployer as detail"
+      class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-5 ad-rounded-xl"
     >
-      View Queue
-    </button>
-  </div>
-</div>
+      <h2 class="text-lg font-semibold mb-2">Chi tiet employer</h2>
+      <p><span class="text-ad-on-surface-variant">Ten:</span> {{ detail.name }}</p>
+      <p><span class="text-ad-on-surface-variant">Email:</span> {{ detail.contactEmail }}</p>
+      <p><span class="text-ad-on-surface-variant">Phone:</span> {{ detail.contactPhone }}</p>
+      <p><span class="text-ad-on-surface-variant">Trang thai:</span> {{ detail.accountStatus }}</p>
+    </section>
+  </section>
+</main>
