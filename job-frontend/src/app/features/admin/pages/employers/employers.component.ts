@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AdminEmployersService } from '../../services/admin-employers.service';
 import { AdminEmployerItem, AdminEmployerStatusAction } from '../../services/admin-api.models';
-import { take } from 'rxjs';
+import { finalize, take } from 'rxjs';
 
 @Component({
   selector: 'app-employers',
@@ -12,6 +12,7 @@ import { take } from 'rxjs';
 })
 export class EmployersComponent implements OnInit {
   private readonly employersService = inject(AdminEmployersService);
+  isExporting = false;
 
   ngOnInit(): void {
     this.employersService.loadMetrics();
@@ -50,6 +51,14 @@ export class EmployersComponent implements OnInit {
     return this.employersService.currentQuery().pageSize;
   }
 
+  get selectedKycStatus(): string {
+    return this.employersService.currentQuery().kycStatus ?? '';
+  }
+
+  get selectedAccountStatus(): string {
+    return this.employersService.currentQuery().status ?? '';
+  }
+
   get totalPages(): number {
     return Math.max(Math.ceil(this.totalItems / this.pageSize), 1);
   }
@@ -57,6 +66,22 @@ export class EmployersComponent implements OnInit {
   onSearch(event: Event): void {
     const raw = (event.target as HTMLInputElement).value.trim();
     this.employersService.updateQuery({ page: 1, search: raw.length > 0 ? raw : undefined });
+  }
+
+  onKycStatusChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
+    this.employersService.updateQuery({
+      page: 1,
+      kycStatus: value.length > 0 ? value : undefined,
+    });
+  }
+
+  onAccountStatusChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
+    this.employersService.updateQuery({
+      page: 1,
+      status: value.length > 0 ? value : undefined,
+    });
   }
 
   goPrevPage(): void {
@@ -80,7 +105,33 @@ export class EmployersComponent implements OnInit {
   }
 
   changeStatus(employer: AdminEmployerItem, action: AdminEmployerStatusAction): void {
-    this.employersService.updateStatus(employer.id, { action }).pipe(take(1)).subscribe();
+    const reason = action === 'suspend' ? window.prompt('Suspend reason (optional):')?.trim() : undefined;
+    this.employersService.updateStatus(employer.id, {
+      action,
+      reason: reason || undefined,
+    }).pipe(take(1)).subscribe();
+  }
+
+  exportEmployers(): void {
+    const query = this.employersService.currentQuery();
+    this.isExporting = true;
+    this.employersService.getExportUrl({
+      format: 'csv',
+      search: query.search,
+      kycStatus: query.kycStatus,
+      status: query.status,
+    }).pipe(
+      take(1),
+      finalize(() => {
+        this.isExporting = false;
+      })
+    ).subscribe({
+      next: (res) => {
+        if (res.downloadUrl) {
+          window.open(res.downloadUrl, '_blank', 'noopener');
+        }
+      }
+    });
   }
 
   trackByEmployer(_: number, item: AdminEmployerItem): string {

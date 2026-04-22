@@ -1,5 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { take } from 'rxjs';
 import { AdminBillingService } from '../../services/admin-billing.service';
 import { AdminBillingTier, AdminBillingTransactionItem } from '../../services/admin-api.models';
 
@@ -44,6 +45,43 @@ export class BillingComponent implements OnInit {
 
   get isLoadingTransactions(): boolean {
     return this.billingService.isLoadingTransactions();
+  }
+
+  get updatingTierId(): string | null {
+    return this.billingService.updatingTierId();
+  }
+
+  get selectedTransactionStatus(): string {
+    return this.billingService.transactionsQuery().status ?? '';
+  }
+
+  onTransactionsStatusChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
+    this.billingService.updateTransactionsQuery({
+      page: 1,
+      status: value.length > 0 ? value : undefined,
+    });
+  }
+
+  saveTier(
+    tier: AdminBillingTier,
+    priceValue: string,
+    featuresValue: string
+  ): void {
+    const priceMonthly = Number(priceValue);
+    if (Number.isNaN(priceMonthly) || priceMonthly <= 0) {
+      return;
+    }
+
+    const features = featuresValue
+      .split(',')
+      .map((feature) => feature.trim())
+      .filter((feature) => feature.length > 0);
+
+    this.billingService.updateTier(tier.id, {
+      priceMonthly,
+      features,
+    }).pipe(take(1)).subscribe();
   }
 
   trackByTier(_: number, item: AdminBillingTier): string {

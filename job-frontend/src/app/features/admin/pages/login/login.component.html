@@ -52,7 +52,7 @@
 <h2 class="font-ad-headline text-3xl font-bold tracking-tight text-ad-on-surface mb-2">Welcome back</h2>
 <p class="font-ad-body text-ad-on-surface-variant text-sm">Please enter your administrative credentials.</p>
 </div>
-<form action="#" class="space-y-6" method="POST">
+<form class="space-y-6" [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
 <!-- Email Input -->
 <div class="space-y-2">
 <label class="block font-ad-body text-sm font-medium text-ad-on-surface" for="email">Email Address</label>
@@ -60,8 +60,9 @@
 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
 <span class="material-symbols-outlined text-ad-on-surface-variant/70 text-xl" data-icon="mail">mail</span>
 </div>
-<input autocomplete="email" class="block w-full pl-11 pr-4 py-3 bg-ad-surface-container-low border-transparent ad-rounded-lg text-ad-on-surface placeholder-ad-on-surface-variant/50 focus:bg-ad-surface-container-lowest focus:ring-0 focus:border-ad-primary/20 focus:outline-none transition-colors duration-200" id="email" name="email" placeholder="admin@elitehire.com" required="" type="email"/>
+<input autocomplete="email" class="block w-full pl-11 pr-4 py-3 bg-ad-surface-container-low border-transparent ad-rounded-lg text-ad-on-surface placeholder-ad-on-surface-variant/50 focus:bg-ad-surface-container-lowest focus:ring-0 focus:border-ad-primary/20 focus:outline-none transition-colors duration-200" id="email" formControlName="email" placeholder="admin@elitehire.com" type="email"/>
 </div>
+<p *ngIf="isInvalid('email')" class="text-xs text-red-600">Please enter a valid email address.</p>
 </div>
 <!-- Password Input -->
 <div class="space-y-2">
@@ -73,19 +74,20 @@
 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
 <span class="material-symbols-outlined text-ad-on-surface-variant/70 text-xl" data-icon="lock">lock</span>
 </div>
-<input autocomplete="current-password" class="block w-full pl-11 pr-4 py-3 bg-ad-surface-container-low border-transparent ad-rounded-lg text-ad-on-surface placeholder-ad-on-surface-variant/50 focus:bg-ad-surface-container-lowest focus:ring-0 focus:border-ad-primary/20 focus:outline-none transition-colors duration-200" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+<input autocomplete="current-password" class="block w-full pl-11 pr-4 py-3 bg-ad-surface-container-low border-transparent ad-rounded-lg text-ad-on-surface placeholder-ad-on-surface-variant/50 focus:bg-ad-surface-container-lowest focus:ring-0 focus:border-ad-primary/20 focus:outline-none transition-colors duration-200" id="password" formControlName="password" placeholder="********" type="password"/>
 </div>
+<p *ngIf="isInvalid('password')" class="text-xs text-red-600">Password must contain at least 6 characters.</p>
 </div>
 <!-- Remember Me -->
 <div class="flex items-center">
-<input class="h-4 w-4 text-ad-primary bg-ad-surface-container-low border-transparent rounded focus:ring-ad-primary/20 focus:ring-offset-ad-surface-container-lowest" id="remember-me" name="remember-me" type="checkbox"/>
+<input class="h-4 w-4 text-ad-primary bg-ad-surface-container-low border-transparent rounded focus:ring-ad-primary/20 focus:ring-offset-ad-surface-container-lowest" id="remember-me" formControlName="rememberMe" type="checkbox"/>
 <label class="ml-2 block font-ad-body text-sm text-ad-on-surface-variant" for="remember-me">
                                 Remember me for 30 days
                             </label>
 </div>
 <!-- Submit Button -->
-<button class="w-full flex justify-center items-center py-3.5 px-4 rounded-md shadow-sm font-ad-body text-sm font-semibold text-ad-on-primary bg-gradient-to-br from-ad-primary to-ad-primary-container hover:from-ad-primary-dim hover:to-ad-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ad-primary focus:ring-offset-ad-surface-container-lowest transition-all duration-300" type="submit">
-                            Sign In
+<button class="w-full flex justify-center items-center py-3.5 px-4 rounded-md shadow-sm font-ad-body text-sm font-semibold text-ad-on-primary bg-gradient-to-br from-ad-primary to-ad-primary-container hover:from-ad-primary-dim hover:to-ad-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ad-primary focus:ring-offset-ad-surface-container-lowest transition-all duration-300 disabled:opacity-60" type="submit" [disabled]="isLoggingIn">
+                            {{ isLoggingIn ? 'Signing In...' : 'Sign In' }}
                             <span class="material-symbols-outlined ml-2 text-xl" data-icon="arrow_forward">arrow_forward</span>
 </button>
 </form>

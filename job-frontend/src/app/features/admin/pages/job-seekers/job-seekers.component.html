@@ -5,13 +5,90 @@
         <h1 class="text-2xl md:text-3xl font-bold">Job Seekers</h1>
         <p class="text-ad-on-surface-variant mt-1">Du lieu tu admin/job-seekers APIs</p>
       </div>
-      <input
-        type="text"
-        placeholder="Tim job seeker..."
-        class="w-full md:w-80 bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2"
-        (input)="onSearch($event)"
-      />
+      <div class="flex w-full md:w-auto flex-col md:flex-row gap-2">
+        <input
+          type="text"
+          placeholder="Tim job seeker..."
+          class="w-full md:w-80 bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2"
+          (input)="onSearch($event)"
+        />
+        <select
+          class="px-3 py-2 bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl"
+          [value]="selectedResumeStatus"
+          (change)="onResumeStatusChange($event)"
+          title="Resume status"
+          aria-label="Resume status"
+        >
+          <option value="">All resume status</option>
+          <option value="complete">complete</option>
+          <option value="incomplete">incomplete</option>
+          <option value="missing">missing</option>
+        </select>
+      </div>
     </header>
+
+    <section class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-5 ad-rounded-xl">
+      <h2 class="text-lg font-semibold mb-4">Create Job Seeker</h2>
+      <form [formGroup]="createJobSeekerForm" (ngSubmit)="submitCreateJobSeeker()" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label for="fullName" class="text-sm font-medium">Full name</label>
+          <input
+            id="fullName"
+            type="text"
+            formControlName="fullName"
+            class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2"
+            placeholder="Nguyen Van A"
+          />
+          <p *ngIf="isCreateFieldInvalid('fullName')" class="mt-1 text-xs text-red-600">Full name is required.</p>
+        </div>
+
+        <div>
+          <label for="seekerEmail" class="text-sm font-medium">Email</label>
+          <input
+            id="seekerEmail"
+            type="email"
+            formControlName="email"
+            class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2"
+            placeholder="candidate@example.com"
+          />
+          <p *ngIf="isCreateFieldInvalid('email')" class="mt-1 text-xs text-red-600">Valid email is required.</p>
+        </div>
+
+        <div>
+          <label for="profession" class="text-sm font-medium">Profession</label>
+          <input
+            id="profession"
+            type="text"
+            formControlName="profession"
+            class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2"
+            placeholder="Frontend Developer"
+          />
+          <p *ngIf="isCreateFieldInvalid('profession')" class="mt-1 text-xs text-red-600">Profession is required.</p>
+        </div>
+
+        <div>
+          <label for="resumeUrl" class="text-sm font-medium">Resume URL</label>
+          <input
+            id="resumeUrl"
+            type="url"
+            formControlName="resumeUrl"
+            class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2"
+            placeholder="https://example.com/resume.pdf"
+          />
+          <p *ngIf="isCreateFieldInvalid('resumeUrl')" class="mt-1 text-xs text-red-600">Resume URL is required.</p>
+        </div>
+
+        <div class="md:col-span-2 flex justify-end">
+          <button
+            type="submit"
+            class="px-4 py-2 bg-ad-primary text-ad-on-primary ad-rounded-xl text-sm font-medium disabled:opacity-60"
+            [disabled]="isCreating"
+          >
+            {{ isCreating ? 'Creating...' : 'Create Job Seeker' }}
+          </button>
+        </div>
+      </form>
+    </section>
 
     <div *ngIf="isLoadingMetrics" class="bg-ad-surface-container-low p-4 ad-rounded-xl">Dang tai metrics...</div>
 

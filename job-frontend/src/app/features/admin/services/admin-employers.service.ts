@@ -140,19 +140,35 @@ export class AdminEmployersService {
    */
   updateStatus(id: string, payload: AdminUpdateEmployerStatusPayload): Observable<AdminUpdateEmployerStatusData> {
     return this.http
-      .patch<ApiResponse<AdminUpdateEmployerStatusData>>(`${this.url}/admin/employers/${id}/status`, payload, {
+      .patch<ApiResponse<AdminUpdateEmployerStatusData | Record<string, unknown>>>(`${this.url}/admin/employers/${id}/status`, payload, {
         withCredentials: true,
       })
       .pipe(
         take(1),
-        map((res) => res.data),
-        tap((updatedData) => {
-          this.notify.success(`Cập nhật trạng thái nhà tuyển dụng thành công: ${updatedData.accountStatus}`);
+        map((res) => {
+          const data = res.data;
+          if (
+            data &&
+            typeof data === 'object' &&
+            'id' in data &&
+            'updated' in data
+          ) {
+            return data as AdminUpdateEmployerStatusData;
+          }
+
+          return {
+            id,
+            updated: true,
+          } as AdminUpdateEmployerStatusData;
+        }),
+        tap(() => {
+          const accountStatus = this.resolveAccountStatus(payload.action);
+          this.notify.success(`Cap nhat trang thai nha tuyen dung thanh cong: ${accountStatus}`);
           this._employers.update(items => items.map(item => 
-            item.id === id ? { ...item, accountStatus: updatedData.accountStatus } : item
+            item.id === id ? { ...item, accountStatus } : item
           ));
           if (this._selectedEmployer()?.id === id) {
-            this._selectedEmployer.update(curr => curr ? { ...curr, accountStatus: updatedData.accountStatus } : null);
+            this._selectedEmployer.update(curr => curr ? { ...curr, accountStatus } : null);
           }
         }),
         catchError(err => {
@@ -160,6 +176,18 @@ export class AdminEmployersService {
           return throwError(() => err);
         })
       );
+  }
+
+  private resolveAccountStatus(action: AdminUpdateEmployerStatusPayload['action']): string {
+    switch (action) {
+      case 'suspend':
+        return 'suspended';
+      case 'restore':
+      case 'activate':
+        return 'active';
+      default:
+        return 'unknown';
+    }
   }
 
   /**

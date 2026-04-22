@@ -5,12 +5,45 @@
         <h1 class="text-2xl md:text-3xl font-bold">Employers</h1>
         <p class="text-ad-on-surface-variant mt-1">Du lieu tu admin/employers APIs</p>
       </div>
-      <input
-        type="text"
-        placeholder="Tim employer..."
-        class="w-full md:w-80 bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2"
-        (input)="onSearch($event)"
-      />
+      <div class="flex w-full md:w-auto flex-col md:flex-row gap-2">
+        <input
+          type="text"
+          placeholder="Tim employer..."
+          class="w-full md:w-80 bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2"
+          (input)="onSearch($event)"
+        />
+        <select
+          class="px-3 py-2 bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl"
+          [value]="selectedKycStatus"
+          (change)="onKycStatusChange($event)"
+          title="KYC status"
+          aria-label="KYC status"
+        >
+          <option value="">All KYC</option>
+          <option value="verified">verified</option>
+          <option value="pending">pending</option>
+          <option value="rejected">rejected</option>
+        </select>
+        <select
+          class="px-3 py-2 bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl"
+          [value]="selectedAccountStatus"
+          (change)="onAccountStatusChange($event)"
+          title="Account status"
+          aria-label="Account status"
+        >
+          <option value="">All accounts</option>
+          <option value="active">active</option>
+          <option value="suspended">suspended</option>
+        </select>
+        <button
+          type="button"
+          class="px-4 py-2 bg-ad-primary text-ad-on-primary ad-rounded-xl text-sm font-medium disabled:opacity-60"
+          [disabled]="isExporting"
+          (click)="exportEmployers()"
+        >
+          {{ isExporting ? 'Exporting...' : 'Export CSV' }}
+        </button>
+      </div>
     </header>
 
     <div *ngIf="isLoadingMetrics" class="bg-ad-surface-container-low p-4 ad-rounded-xl">Dang tai metrics...</div>

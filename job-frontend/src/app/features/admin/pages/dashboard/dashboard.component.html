@@ -66,13 +66,20 @@
       </div>
       <div class="overflow-hidden">
         <p class="text-sm font-bold text-ad-on-surface truncate font-inter">
-          Admin User
+          {{ adminName }}
         </p>
         <p class="text-xs text-[#282b51] truncate font-inter">
-          Super Administrator
+          {{ adminRole }}
         </p>
       </div>
     </div>
+    <button
+      type="button"
+      class="mt-3 w-full px-4 py-2 text-sm font-medium ad-rounded-full border border-ad-outline-variant/30 text-ad-primary hover:bg-ad-primary-fixed transition-all"
+      (click)="onLogout()"
+    >
+      Logout
+    </button>
   </div>
 </aside>
 <!-- TopAppBar Shell -->

@@ -23,11 +23,12 @@ import com.job_web.dto.admin.seeker.JobSeekerMetricsResponse;
 import com.job_web.dto.admin.seeker.JobSeekerRequest;
 import com.job_web.dto.admin.seeker.RegionDistributionResponse;
 import com.job_web.dto.common.PageResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.List;
 
 public interface AdminService {
-    AdminLoginResponse login(AdminLoginRequest request);
+    String login(AdminLoginRequest request, HttpServletResponse response);
 
     AdminLoginResponse refresh(AdminRefreshRequest request);
 

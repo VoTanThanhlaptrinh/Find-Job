@@ -65,7 +65,7 @@ export class AdminBillingService {
   loadTiers(): void {
     this._isLoadingTiers.set(true);
     this.http
-      .get<ApiResponse<AdminBillingTiersData>>(`${this.url}/admin/billing/tiers`, {
+      .get<ApiResponse<AdminBillingTiersData | AdminBillingTier[]>>(`${this.url}/admin/billing/tiers`, {
         withCredentials: true,
       })
       .pipe(
@@ -73,7 +73,11 @@ export class AdminBillingService {
         finalize(() => this._isLoadingTiers.set(false))
       )
       .subscribe({
-        next: (res) => this._tiers.set(res.data.tiers),
+        next: (res) => {
+          const payload = res.data;
+          const tiers = Array.isArray(payload) ? payload : payload.tiers;
+          this._tiers.set(tiers);
+        },
         error: (err) => {
           this._tiers.set([]);
           this.handleError(err, 'Không thể tải danh sách gói cước');
@@ -87,12 +91,21 @@ export class AdminBillingService {
   updateTier(id: string, payload: AdminUpdateBillingTierPayload): Observable<AdminUpdateBillingTierData> {
     this._isUpdatingTier.set(id);
     return this.http
-      .patch<ApiResponse<AdminUpdateBillingTierData>>(`${this.url}/admin/billing/tiers/${id}`, payload, {
+      .patch<ApiResponse<AdminUpdateBillingTierData | boolean>>(`${this.url}/admin/billing/tiers/${id}`, payload, {
         withCredentials: true,
       })
       .pipe(
         take(1),
-        map((res) => res.data),
+        map((res) => {
+          if (typeof res.data === 'boolean') {
+            return {
+              id,
+              updated: res.data,
+            } as AdminUpdateBillingTierData;
+          }
+
+          return res.data;
+        }),
         tap(() => {
           this.notify.success(`Cập nhật gói cước thành công`);
           this.loadTiers();

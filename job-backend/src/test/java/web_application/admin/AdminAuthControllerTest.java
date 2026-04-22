@@ -6,6 +6,7 @@ import com.job_web.dto.admin.auth.AdminLoginRequest;
 import com.job_web.dto.admin.auth.AdminLoginResponse;
 import com.job_web.dto.admin.auth.AdminRefreshRequest;
 import com.job_web.service.admin.AdminService;
+import jakarta.servlet.http.HttpServletResponse;
 import com.job_web.utills.MessageUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -18,8 +19,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import web_application.support.TestSecurityConfig;
-
-import java.time.LocalDateTime;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -51,28 +50,15 @@ class AdminAuthControllerTest {
         @DisplayName("AD01: Dang nhap admin thanh cong")
         void login_Success() throws Exception {
             AdminLoginRequest request = new AdminLoginRequest("admin@elitehire.com", "password", true);
-            AdminLoginResponse response = AdminLoginResponse.builder()
-                    .accessToken("access-token")
-                    .refreshToken("refresh-token")
-                    .expiresIn(900)
-                    .admin(AdminLoginResponse.AdminInfo.builder()
-                            .id("adm_001")
-                            .fullName("Admin User")
-                            .email("admin@elitehire.com")
-                            .role("super_admin")
-                            .lastLoginAt(LocalDateTime.now())
-                            .build())
-                    .build();
-
-            when(adminService.login(any(AdminLoginRequest.class))).thenReturn(response);
+            when(adminService.login(any(AdminLoginRequest.class), any(HttpServletResponse.class)))
+                    .thenReturn("access-token");
 
             mockMvc.perform(post(BASE_URL + "/login")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.status").value(200))
-                    .andExpect(jsonPath("$.data.accessToken").value("access-token"))
-                    .andExpect(jsonPath("$.data.admin.email").value("admin@elitehire.com"));
+                    .andExpect(jsonPath("$.data").value("access-token"));
         }
     }
 
