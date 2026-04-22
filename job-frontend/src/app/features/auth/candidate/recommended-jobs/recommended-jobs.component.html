@@ -1,69 +1,153 @@
-<section class="flex flex-col gap-2 h-screen">
-  <header
-    class="flex flex-col gap-2 rounded-3xl border border-slate-200 bg-white px-4 py-3 shadow-sm lg:flex-row lg:items-end lg:justify-between">
-    <div class="space-y-2">
-      <h2 class="text-xl font-bold text-slate-900 sm:text-2xl">{{ title }}</h2>
-      <p class="text-sm text-slate-500">
-        {{ helperText }}
-      </p>
-    </div>
+<div role="main" class="max-w-6xl mx-auto px-4 py-8 md:py-16 bg-surface text-on-surface antialiased min-h-screen">
+  <!-- Visual Polish: Enhanced Background shapes -->
+  <div class="fixed top-0 left-0 w-full h-full -z-10 opacity-40 pointer-events-none overflow-hidden">
+    <div class="absolute top-[5%] left-[-10%] w-[600px] h-[600px] bg-primary/10 blur-[120px] rounded-full"></div>
+    <div class="absolute bottom-[-10%] right-[-5%] w-[500px] h-[500px] bg-tertiary-container/15 blur-[100px] rounded-full"></div>
+    <div class="absolute top-[40%] right-[10%] w-[300px] h-[300px] bg-secondary-container/10 blur-[80px] rounded-full"></div>
+  </div>
 
-    <div class="w-full lg:max-w-sm">
-      <label for="resume-select" class="mb-2 block text-sm font-semibold text-slate-700">
-        {{ selectLabel }}
-      </label>
-      <select id="resume-select"
-        class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-100 disabled:cursor-not-allowed disabled:opacity-70"
-        [ngModel]="selectedResumeId()" (ngModelChange)="onResumeChange($event)"
-        [disabled]="isResumeLoading() || resumes().length === 0">
-        @if (isResumeLoading()) {
-        <option [ngValue]="null">{{ selectLoadingLabel }}</option>
-        } @else if (resumes().length === 0) {
-        <option [ngValue]="null">{{ selectEmptyLabel }}</option>
-        } @else {
-        @for (resume of resumes(); track resume.id) {
-        <option [ngValue]="resume.id">{{ resume.fileName }}</option>
-        }
-        }
-      </select>
+  <!-- Header Section: Refined and Sleek -->
+  <div role="banner" class="bg-white rounded-2xl border border-outline-variant p-8 md:p-10 mb-10 relative overflow-hidden shadow-sm">
+    <div class="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full -mr-32 -mt-32 blur-[100px]"></div>
+    <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+      <div class="space-y-3">
+        <div class="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-bold tracking-tight">
+          <span class="material-symbols-outlined text-base">auto_awesome</span>
+          {{ aiMatchingLabel() }}
+        </div>
+        <h1 class="text-3xl md:text-4xl font-extrabold text-on-surface tracking-tight">{{ title() }}</h1>
+        <p class="text-on-surface-variant text-lg">{{ helperText() }}</p>
+      </div>
+      <!-- Resume Selector: Professional Component -->
+      <div class="w-full lg:w-96 bg-surface-container-low/50 p-4 rounded-xl border border-outline-variant/50">
+        <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-2 ml-1" for="resume-select">{{ selectLabel() }}</label>
+        <div class="relative">
+          <select 
+            id="resume-select"
+            class="block w-full pl-4 pr-12 py-3.5 text-base border-outline-variant focus:ring-2 focus:ring-primary/20 focus:border-primary sm:text-sm rounded-xl appearance-none bg-white transition-all cursor-pointer font-medium text-on-surface"
+            [ngModel]="selectedResumeId()" 
+            (ngModelChange)="onResumeChange($event)"
+            [disabled]="isResumeLoading() || resumes().length === 0"
+          >
+            @if (isResumeLoading()) {
+              <option [ngValue]="null">{{ selectLoadingLabel() }}</option>
+            } @else if (resumes().length === 0) {
+              <option [ngValue]="null">{{ selectEmptyLabel() }}</option>
+            } @else {
+              @for (resume of resumes(); track resume.id) {
+                <option [ngValue]="resume.id">{{ resume.fileName }}</option>
+              }
+            }
+          </select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-on-surface-variant">
+            <span class="material-symbols-outlined">expand_more</span>
+          </div>
+        </div>
+      </div>
     </div>
-  </header>
-  @if (!isResumeLoading() && resumes().length === 0) {
-  <article class="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-5 py-8 text-center shadow-sm">
-    <h3 class="text-lg font-semibold text-slate-900">{{ emptyResumeTitle }}</h3>
-    <p class="mt-2 text-sm leading-6 text-slate-500">
-      {{ emptyResumeDescription }}
-    </p>
-    <a routerLink="/infor/cv"
-      class="mt-5 inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700">
-      {{ emptyResumeAction }}
-    </a>
-  </article>
-  }
+  </div>
 
   @if (isJobLoading()) {
-  <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-    @for (row of skeletonRows; track row) {
-    <app-skeleton-cv-card></app-skeleton-cv-card>
-    }
-  </div>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-16">
+      @for (row of skeletonRows; track row) {
+        <app-skeleton-cv-card></app-skeleton-cv-card>
+      }
+    </div>
   }
 
-  @if (!isResumeLoading() && !isJobLoading() && resumes().length > 0 && suggestedJobs().length === 0 &&
-  selectedResumeId() !== null) {
-  <article class="rounded-3xl border border-dashed border-slate-300 bg-white px-5 py-8 text-center shadow-sm">
-    <h3 class="text-lg font-semibold text-slate-900">{{ emptyJobTitle }}</h3>
-    <p class="mt-2 text-sm leading-6 text-slate-500">
-      {{ emptyJobDescription }}
-    </p>
-  </article>
-  }
-
+  <!-- Recommended Jobs List -->
   @if (!isResumeLoading() && !isJobLoading() && suggestedJobs().length > 0) {
-  <div class="flex flex-col gap-3 overflow-y-auto h-full items-center">
-    @for (job of suggestedJobs(); track job.id) {
-    <app-job-card [job]="job" detailRoute="/single"></app-job-card>
-    }
-  </div>
+    <div class="space-y-4 mb-16">
+      @for (job of suggestedJobs(); track job.id) {
+        <!-- <div class="group bg-white border border-outline-variant rounded-2xl p-6 transition-all duration-300 job-card-shadow hover:border-primary/50 relative">
+          <div class="flex flex-col lg:flex-row lg:items-center gap-6">
+            <div class="w-16 h-16 rounded-xl bg-surface-container shrink-0 flex items-center justify-center overflow-hidden border border-outline-variant/30 group-hover:border-primary/20 transition-colors">
+              <img title="img" [src]="'assets/web_css/img/post.png'" [alt]="job.title" class="w-full h-full object-cover p-1" />
+            </div>
+            <div class="grow min-w-0">
+              <div class="flex items-center gap-3 mb-1">
+                <h3 class="text-xl font-bold text-on-surface group-hover:text-primary transition-colors truncate">{{ job.title }}</h3>
+              </div>
+              <p class="text-on-surface-variant font-semibold text-sm mb-3">Công ty Tuyển dụng</p>
+              <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-outline font-medium">
+                <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[18px]">location_on</span> {{ job.address }}</span>
+                <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                <span class="text-on-surface font-bold">{{ job.salary | number }} VND</span>
+                <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-primary/5 text-primary font-bold">
+                  <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                  {{ matchScoreLabel() }}
+                </span>
+              </div>
+            </div>
+            <div class="flex flex-row items-center justify-between lg:flex-col lg:items-end lg:justify-center gap-4 lg:min-w-[180px]">
+              <span class="px-4 py-1.5 rounded-lg text-xs font-extrabold bg-secondary-container/10 text-secondary border border-secondary/10 uppercase tracking-widest">
+                {{ job.time }}
+              </span>
+              <div class="flex items-center gap-3">
+                <button class="p-2.5 text-outline hover:text-primary hover:bg-primary/5 rounded-xl transition-all">
+                  <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bookmark</span>
+                </button>
+                <a [routerLink]="['/single', job.id]" class="px-6 py-2.5 bg-primary-container text-on-primary rounded-xl font-bold text-sm hover:brightness-110 shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all hover:-translate-y-0.5 active:translate-y-0">
+                  {{ viewDetailLabel() }}
+                </a>
+              </div>
+            </div>
+          </div>
+        </div> -->
+        <app-job-card [job]="job"></app-job-card>
+      }
+    </div>
   }
-</section>
+
+  <!-- Empty State: No Matches Found -->
+  @if (!isResumeLoading() && !isJobLoading() && resumes().length > 0 && suggestedJobs().length === 0 && selectedResumeId() !== null) {
+    <div class="mt-12">
+      <div class="bg-white rounded-3xl border-2 border-dashed border-outline-variant/60 p-12 md:p-20 text-center">
+        <div class="w-24 h-24 bg-surface-container-low rounded-full flex items-center justify-center mx-auto mb-8 relative">
+          <span class="material-symbols-outlined text-5xl text-outline-variant">search_off</span>
+          <div class="absolute -top-1 -right-1 w-6 h-6 bg-error text-white rounded-full flex items-center justify-center border-2 border-white">
+            <span class="material-symbols-outlined text-xs font-bold">priority_high</span>
+          </div>
+        </div>
+        <h2 class="text-3xl font-extrabold text-on-surface mb-3 tracking-tight">{{ emptyJobTitle() }}</h2>
+        <p class="text-on-surface-variant max-w-lg mx-auto mb-10 text-lg leading-relaxed">{{ emptyJobDescription() }}</p>
+        <button (click)="selectedResumeId.set(null)" class="inline-flex items-center gap-3 px-8 py-4 bg-primary text-on-primary rounded-2xl font-bold shadow-xl shadow-primary/30 hover:scale-105 transition-all active:scale-95 group">
+          <span class="material-symbols-outlined group-hover:rotate-12 transition-transform">edit_note</span>
+          {{ selectOtherResumeLabel() }}
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Empty State: No Resumes -->
+  @if (!isResumeLoading() && resumes().length === 0) {
+    <div class="mt-12">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 bg-white rounded-3xl border border-outline-variant p-8 md:p-12 items-center shadow-sm">
+        <div class="space-y-6">
+          <div class="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-2">
+            <span class="material-symbols-outlined text-4xl text-primary">upload_file</span>
+          </div>
+          <h2 class="text-3xl md:text-4xl font-extrabold text-on-surface leading-tight tracking-tight">{{ emptyResumeTitle() }}</h2>
+          <p class="text-on-surface-variant text-lg leading-relaxed max-w-md">{{ emptyResumeDescription() }}</p>
+          <div class="pt-4">
+            <a routerLink="/infor/cv" class="inline-flex items-center gap-3 px-10 py-5 bg-primary text-on-primary rounded-2xl font-extrabold shadow-2xl shadow-primary/40 hover:shadow-primary/50 transition-all hover:-translate-y-1 active:translate-y-0">
+              <span class="material-symbols-outlined text-2xl">add_circle</span>
+              {{ emptyResumeAction() }}
+            </a>
+          </div>
+        </div>
+        <div class="relative group h-80 md:h-[450px] rounded-2xl overflow-hidden shadow-2xl">
+          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBH1iJKYuMddEamtOXXkNm4p5_kT1tLhbjEkdpaqiJR5gvyk50hzU8S0HWI7mq7_69gUo7SAkZxNYmuagghZufkIUXgE-1VsnLl-kJUVlTNLXTma-qgY7XpAW-Nz3kjt7zsbsMgghCXZbQpO2CQiSbTy2HH_F4sFmOoR7wBUeLkK3Lg7aHjdMoT1gYeJj19GZ2623FE3KRa7KG0SuTpcuqDQVFYN-w_73aP-tK_cxkoFwN3tpYjjWu3Ubi5JXIlxIXsBBCSmOVx8Kg" alt="Resume Upload Illustration" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+          <div class="absolute bottom-6 left-6 right-6 p-4 backdrop-blur-md bg-white/10 rounded-xl border border-white/20">
+            <p class="text-white text-sm font-semibold flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary-container">verified</span>
+              {{ aiAnalysisHintLabel() }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

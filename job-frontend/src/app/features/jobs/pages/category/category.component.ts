@@ -1,7 +1,8 @@
-import { Component, effect, OnInit } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { AfterViewInit, Component, effect, inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { PageEvent } from '@angular/material/paginator';
 import { debounceTime, distinctUntilChanged, Subject, take } from 'rxjs';
 import { CallToActionComponent } from '../../../../shared/components/call-to-action/call-to-action.component';
 import { JobCardComponent } from '../../../../shared/components/job-card/job-card.component';
@@ -18,7 +19,6 @@ import { I18nService } from '../../../../core/i18n/i18n.service';
 @Component({
   selector: 'app-category',
   imports: [
-    MatPaginatorModule,
     FormsModule,
     NgxSliderModule,
     JobCardComponent,
@@ -30,7 +30,8 @@ import { I18nService } from '../../../../core/i18n/i18n.service';
   templateUrl: './category.component.html',
   styleUrl: './category.component.css',
 })
-export class CategoryComponent implements OnInit {
+export class CategoryComponent implements OnInit, AfterViewInit {
+  readonly pageSizeOptions = [5, 10, 25];
   addressCount: AddressCountViewModel[] = [];
   jobs: JobCardModel[] = [];
   pageIndex = 0;
@@ -46,6 +47,8 @@ export class CategoryComponent implements OnInit {
   ];
 
   private searchSubject = new Subject<string>();
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly scrollToTopThreshold = 24;
   title: string = '';
   constructor(
     private category: CategoryService,
@@ -62,11 +65,15 @@ export class CategoryComponent implements OnInit {
     this.getAmount();
     this.getAddressCount();
     this.searchSubject.pipe(
-      debounceTime(400),        // Đợi 400ms sau khi ngừng gõ mới chạy tiếp
-      distinctUntilChanged()    // Chỉ gọi API nếu giá trị thực sự thay đổi so với lần trước
+      debounceTime(400),        
+      distinctUntilChanged()    
     ).subscribe(searchValue => {
       this.executeSearch(searchValue);
     });
+  }
+
+  ngAfterViewInit(): void {
+    this.scrollToTopIfNeeded();
   }
 
   getAmount(): void {
@@ -83,6 +90,7 @@ export class CategoryComponent implements OnInit {
   handlePage(event: PageEvent): void {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
+    this.scrollToTopIfNeeded();
 
     if (this.hasActiveFilters()) {
       this.searchWithFilters(this.buildFilterPayload());
@@ -99,6 +107,68 @@ export class CategoryComponent implements OnInit {
   formatMoney(value: number): string {
     const locale = this.i18nService.currentLanguage === 'vi' ? 'vi-VN' : 'en-US';
     return `${value.toLocaleString(locale)} VND`;
+  }
+
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.length / this.pageSize));
+  }
+
+  get visiblePageItems(): Array<number | 'ellipsis'> {
+    const totalPages = this.totalPages;
+
+    if (totalPages <= 5) {
+      return Array.from({ length: totalPages }, (_, index) => index + 1);
+    }
+
+    const currentPage = this.pageIndex + 1;
+    const pages = new Set<number>([1, totalPages, currentPage, currentPage - 1, currentPage + 1]);
+    const sortedPages = Array.from(pages)
+      .filter((page) => page >= 1 && page <= totalPages)
+      .sort((left, right) => left - right);
+
+    const visibleItems: Array<number | 'ellipsis'> = [];
+
+    sortedPages.forEach((page, index) => {
+      if (index > 0 && page - sortedPages[index - 1] > 1) {
+        visibleItems.push('ellipsis');
+      }
+
+      visibleItems.push(page);
+    });
+
+    return visibleItems;
+  }
+
+  get paginationStart(): number {
+    if (this.length === 0) {
+      return 0;
+    }
+
+    return this.pageIndex * this.pageSize + 1;
+  }
+
+  get paginationEnd(): number {
+    return Math.min((this.pageIndex + 1) * this.pageSize, this.length);
+  }
+
+  get rowsPerPageLabel(): string {
+    return this.i18nService.currentLanguage === 'vi' ? 'Hien thi moi trang' : 'Rows per page';
+  }
+
+  get showingLabel(): string {
+    return this.i18nService.currentLanguage === 'vi' ? 'Hien thi' : 'Showing';
+  }
+
+  get ofLabel(): string {
+    return this.i18nService.currentLanguage === 'vi' ? 'tren' : 'of';
+  }
+
+  get previousLabel(): string {
+    return this.i18nService.currentLanguage === 'vi' ? 'Truoc' : 'Previous';
+  }
+
+  get nextLabel(): string {
+    return this.i18nService.currentLanguage === 'vi' ? 'Sau' : 'Next';
   }
 
   onFilterChange(event: Event): void {
@@ -160,9 +230,69 @@ export class CategoryComponent implements OnInit {
     this.searchSubject.next(value);
   }
 
+  onPageSizeChange(value: string): void {
+    const nextPageSize = Number(value);
+
+    if (!this.pageSizeOptions.includes(nextPageSize) || nextPageSize === this.pageSize) {
+      return;
+    }
+
+    this.handlePage({
+      pageIndex: 0,
+      previousPageIndex: this.pageIndex,
+      pageSize: nextPageSize,
+      length: this.length,
+    });
+  }
+
+  goToPage(pageNumber: number): void {
+    const targetPageIndex = pageNumber - 1;
+
+    if (targetPageIndex < 0 || targetPageIndex >= this.totalPages || targetPageIndex === this.pageIndex) {
+      return;
+    }
+
+    this.handlePage({
+      pageIndex: targetPageIndex,
+      previousPageIndex: this.pageIndex,
+      pageSize: this.pageSize,
+      length: this.length,
+    });
+  }
+
+  goToPreviousPage(): void {
+    this.goToPage(this.pageIndex);
+  }
+
+  goToNextPage(): void {
+    this.goToPage(this.pageIndex + 2);
+  }
+
+  isCurrentPage(pageItem: number | 'ellipsis'): boolean {
+    return typeof pageItem === 'number' && pageItem === this.pageIndex + 1;
+  }
+
   private executeSearch(value: string) {
     this.title = value; // Cập nhật title chính thức
     this.pageIndex = 0; // Reset về trang đầu
     this.searchWithFilters(this.buildFilterPayload());
+  }
+  private scrollToTopIfNeeded(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      const currentScrollY = window.scrollY || window.pageYOffset || 0;
+
+      if (currentScrollY <= this.scrollToTopThreshold) {
+        return;
+      }
+
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+    });
   }
 }

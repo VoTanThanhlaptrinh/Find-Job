@@ -1,11 +1,14 @@
-import { Component, ElementRef, HostListener, Input, inject } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, inject, computed } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ResumeContext, ResumeService } from '../../../core/services/resume.service';
 import { ResumeReviewInput } from '../../models/jobs/resume-review-input.model';
 import { NotifyMessageService } from '../../../core/services/notify-message.service';
+import { I18nService } from '../../../core/i18n/i18n.service';
 
 @Component({
   selector: 'app-resume-review',
   standalone: true,
+  imports: [CommonModule],
   templateUrl: './resume-review.component.html',
   styleUrl: './resume-review.component.css'
 })
@@ -13,14 +16,23 @@ export class ResumeReviewComponent {
   private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly resumeService = inject(ResumeService);
   private readonly notifyService = inject(NotifyMessageService);
+  private readonly i18n = inject(I18nService);
 
   @Input({ required: true }) resume!: ResumeReviewInput;
   @Input() context: ResumeContext = 'user';
   @Input() allowDelete = true;
+  @Input() isOfficial = false;
+
   isMenuOpen = false;
   isDeleting = false;
   isLoadingView = false;
   isLoadingDownload = false;
+
+  readonly officialLabel = computed(() => this.i18n.translate('cvList.officialTag'));
+  readonly downloadLabel = computed(() => this.i18n.translate('cvList.download'));
+  readonly deleteLabel = computed(() => this.i18n.translate('cvList.delete'));
+  readonly deletingLabel = computed(() => this.i18n.translate('cvList.deleting'));
+  readonly viewLabel = computed(() => this.i18n.translate('cvList.view'));
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
@@ -102,31 +114,27 @@ export class ResumeReviewComponent {
     });
   }
 
-  get fileIconPath(): string {
+  get fileIconType(): 'pdf' | 'doc' | 'unknown' {
     const lowerCaseName = this.resume.fileName.toLowerCase();
-    if (lowerCaseName.endsWith('.doc') || lowerCaseName.endsWith('.docx')) {
-      return 'assets/images/icons/file-doc.svg';
-    }
-    return 'assets/images/icons/file-pdf.svg';
+    if (lowerCaseName.endsWith('.pdf')) return 'pdf';
+    if (lowerCaseName.endsWith('.doc') || lowerCaseName.endsWith('.docx')) return 'doc';
+    return 'unknown';
   }
 
   get createDateLabel(): string {
     if (!this.resume.createDate) {
-      return 'Ngày tải lên: --';
+      return '--';
     }
 
     const date = new Date(this.resume.createDate);
     if (Number.isNaN(date.getTime())) {
-      return `Ngày tải lên: ${this.resume.createDate}`;
+      return this.resume.createDate;
     }
 
-    const datePart = new Intl.DateTimeFormat('vi-VN').format(date);
-    const timePart = new Intl.DateTimeFormat('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true
+    return new Intl.DateTimeFormat('vi-VN', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
     }).format(date);
-
-    return `Ngày tải lên: ${datePart} | ${timePart}`;
   }
 }

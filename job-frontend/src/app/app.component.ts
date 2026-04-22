@@ -25,13 +25,13 @@ export class AppComponent implements OnInit {
     private authService: AuthService,
     private i18nService: I18nService,
   ) {
-    this.updateHeaderVisibility(this.router.url);
+    this.updateLayoutVisibility(this.router.url);
 
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event) => {
         const navigationEvent = event as NavigationEnd;
-        this.updateHeaderVisibility(navigationEvent.urlAfterRedirects);
+        this.updateLayoutVisibility(navigationEvent.urlAfterRedirects);
       });
   }
 
@@ -39,7 +39,7 @@ export class AppComponent implements OnInit {
     this.i18nService.initialize();
   }
 
-  private updateHeaderVisibility(url: string): void {
+  private updateLayoutVisibility(url: string): void {
     const layoutVisibility = this.layoutVisibilityService.getLayoutVisibility(url);
     this.showHeader = layoutVisibility.showHeader;
     this.showFooter = layoutVisibility.showFooter;

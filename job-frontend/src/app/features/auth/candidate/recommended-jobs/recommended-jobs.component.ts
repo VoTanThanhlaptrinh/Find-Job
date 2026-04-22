@@ -6,6 +6,7 @@ import { JobCardComponent } from '../../../../shared/components/job-card/job-car
 import { SkeletonCvCardComponent } from '../../../../shared/components/skeleton-cv-card/skeleton-cv-card.component';
 import { ResumeService } from '../../../../core/services/resume.service';
 import { JobService } from '../../../jobs/services/job.service';
+import { I18nService } from '../../../../core/i18n/i18n.service';
 
 @Component({
   selector: 'app-recommended-jobs',
@@ -18,20 +19,24 @@ import { JobService } from '../../../jobs/services/job.service';
 export class RecommendedJobsComponent implements OnInit {
   private readonly resumeService = inject(ResumeService);
   private readonly jobService = inject(JobService);
+  private readonly i18n = inject(I18nService);
 
-  readonly title = 'Gợi ý các công việc phù hợp.';
-  readonly selectLabel = 'Chọn CV';
-  readonly selectEmptyLabel = 'Bạn chưa có CV nào';
-  readonly selectLoadingLabel = 'Đang tải danh sách CV...';
-  readonly helperText = 'Danh sách job sẽ thay đổi theo CV bạn đang chọn.';
-  readonly selectedResumeLabel = 'CV đang phân tích';
-  readonly selectedResumeDatePrefix = 'Cập nhật';
-  readonly suggestionCountLabel = 'Công việc phù hợp';
-  readonly emptyResumeTitle = 'Bạn chưa có CV để hệ thống gợi ý.';
-  readonly emptyResumeDescription = 'Hãy tải CV lên trước, sau đó quay lại tab này để xem danh sách công việc phù hợp.';
-  readonly emptyResumeAction = 'Quản lý CV';
-  readonly emptyJobTitle = 'Chưa có công việc phù hợp cho CV này.';
-  readonly emptyJobDescription = 'Bạn có thể chọn CV khác hoặc cập nhật nội dung CV để nhận gợi ý tốt hơn.';
+  readonly title = computed(() => this.i18n.translate('recommendedJobs.title'));
+  readonly helperText = computed(() => this.i18n.translate('recommendedJobs.helperText'));
+  readonly selectLabel = computed(() => this.i18n.translate('recommendedJobs.selectLabel'));
+  readonly selectEmptyLabel = computed(() => this.i18n.translate('recommendedJobs.selectEmptyLabel'));
+  readonly selectLoadingLabel = computed(() => this.i18n.translate('recommendedJobs.selectLoadingLabel'));
+  readonly emptyResumeTitle = computed(() => this.i18n.translate('recommendedJobs.emptyResumeTitle'));
+  readonly emptyResumeDescription = computed(() => this.i18n.translate('recommendedJobs.emptyResumeDescription'));
+  readonly emptyResumeAction = computed(() => this.i18n.translate('recommendedJobs.emptyResumeAction'));
+  readonly emptyJobTitle = computed(() => this.i18n.translate('recommendedJobs.emptyJobTitle'));
+  readonly emptyJobDescription = computed(() => this.i18n.translate('recommendedJobs.emptyJobDescription'));
+  readonly aiMatchingLabel = computed(() => this.i18n.translate('recommendedJobs.aiMatching'));
+  readonly matchScoreLabel = computed(() => this.i18n.translate('recommendedJobs.matchScore'));
+  readonly viewDetailLabel = computed(() => this.i18n.translate('recommendedJobs.viewDetail'));
+  readonly selectOtherResumeLabel = computed(() => this.i18n.translate('recommendedJobs.selectOtherResume'));
+  readonly aiAnalysisHintLabel = computed(() => this.i18n.translate('recommendedJobs.aiAnalysisHint'));
+
   readonly skeletonRows = [1, 2, 3];
 
   readonly resumes = this.resumeService.resumes$;
@@ -44,14 +49,6 @@ export class RecommendedJobsComponent implements OnInit {
     const resumeId = this.selectedResumeId();
     if (resumeId === null) return null;
     return this.resumes().find((resume) => resume.id === resumeId) ?? null;
-  });
-
-  readonly selectedResumeDateLabel = computed(() => {
-    const resume = this.selectedResume();
-    if (resume === null) return '--';
-    const date = new Date(resume.createDate);
-    if (Number.isNaN(date.getTime())) return resume.createDate;
-    return new Intl.DateTimeFormat('vi-VN').format(date);
   });
 
   readonly suggestionCount = computed(() => this.suggestedJobs().length);

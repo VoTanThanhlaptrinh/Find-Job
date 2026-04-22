@@ -1,82 +1,48 @@
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f5f5f5;
-  padding: 30px;
+.material-symbols-outlined {
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
 }
 
-.card {
-  background: white;
-  border-radius: 10px;
-  padding: 30px;
-  max-width: 1000px;
-  margin: 0 auto;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+:host ::ng-deep .custom-datepicker-container .mat-mdc-form-field-subscript-wrapper {
+  display: none;
 }
 
-h2 {
-  margin-bottom: 25px;
+:host ::ng-deep .custom-datepicker-container .mat-mdc-text-field-wrapper {
+  padding: 0;
+  background-color: transparent !important;
 }
 
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px 40px;
+:host ::ng-deep .custom-datepicker-container .mat-mdc-form-field-flex {
+  padding: 0 !important;
+}
+
+:host ::ng-deep .custom-datepicker-container .mat-mdc-form-field-infix {
+  padding: 0 !important;
+  min-height: unset !important;
+}
+
+:host ::ng-deep .custom-datepicker-container .mat-datepicker-toggle button {
+  color: #94a3b8;
+}
+
+:host ::ng-deep .profile-datepicker-panel {
+  z-index: 2100 !important;
+}
+
+:host ::ng-deep .profile-datepicker-panel .mat-mdc-datepicker-content,
+:host ::ng-deep .profile-datepicker-panel .mat-datepicker-content {
+  background-color: #ffffff !important;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.18) !important;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
   position: relative;
+  z-index: 2101;
 }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-group label {
-  margin-bottom: 5px;
-  font-size: 14px;
-  color: #555;
-}
-
-.form-group input,
-.form-group select {
-  padding: 8px 10px;
-  font-size: 16px;
-  border: none;
-  border-bottom: 1px solid #ccc;
-  outline: none;
-}
-
-.birth-date-select {
-  display: flex;
-  gap: 10px;
-}
-
-.birth-date-select select {
-  flex: 1;
-}
-
-.full-width {
-  grid-column: span 2;
-}
-
-/* Button container aligned to the right at the end of the form */
-.btn-container {
-  grid-column: 1 / -1;
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 20px;
-}
-
-button {
-  background-color: #111;
-  color: white;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-  transition: background 0.15s;
-}
-
-button:hover {
-  background-color: #333;
+:host ::ng-deep .profile-datepicker-panel .mat-calendar,
+:host ::ng-deep .profile-datepicker-panel .mat-mdc-calendar {
+  background-color: #ffffff !important;
 }
