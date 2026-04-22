@@ -1,6 +1,5 @@
 package com.job_web.controller.job;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.job_web.dto.common.ApiResponse;
@@ -8,7 +7,7 @@ import com.job_web.dto.job.AddressJobCount;
 import com.job_web.dto.job.JobCardView;
 import com.job_web.dto.job.JobDetailView;
 import com.job_web.dto.job.JobFilterDTO;
-import com.job_web.service.ai.ApiService;
+import com.job_web.service.cache.HomeCategoryCacheService;
 import com.job_web.service.job.JobQueryService;
 import com.job_web.service.job.JobService;
 import com.job_web.utills.MessageUtils;
@@ -30,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PublicJobController {
     private final JobService jobService;
     private final JobQueryService jobQueryService;
+    private final HomeCategoryCacheService homeCategoryCacheService;
 
     @GetMapping("/newest")
     public ResponseEntity<ApiResponse<Page<JobCardView>>> getListJobNewest(
@@ -47,7 +47,7 @@ public class PublicJobController {
 
     @GetMapping("/address-count")
     public ResponseEntity<ApiResponse<List<AddressJobCount>>> getAddressCount() {
-        List<AddressJobCount> data = jobQueryService.getAddressJobCount();
+        List<AddressJobCount> data = homeCategoryCacheService.getCategoryData();
         return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("message.success"), data, HttpStatus.OK.value()));
     }
 

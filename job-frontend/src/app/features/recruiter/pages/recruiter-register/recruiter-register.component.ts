@@ -1,12 +1,12 @@
 import { Component, effect, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { RecruiterAuthService } from '../../services/recruiter-auth.service';
 
 @Component({
   selector: 'app-recruiter-register',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule],
   templateUrl: './recruiter-register.component.html',
   styleUrl: './recruiter-register.component.css',
 })

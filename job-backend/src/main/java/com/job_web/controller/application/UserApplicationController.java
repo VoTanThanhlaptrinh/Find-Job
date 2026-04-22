@@ -58,13 +58,13 @@ public class UserApplicationController {
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @GetMapping("/applications/jobs/{jobId}/status")
+    @GetMapping("/applications/{jobId}/status")
     public ResponseEntity<ApiResponse<Boolean>> hasApplied(@PathVariable("jobId") long jobId, @CurrentUser User currentUser) {
         ApiResponse<Boolean> res = applyService.hasApplied(currentUser.getEmail(), jobId);
         return ResponseEntity.status(res.getStatus()).body(res);
     }
 
-    @GetMapping("/jobs/applied")
+    @GetMapping("/applied")
     public ResponseEntity<ApiResponse<Page<JobCardView>>> listJobUserApplied(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,

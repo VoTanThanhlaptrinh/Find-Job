@@ -1,251 +1,182 @@
-<div class="max-w-7xl mx-auto h-full">
-  <!-- Content Canvas -->
-  <div class="px-8 pb-12">
-    <app-admin-page-header
-      title="Job Seekers Directory"
-      description="Manage and monitor the elite talent pipeline across all sectors."
-      wrapperClass="mb-8"
-      titleClass="text-3xl font-bold tracking-tight text-slate-900 mb-1"
-      descriptionClass="text-slate-500 font-medium"
-    ></app-admin-page-header>
-    <!-- Metric Bar -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-      <app-admin-metric-card
-        label="Total Seekers"
-        value="45,200"
-        containerClass="bg-white border border-slate-100 p-6 rounded-xl flex flex-col justify-between transition-transform hover:scale-[1.01] duration-300 shadow-sm"
-        labelClass="text-[10px] font-bold uppercase tracking-widest text-slate-400"
-        valueClass="text-3xl font-bold text-slate-900"
-        valueRowClass="mt-2"
-      >
-        <div metric-footer class="flex items-center justify-between mt-4">
-          <span class="text-xs font-semibold text-emerald-600 flex items-center">
-            <span class="material-symbols-outlined text-sm mr-1">trending_up</span>
-            +12% this month
-          </span>
-          <div class="h-8 w-24 overflow-hidden">
-            <svg class="stroke-blue-600 fill-none stroke-2" viewbox="0 0 100 40">
-              <path d="M0 35 Q 25 35, 40 20 T 80 10 T 100 5"></path>
-            </svg>
-          </div>
-        </div>
-      </app-admin-metric-card>
-      <app-admin-metric-card
-        label="Active (Last 7 Days)"
-        value="12,400"
-        containerClass="bg-white border border-slate-100 p-6 rounded-xl flex flex-col justify-between transition-transform hover:scale-[1.01] duration-300 shadow-sm"
-        labelClass="text-[10px] font-bold uppercase tracking-widest text-slate-400"
-        valueClass="text-3xl font-bold text-slate-900"
-        valueRowClass="mt-2"
-      >
-        <div metric-footer class="flex items-center justify-between mt-4">
-          <span class="text-xs font-semibold text-emerald-600 flex items-center">
-            <span class="material-symbols-outlined text-sm mr-1">bolt</span>
-            High Engagement
-          </span>
-          <div class="h-8 w-24 overflow-hidden">
-            <svg class="stroke-blue-400 fill-none stroke-2" viewbox="0 0 100 40">
-              <path d="M0 30 Q 20 10, 40 30 T 70 10 T 100 20"></path>
-            </svg>
-          </div>
-        </div>
-      </app-admin-metric-card>
-      <app-admin-metric-card
-        label="Placed Candidates"
-        value="8,900"
-        containerClass="bg-white border border-slate-100 p-6 rounded-xl flex flex-col justify-between transition-transform hover:scale-[1.01] duration-300 shadow-sm"
-        labelClass="text-[10px] font-bold uppercase tracking-widest text-slate-400"
-        valueClass="text-3xl font-bold text-slate-900"
-        valueRowClass="mt-2"
-      >
-        <div metric-footer class="flex items-center justify-between mt-4">
-          <span class="text-xs font-semibold text-blue-600 flex items-center">
-            <span class="material-symbols-outlined text-sm mr-1">check_circle</span>
-            94% Retention Rate
-          </span>
-        </div>
-      </app-admin-metric-card>
-    </div>
-    <!-- Main Data Table Container -->
-    <div class="bg-white border border-slate-100 rounded-xl overflow-hidden shadow-sm">
-      <div class="px-8 py-6 flex justify-between items-center bg-white border-b border-slate-100">
-        <div class="flex gap-4">
-          <button class="bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 hover:bg-blue-700 transition-colors shadow-sm">
-            <span class="material-symbols-outlined text-sm">person_add</span>
-            Add Candidate
-          </button>
-          <button class="bg-slate-100 text-slate-700 px-5 py-2 rounded-lg text-sm font-semibold hover:bg-slate-200 transition-colors">Export CSV</button>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="text-sm font-medium text-slate-500">Sort by:</span>
-          <select title="select" class="bg-transparent border-none text-sm font-bold text-slate-900 focus:ring-0 cursor-pointer">
-            <option>Last Active</option>
-            <option>Profession</option>
-            <option>Status</option>
-          </select>
-        </div>
+<main class="bg-ad-surface min-h-screen p-6 md:p-10 text-ad-on-surface">
+  <section class="max-w-7xl mx-auto space-y-6">
+    <header class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div>
+        <h1 class="text-2xl md:text-3xl font-bold">Job Seekers</h1>
+        <p class="text-ad-on-surface-variant mt-1">Du lieu tu admin/job-seekers APIs</p>
       </div>
-      <div class="overflow-x-auto">
-        <table class="w-full text-left">
-          <thead class="bg-slate-50/50">
-            <tr>
-              <th class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Candidate Name</th>
-              <th class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Profession/Role</th>
-              <th class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Resume Status</th>
-              <th class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">Last Active</th>
-              <th class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100">
-            <!-- Row 1 -->
-            <tr class="group hover:bg-blue-50/50 transition-colors">
-              <td class="px-8 py-6">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold">SJ</div>
-                  <div>
-                    <p class="font-bold text-slate-900">Sarah Jenkins</p>
-                    <p class="text-xs text-slate-500">sarah.j&#64;email.com</p>
-                  </div>
-                </div>
-              </td>
-              <td class="px-8 py-6 text-sm font-medium text-slate-900">Senior UX Designer</td>
-              <td class="px-8 py-6">
-                <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider flex w-fit items-center gap-1">
-                  <span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">check_circle</span> Available
-                </span>
-              </td>
-              <td class="px-8 py-6 text-sm text-slate-500 font-medium">2h ago</td>
-              <td class="px-8 py-6 text-right">
-                <button class="material-symbols-outlined text-slate-400 hover:text-blue-600 transition-colors">more_vert</button>
-              </td>
-            </tr>
-            <!-- Row 2 -->
-            <tr class="group hover:bg-blue-50/50 transition-colors">
-              <td class="px-8 py-6">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold">MC</div>
-                  <div>
-                    <p class="font-bold text-slate-900">Michael Chen</p>
-                    <p class="text-xs text-slate-500">m.chen&#64;tech.com</p>
-                  </div>
-                </div>
-              </td>
-              <td class="px-8 py-6 text-sm font-medium text-slate-900">Backend Architect</td>
-              <td class="px-8 py-6">
-                <span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider flex w-fit items-center gap-1">
-                  <span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">error</span> Missing
-                </span>
-              </td>
-              <td class="px-8 py-6 text-sm text-slate-500 font-medium">1d ago</td>
-              <td class="px-8 py-6 text-right">
-                <button class="material-symbols-outlined text-slate-400 hover:text-blue-600 transition-colors">more_vert</button>
-              </td>
-            </tr>
-            <!-- Row 3 -->
-            <tr class="group hover:bg-blue-50/50 transition-colors">
-              <td class="px-8 py-6">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-full bg-cyan-100 flex items-center justify-center text-cyan-700 font-bold">ER</div>
-                  <div>
-                    <p class="font-bold text-slate-900">Elena Rodriguez</p>
-                    <p class="text-xs text-slate-500">elena.r&#64;design.co</p>
-                  </div>
-                </div>
-              </td>
-              <td class="px-8 py-6 text-sm font-medium text-slate-900">Product Manager</td>
-              <td class="px-8 py-6">
-                <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider flex w-fit items-center gap-1">
-                  <span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">check_circle</span> Available
-                </span>
-              </td>
-              <td class="px-8 py-6 text-sm text-slate-500 font-medium">5h ago</td>
-              <td class="px-8 py-6 text-right">
-                <button class="material-symbols-outlined text-slate-400 hover:text-blue-600 transition-colors">more_vert</button>
-              </td>
-            </tr>
-            <!-- Row 4 -->
-            <tr class="group hover:bg-blue-50/50 transition-colors">
-              <td class="px-8 py-6">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-700 font-bold">AO</div>
-                  <div>
-                    <p class="font-bold text-slate-900">Amina Okafor</p>
-                    <p class="text-xs text-slate-500">amina.o&#64;globalsolutions.io</p>
-                  </div>
-                </div>
-              </td>
-              <td class="px-8 py-6 text-sm font-medium text-slate-900">DevOps Engineer</td>
-              <td class="px-8 py-6">
-                <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider flex w-fit items-center gap-1">
-                  <span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">check_circle</span> Available
-                </span>
-              </td>
-              <td class="px-8 py-6 text-sm text-slate-500 font-medium">Just now</td>
-              <td class="px-8 py-6 text-right">
-                <button class="material-symbols-outlined text-slate-400 hover:text-blue-600 transition-colors">more_vert</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="flex w-full md:w-auto flex-col md:flex-row gap-2">
+        <input
+          type="text"
+          placeholder="Tim job seeker..."
+          class="w-full md:w-80 bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2"
+          (input)="onSearch($event)"
+        />
+        <select
+          class="px-3 py-2 bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl"
+          [value]="selectedResumeStatus"
+          (change)="onResumeStatusChange($event)"
+          title="Resume status"
+          aria-label="Resume status"
+        >
+          <option value="">All resume status</option>
+          <option value="complete">complete</option>
+          <option value="incomplete">incomplete</option>
+          <option value="missing">missing</option>
+        </select>
       </div>
-      <div class="px-8 py-4 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
-        <p class="text-xs font-semibold text-slate-500">Showing <span class="text-slate-900">1-4</span> of <span class="text-slate-900">45,200</span> candidates</p>
-        <div class="flex gap-2">
-          <button class="p-2 rounded-lg hover:bg-slate-200 text-slate-400 disabled:opacity-30 transition-colors" disabled="">
-            <span class="material-symbols-outlined text-sm">chevron_left</span>
-          </button>
-          <button class="px-3 py-1 rounded-lg bg-blue-600 text-white text-xs font-bold shadow-sm">1</button>
-          <button class="px-3 py-1 rounded-lg hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors">2</button>
-          <button class="px-3 py-1 rounded-lg hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors">3</button>
-          <button class="p-2 rounded-lg hover:bg-slate-200 text-slate-500 transition-colors">
-            <span class="material-symbols-outlined text-sm">chevron_right</span>
-          </button>
-        </div>
-      </div>
-    </div>
-    <!-- Secondary Layout - Talent Distribution Chart -->
-    <div class="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <div class="lg:col-span-2 bg-white p-8 rounded-xl border border-slate-100 shadow-sm">
-        <div class="flex justify-between items-center mb-6">
-          <h3 class="text-lg font-bold text-slate-900">Talent Distribution by Region</h3>
-          <button class="text-xs font-bold text-blue-600 uppercase tracking-widest hover:text-blue-700 transition-colors">View Map View</button>
-        </div>
-        <div class="h-48 flex items-end justify-between gap-4">
-          <div class="flex-1 bg-slate-100 relative group rounded-t-md">
-            <div class="absolute bottom-0 w-full bg-blue-400 h-[60%] rounded-t-md transition-all group-hover:h-[70%]"></div>
-            <span class="absolute -bottom-6 w-full text-center text-[10px] font-bold text-slate-500 uppercase">NA</span>
-          </div>
-          <div class="flex-1 bg-slate-100 relative group rounded-t-md">
-            <div class="absolute bottom-0 w-full bg-blue-600 h-[85%] rounded-t-md transition-all group-hover:h-[95%]"></div>
-            <span class="absolute -bottom-6 w-full text-center text-[10px] font-bold text-slate-500 uppercase">EU</span>
-          </div>
-          <div class="flex-1 bg-slate-100 relative group rounded-t-md">
-            <div class="absolute bottom-0 w-full bg-blue-400 h-[45%] rounded-t-md transition-all group-hover:h-[55%]"></div>
-            <span class="absolute -bottom-6 w-full text-center text-[10px] font-bold text-slate-500 uppercase">APAC</span>
-          </div>
-          <div class="flex-1 bg-slate-100 relative group rounded-t-md">
-            <div class="absolute bottom-0 w-full bg-blue-300 h-[30%] rounded-t-md transition-all group-hover:h-[40%]"></div>
-            <span class="absolute -bottom-6 w-full text-center text-[10px] font-bold text-slate-500 uppercase">LATAM</span>
-          </div>
-          <div class="flex-1 bg-slate-100 relative group rounded-t-md">
-            <div class="absolute bottom-0 w-full bg-blue-200 h-[20%] rounded-t-md transition-all group-hover:h-[30%]"></div>
-            <span class="absolute -bottom-6 w-full text-center text-[10px] font-bold text-slate-500 uppercase">MEA</span>
-          </div>
-        </div>
-      </div>
-      <!-- Quick Insight Card -->
-      <div class="bg-blue-600 p-8 rounded-xl text-white relative overflow-hidden shadow-sm">
-        <div class="relative z-10">
-          <span class="material-symbols-outlined text-blue-200 mb-4 text-3xl">insights</span>
-          <h3 class="text-xl font-bold mb-2">Growth Tip</h3>
-          <p class="text-sm text-blue-100 mb-6 leading-relaxed font-medium">Top-tier Backend Architects are in high demand this week. Consider prioritizing profile verifications for this cohort.</p>
-          <button class="w-full bg-white text-blue-600 font-bold py-3 rounded-lg text-sm hover:bg-slate-50 transition-colors shadow-sm">Boost Category</button>
-        </div>
-        <div class="absolute -right-4 -bottom-4 w-40 h-40 bg-blue-500 rounded-full blur-3xl opacity-50"></div>
-        <div class="absolute -left-10 top-0 w-32 h-32 bg-blue-400 rounded-full blur-3xl opacity-30"></div>
-      </div>
-    </div>
-  </div>
+    </header>
 
-</div>
+    <section class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-5 ad-rounded-xl">
+      <h2 class="text-lg font-semibold mb-4">Create Job Seeker</h2>
+      <form [formGroup]="createJobSeekerForm" (ngSubmit)="submitCreateJobSeeker()" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label for="fullName" class="text-sm font-medium">Full name</label>
+          <input
+            id="fullName"
+            type="text"
+            formControlName="fullName"
+            class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2"
+            placeholder="Nguyen Van A"
+          />
+          <p *ngIf="isCreateFieldInvalid('fullName')" class="mt-1 text-xs text-red-600">Full name is required.</p>
+        </div>
 
+        <div>
+          <label for="seekerEmail" class="text-sm font-medium">Email</label>
+          <input
+            id="seekerEmail"
+            type="email"
+            formControlName="email"
+            class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2"
+            placeholder="candidate@example.com"
+          />
+          <p *ngIf="isCreateFieldInvalid('email')" class="mt-1 text-xs text-red-600">Valid email is required.</p>
+        </div>
+
+        <div>
+          <label for="profession" class="text-sm font-medium">Profession</label>
+          <input
+            id="profession"
+            type="text"
+            formControlName="profession"
+            class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2"
+            placeholder="Frontend Developer"
+          />
+          <p *ngIf="isCreateFieldInvalid('profession')" class="mt-1 text-xs text-red-600">Profession is required.</p>
+        </div>
+
+        <div>
+          <label for="resumeUrl" class="text-sm font-medium">Resume URL</label>
+          <input
+            id="resumeUrl"
+            type="url"
+            formControlName="resumeUrl"
+            class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2"
+            placeholder="https://example.com/resume.pdf"
+          />
+          <p *ngIf="isCreateFieldInvalid('resumeUrl')" class="mt-1 text-xs text-red-600">Resume URL is required.</p>
+        </div>
+
+        <div class="md:col-span-2 flex justify-end">
+          <button
+            type="submit"
+            class="px-4 py-2 bg-ad-primary text-ad-on-primary ad-rounded-xl text-sm font-medium disabled:opacity-60"
+            [disabled]="isCreating"
+          >
+            {{ isCreating ? 'Creating...' : 'Create Job Seeker' }}
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <div *ngIf="isLoadingMetrics" class="bg-ad-surface-container-low p-4 ad-rounded-xl">Dang tai metrics...</div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4" *ngIf="metrics as data">
+      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl">
+        <p class="text-sm text-ad-on-surface-variant">Tong seekers</p>
+        <p class="text-2xl font-bold mt-1">{{ data.totalSeekers }}</p>
+      </article>
+      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl">
+        <p class="text-sm text-ad-on-surface-variant">Growth</p>
+        <p class="text-2xl font-bold mt-1">{{ data.totalSeekersGrowthPct }}%</p>
+      </article>
+      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl">
+        <p class="text-sm text-ad-on-surface-variant">Active 7d</p>
+        <p class="text-2xl font-bold mt-1">{{ data.activeLast7Days }}</p>
+      </article>
+      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl">
+        <p class="text-sm text-ad-on-surface-variant">Placed</p>
+        <p class="text-2xl font-bold mt-1">{{ data.placedCandidates }}</p>
+      </article>
+      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl">
+        <p class="text-sm text-ad-on-surface-variant">Retention</p>
+        <p class="text-2xl font-bold mt-1">{{ data.retentionPct }}%</p>
+      </article>
+    </div>
+
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
+      <section class="xl:col-span-2 bg-ad-surface-container-lowest border border-ad-outline-variant/20 ad-rounded-xl overflow-hidden">
+        <div *ngIf="isLoadingList" class="p-4">Dang tai danh sach job seekers...</div>
+        <div *ngIf="!isLoadingList && jobSeekers.length === 0" class="p-4 text-ad-on-surface-variant">Khong co du lieu.</div>
+
+        <div *ngIf="!isLoadingList && jobSeekers.length > 0" class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-ad-surface-container-low text-left">
+              <tr>
+                <th class="px-4 py-3">Ten</th>
+                <th class="px-4 py-3">Email</th>
+                <th class="px-4 py-3">Nghe nghiep</th>
+                <th class="px-4 py-3">Resume</th>
+                <th class="px-4 py-3">Last active</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let seeker of jobSeekers; trackBy: trackBySeeker" class="border-t border-ad-outline-variant/10">
+                <td class="px-4 py-3 font-medium">{{ seeker.fullName }}</td>
+                <td class="px-4 py-3">{{ seeker.email }}</td>
+                <td class="px-4 py-3">{{ seeker.profession }}</td>
+                <td class="px-4 py-3">{{ seeker.resumeStatus }}</td>
+                <td class="px-4 py-3">{{ seeker.lastActiveAt }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <footer class="px-4 py-3 border-t border-ad-outline-variant/10 flex items-center justify-between text-sm">
+          <span>Trang {{ currentPage }} / {{ totalPages }} - Tong {{ totalItems }}</span>
+          <div class="space-x-2">
+            <button
+              type="button"
+              class="px-3 py-1.5 ad-rounded-lg border border-ad-outline-variant/30 disabled:opacity-40"
+              [disabled]="currentPage <= 1"
+              (click)="goPrevPage()"
+            >
+              Truoc
+            </button>
+            <button
+              type="button"
+              class="px-3 py-1.5 ad-rounded-lg border border-ad-outline-variant/30 disabled:opacity-40"
+              [disabled]="currentPage >= totalPages"
+              (click)="goNextPage()"
+            >
+              Sau
+            </button>
+          </div>
+        </footer>
+      </section>
+
+      <section class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-5 ad-rounded-xl">
+        <h2 class="text-lg font-semibold mb-3">Region distribution</h2>
+        <div *ngIf="isLoadingRegions" class="text-sm text-ad-on-surface-variant">Dang tai thong ke vung...</div>
+        <div *ngIf="!isLoadingRegions && !regionDistribution" class="text-sm text-ad-on-surface-variant">Khong co du lieu vung.</div>
+        <ul *ngIf="regionDistribution as region" class="space-y-2 text-sm">
+          <li *ngFor="let item of region.regions" class="flex items-center justify-between">
+            <span>{{ item.code }}</span>
+            <span class="font-semibold">{{ item.count }}</span>
+          </li>
+        </ul>
+      </section>
+    </div>
+  </section>
+</main>

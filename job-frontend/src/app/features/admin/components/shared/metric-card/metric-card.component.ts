@@ -14,7 +14,7 @@ export class AdminMetricCardComponent {
 
   @Input()
   containerClass =
-    'bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between';
+    'bg-white p-6 ad-rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between';
   @Input() labelClass = 'text-xs font-bold uppercase tracking-widest text-slate-500';
   @Input() valueClass = 'text-3xl font-bold tracking-tight text-slate-900';
   @Input() valueRowClass = 'flex items-baseline space-x-2';

@@ -4,14 +4,12 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { take } from 'rxjs';
 import { JobService } from '../../../jobs/services/job.service';
 import { JobDetailViewModel } from '../../../../shared/models/jobs/job-api-response.model';
-import { SafeHtmlPipe } from '../../../../shared/pipes/safe-html.pipe';
-import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
 import { I18nService } from '../../../../core/i18n/i18n.service';
 
 @Component({
   selector: 'app-recruiter-job-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, SafeHtmlPipe, TranslatePipe],
+  imports: [CommonModule, RouterLink],
   templateUrl: './recruiter-job-detail.component.html',
   styleUrl: './recruiter-job-detail.component.css'
 })

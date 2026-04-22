@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { computed, Injectable, signal } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { computed, Injectable, inject, PLATFORM_ID, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, finalize, map, Observable, take, throwError } from 'rxjs';
+import { catchError, finalize, map, Observable, of, take, throwError } from 'rxjs';
 import { TokenService } from '../../../core/services/token.service';
 import { UtilitiesService } from '../../../core/services/utilities.service';
 import { NotifyMessageService } from '../../../core/services/notify-message.service';
@@ -11,6 +12,7 @@ import {
   AdminLoginPayload,
   AdminLoginProfile,
   AdminLogoutData,
+  AdminRefreshData,
 } from './admin-api.models';
 
 @Injectable({
@@ -18,16 +20,20 @@ import {
 })
 export class AdminAuthService {
   private readonly url: string;
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly isBrowser = isPlatformBrowser(this.platformId);
   
   // Internal state
   private readonly _adminProfile = signal<AdminLoginProfile | null>(null);
   private readonly _refreshToken = signal<string | null>(null);
   private readonly _isLoggingIn = signal(false);
+  private readonly _isRefreshing = signal(false);
 
   // Public computed signals
   readonly adminProfile = computed(() => this._adminProfile());
   readonly isLoggedIn = computed(() => !!this._adminProfile());
   readonly isLoggingIn = computed(() => this._isLoggingIn());
+  readonly isRefreshing = computed(() => this._isRefreshing());
 
   constructor(
     private readonly http: HttpClient,
@@ -67,12 +73,46 @@ export class AdminAuthService {
   }
 
   /**
+   * Refresh current admin session token pair
+   */
+  refreshSession(silent: boolean = false): Observable<void> {
+    const refreshToken = this._refreshToken();
+    if (!refreshToken) {
+      return of(void 0);
+    }
+
+    this._isRefreshing.set(true);
+    return this.http
+      .post<ApiResponse<AdminRefreshData>>(
+        `${this.url}/admin/auth/refresh`,
+        { refreshToken },
+        { withCredentials: true }
+      )
+      .pipe(
+        take(1),
+        map((res) => {
+          this.persistSession(res.data);
+        }),
+        catchError((err) => {
+          if (!silent) {
+            const msg = err?.error?.message || 'Lam moi phien dang nhap that bai';
+            this.notify.error(msg);
+          }
+          this.clearAdminSession();
+          return throwError(() => err);
+        }),
+        finalize(() => this._isRefreshing.set(false))
+      );
+  }
+
+  /**
    * Handle Admin Logout
    */
   logout(): void {
     const refreshToken = this._refreshToken();
+    const payloadRefreshToken = refreshToken ?? '';
     this.http
-      .post<ApiResponse<AdminLogoutData>>(`${this.url}/admin/auth/logout`, { refreshToken }, {
+      .post<ApiResponse<AdminLogoutData>>(`${this.url}/admin/auth/logout`, { refreshToken: payloadRefreshToken }, {
         withCredentials: true,
       })
       .pipe(
@@ -93,28 +133,41 @@ export class AdminAuthService {
     this.tokenService.setToken(data.accessToken);
     this._adminProfile.set(data.admin);
     this._refreshToken.set(data.refreshToken);
-    
-    localStorage.setItem('admin_session', JSON.stringify({
-      profile: data.admin,
-      refreshToken: data.refreshToken
-    }));
+
+    if (this.isBrowser) {
+      localStorage.setItem('admin_session', JSON.stringify({
+        profile: data.admin,
+        refreshToken: data.refreshToken
+      }));
+    }
   }
 
   private clearAdminSession(): void {
     this.tokenService.clearToken();
     this._adminProfile.set(null);
     this._refreshToken.set(null);
-    localStorage.removeItem('admin_session');
+
+    if (this.isBrowser) {
+      localStorage.removeItem('admin_session');
+    }
   }
 
   private loadAdminSession(): void {
+    if (!this.isBrowser) {
+      return;
+    }
+
     const stored = localStorage.getItem('admin_session');
     if (stored) {
       try {
         const session = JSON.parse(stored);
         this._adminProfile.set(session.profile);
         this._refreshToken.set(session.refreshToken);
-        // Lưu ý: Access token thường được khôi phục qua cơ chế khác hoặc cần gọi refresh ngay nếu hết hạn
+        this.refreshSession(true).pipe(take(1)).subscribe({
+          error: () => {
+            // Errors are already handled in refreshSession.
+          }
+        });
       } catch (e) {
         this.clearAdminSession();
       }

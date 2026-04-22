@@ -23,6 +23,20 @@ function hasHirerRole(tokenService: TokenService): boolean {
   return tokenService.hasAnyRole(['HIRER', 'ROLE_HIRER']);
 }
 
+function logGuardDecision(
+  message: string,
+  state: RouterStateSnapshot,
+  authReady: boolean,
+  roles: string[]
+): void {
+  console.info('[HirerGuard]', {
+    message,
+    url: state.url,
+    authReady,
+    roles,
+  });
+}
+
 export const hirerGuard: CanActivateFn = (
   route: ActivatedRouteSnapshot,
   state: RouterStateSnapshot
@@ -31,15 +45,27 @@ export const hirerGuard: CanActivateFn = (
   const tokenService = inject(TokenService);
   const authService = inject(AuthService);
   const router = inject(Router);
+  const authReady = authService.isAuthReady();
+  const roles = tokenService.getTokenRoles();
 
   // Allow navigation while auth state is still restoring from refresh token.
-  if (!authService.isAuthReady()) {
+  if (!authReady) {
+    logGuardDecision('Auth is not ready yet, allowing temporary navigation.', state, authReady, roles);
     return true;
   }
 
-  return hasHirerRole(tokenService)
-    ? true
-    : buildUnauthorizedRedirect(router, state);
+  const isAuthorized = hasHirerRole(tokenService);
+
+  logGuardDecision(
+    isAuthorized
+      ? 'Recruiter role detected, allowing navigation.'
+      : 'Recruiter role missing, redirecting to recruiter login.',
+    state,
+    authReady,
+    roles
+  );
+
+  return isAuthorized ? true : buildUnauthorizedRedirect(router, state);
 };
 
 export const hirerChildGuard: CanActivateChildFn = (

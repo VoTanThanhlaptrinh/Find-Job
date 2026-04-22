@@ -1,13 +1,11 @@
 import { Component, effect, inject, signal } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
+import { Router } from '@angular/router';
 import { RecruiterAuthService } from '../../services/recruiter-auth.service';
 import { TokenService } from '../../../../core/services/token.service';
 import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-recruiter-dashboard',
-  imports: [RouterOutlet, RouterLink, TranslatePipe],
   templateUrl: './recruiter-dashboard.component.html',
   styleUrl: './recruiter-dashboard.component.css',
 })

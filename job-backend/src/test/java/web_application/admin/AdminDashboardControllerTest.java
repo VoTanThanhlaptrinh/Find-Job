@@ -5,6 +5,7 @@ import com.job_web.dto.admin.dashboard.DashboardSummaryResponse;
 import com.job_web.dto.admin.dashboard.PendingJobItem;
 import com.job_web.dto.common.PageResponse;
 import com.job_web.service.admin.AdminService;
+import com.job_web.utills.MessageUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(AdminDashboardController.class)
 @AutoConfigureMockMvc
-@Import(TestSecurityConfig.class)
+@Import({TestSecurityConfig.class, AdminDashboardController.class, MessageUtils.class})
 class AdminDashboardControllerTest {
 
     @Autowired

@@ -19,5 +19,5 @@ export class AdminPageHeaderComponent {
 
   @Input()
   actionClass =
-    'flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-md shadow-blue-600/20 hover:bg-blue-700 active:scale-95 transition-all';
+    'flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 ad-rounded-xl font-bold text-sm shadow-md shadow-blue-600/20 hover:bg-blue-700 active:scale-95 transition-all';
 }

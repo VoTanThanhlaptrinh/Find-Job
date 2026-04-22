@@ -7,6 +7,7 @@ import com.job_web.dto.admin.job.BulkActionRequest;
 import com.job_web.dto.admin.job.JobMetricsResponse;
 import com.job_web.dto.common.PageResponse;
 import com.job_web.service.admin.AdminService;
+import com.job_web.utills.MessageUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -32,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(AdminJobsController.class)
 @AutoConfigureMockMvc
-@Import(TestSecurityConfig.class)
+@Import({TestSecurityConfig.class, AdminJobsController.class, MessageUtils.class})
 class AdminJobsControllerTest {
 
     @Autowired

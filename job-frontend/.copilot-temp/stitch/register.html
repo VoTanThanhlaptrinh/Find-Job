@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Aura | Đăng ký doanh nghiệp</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary": "#ffffff",
+                        "surface-container-low": "#f2f4f6",
+                        "surface-container-high": "#e6e8ea",
+                        "primary": "#004ac6",
+                        "secondary-fixed-dim": "#89ceff",
+                        "tertiary": "#7a1bc8",
+                        "on-tertiary-fixed-variant": "#6900b3",
+                        "surface-variant": "#e0e3e5",
+                        "on-secondary-fixed": "#001e2f",
+                        "outline": "#737686",
+                        "secondary-fixed": "#c9e6ff",
+                        "on-tertiary-container": "#faecff",
+                        "inverse-primary": "#b4c5ff",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#eeefff",
+                        "secondary-container": "#39b8fd",
+                        "on-secondary-fixed-variant": "#004c6e",
+                        "on-secondary-container": "#004666",
+                        "secondary": "#006591",
+                        "on-background": "#191c1e",
+                        "surface": "#f7f9fb",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "primary-fixed": "#dbe1ff",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-tertiary-fixed": "#2c0051",
+                        "on-surface-variant": "#434655",
+                        "inverse-surface": "#2d3133",
+                        "primary-container": "#2563eb",
+                        "surface-dim": "#d8dadc",
+                        "surface-container": "#eceef0",
+                        "surface-bright": "#f7f9fb",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed": "#00174b",
+                        "background": "#f7f9fb",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#0053db",
+                        "on-error": "#ffffff",
+                        "inverse-on-surface": "#eff1f3",
+                        "tertiary-fixed": "#f0dbff",
+                        "on-surface": "#191c1e",
+                        "outline-variant": "#c3c6d7",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed-dim": "#ddb7ff",
+                        "tertiary-container": "#943fe2",
+                        "surface-container-lowest": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .atmospheric-glow {
+            background: linear-gradient(135deg, #004ac6 0%, #943fe2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.4;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-surface antialiased overflow-x-hidden">
+<!-- Top Navigation Anchor (Manual Placement per Shell Visibility Rule) -->
+<header class="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-md shadow-xl shadow-primary/5">
+<div class="flex items-center justify-between px-8 py-4 max-w-7xl mx-auto w-full">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-2xl">flare</span>
+<span class="font-headline font-bold text-2xl bg-gradient-to-r from-primary to-tertiary-container bg-clip-text text-transparent">Aura</span>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="font-headline font-semibold tracking-tight text-primary border-b-2 border-primary" href="#">Tuyển dụng</a>
+<a class="font-headline font-semibold tracking-tight text-outline hover:text-on-surface transition-all duration-300" href="#">Tính năng</a>
+<a class="font-headline font-semibold tracking-tight text-outline hover:text-on-surface transition-all duration-300" href="#">Bảng giá</a>
+</div>
+<a class="text-primary font-headline font-semibold hover:bg-surface-container-low px-6 py-2 rounded-full transition-transform active:scale-95" href="#">Login</a>
+</div>
+</header>
+<main class="min-h-screen flex flex-col md:flex-row pt-16 md:pt-0">
+<!-- Side 1: Atmospheric Experience -->
+<section class="md:w-5/12 atmospheric-glow flex flex-col items-center justify-center p-12 text-on-primary min-h-[353px] md:min-h-screen relative">
+<!-- Glow Orbs -->
+<div class="glow-orb w-[400px] h-[400px] bg-secondary-container -top-20 -left-20"></div>
+<div class="glow-orb w-[300px] h-[300px] bg-tertiary-fixed-dim -bottom-10 -right-10"></div>
+<div class="relative z-10 text-center md:text-left">
+<div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 mb-8 mx-auto md:mx-0">
+<span class="font-headline text-4xl font-extrabold tracking-tighter">RP</span>
+</div>
+<h1 class="font-headline text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 leading-tight">
+                    Tạo tài khoản<br/>doanh nghiệp
+                </h1>
+<p class="text-primary-fixed font-light text-lg max-w-sm mx-auto md:mx-0 leading-relaxed opacity-90">
+                    Bắt đầu hành trình tìm kiếm nhân tài với công nghệ AI tiên tiến và trải nghiệm tuyển dụng tinh tế nhất.
+                </p>
+<div class="mt-12 hidden md:block">
+<div class="flex items-center gap-4 mb-6">
+<div class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-white">bolt</span>
+</div>
+<div>
+<p class="font-semibold text-white">Kết nối nhanh chóng</p>
+<p class="text-sm text-primary-fixed/80">Tiếp cận 1M+ ứng viên tiềm năng</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-white">analytics</span>
+</div>
+<div>
+<p class="font-semibold text-white">Phân tích chuyên sâu</p>
+<p class="text-sm text-primary-fixed/80">Dữ liệu thị trường thời gian thực</p>
+</div>
+</div>
+</div>
+</div>
+<div class="absolute bottom-12 left-12 right-12 hidden lg:block">
+<div class="p-6 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10">
+<p class="text-sm italic opacity-80">"Aura đã thay đổi hoàn toàn cách chúng tôi tiếp cận nhân sự chất lượng cao. Một giao diện tuyệt vời."</p>
+<div class="mt-4 flex items-center gap-3">
+<img class="w-8 h-8 rounded-full object-cover" data-alt="Professional portrait of a male tech executive in a light blue shirt with soft studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdY6Oi9b5hwNw1wGf7ssd2Q6uEpwwtIexlGnK4u1cOz2Y8nhKgHJfeieL8UOVyFd9nHOxoi_9h-F7MbY6HE010dpIq1W1oMVKV1GrtUTPGfWc-Rk3IYCB_L3cdBJkjGZEa9HrLwhJ-PhhknwQgHJhSAhYotcIE0xAzpNBr-fOzjjDKH9UEwORAJ8hCNO0hY0SrpTzTWi8JSuRtPt-v8H1y1AKeo--Ta-XdA-0pRJrwXpD7coryiqHxzudM7P_8vlpF3-O2Esx5bAk"/>
+<span class="text-xs font-semibold">Giám đốc Nhân sự, TechCorp</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Side 2: Registration Form -->
+<section class="md:w-7/12 flex items-center justify-center bg-surface p-6 md:p-12 lg:p-24">
+<div class="w-full max-w-md">
+<div class="mb-10 text-center md:text-left">
+<h2 class="font-headline text-3xl font-bold text-on-surface mb-2">Đăng ký ngay</h2>
+<p class="text-on-surface-variant font-body">Xây dựng đội ngũ trong mơ của bạn ngay hôm nay.</p>
+</div>
+<form class="space-y-6">
+<div class="space-y-1">
+<label class="text-xs font-semibold uppercase tracking-wider text-outline px-1">Họ và tên</label>
+<input class="w-full px-4 py-4 rounded-xl bg-surface-container-lowest border-none shadow-sm focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all duration-300 placeholder:text-outline-variant text-on-surface" placeholder="Nguyễn Văn A" type="text"/>
+<div class="h-[2px] w-full bg-outline-variant opacity-20"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-1">
+<label class="text-xs font-semibold uppercase tracking-wider text-outline px-1">Tên công ty</label>
+<input class="w-full px-4 py-4 rounded-xl bg-surface-container-lowest border-none shadow-sm focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-outline-variant" placeholder="Công ty Aura" type="text"/>
+<div class="h-[2px] w-full bg-outline-variant opacity-20"></div>
+</div>
+<div class="space-y-1">
+<label class="text-xs font-semibold uppercase tracking-wider text-outline px-1">Số điện thoại</label>
+<input class="w-full px-4 py-4 rounded-xl bg-surface-container-lowest border-none shadow-sm focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-outline-variant" placeholder="0901 234 567" type="tel"/>
+<div class="h-[2px] w-full bg-outline-variant opacity-20"></div>
+</div>
+</div>
+<div class="space-y-1">
+<label class="text-xs font-semibold uppercase tracking-wider text-outline px-1">Email công việc</label>
+<input class="w-full px-4 py-4 rounded-xl bg-surface-container-lowest border-none shadow-sm focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-outline-variant" placeholder="name@company.com" type="email"/>
+<div class="h-[2px] w-full bg-outline-variant opacity-20"></div>
+</div>
+<div class="space-y-1 relative">
+<label class="text-xs font-semibold uppercase tracking-wider text-outline px-1">Mật khẩu</label>
+<div class="relative">
+<input class="w-full px-4 py-4 rounded-xl bg-surface-container-lowest border-none shadow-sm focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-outline-variant" placeholder="••••••••" type="password"/>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-outline" type="button">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</div>
+<div class="h-[2px] w-full bg-outline-variant opacity-20"></div>
+</div>
+<div class="flex items-start gap-3 py-2">
+<input class="mt-1 w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" id="terms" type="checkbox"/>
+<label class="text-sm text-on-surface-variant leading-relaxed" for="terms">
+                            Tôi đồng ý với <a class="text-primary font-medium hover:underline" href="#">Điều khoản dịch vụ</a> và <a class="text-primary font-medium hover:underline" href="#">Chính sách bảo mật</a> của Aura.
+                        </label>
+</div>
+<button class="w-full py-5 bg-gradient-to-r from-primary to-primary-container text-white font-headline font-bold text-sm tracking-widest rounded-full shadow-lg shadow-primary/20 hover:shadow-primary/40 active:scale-[0.98] transition-all duration-300" type="submit">
+                        ĐĂNG KÝ DOANH NGHIỆP
+                    </button>
+</form>
+<div class="mt-12 text-center">
+<p class="text-on-surface-variant text-sm">
+                        Đã có tài khoản doanh nghiệp? 
+                        <a class="text-primary font-bold ml-1 hover:underline underline-offset-4" href="#">Đăng nhập ngay</a>
+</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer Anchor -->
+<footer class="w-full border-t border-slate-100 bg-slate-50">
+<div class="flex flex-col md:flex-row justify-between items-center px-12 py-8 gap-4 max-w-7xl mx-auto">
+<div class="flex items-center gap-2">
+<span class="font-headline font-bold text-on-surface">Aura Recruitment</span>
+<span class="text-slate-400 text-sm">| Atmospheric Precision.</span>
+</div>
+<div class="flex gap-8">
+<a class="text-slate-400 text-sm hover:text-primary transition-colors font-body" href="#">Privacy</a>
+<a class="text-slate-400 text-sm hover:text-primary transition-colors font-body" href="#">Terms</a>
+<a class="text-slate-400 text-sm hover:text-primary transition-colors font-body" href="#">Support</a>
+</div>
+<p class="text-slate-400 text-xs font-body">© 2024 Aura Recruitment. All rights reserved.</p>
+</div>
+</footer>
+</body></html>

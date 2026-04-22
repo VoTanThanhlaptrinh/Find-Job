@@ -1,40 +1,23 @@
-<section class="overview-page">
-  <header class="overview-head">
-    <h1>{{ 'recruiterOverview.title' | t }}</h1>
-    <p>{{ 'recruiterOverview.subtitle' | t }}</p>
-  </header>
+<main class="bg-re-background min-h-screen p-6 md:p-10 text-re-on-surface">
+  <section class="max-w-6xl mx-auto space-y-6">
+    <header>
+      <h1 class="text-2xl md:text-3xl font-bold">Tong quan recruiter</h1>
+      <p class="text-re-on-surface-variant mt-1">Du lieu hien thi tu cac API recruiter hien co</p>
+    </header>
 
-  <div class="metric-grid">
-    @for (metric of metrics(); track metric.titleKey) {
-      <article class="metric-card">
-        <p class="metric-title">{{ metric.titleKey | t }}</p>
-        <p class="metric-value">{{ metric.value }}</p>
-        <p class="metric-trend">{{ metric.trendKey | t }}</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+      <article
+        *ngFor="let metric of metrics()"
+        class="bg-re-surface-container-lowest border border-re-outline-variant/20 p-5 re-rounded-2xl"
+      >
+        <p class="text-sm text-re-on-surface-variant">{{ metric.titleKey }}</p>
+        <p class="text-2xl font-bold mt-2">{{ metric.value }}</p>
+        <p class="text-xs mt-2 text-re-on-surface-variant">{{ metric.trendKey }}</p>
       </article>
-    }
-  </div>
+    </div>
 
-  <div class="placeholder-grid">
-    <article class="placeholder-card tall-card">
-      <h2>{{ 'recruiterOverview.performanceTitle' | t }}</h2>
-      <div class="white-panel p-3 text-sm text-slate-600">
-        <ul class="list-disc pl-5 space-y-2">
-          <li>{{ 'recruiterOverview.performanceItems.first' | t }}</li>
-          <li>{{ 'recruiterOverview.performanceItems.second' | t }}</li>
-          <li>{{ 'recruiterOverview.performanceItems.third' | t }}</li>
-        </ul>
-      </div>
-    </article>
-
-    <article class="placeholder-card">
-      <h2>{{ 'recruiterOverview.recentActivityTitle' | t }}</h2>
-      <div class="white-panel p-3 text-sm text-slate-600">
-        <ul class="space-y-2">
-          <li>• {{ 'recruiterOverview.recentActivities.first' | t }}</li>
-          <li>• {{ 'recruiterOverview.recentActivities.second' | t }}</li>
-          <li>• {{ 'recruiterOverview.recentActivities.third' | t }}</li>
-        </ul>
-      </div>
-    </article>
-  </div>
-</section>
+    <div class="bg-re-surface-container-low p-4 re-rounded-xl text-sm text-re-on-surface-variant">
+      Hien tai API recruiter moi cap metric dem so tin dang dang. Cac metric con lai can endpoint rieng.
+    </div>
+  </section>
+</main>

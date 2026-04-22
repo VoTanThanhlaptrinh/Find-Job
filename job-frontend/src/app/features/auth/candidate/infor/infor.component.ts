@@ -35,6 +35,5 @@ export class InforComponent {
   }
 
   onMenuItemClick(): void {
-    // Keep sidebar open on desktop, logic preserved
   }
 }

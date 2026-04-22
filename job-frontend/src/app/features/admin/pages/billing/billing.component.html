@@ -1,266 +1,135 @@
-<div class="max-w-7xl mx-auto h-full">
-  <div class="p-8 space-y-12 max-w-7xl mx-auto">
-    <!-- Header Section -->
-    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
-      <div>
-        <h2 class="text-4xl font-extrabold tracking-tight text-slate-900 font-manrope">Billing &amp; Subscriptions</h2>
-        <p class="text-slate-500 mt-2 max-w-xl text-lg">Manage your global service tiers, pricing models, and monitor recent financial flows.</p>
-      </div>
-      <button class="bg-blue-600 text-white px-8 py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-blue-700 active:scale-95 transition-all shadow-lg shadow-blue-600/30 w-full md:w-auto">
-        <span class="material-symbols-outlined text-sm">edit</span>
-        Edit Tier Pricing
-      </button>
+<main class="bg-ad-surface min-h-screen p-6 md:p-10 text-ad-on-surface">
+  <section class="max-w-7xl mx-auto space-y-6">
+    <header>
+      <h1 class="text-2xl md:text-3xl font-bold">Billing</h1>
+      <p class="text-ad-on-surface-variant mt-1">Du lieu tu admin/billing APIs</p>
+    </header>
+
+    <div *ngIf="isLoadingSummary" class="bg-ad-surface-container-low p-4 ad-rounded-xl">Dang tai summary...</div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4" *ngIf="summary as data">
+      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl">
+        <p class="text-sm text-ad-on-surface-variant">MRR</p>
+        <p class="text-2xl font-bold mt-1">{{ data.monthlyRecurringRevenue | number }}</p>
+      </article>
+      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl">
+        <p class="text-sm text-ad-on-surface-variant">MRR Growth</p>
+        <p class="text-2xl font-bold mt-1">{{ data.mrrGrowthPct }}%</p>
+      </article>
+      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl">
+        <p class="text-sm text-ad-on-surface-variant">Active subscriptions</p>
+        <p class="text-2xl font-bold mt-1">{{ data.activeSubscriptions }}</p>
+      </article>
     </div>
-    <!-- Pricing Tiers Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <!-- Basic Card -->
-      <div class="bg-white rounded-2xl p-8 flex flex-col h-full relative group border border-slate-200 hover:border-blue-600/30 transition-colors shadow-sm">
-        <div class="flex justify-between items-start mb-6">
-          <div>
-            <span class="text-blue-600 text-xs font-black uppercase tracking-widest bg-blue-50 px-3 py-1 rounded-full">Standard</span>
-            <h3 class="text-2xl font-extrabold mt-4 text-slate-900">Basic</h3>
-          </div>
-          <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
-            <span class="material-symbols-outlined">rocket</span>
-          </div>
-        </div>
-        <div class="mb-8">
-          <span class="text-5xl font-black tracking-tighter text-slate-900">$499</span>
-          <span class="text-slate-500 text-base font-semibold">/month</span>
-        </div>
-        <ul class="space-y-4 flex-1 mb-8">
-          <li class="flex items-center gap-3 text-base font-medium text-slate-900">
-            <div class="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
-              <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'wght' 600;">check</span>
-            </div>
-            Up to 10 Job Postings
-          </li>
-          <li class="flex items-center gap-3 text-base font-medium text-slate-900">
-            <div class="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
-              <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'wght' 600;">check</span>
-            </div>
-            Standard Talent Pool
-          </li>
-          <li class="flex items-center gap-3 text-base font-medium text-slate-900">
-            <div class="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
-              <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'wght' 600;">check</span>
-            </div>
-            Email Support
-          </li>
-        </ul>
-        <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-          <div class="bg-blue-600 h-full w-[15%] rounded-full"></div>
-        </div>
+
+    <section class="space-y-3">
+      <h2 class="text-lg font-semibold">Tiers</h2>
+      <div *ngIf="isLoadingTiers" class="bg-ad-surface-container-low p-4 ad-rounded-xl">Dang tai tiers...</div>
+      <div *ngIf="!isLoadingTiers && tiers.length === 0" class="bg-ad-surface-container-low p-4 ad-rounded-xl text-ad-on-surface-variant">
+        Khong co du lieu tiers.
       </div>
-      <!-- Pro Card (HIGHLIGHTED) -->
-      <div class="bg-blue-600 rounded-2xl p-8 flex flex-col h-full relative overflow-hidden shadow-xl shadow-blue-600/20 transform md:-translate-y-4">
-        <div class="absolute top-0 right-0 bg-white text-blue-600 px-4 py-1.5 rounded-bl-xl text-[10px] font-black uppercase tracking-widest shadow-sm">Popular</div>
-        <div class="flex justify-between items-start mb-6 relative z-10">
-          <div>
-            <span class="text-white text-xs font-black uppercase tracking-widest bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">Advanced</span>
-            <h3 class="text-2xl font-extrabold mt-4 text-white">Pro</h3>
+      <div *ngIf="!isLoadingTiers && tiers.length > 0" class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <article
+          *ngFor="let tier of tiers; trackBy: trackByTier"
+          class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-5 ad-rounded-xl"
+        >
+          <div class="flex items-center justify-between">
+            <h3 class="font-semibold text-lg">{{ tier.name }}</h3>
+            <span class="text-xs px-2 py-1 ad-rounded-full bg-ad-primary-fixed text-ad-on-primary-fixed">{{ tier.badge }}</span>
           </div>
-          <div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white">
-            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bolt</span>
+          <p class="text-ad-on-surface-variant mt-2">{{ tier.priceMonthly | number }} {{ tier.currency }}/month</p>
+          <p class="text-sm mt-1">Usage: {{ tier.usagePct }}%</p>
+          <ul class="mt-3 space-y-1 text-sm">
+            <li *ngFor="let feature of tier.features">- {{ feature }}</li>
+          </ul>
+          <div class="mt-4 space-y-3 border-t border-ad-outline-variant/10 pt-3">
+            <div>
+              <label [for]="'tier-price-' + tier.id" class="text-xs text-ad-on-surface-variant">Price monthly</label>
+              <input
+                #priceInput
+                [id]="'tier-price-' + tier.id"
+                type="number"
+                min="1"
+                [value]="tier.priceMonthly"
+                title="Tier monthly price"
+                placeholder="Monthly price"
+                class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2 text-sm"
+              />
+            </div>
+            <div>
+              <label [for]="'tier-features-' + tier.id" class="text-xs text-ad-on-surface-variant">Features (comma separated)</label>
+              <input
+                #featuresInput
+                [id]="'tier-features-' + tier.id"
+                type="text"
+                [value]="tier.features.join(', ')"
+                title="Tier features"
+                placeholder="feature 1, feature 2"
+                class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2 text-sm"
+              />
+            </div>
+            <button
+              type="button"
+              class="w-full px-3 py-2 ad-rounded-lg bg-ad-primary text-ad-on-primary text-sm disabled:opacity-40"
+              [disabled]="updatingTierId === tier.id"
+              (click)="saveTier(tier, priceInput.value, featuresInput.value)"
+            >
+              {{ updatingTierId === tier.id ? 'Saving...' : 'Save Tier' }}
+            </button>
           </div>
-        </div>
-        <div class="mb-8 relative z-10">
-          <span class="text-5xl font-black tracking-tighter text-white">$1,299</span>
-          <span class="text-white/80 text-base font-semibold">/month</span>
-        </div>
-        <ul class="space-y-4 flex-1 mb-8 relative z-10">
-          <li class="flex items-center gap-3 text-base font-medium text-white">
-            <div class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-white backdrop-blur-sm">
-              <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'wght' 600;">check</span>
-            </div>
-            Unlimited Job Postings
-          </li>
-          <li class="flex items-center gap-3 text-base font-medium text-white">
-            <div class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-white backdrop-blur-sm">
-              <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'wght' 600;">check</span>
-            </div>
-            AI Talent Matching
-          </li>
-          <li class="flex items-center gap-3 text-base font-medium text-white">
-            <div class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-white backdrop-blur-sm">
-              <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'wght' 600;">check</span>
-            </div>
-            Dedicated Account Manager
-          </li>
-          <li class="flex items-center gap-3 text-base font-medium text-white">
-            <div class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-white backdrop-blur-sm">
-              <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'wght' 600;">check</span>
-            </div>
-            Analytics Dashboard
-          </li>
-        </ul>
-        <div class="h-1.5 w-full bg-white/20 rounded-full overflow-hidden relative z-10">
-          <div class="bg-white h-full w-[65%] rounded-full shadow-[0_0_10px_rgba(255,255,255,0.8)]"></div>
-        </div>
-        <div class="absolute top-[-50%] right-[-50%] w-full h-full bg-gradient-to-bl from-white/10 to-transparent rounded-full blur-3xl pointer-events-none"></div>
-      </div>
-      <!-- Enterprise Card -->
-      <div class="bg-white rounded-2xl p-8 flex flex-col h-full relative border border-slate-200 hover:border-blue-600/30 transition-colors shadow-sm">
-        <div class="flex justify-between items-start mb-6">
-          <div>
-            <span class="text-slate-600 text-xs font-black uppercase tracking-widest bg-slate-100 px-3 py-1 rounded-full">Bespoke</span>
-            <h3 class="text-2xl font-extrabold mt-4 text-slate-900">Enterprise</h3>
-          </div>
-          <div class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700">
-            <span class="material-symbols-outlined">corporate_fare</span>
-          </div>
-        </div>
-        <div class="mb-8">
-          <span class="text-5xl font-black tracking-tighter text-slate-900">$4,999</span>
-          <span class="text-slate-500 text-base font-semibold">/month</span>
-        </div>
-        <ul class="space-y-4 flex-1 mb-8">
-          <li class="flex items-center gap-3 text-base font-medium text-slate-900">
-            <div class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-slate-700">
-              <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'wght' 600;">check</span>
-            </div>
-            Custom API Integration
-          </li>
-          <li class="flex items-center gap-3 text-base font-medium text-slate-900">
-            <div class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-slate-700">
-              <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'wght' 600;">check</span>
-            </div>
-            White-label Portal
-          </li>
-          <li class="flex items-center gap-3 text-base font-medium text-slate-900">
-            <div class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-slate-700">
-              <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'wght' 600;">check</span>
-            </div>
-            Global Compliance Suite
-          </li>
-        </ul>
-        <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-          <div class="bg-slate-800 h-full w-[100%] rounded-full"></div>
-        </div>
-      </div>
-    </div>
-    <!-- Recent Transactions Section -->
-    <section class="space-y-6 pt-6">
-      <div class="flex items-center justify-between">
-        <h3 class="text-2xl font-extrabold text-slate-900">Recent Transactions</h3>
-        <button class="text-blue-600 font-bold hover:underline flex items-center gap-1 bg-blue-50 px-4 py-2 rounded-lg">
-          View All
-          <span class="material-symbols-outlined text-sm">arrow_forward</span>
-        </button>
-      </div>
-      <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
-            <thead>
-              <tr class="bg-slate-50 border-b border-slate-200">
-                <th class="px-6 py-4 text-xs font-black uppercase tracking-wider text-slate-500">Transaction ID</th>
-                <th class="px-6 py-4 text-xs font-black uppercase tracking-wider text-slate-500">Employer</th>
-                <th class="px-6 py-4 text-xs font-black uppercase tracking-wider text-slate-500">Package</th>
-                <th class="px-6 py-4 text-xs font-black uppercase tracking-wider text-slate-500 text-right">Amount</th>
-                <th class="px-6 py-4 text-xs font-black uppercase tracking-wider text-slate-500">Date</th>
-                <th class="px-6 py-4 text-xs font-black uppercase tracking-wider text-slate-500">Status</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100">
-              <tr class="hover:bg-blue-50/50 transition-colors group">
-                <td class="px-6 py-5 text-sm font-semibold text-blue-600">#TX-90234</td>
-                <td class="px-6 py-5">
-                  <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded bg-blue-50 flex items-center justify-center font-bold text-xs text-blue-600">N</div>
-                    <span class="text-sm font-bold text-slate-900">Nexus Core Inc.</span>
-                  </div>
-                </td>
-                <td class="px-6 py-5"><span class="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 bg-blue-50 text-blue-600 rounded-full border border-blue-200">PRO</span></td>
-                <td class="px-6 py-5 text-sm font-extrabold text-right text-slate-900">$1,299.00</td>
-                <td class="px-6 py-5 text-sm text-slate-500 font-medium">Oct 24, 2023</td>
-                <td class="px-6 py-5">
-                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Paid
-                  </span>
-                </td>
-              </tr>
-              <tr class="hover:bg-blue-50/50 transition-colors group">
-                <td class="px-6 py-5 text-sm font-semibold text-blue-600">#TX-90235</td>
-                <td class="px-6 py-5">
-                  <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded bg-slate-100 flex items-center justify-center font-bold text-xs text-slate-700">G</div>
-                    <span class="text-sm font-bold text-slate-900">Global Logistics</span>
-                  </div>
-                </td>
-                <td class="px-6 py-5"><span class="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 bg-slate-100 text-slate-700 rounded-full border border-slate-200">BASIC</span></td>
-                <td class="px-6 py-5 text-sm font-extrabold text-right text-slate-900">$499.00</td>
-                <td class="px-6 py-5 text-sm text-slate-500 font-medium">Oct 23, 2023</td>
-                <td class="px-6 py-5">
-                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-50 text-red-700 text-xs font-bold border border-red-200">
-                    <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> Failed
-                  </span>
-                </td>
-              </tr>
-              <tr class="hover:bg-blue-50/50 transition-colors group">
-                <td class="px-6 py-5 text-sm font-semibold text-blue-600">#TX-90236</td>
-                <td class="px-6 py-5">
-                  <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded bg-slate-800 flex items-center justify-center font-bold text-xs text-white">V</div>
-                    <span class="text-sm font-bold text-slate-900">Velocity Ventures</span>
-                  </div>
-                </td>
-                <td class="px-6 py-5"><span class="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 bg-slate-800 text-white rounded-full border border-slate-700">ENTERPRISE</span></td>
-                <td class="px-6 py-5 text-sm font-extrabold text-right text-slate-900">$4,999.00</td>
-                <td class="px-6 py-5 text-sm text-slate-500 font-medium">Oct 22, 2023</td>
-                <td class="px-6 py-5">
-                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Paid
-                  </span>
-                </td>
-              </tr>
-              <tr class="hover:bg-blue-50/50 transition-colors group">
-                <td class="px-6 py-5 text-sm font-semibold text-blue-600">#TX-90237</td>
-                <td class="px-6 py-5">
-                  <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded bg-blue-50 flex items-center justify-center font-bold text-xs text-blue-600">S</div>
-                    <span class="text-sm font-bold text-slate-900">Skyline Data</span>
-                  </div>
-                </td>
-                <td class="px-6 py-5"><span class="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 bg-blue-50 text-blue-600 rounded-full border border-blue-200">PRO</span></td>
-                <td class="px-6 py-5 text-sm font-extrabold text-right text-slate-900">$1,299.00</td>
-                <td class="px-6 py-5 text-sm text-slate-500 font-medium">Oct 21, 2023</td>
-                <td class="px-6 py-5">
-                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-bold border border-slate-200">
-                    <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> Refunded
-                  </span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        </article>
       </div>
     </section>
-    <!-- Footer Stats -->
-    <div class="pt-8 flex flex-col md:flex-row gap-6">
-      <div class="flex-1 bg-white p-8 rounded-2xl flex items-center justify-between border border-slate-200 shadow-sm">
-        <div>
-          <span class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Monthly Recurring Revenue</span>
-          <p class="text-4xl font-black text-slate-900 mt-2">$442,890.00</p>
-        </div>
-        <div class="text-right">
-          <span class="text-sm font-bold text-emerald-600 flex items-center justify-end gap-1 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100">
-            <span class="material-symbols-outlined text-sm">trending_up</span>
-            +12.4%
-          </span>
-          <p class="text-[10px] text-slate-500 uppercase font-bold mt-2">vs Last Month</p>
-        </div>
-      </div>
-      <div class="md:w-1/3 bg-slate-900 text-white p-8 rounded-2xl flex items-center justify-between overflow-hidden relative shadow-lg">
-        <div class="relative z-10">
-          <span class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Total Active Subscriptions</span>
-          <p class="text-4xl font-black mt-2">2,841</p>
-        </div>
-        <div class="absolute -right-4 -bottom-4 opacity-10">
-          <span class="material-symbols-outlined text-9xl">groups</span>
-        </div>
-        <div class="absolute inset-0 bg-gradient-to-tr from-blue-600/20 to-transparent pointer-events-none"></div>
-      </div>
-    </div>
-  </div>
 
-</div>
+    <section class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 ad-rounded-xl overflow-hidden">
+      <div class="px-4 py-3 border-b border-ad-outline-variant/10 flex items-center justify-between">
+        <h2 class="text-lg font-semibold">Transactions</h2>
+        <div class="flex items-center gap-3">
+          <label for="transaction-status" class="text-sm text-ad-on-surface-variant">Status</label>
+          <select
+            id="transaction-status"
+            [value]="selectedTransactionStatus"
+            (change)="onTransactionsStatusChange($event)"
+            class="px-3 py-1.5 text-sm border border-ad-outline-variant/30 ad-rounded-lg bg-ad-surface-container-low"
+          >
+            <option value="">all</option>
+            <option value="paid">paid</option>
+            <option value="pending">pending</option>
+            <option value="failed">failed</option>
+          </select>
+          <span class="text-sm text-ad-on-surface-variant">Tong: {{ totalTransactions }}</span>
+        </div>
+      </div>
+
+      <div *ngIf="isLoadingTransactions" class="p-4">Dang tai giao dich...</div>
+      <div *ngIf="!isLoadingTransactions && transactions.length === 0" class="p-4 text-ad-on-surface-variant">
+        Khong co du lieu giao dich.
+      </div>
+      <div *ngIf="!isLoadingTransactions && transactions.length > 0" class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-ad-surface-container-low text-left">
+            <tr>
+              <th class="px-4 py-3">Employer</th>
+              <th class="px-4 py-3">Package</th>
+              <th class="px-4 py-3">Amount</th>
+              <th class="px-4 py-3">Date</th>
+              <th class="px-4 py-3">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let tx of transactions; trackBy: trackByTransaction" class="border-t border-ad-outline-variant/10">
+              <td class="px-4 py-3">
+                <p class="font-medium">{{ tx.employerName }}</p>
+                <p class="text-xs text-ad-on-surface-variant">{{ tx.employerId }}</p>
+              </td>
+              <td class="px-4 py-3">{{ tx.packageName }}</td>
+              <td class="px-4 py-3">{{ tx.amount | number }} {{ tx.currency }}</td>
+              <td class="px-4 py-3">{{ tx.date }}</td>
+              <td class="px-4 py-3">{{ tx.status }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </section>
+</main>

@@ -1,75 +1,9 @@
 @import 'quill/dist/quill.core.css';
 @import 'quill/dist/quill.bubble.css';
 @import 'quill/dist/quill.snow.css';
+@config '../tailwind.config.js';
 @import 'tailwindcss';
-/* @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap"); */
 
-:root {
-  --color-error-container: #fb5151;
-  --color-on-background: #282b51;
-  --color-surface-dim: #cfd1ff;
-  --color-surface-container-lowest: #ffffff;
-  --color-on-surface: #282b51;
-  --color-surface-container-highest: #d9daff;
-  --color-primary-container: #7b9cff;
-  --color-on-error: #ffefee;
-  --color-tertiary: #8e3a8a;
-  --color-outline: #71749e;
-  --color-inverse-on-surface: #9799c6;
-  --color-surface: #f8f5ff;
-  --color-on-tertiary-container: #661466;
-  --color-on-secondary-container: #323aa2;
-  --color-secondary-dim: #3b43aa;
-  --color-on-primary-fixed: #000000;
-  --color-on-primary-container: #001e5a;
-  --color-secondary: #4850b7;
-  --color-on-primary: #f1f2ff;
-  --color-on-secondary: #f3f1ff;
-  --color-tertiary-container: #fe9cf4;
-  --color-surface-container-low: #f1efff;
-  --color-on-surface-variant: #555881;
-  --color-inverse-surface: #06092f;
-  --color-surface-variant: #d9daff;
-  --color-on-error-container: #570008;
-  --color-background: #f8f5ff;
-  --color-error: #b31b25;
-  --color-secondary-container: #cbceff;
-  --color-tertiary-fixed: #fe9cf4;
-  --color-on-tertiary-fixed: #480049;
-  --color-on-secondary-fixed: #1c248e;
-  --color-surface-bright: #f8f5ff;
-  --color-on-primary-fixed-variant: #00266e;
-  --color-primary: #0050d4;
-  --color-surface-container-high: #e0e0ff;
-  --color-tertiary-fixed-dim: #ef8fe5;
-  --color-surface-tint: #0050d4;
-  --color-primary-dim: #0046bb;
-  --color-inverse-primary: #618bff;
-  --color-on-secondary-fixed-variant: #3c45ab;
-  --color-on-tertiary: #ffeef8;
-  --color-secondary-fixed-dim: #bbbfff;
-  --color-outline-variant: #a7aad7;
-  --color-on-tertiary-fixed-variant: #711f6f;
-  --color-error-dim: #9f0519;
-  --color-tertiary-dim: #802d7d;
-  --color-primary-fixed-dim: #658eff;
-  --color-surface-container: #e7e6ff;
-  --color-secondary-fixed: #cbceff;
-  --color-primary-fixed: #7b9cff;
-
-  /* ====================
-     BORDER RADIUS
-     ==================== */
-  --radius-default: 0.125rem;
-  --radius-lg: 0.25rem;
-  --radius-xl: 0.5rem;
-  --radius-full: 0.75rem;
-
-  /* ====================
-     TYPOGRAPHY
-     ==================== */
-  /* Thêm sans-serif làm fallback font mặc định */
-  --font-headline: 'Manrope', sans-serif;
-  --font-body: 'Inter', sans-serif;
-  --font-label: 'Inter', sans-serif;
+.material-symbols-outlined {
+   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }

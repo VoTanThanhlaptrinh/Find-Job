@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { computed, Injectable, signal } from '@angular/core';
-import { Observable, take } from 'rxjs';
+import { finalize, Observable, take } from 'rxjs';
 import { UtilitiesService } from '../../../core/services/utilities.service';
 import {
   ApplyCvWithExistingRequest,
@@ -188,7 +188,7 @@ export class JobService {
       .set('page', pageIndex)
       .set('size', pageSize);
     return this.http.get<JobListApiResponse>(
-      `${this.url}/jobs/applied`,
+      `${this.url}/user/applied`,
       { params, withCredentials: true }
     ).pipe(take(1));
   }

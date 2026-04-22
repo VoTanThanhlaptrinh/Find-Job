@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline": "#737686",
+                    "background": "#f7f9fb",
+                    "on-tertiary-container": "#faecff",
+                    "secondary-container": "#39b8fd",
+                    "on-surface-variant": "#434655",
+                    "surface-dim": "#d8dadc",
+                    "on-tertiary-fixed-variant": "#6900b3",
+                    "on-tertiary-fixed": "#2c0051",
+                    "inverse-on-surface": "#eff1f3",
+                    "on-tertiary": "#ffffff",
+                    "tertiary": "#7a1bc8",
+                    "primary-container": "#2563eb",
+                    "on-primary-container": "#eeefff",
+                    "primary-fixed": "#dbe1ff",
+                    "on-surface": "#191c1e",
+                    "surface-container-highest": "#e0e3e5",
+                    "tertiary-container": "#943fe2",
+                    "surface-container-low": "#f2f4f6",
+                    "secondary-fixed-dim": "#89ceff",
+                    "tertiary-fixed": "#f0dbff",
+                    "surface-container": "#eceef0",
+                    "on-error": "#ffffff",
+                    "surface": "#f7f9fb",
+                    "surface-tint": "#0053db",
+                    "secondary-fixed": "#c9e6ff",
+                    "on-secondary-fixed-variant": "#004c6e",
+                    "surface-bright": "#f7f9fb",
+                    "surface-container-lowest": "#ffffff",
+                    "on-primary-fixed-variant": "#003ea8",
+                    "surface-variant": "#e0e3e5",
+                    "on-secondary-fixed": "#001e2f",
+                    "secondary": "#006591",
+                    "on-secondary": "#ffffff",
+                    "on-background": "#191c1e",
+                    "primary-fixed-dim": "#b4c5ff",
+                    "inverse-primary": "#b4c5ff",
+                    "primary": "#004ac6",
+                    "on-error-container": "#93000a",
+                    "error": "#ba1a1a",
+                    "inverse-surface": "#2d3133",
+                    "on-secondary-container": "#004666",
+                    "on-primary-fixed": "#00174b",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed-dim": "#ddb7ff",
+                    "outline-variant": "#c3c6d7",
+                    "surface-container-high": "#e6e8ea",
+                    "on-primary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "1.5rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen pb-32 overflow-x-hidden">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 flex items-center px-6 h-16 bg-white/70 backdrop-blur-xl shadow-sm shadow-blue-500/5">
+<div class="flex items-center gap-4 w-full max-w-5xl mx-auto">
+<button class="flex items-center justify-center p-2 rounded-full hover:bg-slate-100/50 transition-colors active:scale-95 duration-200 text-blue-600">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-manrope font-bold text-xl tracking-tight text-on-surface">Tạo tin tuyển dụng</h1>
+</div>
+</header>
+<main class="pt-24 px-6 max-w-5xl mx-auto relative">
+<!-- Background Atmospheric Blobs -->
+<div class="absolute -top-24 -left-24 w-96 h-96 bg-primary-fixed opacity-30 blur-[120px] -z-10 rounded-full"></div>
+<div class="absolute top-1/2 -right-24 w-80 h-80 bg-tertiary-fixed opacity-20 blur-[100px] -z-10 rounded-full"></div>
+<div class="space-y-8">
+<!-- Section 1: Thông tin cơ bản -->
+<section class="bg-surface-container-lowest rounded-xl p-8 shadow-xl shadow-blue-900/5 border border-white/50">
+<div class="flex items-center gap-3 mb-8">
+<div class="w-1.5 h-6 bg-primary rounded-full"></div>
+<h2 class="text-xl font-headline font-extrabold text-on-surface tracking-tight">Thông tin cơ bản</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<div class="lg:col-span-2">
+<label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">Tên công việc</label>
+<input class="w-full bg-surface-container-low/50 border-none rounded-xl px-4 py-3.5 focus:ring-2 focus:ring-primary/20 placeholder:text-slate-400 text-on-surface transition-all" placeholder="Ví dụ: Senior Product Designer" type="text"/>
+</div>
+<div>
+<label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">Loại hình</label>
+<select class="w-full bg-surface-container-low/50 border-none rounded-xl px-4 py-3.5 focus:ring-2 focus:ring-primary/20 text-on-surface transition-all appearance-none">
+<option>Toàn thời gian</option>
+<option>Bán thời gian</option>
+<option>Hợp đồng</option>
+<option>Thực tập</option>
+</select>
+</div>
+<div>
+<label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">Mức lương</label>
+<input class="w-full bg-surface-container-low/50 border-none rounded-xl px-4 py-3.5 focus:ring-2 focus:ring-primary/20 placeholder:text-slate-400 text-on-surface transition-all" placeholder="Thỏa thuận hoặc 20M - 30M" type="text"/>
+</div>
+<div>
+<label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">Số lượng</label>
+<input class="w-full bg-surface-container-low/50 border-none rounded-xl px-4 py-3.5 focus:ring-2 focus:ring-primary/20 placeholder:text-slate-400 text-on-surface transition-all" placeholder="01" type="number"/>
+</div>
+<div>
+<label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">Hạn nộp</label>
+<input class="w-full bg-surface-container-low/50 border-none rounded-xl px-4 py-3.5 focus:ring-2 focus:ring-primary/20 text-on-surface transition-all" type="date"/>
+</div>
+<div class="lg:col-span-3">
+<label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">Địa điểm</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-3.5 text-slate-400">location_on</span>
+<input class="w-full bg-surface-container-low/50 border-none rounded-xl pl-12 pr-4 py-3.5 focus:ring-2 focus:ring-primary/20 placeholder:text-slate-400 text-on-surface transition-all" placeholder="Địa chỉ văn phòng làm việc..." type="text"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 2: Chi tiết hồ sơ -->
+<section class="bg-surface-container-lowest rounded-xl p-8 shadow-xl shadow-blue-900/5 border border-white/50">
+<div class="flex items-center gap-3 mb-8">
+<div class="w-1.5 h-6 bg-tertiary rounded-full"></div>
+<h2 class="text-xl font-headline font-extrabold text-on-surface tracking-tight">Chi tiết hồ sơ</h2>
+</div>
+<div class="space-y-8">
+<div>
+<label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">Mô tả công việc</label>
+<textarea class="w-full bg-surface-container-low/50 border-none rounded-xl px-4 py-4 focus:ring-2 focus:ring-primary/20 placeholder:text-slate-400 text-on-surface transition-all resize-none" placeholder="Mô tả các trách nhiệm chính của vị trí này..." rows="4"></textarea>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div>
+<label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">Yêu cầu</label>
+<textarea class="w-full bg-surface-container-low/50 border-none rounded-xl px-4 py-4 focus:ring-2 focus:ring-primary/20 placeholder:text-slate-400 text-on-surface transition-all resize-none" placeholder="- Kinh nghiệm 2 năm...
+- Sử dụng thành thạo Figma..." rows="5"></textarea>
+</div>
+<div>
+<label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">Quyền lợi</label>
+<textarea class="w-full bg-surface-container-low/50 border-none rounded-xl px-4 py-4 focus:ring-2 focus:ring-primary/20 placeholder:text-slate-400 text-on-surface transition-all resize-none" placeholder="- Lương thưởng tháng 13...
+- Bảo hiểm cao cấp..." rows="5"></textarea>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Visual Side Card (Editorial Element) -->
+<div class="hidden lg:block fixed top-24 right-8 w-64">
+<div class="bg-white/40 backdrop-blur-md rounded-xl p-6 border border-white/60 shadow-lg shadow-blue-900/5">
+<img class="w-full h-32 object-cover rounded-lg mb-4 opacity-80" data-alt="professional workspace with high-end designer equipment and soft natural light coming through a window" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdTL8Wcl7vD7RtixGy_wAsBTmAnZkrj7X5SCUfwgPvBu9sZjypOpVDgL88DgWDdFWbK6b4AhUXc3Ux1Th5U4O_Os6uP4ar01QiwQd4aTMg2ohw1Toaax2lLSf-N_CeMLCwyDVTyVfCHLRnIgu65GINplo8x9U2Mfp9UZI5qL6Id0h1UpJxy4JjW3XGQC_5JWtz3HPCKMnaEjtgfpguNtDK6FyYkphwAi3TIedXPA3nZqHEV9T07prhz7ulZIt__0p2cpgE2hmhWhI"/>
+<h3 class="text-sm font-headline font-bold text-on-surface mb-2">Mẹo tuyển dụng</h3>
+<p class="text-xs text-on-surface-variant leading-relaxed">Sử dụng các từ khóa chuyên môn giúp tin tuyển dụng của bạn dễ dàng tiếp cận đúng ứng cử viên tiềm năng hơn.</p>
+</div>
+</div>
+</main>
+<!-- Floating Action Bar -->
+<div class="fixed bottom-10 left-1/2 -translate-x-1/2 z-50">
+<div class="flex items-center gap-4 bg-white/80 backdrop-blur-2xl px-6 py-4 rounded-full shadow-[0_-10px_40px_rgba(0,74,198,0.12)] border border-white/50 min-w-[320px] justify-between">
+<button class="flex items-center gap-2 text-slate-500 font-label font-medium px-4 py-2 rounded-full hover:bg-slate-100/50 transition-all active:scale-95">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+<span>Xem trước</span>
+</button>
+<button class="flex items-center gap-2 bg-primary-container text-white font-label font-bold px-8 py-3 rounded-full shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 transition-all active:scale-95 duration-200">
+<span class="material-symbols-outlined text-[20px]">save</span>
+<span>Lưu công việc</span>
+</button>
+</div>
+</div>
+<!-- Background Decoration -->
+<div class="fixed bottom-0 right-0 w-full h-1 bg-gradient-to-r from-primary to-tertiary opacity-20"></div>
+</body></html>

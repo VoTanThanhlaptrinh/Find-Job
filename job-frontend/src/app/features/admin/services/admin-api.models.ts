@@ -37,11 +37,7 @@ export interface AdminRefreshPayload {
   refreshToken: string;
 }
 
-export interface AdminRefreshData {
-  accessToken: string;
-  refreshToken: string;
-  expiresIn: number;
-}
+export type AdminRefreshData = AdminLoginData;
 
 export interface AdminLogoutPayload {
   refreshToken: string;
@@ -136,9 +132,8 @@ export interface AdminUpdateEmployerStatusPayload {
 }
 
 export interface AdminUpdateEmployerStatusData {
-  id: string;
-  accountStatus: string;
-  updatedAt: string;
+  id: string | number;
+  updated: boolean;
 }
 
 export interface AdminEmployersExportQuery {
@@ -150,7 +145,7 @@ export interface AdminEmployersExportQuery {
 
 export interface AdminEmployersExportData {
   downloadUrl: string;
-  expiresAt: string;
+  expiresAt?: string;
 }
 
 export interface AdminJobSeekersMetrics {
@@ -240,8 +235,8 @@ export interface AdminCreateJobPayload {
 
 export interface AdminCreateJobData {
   id: string;
-  status: string;
   created: boolean;
+  status?: string;
 }
 
 export interface AdminUpdateJobStatusPayload {
@@ -287,7 +282,7 @@ export interface AdminUpdateBillingTierPayload {
 export interface AdminUpdateBillingTierData {
   id: string;
   updated: boolean;
-  updatedAt: string;
+  updatedAt?: string;
 }
 
 export interface AdminBillingTransactionsQuery {
@@ -302,7 +297,7 @@ export interface AdminBillingTransactionItem {
   id: string;
   employerId: string;
   employerName: string;
-  package: string;
+  packageName: string;
   amount: number;
   currency: string;
   date: string;

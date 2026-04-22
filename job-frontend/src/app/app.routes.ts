@@ -20,18 +20,14 @@ import { ApplyCvComponent } from './features/jobs/pages/apply-cv/apply-cv.compon
 import { LoginCallbackComponent } from './features/auth/pages/login-callback/login-callback.component';
 import { ForgotPassComponent } from './features/auth/pages/forgot-pass/forgot-pass.component';
 import { ResetPassComponent } from './features/auth/pages/reset-pass/reset-pass.component';
-import { CandidateListComponent } from './features/recruiter/pages/candidate-list/candidate-list.component';
 import { userLoginGuard } from './core/guards/user-login.guard';
-import { hirerGuard } from './core/guards/hirer-guard.guard';
-import { RecruiterLoginComponent } from './features/recruiter/pages/recruiter-login/recruiter-login.component';
-import { RecruiterRegisterComponent } from './features/recruiter/pages/recruiter-register/recruiter-register.component';
-import { recruiterDashboardRoutes } from './features/recruiter/pages/recruiter-dashboard/recruiter-dashboard.routes';
 import { ApplySuccessComponent } from './shared/components/apply-success/apply-success.component';
 export const routes: Routes = [
   { path: '', component: HomeComponent },
-  { path: 'recruiter/login', component: RecruiterLoginComponent },
-  { path: 'recruiter/register', component: RecruiterRegisterComponent },
-  ...recruiterDashboardRoutes,
+  {
+    path: 'recruiter',
+    loadChildren: () => import('./features/recruiter/recruiter.routes').then((m) => m.recruiterRoutes)
+  },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'about', component: AboutUsComponent },
@@ -41,7 +37,7 @@ export const routes: Routes = [
   { path: 'category', component: CategoryComponent },
   { path: 'verify', component: VerifyComponent },
   { path: 'activate', component: ActivateComponent },
-  { path: 'post-job', redirectTo: 'recruiter/dashboard/jobs/post-job', pathMatch: 'full' },
+  { path: 'post-job', redirectTo: 'recruiter/jobs/post-job', pathMatch: 'full' },
   { path: 'forgot-pass', component: ForgotPassComponent },
   { path: 'reset-pass/:random', component: ResetPassComponent },
   { path: 'login-callback', component: LoginCallbackComponent },
@@ -51,19 +47,14 @@ export const routes: Routes = [
 
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'profile' },
-      { path: 'profile', component: ProfileComponent, canActivate: [userLoginGuard] },
+      { path: 'profile', component: ProfileComponent},
       { path: 'change-password', component: ChangePassComponent },
       { path: 'cv', component: CvUiComponent },
       { path: 'recommended-jobs', component: RecommendedJobsComponent },
       { path: 'history-apply', component: HistoryApplyComponent }
     ]
   },
-  {
-    path: 'candidate-list',
-    component: CandidateListComponent,
-    canActivate: [hirerGuard],
-  }
-  ,
+  { path: 'candidate-list', redirectTo: 'recruiter/candidates', pathMatch: 'full' },
   { path: 'single/:id', component: JobSingleComponent },
   { path: 'apply-cv/:id', component: ApplyCvComponent },
   { path: 'apply-success', component: ApplySuccessComponent },

@@ -7,6 +7,7 @@ import com.job_web.dto.admin.auth.AdminRefreshRequest;
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.service.admin.AdminService;
 import com.job_web.utills.MessageUtils;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,11 +25,12 @@ public class AdminAuthController {
     private final AdminService adminService;
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<AdminLoginResponse>> login(@RequestBody AdminLoginRequest request) {
-        AdminLoginResponse response = adminService.login(request);
+    public ResponseEntity<ApiResponse<String>> login(@RequestBody AdminLoginRequest request,
+                                                     HttpServletResponse response) {
+        String accessToken = adminService.login(request, response);
         return ResponseEntity.ok(new ApiResponse<>(
                 MessageUtils.getMessage("message.success"), 
-                response, 
+                accessToken, 
                 HttpStatus.OK.value()
         ));
     }

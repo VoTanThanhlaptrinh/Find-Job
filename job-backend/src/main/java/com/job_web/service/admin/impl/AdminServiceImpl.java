@@ -42,16 +42,21 @@ import com.job_web.models.User;
 import com.job_web.service.admin.AdminService;
 import com.job_web.service.security.JwtService;
 import com.job_web.service.security.RefreshTokenService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -75,11 +80,23 @@ public class AdminServiceImpl implements AdminService {
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
 
-    @Override public AdminLoginResponse login(AdminLoginRequest r) {
+    @Value("${app.cookie.secure}")
+    private boolean isSecure;
+
+    @Override public String login(AdminLoginRequest r, HttpServletResponse response) {
         User u = userRepository.findByEmail(r.getEmail()).orElseThrow(() -> new ResourceNotFoundException("auth.email.not_found"));
         validateAdminRole(u);
         if (!encoder.matches(r.getPassword(), u.getPassword())) throw new BadRequestException("auth.login.wrong_password");
-        return AdminLoginResponse.builder().accessToken(jwtService.generateToken(u)).refreshToken(refreshTokenService.createRefreshToken(u.getEmail())).expiresIn(900).admin(AdminLoginResponse.AdminInfo.builder().id("adm_" + u.getId()).fullName(u.getFullName()).email(u.getEmail()).role("super_admin").lastLoginAt(LocalDateTime.now()).build()).build();
+        String refreshToken = refreshTokenService.createRefreshToken(u.getEmail());
+        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken)
+                .httpOnly(true)
+                .secure(isSecure)
+                .path("/")
+                .sameSite("Lax")
+                .maxAge(Duration.ofDays(7).getSeconds())
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+        return jwtService.generateToken(u);
     }
     @Override public AdminLoginResponse refresh(AdminRefreshRequest r) {
         if (refreshTokenService.isValid(r.getRefreshToken())) {

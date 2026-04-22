@@ -5,7 +5,7 @@ import com.job_web.controller.job.PublicJobController;
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.dto.job.JobCardView;
 import com.job_web.dto.job.JobFilterDTO;
-import com.job_web.service.ai.ApiService;
+import com.job_web.service.cache.HomeCategoryCacheService;
 import com.job_web.service.job.JobQueryService;
 import com.job_web.service.job.JobService;
 import org.junit.jupiter.api.DisplayName;
@@ -50,7 +50,7 @@ class PublicJobControllerTest {
     private JobQueryService jobQueryService;
 
     @MockBean
-    private ApiService apiService;
+    private HomeCategoryCacheService homeCategoryCacheService;
 
     private static final String BASE_URL = "/api/jobs";
 
