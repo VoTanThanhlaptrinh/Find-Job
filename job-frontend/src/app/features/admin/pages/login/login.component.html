@@ -1,103 +1,224 @@
 <!-- Main Content Area -->
-<div role="main" class="flex-grow flex items-center justify-center p-6 md:p-12 lg:p-24 w-full h-screen">
-<div class="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
-<!-- Left Side: Branding & Decorative -->
-<div class="hidden lg:flex flex-col justify-center h-full relative">
-<!-- Asymmetric Background Blob -->
-<div class="absolute -left-12 -top-12 w-[120%] h-[120%] bg-ad-surface-container-low rounded-[40px] -z-10 rotate-[-3deg]"></div>
-<div class="space-y-8 p-12">
-<div class="flex items-center gap-3">
-<span class="material-symbols-outlined text-4xl text-ad-primary" data-icon="bubble_chart" data-weight="fill" style="font-variation-settings: 'FILL' 1;">bubble_chart</span>
-<h1 class="font-ad-headline font-extrabold text-3xl tracking-tight text-ad-on-surface">EliteHire</h1>
-</div>
-<div class="space-y-4">
-<h2 class="font-ad-headline text-5xl font-bold leading-[1.1] text-ad-on-surface tracking-[-0.02em]">Curate your<br/>talent ecosystem.</h2>
-<p class="font-ad-body text-ad-on-surface-variant text-lg max-w-md leading-relaxed">Access the precision tools required to manage elite candidates and streamline your hiring pipeline.</p>
-</div>
-<!-- Decorative Graphic element -->
-<div class="relative w-full aspect-[4/3] mt-12 rounded-[24px] overflow-hidden bg-gradient-to-br from-ad-primary-container to-ad-surface-container-highest shadow-[0_12px_32px_-4px_rgba(40,43,81,0.08)]">
-<div class="absolute inset-0 bg-white/40 backdrop-blur-[2px]"></div>
-<!-- Abstract UI Shapes representing data/candidates -->
-<div class="absolute top-8 left-8 w-3/4 h-16 bg-ad-surface-container-lowest/80 backdrop-blur-md ad-rounded-xl flex items-center px-6 gap-4 shadow-sm border border-white/50">
-<div class="w-10 h-10 ad-rounded-full bg-ad-primary/20 flex items-center justify-center">
-<span class="material-symbols-outlined text-ad-primary text-xl" data-icon="person">person</span>
-</div>
-<div class="flex-1">
-<div class="h-3 w-1/3 bg-ad-on-surface/20 ad-rounded-full mb-2"></div>
-<div class="h-2 w-1/4 bg-ad-on-surface/10 ad-rounded-full"></div>
-</div>
-<div class="h-6 w-16 bg-ad-primary/10 ad-rounded-full"></div>
-</div>
-<div class="absolute top-28 right-8 w-2/3 h-16 bg-ad-surface-container-lowest/80 backdrop-blur-md ad-rounded-xl flex items-center px-6 gap-4 shadow-sm border border-white/50">
-<div class="w-10 h-10 ad-rounded-full bg-ad-tertiary/20 flex items-center justify-center">
-<span class="material-symbols-outlined text-ad-tertiary text-xl" data-icon="star">star</span>
-</div>
-<div class="flex-1">
-<div class="h-3 w-1/2 bg-ad-on-surface/20 ad-rounded-full mb-2"></div>
-<div class="h-2 w-1/3 bg-ad-on-surface/10 ad-rounded-full"></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<!-- Right Side: Login Form -->
-<div class="w-full max-w-md mx-auto">
-<div class="bg-ad-surface-container-lowest rounded-[24px] p-8 md:p-12 shadow-[0_12px_32px_-4px_rgba(40,43,81,0.08)] border border-ad-outline-variant/15 relative overflow-hidden">
-<!-- Mobile Logo -->
-<div class="lg:hidden flex items-center gap-2 mb-8">
-<span class="material-symbols-outlined text-3xl text-ad-primary" data-icon="bubble_chart" data-weight="fill" style="font-variation-settings: 'FILL' 1;">bubble_chart</span>
-<h1 class="font-ad-headline font-extrabold text-2xl tracking-tight text-ad-on-surface">EliteHire</h1>
-</div>
-<div class="mb-10">
-<h2 class="font-ad-headline text-3xl font-bold tracking-tight text-ad-on-surface mb-2">Welcome back</h2>
-<p class="font-ad-body text-ad-on-surface-variant text-sm">Please enter your administrative credentials.</p>
-</div>
-<form class="space-y-6" [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
-<!-- Email Input -->
-<div class="space-y-2">
-<label class="block font-ad-body text-sm font-medium text-ad-on-surface" for="email">Email Address</label>
-<div class="relative">
-<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-<span class="material-symbols-outlined text-ad-on-surface-variant/70 text-xl" data-icon="mail">mail</span>
-</div>
-<input autocomplete="email" class="block w-full pl-11 pr-4 py-3 bg-ad-surface-container-low border-transparent ad-rounded-lg text-ad-on-surface placeholder-ad-on-surface-variant/50 focus:bg-ad-surface-container-lowest focus:ring-0 focus:border-ad-primary/20 focus:outline-none transition-colors duration-200" id="email" formControlName="email" placeholder="admin@elitehire.com" type="email"/>
-</div>
-<p *ngIf="isInvalid('email')" class="text-xs text-red-600">Please enter a valid email address.</p>
-</div>
-<!-- Password Input -->
-<div class="space-y-2">
-<div class="flex items-center justify-between">
-<label class="block font-ad-body text-sm font-medium text-ad-on-surface" for="password">Password</label>
-<a class="font-ad-body text-sm font-medium text-ad-primary hover:text-ad-primary-dim transition-colors" href="#">Forgot Password?</a>
-</div>
-<div class="relative">
-<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-<span class="material-symbols-outlined text-ad-on-surface-variant/70 text-xl" data-icon="lock">lock</span>
-</div>
-<input autocomplete="current-password" class="block w-full pl-11 pr-4 py-3 bg-ad-surface-container-low border-transparent ad-rounded-lg text-ad-on-surface placeholder-ad-on-surface-variant/50 focus:bg-ad-surface-container-lowest focus:ring-0 focus:border-ad-primary/20 focus:outline-none transition-colors duration-200" id="password" formControlName="password" placeholder="********" type="password"/>
-</div>
-<p *ngIf="isInvalid('password')" class="text-xs text-red-600">Password must contain at least 6 characters.</p>
-</div>
-<!-- Remember Me -->
-<div class="flex items-center">
-<input class="h-4 w-4 text-ad-primary bg-ad-surface-container-low border-transparent rounded focus:ring-ad-primary/20 focus:ring-offset-ad-surface-container-lowest" id="remember-me" formControlName="rememberMe" type="checkbox"/>
-<label class="ml-2 block font-ad-body text-sm text-ad-on-surface-variant" for="remember-me">
-                                Remember me for 30 days
-                            </label>
-</div>
-<!-- Submit Button -->
-<button class="w-full flex justify-center items-center py-3.5 px-4 rounded-md shadow-sm font-ad-body text-sm font-semibold text-ad-on-primary bg-gradient-to-br from-ad-primary to-ad-primary-container hover:from-ad-primary-dim hover:to-ad-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ad-primary focus:ring-offset-ad-surface-container-lowest transition-all duration-300 disabled:opacity-60" type="submit" [disabled]="isLoggingIn">
-                            {{ isLoggingIn ? 'Signing In...' : 'Sign In' }}
-                            <span class="material-symbols-outlined ml-2 text-xl" data-icon="arrow_forward">arrow_forward</span>
-</button>
-</form>
-<!-- Bottom Links -->
-<div class="mt-8 text-center">
-<p class="font-ad-body text-sm text-ad-on-surface-variant">
-                            Need portal access? <a class="font-medium text-ad-primary hover:text-ad-primary-dim transition-colors" href="#">Contact IT Support</a>
-</p>
-</div>
-</div>
-</div>
-</div>
+<div
+  role="main"
+  class="flex-grow flex items-center justify-center p-6 md:p-12 lg:p-24 w-full h-screen"
+>
+  <div
+    class="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center"
+  >
+    <!-- Left Side: Branding & Decorative -->
+    <div class="hidden lg:flex flex-col justify-center h-full relative">
+      <!-- Asymmetric Background Blob -->
+      <div
+        class="absolute -left-12 -top-12 w-[120%] h-[120%] bg-ad-surface-container-low rounded-[40px] -z-10 rotate-[-3deg]"
+      ></div>
+      <div class="space-y-8 p-12">
+        <div class="flex items-center gap-3">
+          <span
+            class="material-symbols-outlined text-4xl text-ad-primary"
+            data-icon="bubble_chart"
+            data-weight="fill"
+            style="font-variation-settings: &quot;FILL&quot; 1"
+            >bubble_chart</span
+          >
+          <h1
+            class="font-ad-headline font-extrabold text-3xl tracking-tight text-ad-on-surface"
+          >
+            EliteHire
+          </h1>
+        </div>
+        <div class="space-y-4">
+          <h2
+            class="font-ad-headline text-5xl font-bold leading-[1.1] text-ad-on-surface tracking-[-0.02em]"
+          >
+            Curate your<br />talent ecosystem.
+          </h2>
+          <p
+            class="font-ad-body text-ad-on-surface-variant text-lg max-w-md leading-relaxed"
+          >
+            Access the precision tools required to manage elite candidates and
+            streamline your hiring pipeline.
+          </p>
+        </div>
+        <!-- Decorative Graphic element -->
+        <div
+          class="relative w-full aspect-[4/3] mt-12 rounded-[24px] overflow-hidden bg-gradient-to-br from-ad-primary-container to-ad-surface-container-highest shadow-[0_12px_32px_-4px_rgba(40,43,81,0.08)]"
+        >
+          <div class="absolute inset-0 bg-white/40 backdrop-blur-[2px]"></div>
+          <!-- Abstract UI Shapes representing data/candidates -->
+          <div
+            class="absolute top-8 left-8 w-3/4 h-16 bg-ad-surface-container-lowest/80 backdrop-blur-md ad-rounded-xl flex items-center px-6 gap-4 shadow-sm border border-white/50"
+          >
+            <div
+              class="w-10 h-10 ad-rounded-full bg-ad-primary/20 flex items-center justify-center"
+            >
+              <span
+                class="material-symbols-outlined text-ad-primary text-xl"
+                data-icon="person"
+                >person</span
+              >
+            </div>
+            <div class="flex-1">
+              <div
+                class="h-3 w-1/3 bg-ad-on-surface/20 ad-rounded-full mb-2"
+              ></div>
+              <div class="h-2 w-1/4 bg-ad-on-surface/10 ad-rounded-full"></div>
+            </div>
+            <div class="h-6 w-16 bg-ad-primary/10 ad-rounded-full"></div>
+          </div>
+          <div
+            class="absolute top-28 right-8 w-2/3 h-16 bg-ad-surface-container-lowest/80 backdrop-blur-md ad-rounded-xl flex items-center px-6 gap-4 shadow-sm border border-white/50"
+          >
+            <div
+              class="w-10 h-10 ad-rounded-full bg-ad-tertiary/20 flex items-center justify-center"
+            >
+              <span
+                class="material-symbols-outlined text-ad-tertiary text-xl"
+                data-icon="star"
+                >star</span
+              >
+            </div>
+            <div class="flex-1">
+              <div
+                class="h-3 w-1/2 bg-ad-on-surface/20 ad-rounded-full mb-2"
+              ></div>
+              <div class="h-2 w-1/3 bg-ad-on-surface/10 ad-rounded-full"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Right Side: Login Form -->
+    <div class="w-full max-w-md mx-auto">
+      <div
+        class="bg-ad-surface-container-lowest rounded-[24px] p-8 md:p-12 shadow-[0_12px_32px_-4px_rgba(40,43,81,0.08)] border border-ad-outline-variant/15 relative overflow-hidden"
+      >
+        <!-- Mobile Logo -->
+        <div class="lg:hidden flex items-center gap-2 mb-8">
+          <span
+            class="material-symbols-outlined text-3xl text-ad-primary"
+            data-icon="bubble_chart"
+            data-weight="fill"
+            style="font-variation-settings: &quot;FILL&quot; 1"
+            >bubble_chart</span
+          >
+          <h1
+            class="font-ad-headline font-extrabold text-2xl tracking-tight text-ad-on-surface"
+          >
+            EliteHire
+          </h1>
+        </div>
+        <div class="mb-10">
+          <h2
+            class="font-ad-headline text-3xl font-bold tracking-tight text-ad-on-surface mb-2"
+          >
+            Welcome back
+          </h2>
+          <p class="font-ad-body text-ad-on-surface-variant text-sm">
+            Please enter your administrative credentials.
+          </p>
+        </div>
+        <form
+          class="space-y-6"
+          [formGroup]="loginForm"
+          (ngSubmit)="onSubmit()"
+          novalidate
+        >
+          <!-- Email Input -->
+          <div class="space-y-2">
+            <label
+              class="block font-ad-body text-sm font-medium text-ad-on-surface"
+              for="email"
+              >Email Address</label
+            >
+            <div class="relative">
+              <div
+                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+              >
+                <span
+                  class="material-symbols-outlined text-ad-on-surface-variant/70 text-xl"
+                  data-icon="mail"
+                  >mail</span
+                >
+              </div>
+              <input
+                autocomplete="email"
+                class="block w-full pl-11 pr-4 py-3 bg-ad-surface-container-low border-transparent ad-rounded-lg text-ad-on-surface placeholder-ad-on-surface-variant/50 focus:bg-ad-surface-container-lowest focus:ring-0 focus:border-ad-primary/20 focus:outline-none transition-colors duration-200"
+                id="email"
+                formControlName="email"
+                placeholder="admin@elitehire.com"
+                type="email"
+              />
+            </div>
+            @if (isInvalid('username')) {
+              <p class="text-xs text-red-600">
+                Please enter a valid username.
+              </p>
+            }
+          </div>
+          <!-- Password Input -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <label
+                class="block font-ad-body text-sm font-medium text-ad-on-surface"
+                for="password"
+                >Password</label
+              >
+              <a
+                class="font-ad-body text-sm font-medium text-ad-primary hover:text-ad-primary-dim transition-colors"
+                href="#"
+                >Forgot Password?</a
+              >
+            </div>
+            <div class="flex gap-2 relative">
+              <div
+                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+              >
+                <span
+                  class="material-symbols-outlined text-ad-on-surface-variant/70 text-xl"
+                  data-icon="lock"
+                  >lock</span
+                >
+              </div>
+              <input
+                autocomplete="current-password"
+                class="block w-full pl-11 pr-4 py-3 bg-ad-surface-container-low border-transparent ad-rounded-lg text-ad-on-surface placeholder-ad-on-surface-variant/50 focus:bg-ad-surface-container-lowest focus:ring-0 focus:border-ad-primary/20 focus:outline-none transition-colors duration-200"
+                id="password"
+                formControlName="password"
+                placeholder="********"
+                type="password"
+              />
+            </div>
+            <p *ngIf="isInvalid('password')" class="text-xs text-red-600">
+              Password must contain at least 6 characters.
+            </p>
+          </div>
+          <!-- Submit Button -->
+          <button
+            class="w-full flex justify-center items-center py-3.5 px-4 rounded-md shadow-sm font-ad-body text-sm font-semibold text-ad-on-primary bg-gradient-to-br from-ad-primary to-ad-primary-container hover:from-ad-primary-dim hover:to-ad-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ad-primary focus:ring-offset-ad-surface-container-lowest transition-all duration-300 disabled:opacity-60"
+            type="submit"
+            [disabled]="isLoggingIn"
+          >
+            {{ isLoggingIn ? "Signing In..." : "Sign In" }}
+            <span
+              class="material-symbols-outlined ml-2 text-xl"
+              data-icon="arrow_forward"
+              >arrow_forward</span
+            >
+          </button>
+        </form>
+        <!-- Bottom Links -->
+        <div class="mt-8 text-center">
+          <p class="font-ad-body text-sm text-ad-on-surface-variant">
+            Need portal access?
+            <a
+              class="font-medium text-ad-primary hover:text-ad-primary-dim transition-colors"
+              href="#"
+              >Contact IT Support</a
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

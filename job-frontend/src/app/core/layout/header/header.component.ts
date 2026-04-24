@@ -5,9 +5,9 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
-import {MatMenuModule} from '@angular/material/menu';
-import {MatButtonModule} from '@angular/material/button';
-import { RouterLink } from "@angular/router";
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
+import { Router, RouterLink } from "@angular/router";
 import { I18nService } from '../../i18n/i18n.service';
 import { AppLanguage } from '../../i18n/translations';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
@@ -27,18 +27,20 @@ export class HeaderComponent {
   constructor(
     private auth: AuthService,
     private i18nService: I18nService,
-  ) {}
+    private router: Router
+  ) { }
 
   logout(): void {
     this.auth.logout();
+    this.router.navigate(['/login']);
   }
 
   goInfor(): void {
-    window.location.href = '/infor';
+    this.router.navigate(['/infor']);
   }
 
   goVerify(): void {
-    window.location.href = '/verify';
+    this.router.navigate(['/verify']);
   }
 
   toggleMobileMenu(): void {

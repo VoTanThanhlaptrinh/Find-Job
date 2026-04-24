@@ -14,6 +14,7 @@ import com.job_web.models.Hirer;
 import com.job_web.models.Job;
 import com.job_web.models.User;
 import com.job_web.service.job.JobService;
+import jakarta.persistence.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -154,6 +155,13 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public List<JobCardView> matchJobs(long cvId) {
-        return jobRepository.matchJobs(cvId);
+        List<Tuple> tuples = jobRepository.matchJobs(cvId);
+        return tuples.stream().map(t -> new JobCardView(
+                t.get("id", Number.class).longValue(),
+                t.get("title", String.class),
+                t.get("address", String.class),
+                t.get("salary", String.class),
+                t.get("time", String.class)
+        )).toList();
     }
 }

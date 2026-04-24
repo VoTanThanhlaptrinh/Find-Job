@@ -18,9 +18,8 @@ export class LoginComponent {
     private readonly adminAuthService: AdminAuthService
   ) {
     this.loginForm = this.fb.nonNullable.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      rememberMe: [true],
+      username: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
@@ -28,7 +27,7 @@ export class LoginComponent {
     return this.adminAuthService.isLoggingIn();
   }
 
-  isInvalid(controlName: 'email' | 'password'): boolean {
+  isInvalid(controlName: 'username' | 'password'): boolean {
     const control = this.loginForm.controls[controlName];
     return control.invalid && (control.touched || control.dirty);
   }
@@ -40,6 +39,6 @@ export class LoginComponent {
     }
 
     const payload = this.loginForm.getRawValue();
-    this.adminAuthService.login(payload).pipe(take(1)).subscribe();
+    this.adminAuthService.login(payload).subscribe();
   }
 }

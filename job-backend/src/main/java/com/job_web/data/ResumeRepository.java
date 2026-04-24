@@ -10,7 +10,7 @@ public interface ResumeRepository extends JpaRepository<Resume, Long> {
     @Query(value = """
             select count(*)
             from resume r
-            join user u on r.user_id = u.id and u.status = 'ACTIVE'
+            join users u on r.user_id = u.id and u.status = 'ACTIVE'
             where u.email = ?1
               and r.status = 'ACTIVE'
             """, nativeQuery = true)
@@ -19,7 +19,7 @@ public interface ResumeRepository extends JpaRepository<Resume, Long> {
     @Query(value = """
             select count(*)
             from resume r
-            join user u on r.user_id = u.id and u.status = 'ACTIVE'
+            join users u on r.user_id = u.id and u.status = 'ACTIVE'
             where r.id = ?1
               and u.email = ?2
               and r.status = 'ACTIVE'

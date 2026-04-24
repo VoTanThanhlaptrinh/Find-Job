@@ -138,6 +138,11 @@ public class AuthServiceImpl implements AuthService {
         return loginByRole(loginDTO, request, response, RoleConstants.HIRER);
     }
 
+    @Override
+    public String loginAdmin(LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response) {
+        return loginByRole(loginDTO, request, response, RoleConstants.ADMIN);
+    }
+
     private String loginByRole(LoginDTO loginDTO,
                                HttpServletRequest request,
                                HttpServletResponse response,

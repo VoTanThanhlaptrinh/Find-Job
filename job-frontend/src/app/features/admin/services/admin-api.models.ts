@@ -13,9 +13,8 @@ export interface AdminListPayload<T> {
 }
 
 export interface AdminLoginPayload {
-  email: string;
+  username: string;
   password: string;
-  rememberMe: boolean;
 }
 
 export interface AdminLoginProfile {

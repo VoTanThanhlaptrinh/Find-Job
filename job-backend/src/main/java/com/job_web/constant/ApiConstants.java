@@ -9,9 +9,9 @@ public class ApiConstants {
             "/error",
             "/oauth2/**",
             "/login/oauth2/**",
-            "/auth/**" ,        // Gộp chung /auth/.* và /auth/status
+            "/auth/**" ,
             "/api/jobs/filter",
-            "/admin/auth/**"
+            "/api/admin/auth/**",
     };
 
     // 2. Các API Public nhưng chỉ cho phép method GET
@@ -43,11 +43,10 @@ public class ApiConstants {
 
     // 6. Cac API yeu cau quyen ADMIN
     public static final String[] ADMIN_ENDPOINTS = {
-            "/admin/login/**",
-            "/admin/dashboard/**",
-            "/admin/employers/**",
-            "/admin/job-seekers/**",
-            "/admin/jobs/**",
-            "/admin/billing/**"
+            "/api/admin/dashboard/**",
+            "/api/admin/employers/**",
+            "/api/admin/job-seekers/**",
+            "/api/admin/jobs/**",
+            "/api/admin/billing/**"
     };
 }

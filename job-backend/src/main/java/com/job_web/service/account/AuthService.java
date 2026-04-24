@@ -20,6 +20,7 @@ public interface AuthService {
     String loginUser(LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response);
 
     String loginHirer(LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response);
+    String loginAdmin(LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response);
 
     String refreshToken(HttpServletRequest request, HttpServletResponse response);
 

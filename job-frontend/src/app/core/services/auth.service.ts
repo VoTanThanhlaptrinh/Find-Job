@@ -181,7 +181,6 @@ export class AuthService {
       .pipe(
         take(1),
         finalize(() => {
-          this.router.navigate(['/login']);
           this.tokenService.clearToken();
           this.loggedIn.set(false);
         })

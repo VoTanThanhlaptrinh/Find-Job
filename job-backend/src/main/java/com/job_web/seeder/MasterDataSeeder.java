@@ -2,6 +2,7 @@ package com.job_web.seeder;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.job_web.constant.RoleConstants;
 import com.job_web.data.AddressRepository;
 import com.job_web.data.HirerRepository;
 import com.job_web.data.JobRepository;
@@ -40,6 +41,8 @@ import java.util.Random;
 public class MasterDataSeeder implements CommandLineRunner {
 
     private static final String DEFAULT_PASSWORD = "Password123!";
+    private static final String DEFAULT_ADMIN_EMAIL = "admin@joblist.local";
+    private static final String DEFAULT_ADMIN_NAME = "System Admin";
 
     private static final List<String> COMPANY_NAMES = List.of(
             "TechNova", "BrightCloud", "FinStack", "GreenByte", "UrbanLab", "DataSpring"
@@ -91,6 +94,8 @@ public class MasterDataSeeder implements CommandLineRunner {
     public void run(String... args) {
         log.info("Đang kiểm tra và khởi tạo Master Data (Hirer, Address)...");
 
+        seedAdminIfNeeded();
+
         List<Hirer> hirers = new ArrayList<>();
         hirerRepository.findAll().forEach(hirers::add);
 
@@ -117,6 +122,31 @@ public class MasterDataSeeder implements CommandLineRunner {
         log.info("✅ Hoàn tất khởi tạo Master Data.");
     }
 
+    private void seedAdminIfNeeded() {
+        long adminCount = userRepository.countByRoleIn(List.of(RoleConstants.ADMIN, RoleConstants.ROLE_ADMIN));
+        if (adminCount > 0) {
+            log.info("Existing admin count: {}. Skip admin seeding.", adminCount);
+            return;
+        }
+
+        User admin = new User();
+        admin.setFullName(DEFAULT_ADMIN_NAME);
+        admin.setEmail(uniqueEmail(DEFAULT_ADMIN_EMAIL));
+        admin.setPassword(passwordEncoder.encode(DEFAULT_PASSWORD));
+        admin.setRole(RoleConstants.ROLE_ADMIN);
+        admin.setAddress("Ho Chi Minh City");
+        admin.setMobile("0900000001");
+        admin.setDateOfBirth(LocalDate.of(1990, 1, 1));
+        admin.setAccountLocked(false);
+        admin.setEnabled(true);
+        admin.setActive(true);
+        admin.setOauth2Enabled(false);
+        admin.setCreateDate(LocalDateTime.now());
+        userRepository.save(admin);
+
+        log.info("Seeded admin account: {}", admin.getEmail());
+    }
+
     private List<Hirer> seedHirers() {
         List<Hirer> hirers = new ArrayList<>();
         Instant now = Instant.now();
@@ -130,7 +160,7 @@ public class MasterDataSeeder implements CommandLineRunner {
             user.setFullName("Hirer " + (i + 1));
             user.setEmail(email);
             user.setPassword(passwordEncoder.encode(DEFAULT_PASSWORD));
-            user.setRole("ROLE_HIRER");
+            user.setRole(RoleConstants.ROLE_HIRER);
             user.setAddress(ADDRESS_SEEDS.get(i % ADDRESS_SEEDS.size()).city());
             user.setMobile("09000000" + (10 + i));
             user.setDateOfBirth(LocalDate.of(1990, 1, 1).plusDays(i * 120L));

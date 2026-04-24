@@ -16,14 +16,33 @@ import {
   JobFilterPayload,
   JobListApiResponse,
   JobSubmitApiResponse,
+  JobDetailViewModel,
 } from '../../../shared/models/jobs/job-api-response.model';
 import { JobCardModel } from '../../../shared/models/jobs/job-card.model';
 import { ApiResponse } from '../../../shared/models/api-response.model';
+
+const INITIAL_JOB_DETAIL: JobDetailViewModel = {
+  id: '',
+  title: '',
+  address: '',
+  description: '',
+  salary: 0,
+  time: '',
+  requireDetails: '',
+  skill: '',
+  expiredDate: '',
+  headcount: 0,
+};
 
 @Injectable({
   providedIn: 'root',
 })
 export class JobService {
+  private jobDetail = signal<JobDetailViewModel | null>(null);
+  private jobDetailError = signal<boolean>(false);
+  private hasApplied = signal<boolean | null>(null);
+  private isCheckingApply = signal<boolean>(false);
+  private checkApplyErrorStatus = signal<number | null>(null);
   private recommendedJobs = signal<JobCardModel[]>([]);
   private isLoadingRecommendedJobs = signal<boolean>(false);
   private appliedJobs = signal<JobCardModel[]>([]);
@@ -31,6 +50,11 @@ export class JobService {
   private hasMoreAppliedJobs = signal<boolean>(true);
   private nextAppliedJobsPage = signal<number>(0);
 
+  readonly jobDetail$ = computed(() => this.jobDetail());
+  readonly jobDetailError$ = computed(() => this.jobDetailError());
+  readonly hasApplied$ = computed(() => this.hasApplied());
+  readonly isCheckingApply$ = computed(() => this.isCheckingApply());
+  readonly checkApplyErrorStatus$ = computed(() => this.checkApplyErrorStatus());
   readonly recommendedJobs$ = computed(() => this.recommendedJobs());
   readonly isLoadingRecommendedJobs$ = computed(() => this.isLoadingRecommendedJobs());
   readonly appliedJobs$ = computed(() => this.appliedJobs());
@@ -43,16 +67,51 @@ export class JobService {
     this.url = utilities.getURLDev();
   }
 
-  getDetailJob(id: string): Observable<JobDetailApiResponse> {
-    return this.http.get<JobDetailApiResponse>(`${this.url}/jobs/${id}`).pipe(take(1));
+  resetJobDetailState(): void {
+    this.jobDetail.set(null);
+    this.jobDetailError.set(false);
   }
 
-  checkApplyJob(id: number): Observable<JobExistsApiResponse> {
-    return this.http.get<JobExistsApiResponse>(
-      `${this.url}/user/applications/jobs/${id}/status`,
-      { withCredentials: true }
-    ).pipe(take(1));
+  resetCheckApplyState(): void {
+    this.hasApplied.set(null);
+    this.isCheckingApply.set(false);
+    this.checkApplyErrorStatus.set(null);
   }
+
+  getDetailJob(id: string): void {
+    this.resetJobDetailState();
+    this.http.get<JobDetailApiResponse>(`${this.url}/jobs/${id}`).pipe(take(1)).subscribe({
+      next: (response) => {
+        this.jobDetail.set(response.data);
+      },
+      error: (error) => {
+        this.jobDetail.set(INITIAL_JOB_DETAIL);
+        this.jobDetailError.set(true);
+        console.error('Error fetching job details:', error);
+      }
+    });
+  }
+
+  checkApplyJob(id: number): void {
+    this.resetCheckApplyState();
+    this.isCheckingApply.set(true);
+    this.http.get<JobExistsApiResponse>(
+      `${this.url}/user/applications/${id}/status`,
+      { withCredentials: true }
+    ).pipe(
+      take(1),
+      finalize(() => this.isCheckingApply.set(false))
+    ).subscribe({
+      next: (response) => {
+        this.hasApplied.set(response.data);
+      },
+      error: (error: { status?: number }) => {
+        this.hasApplied.set(false);
+        this.checkApplyErrorStatus.set(error?.status ?? null);
+      }
+    });
+  }
+  
   getSuggestedJobsByResume(resumeId: number): void {
     this.isLoadingRecommendedJobs.set(true);
     this.recommendedJobs.set([]);

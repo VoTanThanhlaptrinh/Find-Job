@@ -1,7 +1,5 @@
-import { Component, NO_ERRORS_SCHEMA, OnInit } from '@angular/core';
+import { Component, effect, NO_ERRORS_SCHEMA, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { take } from 'rxjs';
-import { HomeService } from '../../../home/services/home.service';
 import { JobDetailViewModel } from '../../../../shared/models/jobs/job-api-response.model';
 import { JobCardModel } from '../../../../shared/models/jobs/job-card.model';
 import { JobService } from '../../services/job.service';
@@ -20,6 +18,7 @@ import { I18nService } from '../../../../core/i18n/i18n.service';
 })
 export class JobSingleComponent implements OnInit {
   jobId!: string;
+  private readonly currentJobId = signal<string>('');
   jobDetail: JobDetailViewModel = {
     id: '',
     title: '',
@@ -33,15 +32,53 @@ export class JobSingleComponent implements OnInit {
     headcount: 0
   };
   relatedJobs: JobCardModel[] = [];
-  hasApplied = false;
+  hasApplied: boolean | null = null;
+  isCheckingApply = false;
 
   constructor(
     private jobSerivce: JobService,
     private route: ActivatedRoute,
-    private homeService: HomeService,
     private authService: AuthService,
     private i18nService: I18nService,
-  ) {}
+  ) {
+    this.jobSerivce.resetJobDetailState();
+    this.jobSerivce.resetCheckApplyState();
+
+    effect(() => {
+      this.jobDetail = this.jobSerivce.jobDetail$() ?? {
+        id: '',
+        title: '',
+        address: '',
+        description: '',
+        salary: 0,
+        time: '',
+        requireDetails: '',
+        skill: '',
+        expiredDate: '',
+        headcount: 0
+      };
+      this.hasApplied = this.jobSerivce.hasApplied$();
+      this.isCheckingApply = this.jobSerivce.isCheckingApply$();
+    });
+
+    effect(() => {
+      const jobId = this.currentJobId();
+      const isAuthReady = this.authService.isAuthReady();
+      const isLoggedIn = this.authService.isLoggedIn();
+
+      if (!jobId || !isAuthReady) {
+        return;
+      }
+
+      const parsedJobId = Number(jobId);
+      if (!isLoggedIn || Number.isNaN(parsedJobId) || parsedJobId <= 0) {
+        this.jobSerivce.resetCheckApplyState();
+        return;
+      }
+
+      this.jobSerivce.checkApplyJob(parsedJobId);
+    });
+  }
 
   carouselOptions = {
     loop: false,
@@ -65,44 +102,45 @@ export class JobSingleComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
       this.jobId = params['id'];
+      this.currentJobId.set(this.jobId);
       this.getDetailJob(this.jobId);
-      this.checkApplyStatus();
     });
   }
 
   getDetailJob(id: string): void {
-    this.jobSerivce
-      .getDetailJob(id)
-      .pipe(take(1))
-      .subscribe({
-        next: (response) => {
-          this.jobDetail = response.data;
-        },
-        error: (err) => {
-          console.error('Error fetching job details:', err);
-        },
-      });
+    this.jobSerivce.getDetailJob(id);
   }
 
   checkApplyStatus(): void {
     const parsedJobId = Number(this.jobId);
 
     if (!this.authService.isLoggedIn() || Number.isNaN(parsedJobId) || parsedJobId <= 0) {
-      this.hasApplied = false;
+      this.jobSerivce.resetCheckApplyState();
+      this.hasApplied = null;
       return;
     }
 
-    this.jobSerivce
-      .checkApplyJob(parsedJobId)
-      .pipe(take(1))
-      .subscribe({
-        next: (response) => {
-          this.hasApplied = response.data;
-        },
-        error: () => {
-          this.hasApplied = false;
-        },
-      });
+    this.jobSerivce.checkApplyJob(parsedJobId);
+  }
+
+  get showApplyButton(): boolean {
+    if (!this.authService.isAuthReady()) {
+      return false;
+    }
+
+    if (!this.authService.isLoggedIn()) {
+      return true;
+    }
+
+    return !this.isCheckingApply && this.hasApplied === false;
+  }
+
+  get showApplyDisabledState(): boolean {
+    if (!this.authService.isAuthReady()) {
+      return true;
+    }
+
+    return this.authService.isLoggedIn() && this.isCheckingApply;
   }
 
   formatMoney(value: number): string {

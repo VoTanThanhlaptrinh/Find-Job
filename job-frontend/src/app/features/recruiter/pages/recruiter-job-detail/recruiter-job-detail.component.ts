@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { take } from 'rxjs';
 import { JobService } from '../../../jobs/services/job.service';
 import { JobDetailViewModel } from '../../../../shared/models/jobs/job-api-response.model';
 import { I18nService } from '../../../../core/i18n/i18n.service';
@@ -34,6 +33,25 @@ export class RecruiterJobDetailComponent implements OnInit {
     headcount: 0
   });
 
+  constructor() {
+    this.jobService.resetJobDetailState();
+
+    effect(() => {
+      const jobDetail = this.jobService.jobDetail$();
+      const hasError = this.jobService.jobDetailError$();
+
+      if (jobDetail) {
+        this.jobDetail.set(jobDetail);
+        this.isLoading.set(false);
+      }
+
+      if (hasError) {
+        this.loadError.set('Cannot load job detail right now.');
+        this.isLoading.set(false);
+      }
+    });
+  }
+
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
       const id = params.get('id') ?? '';
@@ -61,15 +79,6 @@ export class RecruiterJobDetailComponent implements OnInit {
     this.isLoading.set(true);
     this.loadError.set(null);
 
-    this.jobService.getDetailJob(id).pipe(take(1)).subscribe({
-      next: (response) => {
-        this.jobDetail.set(response.data);
-        this.isLoading.set(false);
-      },
-      error: () => {
-        this.loadError.set('Cannot load job detail right now.');
-        this.isLoading.set(false);
-      }
-    });
+    this.jobService.getDetailJob(id);
   }
 }

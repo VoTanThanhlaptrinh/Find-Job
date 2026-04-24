@@ -12,14 +12,6 @@ import { AdminAuthService } from '../../services/admin-auth.service';
 export class DashboardComponent {
   constructor(private readonly adminAuthService: AdminAuthService) {}
 
-  get adminName(): string {
-    return this.adminAuthService.adminProfile()?.fullName || 'Admin User';
-  }
-
-  get adminRole(): string {
-    return this.adminAuthService.adminProfile()?.role || 'Super Administrator';
-  }
-
   onLogout(): void {
     this.adminAuthService.logout();
   }
