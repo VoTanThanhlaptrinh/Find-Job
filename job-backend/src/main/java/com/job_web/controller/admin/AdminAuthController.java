@@ -4,9 +4,12 @@ import com.job_web.dto.admin.auth.AdminLoginRequest;
 import com.job_web.dto.admin.auth.AdminLoginResponse;
 import com.job_web.dto.admin.auth.AdminLogoutRequest;
 import com.job_web.dto.admin.auth.AdminRefreshRequest;
+import com.job_web.dto.auth.LoginDTO;
 import com.job_web.dto.common.ApiResponse;
+import com.job_web.service.account.AuthService;
 import com.job_web.service.admin.AdminService;
 import com.job_web.utills.MessageUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,39 +22,26 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
 @RestController
-@RequestMapping(path = "/admin/auth", produces = "application/json")
+@RequestMapping(path = "api/auth/admin", produces = "application/json")
 @RequiredArgsConstructor
 public class AdminAuthController {
-    private final AdminService adminService;
+    private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<String>> login(@RequestBody AdminLoginRequest request,
+    public ResponseEntity<ApiResponse<String>> login(@RequestBody LoginDTO loginDTO, HttpServletRequest request,
                                                      HttpServletResponse response) {
-        String accessToken = adminService.login(request, response);
+        String accessToken = authService.loginAdmin(loginDTO, request, response);
         return ResponseEntity.ok(new ApiResponse<>(
-                MessageUtils.getMessage("message.success"), 
-                accessToken, 
-                HttpStatus.OK.value()
-        ));
-    }
-
-    @PostMapping("/refresh")
-    public ResponseEntity<ApiResponse<AdminLoginResponse>> refresh(@RequestBody AdminRefreshRequest request) {
-        AdminLoginResponse response = adminService.refresh(request);
-        return ResponseEntity.ok(new ApiResponse<>(
-                MessageUtils.getMessage("message.success"), 
-                response, 
+                MessageUtils.getMessage("message.success"),
+                accessToken,
                 HttpStatus.OK.value()
         ));
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<ApiResponse<Map<String, Boolean>>> logout(@RequestBody AdminLogoutRequest request) {
-        adminService.logout(request.getRefreshToken());
-        return ResponseEntity.ok(new ApiResponse<>(
-                MessageUtils.getMessage("message.success"), 
-                Map.of("loggedOut", true), 
-                HttpStatus.OK.value()
-        ));
+    public ResponseEntity<ApiResponse<String>> logout(HttpServletRequest request,
+                                                                    HttpServletResponse response) {
+        authService.logout(request, response);
+        return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("auth.logout.success"), null, HttpStatus.OK.value()));
     }
 }

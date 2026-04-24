@@ -27,7 +27,7 @@ type ApplyCvFormGroup = FormGroup<{
 @Component({
   selector: 'app-apply-cv',
   standalone: true,
-  imports: [RouterModule, ReactiveFormsModule, ResumeReviewComponent, TranslatePipe],
+  imports: [RouterModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './apply-cv.component.html',
   styleUrl: './apply-cv.component.css'
 })
@@ -50,6 +50,8 @@ export class ApplyCvComponent implements OnInit {
     private notifyService: NotifyMessageService,
     private i18nService: I18nService,
   ) {
+    this.jobService.resetCheckApplyState();
+
     this.applyCvForm = this.fb.nonNullable.group({
       cvMode: this.fb.nonNullable.control<CvMode>('existing', Validators.required),
       existingCvId: this.fb.nonNullable.control(this.previousCvOptions[0]?.id ?? 0, Validators.required),
@@ -65,6 +67,22 @@ export class ApplyCvComponent implements OnInit {
         if (this.applyCvForm.controls.existingCvId.value === 0) {
           this.applyCvForm.controls.existingCvId.setValue(resumes[0].id);
         }
+      }
+    });
+
+    effect(() => {
+      const errorStatus = this.jobService.checkApplyErrorStatus$();
+      const hasApplied = this.jobService.hasApplied$();
+
+      if (errorStatus === 401) {
+        this.notifyService.warning(this.i18nService.translate('applyCv.errors.loginRequired'));
+        this.router.navigate(['/login']);
+        return;
+      }
+
+      if (hasApplied) {
+        this.notifyService.info(this.i18nService.translate('applyCv.notifications.alreadyApplied'));
+        this.router.navigate(['/single', this.jobId]);
       }
     });
   }
@@ -86,20 +104,7 @@ export class ApplyCvComponent implements OnInit {
   }
 
   checkApplyJob(): void {
-    this.jobService.checkApplyJob(this.jobId).pipe(take(1)).subscribe({
-      next: (response) => {
-        if (response.data) {
-          this.notifyService.info(this.i18nService.translate('applyCv.notifications.alreadyApplied'));
-          this.router.navigate(['/single', this.jobId]);
-        }
-      },
-      error: (error: { status?: number }) => {
-        if (error?.status === 401) {
-          this.notifyService.warning(this.i18nService.translate('applyCv.errors.loginRequired'));
-          this.router.navigate(['/login']);
-        }
-      }
-    });
+    this.jobService.checkApplyJob(this.jobId);
   }
   formatMoney(val: number): string {
     const locale = this.i18nService.currentLanguage === 'vi' ? 'vi-VN' : 'en-US';

@@ -71,8 +71,7 @@ export class RecruiterDashboardComponent {
   onLogout(): void {
     this.closeMobileSidebar();
     this.tokenService.clearToken();
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
+    this.authService.logout();
     this.router.navigate(['/recruiter/login']);
   }
 }

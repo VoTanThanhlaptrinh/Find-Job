@@ -5,7 +5,10 @@ import com.job_web.controller.admin.AdminAuthController;
 import com.job_web.dto.admin.auth.AdminLoginRequest;
 import com.job_web.dto.admin.auth.AdminLoginResponse;
 import com.job_web.dto.admin.auth.AdminRefreshRequest;
+import com.job_web.dto.auth.LoginDTO;
+import com.job_web.service.account.AuthService;
 import com.job_web.service.admin.AdminService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import com.job_web.utills.MessageUtils;
 import org.junit.jupiter.api.DisplayName;
@@ -38,7 +41,7 @@ class AdminAuthControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private AdminService adminService;
+    private AuthService authService;
 
     private static final String BASE_URL = "/admin/auth";
 
@@ -49,8 +52,8 @@ class AdminAuthControllerTest {
         @Test
         @DisplayName("AD01: Dang nhap admin thanh cong")
         void login_Success() throws Exception {
-            AdminLoginRequest request = new AdminLoginRequest("admin@elitehire.com", "password", true);
-            when(adminService.login(any(AdminLoginRequest.class), any(HttpServletResponse.class)))
+            AdminLoginRequest request = new AdminLoginRequest("admin@elitehire.com", "password");
+            when(authService.loginAdmin(any(LoginDTO.class), any(HttpServletRequest.class), any(HttpServletResponse.class)))
                     .thenReturn("access-token");
 
             mockMvc.perform(post(BASE_URL + "/login")
@@ -59,30 +62,6 @@ class AdminAuthControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.status").value(200))
                     .andExpect(jsonPath("$.data").value("access-token"));
-        }
-    }
-
-    @Nested
-    @DisplayName("POST /admin/auth/refresh")
-    class RefreshTokenTests {
-
-        @Test
-        @DisplayName("AD02: Lam moi token thanh cong")
-        void refresh_Success() throws Exception {
-            AdminRefreshRequest request = new AdminRefreshRequest("old-refresh-token");
-            AdminLoginResponse response = AdminLoginResponse.builder()
-                    .accessToken("new-access-token")
-                    .refreshToken("new-refresh-token")
-                    .expiresIn(900)
-                    .build();
-
-            when(adminService.refresh(any(AdminRefreshRequest.class))).thenReturn(response);
-
-            mockMvc.perform(post(BASE_URL + "/refresh")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.accessToken").value("new-access-token"));
         }
     }
 }

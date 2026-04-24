@@ -12,7 +12,8 @@ describe('LayoutVisibilityService', () => {
 
     expect(visibility.showHeader).toBeFalse();
     expect(visibility.showFooter).toBeFalse();
-    expect(visibility.hiddenReason).toBe('matched hidden prefix: /recruiter');
+    expect(visibility.hiddenHeaderReason).toBe('matched hidden header prefix: /recruiter');
+    expect(visibility.hiddenFooterReason).toBe('matched hidden footer prefix: /recruiter');
   });
 
   it('keeps seeker shell visible on non-recruiter routes', () => {
@@ -20,7 +21,8 @@ describe('LayoutVisibilityService', () => {
 
     expect(visibility.showHeader).toBeTrue();
     expect(visibility.showFooter).toBeTrue();
-    expect(visibility.hiddenReason).toBeNull();
+    expect(visibility.hiddenHeaderReason).toBeNull();
+    expect(visibility.hiddenFooterReason).toBeNull();
   });
 
   it('hides layout on reset password routes', () => {
@@ -28,6 +30,16 @@ describe('LayoutVisibilityService', () => {
 
     expect(visibility.showHeader).toBeFalse();
     expect(visibility.showFooter).toBeFalse();
-    expect(visibility.hiddenReason).toBe('matched reset password route');
+    expect(visibility.hiddenHeaderReason).toBe('matched hidden header reset password route');
+    expect(visibility.hiddenFooterReason).toBe('matched hidden footer reset password route');
+  });
+
+  it('can hide only the header for header-only routes', () => {
+    const visibility = service.getLayoutVisibility('/login-callback');
+
+    expect(visibility.showHeader).toBeFalse();
+    expect(visibility.showFooter).toBeTrue();
+    expect(visibility.hiddenHeaderReason).toBe('matched hidden header route: /login-callback');
+    expect(visibility.hiddenFooterReason).toBeNull();
   });
 });

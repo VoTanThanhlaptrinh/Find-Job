@@ -1,11 +1,4 @@
-import { Injectable } from '@angular/core';
-
-export interface LayoutVisibility {
-  showHeader: boolean;
-  showFooter: boolean;
-  path: string;
-  hiddenReason: string | null;
-}
+import { computed, Injectable, signal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
@@ -17,35 +10,19 @@ export class LayoutVisibilityService {
     '/post-job',
   ]);
 
-  private readonly hiddenLayoutPrefixes = ['/recruiter', '/admin'];
+  private readonly hiddenHeaderPrefixes = ['/recruiter', '/admin'];
+  private readonly hiddenFooterPrefixes = ['/recruiter', '/admin', '/infor'];
+  private readonly headerSignal =  signal<boolean>(false);
+  private readonly footerSignal = signal<boolean>(false);
+  headerComputed = computed(() => this.headerSignal());
+  footerComputed = computed(() => this.footerSignal());
 
-  getLayoutVisibility(url: string): LayoutVisibility {
+  checkUrlIsHidden(url: string) {
     const path = this.normalizePath(url);
-    const hiddenReason = this.getHiddenReason(path);
-    const isHidden = hiddenReason !== null;
-
-    return {
-      showHeader: !isHidden,
-      showFooter: !isHidden,
-      path,
-      hiddenReason,
-    };
-  }
-
-  private getHiddenReason(path: string): string | null {
-    if (this.hiddenHeaderRoutes.has(path)) {
-      return `matched hidden route: ${path}`;
-    }
-
-    if (path.startsWith('/reset-pass/')) {
-      return 'matched reset password route';
-    }
-
-    const matchedPrefix = this.hiddenLayoutPrefixes.find((prefix) =>
-      path === prefix || path.startsWith(`${prefix}/`)
-    );
-
-    return matchedPrefix ? `matched hidden prefix: ${matchedPrefix}` : null;
+    const isHeaderHidden = this.hiddenHeaderRoutes.has(path) || this.hiddenHeaderPrefixes.some(prefix => path.startsWith(prefix));
+    const isFooterHidden = this.hiddenFooterPrefixes.some(prefix => path.startsWith(prefix));
+    this.headerSignal.set(!isHeaderHidden);
+    this.footerSignal.set(!isFooterHidden);
   }
 
   private normalizePath(url: string): string {

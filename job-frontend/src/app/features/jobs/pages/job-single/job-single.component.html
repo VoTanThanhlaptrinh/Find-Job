@@ -26,7 +26,7 @@
             <img src="assets/web_css/img/post.png" alt="" />
           </div>
           <div class="details">
-            <div class="title d-flex flex-row justify-content-between">
+            <div class="title flex justify-between">
               <div class="titles">
                 <a>
                   <h4>{{ this.jobDetail.title }}</h4>
@@ -34,13 +34,12 @@
               </div>
               <ul class="btns">
                 <li>
-                  <a href="#"><span class="lnr lnr-heart"></span></a>
-                </li>
-                <li>
-                  @if (hasApplied) {
+                  @if (hasApplied === true) {
                     <a aria-disabled="true" style="pointer-events: none; opacity: 0.8">{{ 'jobSingle.applied' | t }}</a>
-                  } @else {
+                  } @else if (showApplyButton) {
                     <a [routerLink]="['/apply-cv', this.jobId]">{{ 'jobSingle.applyNow' | t }}</a>
+                  } @else {
+                    <a aria-disabled="true" style="pointer-events: none; opacity: 0.8">{{ 'jobSingle.applyNow' | t }}</a>
                   }
                 </li>
               </ul>

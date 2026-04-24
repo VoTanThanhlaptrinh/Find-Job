@@ -4,6 +4,7 @@ import com.job_web.dto.application.CandidateDTO;
 import com.job_web.models.Apply;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -11,18 +12,17 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface ApplyRepository extends CrudRepository<Apply, Long> {
+public interface ApplyRepository extends JpaRepository<Apply, Long> {
     @Query(value = """
-            select a.*
+            select a.id
             from apply a
-            join user u on a.user_id = u.id and u.status = 'ACTIVE'
-            join job j on j.id = a.job_id and j.status = 'ACTIVE'
-            where u.email = ?1
-              and j.id = ?2
-              and a.status = 'ACTIVE'
-            limit 1
+            join users u on a.user_id = u.id\s
+                    join job j on j.id = a.job_id
+                    where u.email = ?1
+                      and j.id = ?2
+                    limit 1
             """, nativeQuery = true)
-    Optional<Apply> findByJobAndUser(String email, long jobId);
+    Optional<Long> findByJobAndUser(String email, long jobId);
 
     @Query(value = """
             select u.full_name as full_name,
@@ -31,10 +31,9 @@ public interface ApplyRepository extends CrudRepository<Apply, Long> {
                    a.apply_date
             from apply a
             join job j on a.job_id = j.id 
-            join user u on a.user_id = u.id
+            join users u on a.user_id = u.id
             join resume r on a.resume_id = r.id 
             where j.id = ?1
-              and a.status = 'ACTIVE' and j.status = 'ACTIVE'  and u.status = 'ACTIVE' and r.status = 'ACTIVE'
             """, nativeQuery = true)
     Page<CandidateDTO> getAllCandidateAppliedJob(long jobId, Pageable pageable);
 }

@@ -42,6 +42,7 @@
         <a
           class="bg-gradient-to-r from-blue-600 to-purple-500 text-white re-rounded-full mx-4 py-3 px-6 shadow-lg shadow-blue-500/20 flex items-center gap-3 transition-all hover:translate-x-1 duration-200"
           href="#"
+          routerLink="/recruiter/dashboard"
         >
           <span class="material-symbols-outlined text-[20px]">dashboard</span>
           <span class="font-inter text-sm font-medium">Overview</span>
@@ -49,6 +50,7 @@
         <a
           class="text-slate-600 dark:text-slate-400 mx-4 py-3 px-6 re-rounded-full flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/5 transition-all hover:translate-x-1 duration-200 group"
           href="#"
+          routerLink="/recruiter/jobs"
         >
           <span
             class="material-symbols-outlined text-[20px] group-hover:text-blue-600"
@@ -59,6 +61,7 @@
         <a
           class="text-slate-600 dark:text-slate-400 mx-4 py-3 px-6 re-rounded-full flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/5 transition-all hover:translate-x-1 duration-200 group"
           href="#"
+          routerLink="/recruiter/candidates"
         >
           <span
             class="material-symbols-outlined text-[20px] group-hover:text-blue-600"
@@ -69,6 +72,7 @@
         <a
           class="text-slate-600 dark:text-slate-400 mx-4 py-3 px-6 re-rounded-full flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/5 transition-all hover:translate-x-1 duration-200 group"
           href="#"
+          routerLink="/recruiter/company-address"
         >
           <span
             class="material-symbols-outlined text-[20px] group-hover:text-blue-600"
@@ -81,7 +85,7 @@
       <div class="mt-auto px-4">
         <a
           class="text-slate-400 py-3 px-6 re-rounded-full flex items-center gap-3 hover:bg-re-error-container/10 hover:text-re-error transition-all duration-200 group"
-          href="#"
+          (click)="onLogout()"
         >
           <span class="material-symbols-outlined text-[20px]">logout</span>
           <span class="font-inter text-sm font-medium">Log out</span>

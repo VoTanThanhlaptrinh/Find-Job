@@ -169,7 +169,7 @@ class ApplyServiceImplTest {
             Resume resume = new Resume();
             resume.setId(456L);
 
-            ApplyCvWithExistingRequest request = new ApplyCvWithExistingRequest(123L, 456L, "user@test.com", null);
+            ApplyCvWithExistingRequest request = new ApplyCvWithExistingRequest(123L, 456L, null);
 
             when(userRepository.findByEmail("user@test.com")).thenReturn(Optional.of(managedUser));
             when(jobRepository.findById(123L)).thenReturn(Optional.of(job));

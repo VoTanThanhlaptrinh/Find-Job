@@ -8,19 +8,25 @@ import org.springframework.security.core.userdetails.UserDetails;
 import io.jsonwebtoken.Claims;
 
 public interface JwtService {
-	 String generateToken(UserDetails user);
-	 String generateToken(String username);
-	 String extractUsername(String token);
+    String generateToken(UserDetails user);
 
-	 <T> T extractClaims(String token, Function<Claims, T> claimResolver);
+    String generateToken(String username);
 
-	 boolean isTokenValid(String token, UserDetails userDetails);
-	 String extractJTI(String token);
-	 boolean isTokenExpired(String token);
-	 String generateRefreshToken(UserDetails user, long expirationMillis);
-	String generateRefreshToken(String username, String familyId, long expirationMillis);
+    String extractUsername(String token);
 
-	String extractFamily(String token);
+    <T> T extractClaims(String token, Function<Claims, T> claimResolver);
+
+    boolean isTokenValid(String token, UserDetails userDetails);
+
+    String extractJTI(String token);
+
+    boolean isTokenExpired(String token);
+
+    String generateRefreshToken(UserDetails user, long expirationMillis);
+
+    String generateRefreshToken(String username, String familyId, long expirationMillis);
+
+    String extractFamily(String token);
 }
 
 

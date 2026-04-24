@@ -54,32 +54,32 @@ public class ApplyServiceImpl implements ApplyService {
     public ApiResponse<String> applyWithExistingCv(ApplyCvWithExistingRequest request, User user) {
         try {
             MDC.put(MDC_USER_ID, String.valueOf(user.getId()));
-            MDC.put(MDC_JOB_ID, String.valueOf(request.getJobId()));
-            MDC.put(MDC_CV_ID, String.valueOf(request.getExistingCvId()));
+            MDC.put(MDC_JOB_ID, String.valueOf(request.jobId()));
+            MDC.put(MDC_CV_ID, String.valueOf(request.existingCvId()));
 
             log.info("Processing job application with existing CV for user: {}, job: {}, cv: {}",
-                    user.getId(), request.getJobId(), request.getExistingCvId());
+                    user.getId(), request.jobId(), request.existingCvId());
 
             var currentUser = userRepository.findByEmail(user.getEmail());
             if (currentUser.isEmpty()) {
                 return new ApiResponse<>(MessageUtils.getMessage("auth.user.not_found"), null, HttpStatus.BAD_REQUEST.value());
             }
-            var job = jobRepository.findById(request.getJobId());
+            var job = jobRepository.findById(request.jobId());
             if (job.isEmpty()) {
                 return new ApiResponse<>(MessageUtils.getMessage("job.not_found"), null, HttpStatus.BAD_REQUEST.value());
             }
-            var resume = resumeRepository.findById(request.getExistingCvId());
+            var resume = resumeRepository.findById(request.existingCvId());
             if (resume.isEmpty()) {
                 return new ApiResponse<>(MessageUtils.getMessage("resume.not_found"), null, HttpStatus.BAD_REQUEST.value());
             }
-            if (applyRepository.findByJobAndUser(currentUser.get().getEmail(), request.getJobId()).isPresent()) {
+            if (applyRepository.findByJobAndUser(currentUser.get().getEmail(), request.jobId()).isPresent()) {
                 log.warn("Duplicate application blocked — user: {} already applied to job: {}",
-                        currentUser.get().getId(), request.getJobId());
+                        currentUser.get().getId(), request.jobId());
                 return new ApiResponse<>(MessageUtils.getMessage("application.already_applied"), null, HttpStatus.BAD_REQUEST.value());
             }
-            if (resumeRepository.countOwnedByUser(request.getExistingCvId(), currentUser.get().getEmail()) == 0) {
+            if (resumeRepository.countOwnedByUser(request.existingCvId(), currentUser.get().getEmail()) == 0) {
                 log.warn("CV ownership violation — user: {} does not own CV: {}",
-                        currentUser.get().getId(), request.getExistingCvId());
+                        currentUser.get().getId(), request.existingCvId());
                 return new ApiResponse<>(MessageUtils.getMessage("resume.not_owned"), null, HttpStatus.BAD_REQUEST.value());
             }
 
@@ -91,7 +91,7 @@ public class ApplyServiceImpl implements ApplyService {
             applyRepository.save(apply);
 
             log.info("Application completed — user: {} applied to job: {} with existing CV: {}",
-                    currentUser.get().getId(), request.getJobId(), request.getExistingCvId());
+                    currentUser.get().getId(), request.jobId(), request.existingCvId());
 
             return new ApiResponse<>(MessageUtils.getMessage("application.success"), null, HttpStatus.OK.value());
         } finally {
@@ -178,8 +178,7 @@ public class ApplyServiceImpl implements ApplyService {
 
     @Override
     public ApiResponse<Boolean> hasApplied(String email, long jobId) {
-        // Read-only query — no state change, no logging needed.
-        Optional<Apply> optionalApply = applyRepository.findByJobAndUser(email, jobId);
-        return new ApiResponse<>(MessageUtils.getMessage("message.success"), optionalApply.isPresent(), HttpStatus.OK.value());
+        Optional<Long> optionalApply = applyRepository.findByJobAndUser(email, jobId);
+        return new ApiResponse<>(MessageUtils.getMessage("message.success"),optionalApply.isPresent() , HttpStatus.OK.value());
     }
 }

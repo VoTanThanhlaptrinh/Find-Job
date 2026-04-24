@@ -27,7 +27,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           error?.error?.message ||
           error?.message ||
           'An error occurred';
-        notifyMessageService.error(message);
+        notifyMessageService.error(message, 'Error');
       }
 
       return throwError(() => error);

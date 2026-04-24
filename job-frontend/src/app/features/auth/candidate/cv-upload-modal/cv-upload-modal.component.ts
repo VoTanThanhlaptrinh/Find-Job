@@ -1,12 +1,17 @@
-import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild, inject, computed } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { I18nService } from '../../../../core/i18n/i18n.service';
 
 @Component({
   selector: 'app-cv-upload-modal',
   standalone: true,
+  imports: [CommonModule],
   templateUrl: './cv-upload-modal.component.html',
   styleUrl: './cv-upload-modal.component.css'
 })
 export class CvUploadModalComponent implements OnChanges {
+  private readonly i18n = inject(I18nService);
+  
   @ViewChild('cvUploadInput') cvUploadInput?: ElementRef<HTMLInputElement>;
   @Input() isOpen = false;
   @Output() closeRequested = new EventEmitter<void>();
@@ -16,6 +21,17 @@ export class CvUploadModalComponent implements OnChanges {
   errorMessage = '';
   readonly maxFileSize = 5 * 1024 * 1024;
   readonly acceptedExtensions = '.pdf,.doc,.docx';
+
+  readonly title = computed(() => this.i18n.translate('cvUploadModal.title'));
+  readonly subtitle = computed(() => this.i18n.translate('cvUploadModal.subtitle'));
+  readonly closeLabel = computed(() => this.i18n.translate('cvUploadModal.close'));
+  readonly dropzoneText = computed(() => this.i18n.translate('cvUploadModal.dropzoneText'));
+  readonly dropzoneSubtext = computed(() => this.i18n.translate('cvUploadModal.dropzoneSubtext'));
+  readonly readyStatusLabel = computed(() => this.i18n.translate('cvUploadModal.readyStatus'));
+  readonly errorTitle = computed(() => this.i18n.translate('cvUploadModal.errorTitle'));
+  readonly cancelLabel = computed(() => this.i18n.translate('cvUploadModal.cancel'));
+  readonly uploadLabel = computed(() => this.i18n.translate('cvUploadModal.upload'));
+  readonly removeFileLabel = computed(() => this.i18n.translate('cvUploadModal.removeFile'));
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['isOpen'] && !this.isOpen) {
@@ -39,7 +55,7 @@ export class CvUploadModalComponent implements OnChanges {
 
   onSubmit(): void {
     if (!this.selectedFile) {
-      this.errorMessage = 'Vui lòng chọn file CV trước khi gửi.';
+      this.errorMessage = this.i18n.translate('cvUploadModal.selectFileHint');
       return;
     }
 
@@ -114,13 +130,13 @@ export class CvUploadModalComponent implements OnChanges {
 
     if (!isAllowedExtension) {
       this.selectedFile = null;
-      this.errorMessage = 'Chỉ hỗ trợ định dạng .pdf, .doc, .docx.';
+      this.errorMessage = this.i18n.translate('cvUploadModal.unsupportedFormat');
       return;
     }
 
     if (file.size > this.maxFileSize) {
       this.selectedFile = null;
-      this.errorMessage = 'Kích thước file vượt quá giới hạn 5MB.';
+      this.errorMessage = this.i18n.translate('cvUploadModal.fileTooLarge');
       return;
     }
 
