@@ -8,6 +8,7 @@ import com.job_web.models.Comment;
 import com.job_web.models.CurrentUser;
 import com.job_web.models.User;
 import com.job_web.service.blog.BlogService;
+import com.job_web.utils.MessageUtils;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -31,14 +32,14 @@ public class BlogController {
 
     @GetMapping("/page/{pageIndex}/{pageSize}")
     public ResponseEntity<ApiResponse<Page<Blog>>> getListOfBlogs(@PathVariable int pageIndex, @PathVariable int pageSize) {
-        ApiResponse<Page<Blog>> res = blogService.getBlogs(pageIndex, pageSize);
-        return ResponseEntity.status(res.getStatus()).body(res);
+        Page<Blog> blogs = blogService.getBlogs(pageIndex, pageSize);
+        return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("blog.get.success"), blogs, HttpStatus.OK.value()));
     }
 
     @GetMapping("/comments/{pageIndex}/{pageSize}")
     public ResponseEntity<ApiResponse<Page<Comment>>> getListOfComments(@PathVariable int pageIndex, @PathVariable int pageSize) {
-        ApiResponse<Page<Comment>> res = blogService.getComments(pageIndex, pageSize);
-        return ResponseEntity.status(res.getStatus()).body(res);
+        Page<Comment> comments = blogService.getComments(pageIndex, pageSize);
+        return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("blog.get.success"), comments, HttpStatus.OK.value()));
     }
 
     @PostMapping
@@ -48,8 +49,8 @@ public class BlogController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                     new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, HttpStatus.BAD_REQUEST.value()));
         }
-        ApiResponse<String> res = blogService.postBlog(blogDTO, currentUser);
-        return ResponseEntity.status(res.getStatus()).body(res);
+        String message = blogService.postBlog(blogDTO, currentUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(message, null, HttpStatus.CREATED.value()));
     }
 
     @PutMapping("/{blogId}")
@@ -61,20 +62,20 @@ public class BlogController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                     new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, HttpStatus.BAD_REQUEST.value()));
         }
-        ApiResponse<String> res = blogService.updateBlog(blogId, blogDTO, currentUser);
-        return ResponseEntity.status(res.getStatus()).body(res);
+        String message = blogService.updateBlog(blogId, blogDTO, currentUser);
+        return ResponseEntity.ok(new ApiResponse<>(message, null, HttpStatus.OK.value()));
     }
 
     @DeleteMapping("/{blogId}")
     public ResponseEntity<ApiResponse<String>> deleteBlog(@PathVariable long blogId) {
-        ApiResponse<String> res = blogService.deleteBlog(blogId);
-        return ResponseEntity.status(res.getStatus()).body(res);
+        String message = blogService.deleteBlog(blogId);
+        return ResponseEntity.ok(new ApiResponse<>(message, null, HttpStatus.OK.value()));
     }
 
     @GetMapping("/{blogId}")
     public ResponseEntity<ApiResponse<Blog>> getBlogDetail(@PathVariable final long blogId) {
-        ApiResponse<Blog> res = blogService.getBlogById(blogId);
-        return ResponseEntity.status(res.getStatus()).body(res);
+        Blog blog = blogService.getBlogById(blogId);
+        return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("blog.get.success"), blog, HttpStatus.OK.value()));
     }
 
     @PostMapping("/comments")
@@ -84,8 +85,8 @@ public class BlogController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                     new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, HttpStatus.BAD_REQUEST.value()));
         }
-        ApiResponse<String> res = blogService.comment(comment, currentUser);
-        return ResponseEntity.status(res.getStatus()).body(res);
+        String message = blogService.comment(comment, currentUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(message, null, HttpStatus.CREATED.value()));
     }
 
     @PostMapping("/likes")
@@ -95,8 +96,8 @@ public class BlogController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                     new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, HttpStatus.BAD_REQUEST.value()));
         }
-        ApiResponse<String> res = blogService.like(likeDTO.getId(), currentUser);
-        return ResponseEntity.status(res.getStatus()).body(res);
+        String message = blogService.like(likeDTO.getId(), currentUser);
+        return ResponseEntity.ok(new ApiResponse<>(message, null, HttpStatus.OK.value()));
     }
 
     @PostMapping("/likes/remove")
@@ -106,7 +107,7 @@ public class BlogController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                     new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, HttpStatus.BAD_REQUEST.value()));
         }
-        ApiResponse<String> res = blogService.unlike(likeDTO.getId(), currentUser);
-        return ResponseEntity.status(res.getStatus()).body(res);
+        String message = blogService.unlike(likeDTO.getId(), currentUser);
+        return ResponseEntity.ok(new ApiResponse<>(message, null, HttpStatus.OK.value()));
     }
 }

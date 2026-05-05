@@ -60,8 +60,7 @@ class BlogControllerTest {
             blog.setAmountLike(10);
             blog.setCreateDate(LocalDateTime.of(2026, 4, 4, 10, 0));
 
-            ApiResponse<Blog> response = new ApiResponse<>("success", blog, HttpStatus.OK.value());
-            when(blogService.getBlogById(eq(1L))).thenReturn(response);
+            when(blogService.getBlogById(eq(1L))).thenReturn(blog);
 
             mockMvc.perform(get(BASE_URL + "/1"))
                     .andExpect(status().isOk())

@@ -7,7 +7,7 @@ import com.job_web.dto.admin.employer.EmployerListItem;
 import com.job_web.dto.admin.employer.EmployerStatusRequest;
 import com.job_web.dto.common.PageResponse;
 import com.job_web.service.admin.AdminService;
-import com.job_web.utills.MessageUtils;
+import com.job_web.utils.MessageUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

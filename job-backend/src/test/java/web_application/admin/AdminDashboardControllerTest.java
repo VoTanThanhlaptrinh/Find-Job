@@ -5,7 +5,7 @@ import com.job_web.dto.admin.dashboard.DashboardSummaryResponse;
 import com.job_web.dto.admin.dashboard.PendingJobItem;
 import com.job_web.dto.common.PageResponse;
 import com.job_web.service.admin.AdminService;
-import com.job_web.utills.MessageUtils;
+import com.job_web.utils.MessageUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import web_application.support.TestSecurityConfig;

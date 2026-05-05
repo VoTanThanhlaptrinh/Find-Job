@@ -1,5 +1,7 @@
 package com.job_web.dto.job;
 
+import com.job_web.constant.EmploymentType;
+
 import java.util.List;
 
 public record JobFilterDTO(
@@ -8,7 +10,7 @@ public record JobFilterDTO(
         int min,
         int max,
         List<String> address,
-        List<String> times,
+        List<EmploymentType> times,
         String title
 ) {
     public int getPageIndex() {
@@ -31,7 +33,7 @@ public record JobFilterDTO(
         return address;
     }
 
-    public List<String> getTimes() {
+    public List<EmploymentType> getTimes() {
         return times;
     }
     public String getTitle(){ return title;}

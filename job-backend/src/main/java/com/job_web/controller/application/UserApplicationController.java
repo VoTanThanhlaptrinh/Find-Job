@@ -10,7 +10,7 @@ import com.job_web.models.CurrentUser;
 import com.job_web.models.User;
 import com.job_web.service.application.ApplyService;
 import com.job_web.service.job.JobQueryService;
-import com.job_web.utills.MessageUtils;
+import com.job_web.utils.MessageUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -42,8 +42,8 @@ public class UserApplicationController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, HttpStatus.BAD_REQUEST.value()));
         }
-        ApiResponse<String> res = applyService.applyWithExistingCv(request, currentUser);
-        return ResponseEntity.status(res.getStatus()).body(res);
+        applyService.applyWithExistingCv(request, currentUser);
+        return ResponseEntity.ok().body(new ApiResponse<>(MessageUtils.getMessage("application.success"),null, HttpStatus.OK.value()));
     }
 
     @PostMapping(value = "/applications/submit-upload", consumes = "multipart/form-data")
@@ -54,14 +54,14 @@ public class UserApplicationController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, HttpStatus.BAD_REQUEST.value()));
         }
-        ApiResponse<String> res = applyService.applyWithUploadCv(request, currentUser);
-        return ResponseEntity.status(res.getStatus()).body(res);
+        applyService.applyWithUploadCv(request, currentUser);
+        return ResponseEntity.ok().body(new ApiResponse<>(MessageUtils.getMessage("application.success"), null, HttpStatus.OK.value()));
     }
 
     @GetMapping("/applications/{jobId}/status")
     public ResponseEntity<ApiResponse<Boolean>> hasApplied(@PathVariable("jobId") long jobId, @CurrentUser User currentUser) {
-        ApiResponse<Boolean> res = applyService.hasApplied(currentUser.getEmail(), jobId);
-        return ResponseEntity.status(res.getStatus()).body(res);
+        Boolean res = applyService.hasApplied(currentUser.getEmail(), jobId);
+        return ResponseEntity.ok().body(new ApiResponse<>(MessageUtils.getMessage("message.success"),null , HttpStatus.OK.value()));
     }
 
     @GetMapping("/applied")

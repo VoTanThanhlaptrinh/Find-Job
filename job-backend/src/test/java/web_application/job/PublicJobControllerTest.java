@@ -1,8 +1,8 @@
 package web_application.job;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.job_web.constant.EmploymentType;
 import com.job_web.controller.job.PublicJobController;
-import com.job_web.dto.common.ApiResponse;
 import com.job_web.dto.job.JobCardView;
 import com.job_web.dto.job.JobFilterDTO;
 import com.job_web.service.cache.HomeCategoryCacheService;
@@ -18,7 +18,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import web_application.support.TestSecurityConfig;
@@ -62,7 +61,7 @@ class PublicJobControllerTest {
         @DisplayName("PJ01: Anonymous van xem duoc danh sach job public")
         void getNewestJobs_Success() throws Exception {
             Page<JobCardView> page = new PageImpl<>(List.of(
-                    new JobCardView(1L, "Java Developer", "Da Nang", "1000-1500", "Full-time")
+                    new JobCardView(1L, "Java Developer", "Da Nang", "1000-1500", EmploymentType.Full_time)
             ));
             when(jobQueryService.getListJobNewest(eq(0), eq(10))).thenReturn(page);
 
@@ -85,12 +84,12 @@ class PublicJobControllerTest {
                     1000,
                     2000,
                     List.of("Ho Chi Minh"),
-                    List.of("Full-time"),
+                    List.of(EmploymentType.Full_time),
                     "Java"
             );
             when(jobQueryService.filterBetterSalaryAndHasAddressAndInTimes(
                     eq(0), eq(10), eq(1000), eq(2000),
-                    eq(List.of("Ho Chi Minh")), eq(List.of("Full-time")), eq("Java")
+                    eq(List.of("Ho Chi Minh")), eq(List.of(EmploymentType.Full_time)), eq("Java")
             )).thenReturn(Page.empty());
 
             mockMvc.perform(post(BASE_URL + "/filter")

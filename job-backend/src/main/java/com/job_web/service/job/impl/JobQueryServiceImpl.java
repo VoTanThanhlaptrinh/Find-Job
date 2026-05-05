@@ -1,5 +1,6 @@
 package com.job_web.service.job.impl;
 
+import com.job_web.constant.EmploymentType;
 import com.job_web.data.queryDSL.JobQuery;
 import com.job_web.dto.job.AddressJobCount;
 import com.job_web.dto.job.JobCardView;
@@ -40,7 +41,7 @@ public class JobQueryServiceImpl implements JobQueryService {
     }
 
     @Override
-    public Page<JobCardView> filterBetterSalaryAndHasAddressAndInTimes(int pageIndex, int pageSize, int min, int max, List<String> cities, List<String> times, String title) {
+    public Page<JobCardView> filterBetterSalaryAndHasAddressAndInTimes(int pageIndex, int pageSize, int min, int max, List<String> cities, List<EmploymentType> times, String title) {
         return jobQuery.filterBetterSalaryAndHasAddressAndInTimes(pageIndex, pageSize, min, max, cities, times, title);
     }
 

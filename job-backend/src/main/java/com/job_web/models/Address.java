@@ -20,7 +20,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
@@ -34,10 +33,27 @@ public class Address extends StatusEntity {
     private String city;
     @Column(nullable = false)
     private String street;
+    @Setter
     @CreatedDate
     @Column(nullable = false)
     private LocalDateTime createDate;
+    
+    @Setter
     @LastModifiedDate
     @Column()
     private LocalDateTime updateDate;
+
+    public void setCity(String city) {
+        if (city == null || city.trim().isEmpty()) {
+            throw new com.job_web.exception.BadRequestException(com.job_web.utils.MessageUtils.getMessage("validation.address.city.required"));
+        }
+        this.city = city;
+    }
+
+    public void setStreet(String street) {
+        if (street == null || street.trim().isEmpty()) {
+            throw new com.job_web.exception.BadRequestException(com.job_web.utils.MessageUtils.getMessage("validation.address.street.required"));
+        }
+        this.street = street;
+    }
 }

@@ -6,7 +6,7 @@ import com.job_web.dto.profile.UserInfo;
 import com.job_web.models.CurrentUser;
 import com.job_web.models.User;
 import com.job_web.service.account.AccountService;
-import com.job_web.utills.MessageUtils;
+import com.job_web.utils.MessageUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

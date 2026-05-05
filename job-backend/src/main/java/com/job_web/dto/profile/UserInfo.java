@@ -1,6 +1,5 @@
 package com.job_web.dto.profile;
 
-import com.job_web.models.User;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 
@@ -28,21 +27,7 @@ public record UserInfo(
         return matcher.matches();
     }
 
-    public static UserInfo fromUser(User userLogin) {
-        return new UserInfo(
-                userLogin.getFullName(),
-                userLogin.getDateOfBirth(),
-                userLogin.getAddress(),
-                userLogin.getMobile()
-        );
-    }
 
-    public void update(User userLogin) {
-        userLogin.setFullName(fullName);
-        userLogin.setDateOfBirth(dateOfBirth);
-        userLogin.setAddress(address);
-        userLogin.setMobile(mobile);
-    }
 
     public String getFullName() {
         return fullName;

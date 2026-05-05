@@ -1,7 +1,7 @@
 package com.job_web.service.support.impl;
 
 import com.job_web.service.support.SpamService;
-import com.job_web.utills.MessageUtils;
+import com.job_web.utils.MessageUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

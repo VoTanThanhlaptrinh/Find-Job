@@ -10,17 +10,22 @@ import com.job_web.dto.application.ResumeUrlDTO;
 import com.job_web.dto.message.CloudUploadMessage;
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.dto.application.ResumeView;
+import com.job_web.exception.ForbiddenException;
+import com.job_web.exception.ResourceNotFoundException;
+import com.job_web.exception.UnauthorizedException;
 import com.job_web.message.MessageProducer;
+import com.job_web.models.CurrentUser;
 import com.job_web.models.Resume;
 import com.job_web.models.User;
 import com.job_web.service.ai.AIService;
 import com.job_web.service.application.ResumeService;
 import com.job_web.service.support.FileService;
 import com.job_web.service.support.S3PresignedUrlService;
-import com.job_web.utills.KeyGeneratorUtil;
-import com.job_web.utills.MessageUtils;
+import com.job_web.utils.KeyGeneratorUtil;
+import com.job_web.utils.MessageUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -32,6 +37,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.rmi.ServerException;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,40 +62,41 @@ public class ResumeServiceImpl implements ResumeService {
     private static final String MDC_CV_ID = "cvId";
 
     @Override
-    public ApiResponse<List<ResumeView>> getListResumeOfUser(User user) {
-        // Read-only query — no MDC / no logging.
-        var resumes = resumeDSL.getListResumeOfUser(user != null ? user.getEmail() : "");
-        String message = resumes.isEmpty() ? MessageUtils.getMessage("resume.not_found") : MessageUtils.getMessage("message.success");
-        return new ApiResponse<>(message, resumes, HttpStatus.OK.value());
+    public List<ResumeView> getListResumeOfUser(User currentUser) {
+        var resumes = resumeDSL.getListResumeOfUser(currentUser != null ? currentUser.getEmail() : "");
+        if(resumes.isEmpty()){
+            throw new ResourceNotFoundException(MessageUtils.getMessage("resume.not_found"));
+        }
+
+        return resumes;
     }
 
     @Override
-    public ApiResponse<List<ResumeDTO>> getResumesByUser(String email) {
-        return new ApiResponse<>(MessageUtils.getMessage("resume.not_implemented"), null, HttpStatus.NOT_IMPLEMENTED.value());
+    public List<ResumeDTO> getResumesByUser(String email) {
+        throw new NotImplementedException(MessageUtils.getMessage("resume.not_implemented"));
     }
 
     @Override
-    public ApiResponse<ResumeDetailDTO> getResumeDetail(long id, User user) {
-        // Read-only query — no MDC / no logging.
+    public ResumeDetailDTO getResumeDetail(long id, User user) {
+
         if (user == null) {
-            return new ApiResponse<>(MessageUtils.getMessage("message.unauthorized"), null, HttpStatus.UNAUTHORIZED.value());
+            throw new UnauthorizedException(MessageUtils.getMessage("message.unauthorized"));
         }
         Optional<Resume> cvOpt = resumeRepository.findById(id);
         if (cvOpt.isEmpty()) {
-            return new ApiResponse<>(MessageUtils.getMessage("resume.not_found"), null, HttpStatus.NOT_FOUND.value());
+            throw new ResourceNotFoundException(MessageUtils.getMessage("resume.not_found"));
         }
         Resume cv = cvOpt.get();
         if (cv.getUser() == null || !user.getEmail().equals(cv.getUser().getEmail())) {
-            return new ApiResponse<>(MessageUtils.getMessage("resume.access.forbidden"), null, HttpStatus.FORBIDDEN.value());
+            throw new ForbiddenException(MessageUtils.getMessage("resume.access.forbidden"));
         }
-        ResumeDetailDTO detail = new ResumeDetailDTO(cv.getId(), cv.getFileName(), cv.getCreateDate());
-        return new ApiResponse<>(MessageUtils.getMessage("message.success"), detail, HttpStatus.OK.value());
+        return new ResumeDetailDTO(cv.getId(), cv.getFileName(), cv.getCreateDate());
     }
 
     @Override
-    public ApiResponse<ResumeView> createResume(ResumeUploadDTO resumeUploadDTO, User user) {
+    public ResumeView createResume(ResumeUploadDTO resumeUploadDTO, User user) {
         if (user == null) {
-            return new ApiResponse<>(MessageUtils.getMessage("message.unauthorized"), null, HttpStatus.UNAUTHORIZED.value());
+            throw new UnauthorizedException(MessageUtils.getMessage("message.unauthorized"));
         }
 
         try {
@@ -115,11 +122,11 @@ public class ResumeServiceImpl implements ResumeService {
                 rawText = fileService.cleanText(rawText);
             } catch (Exception e) {
                 log.warn("File processing failed during resume creation for user: {}", user.getId());
-                return new ApiResponse<>(MessageUtils.getMessage("resume.upload.failed"), null, HttpStatus.INTERNAL_SERVER_ERROR.value());
+                throw new RuntimeException(MessageUtils.getMessage("resume.upload.failed"));
             }
             if (data.length == 0) {
                 log.warn("Empty file uploaded during resume creation for user: {}", user.getId());
-                return new ApiResponse<>(MessageUtils.getMessage("message.error"), null, HttpStatus.INTERNAL_SERVER_ERROR.value());
+                throw new RuntimeException(MessageUtils.getMessage("message.error"));
             }
 
             producer.uploadToCloud(new CloudUploadMessage(data, key, resumeUploadDTO.getFile().getOriginalFilename()));
@@ -131,7 +138,7 @@ public class ResumeServiceImpl implements ResumeService {
             log.info("Resume created — cv: {}, dispatched cloud upload and AI processing for user: {}",
                     cv.getId(), user.getId());
 
-            return new ApiResponse<>(MessageUtils.getMessage("message.success"), new ResumeView(cv.getId(), cv.getFileName(), cv.getCreateDate()), HttpStatus.CREATED.value());
+            return new ResumeView(cv.getId(), cv.getFileName(), cv.getCreateDate());
         } finally {
             MDC.remove(MDC_USER_ID);
             MDC.remove(MDC_CV_ID);
@@ -139,9 +146,9 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public ApiResponse<String> updateResume(long id, ResumeUploadDTO resumeUploadDTO, User user) {
+    public void updateResume(long id, ResumeUploadDTO resumeUploadDTO, User user) {
         if (user == null) {
-            return new ApiResponse<>(MessageUtils.getMessage("message.unauthorized"), null, HttpStatus.UNAUTHORIZED.value());
+            throw new UnauthorizedException(MessageUtils.getMessage("message.unauthorized"));
         }
 
         try {
@@ -152,12 +159,12 @@ public class ResumeServiceImpl implements ResumeService {
 
             Optional<Resume> cvOpt = resumeRepository.findById(id);
             if (cvOpt.isEmpty()) {
-                return new ApiResponse<>(MessageUtils.getMessage("resume.not_found"), null, HttpStatus.NOT_FOUND.value());
+                throw new ResourceNotFoundException(MessageUtils.getMessage("resume.not_found"));
             }
             Resume cv = cvOpt.get();
             if (cv.getUser() == null || !user.getEmail().equals(cv.getUser().getEmail())) {
                 log.warn("Resume update forbidden — user: {} does not own CV: {}", user.getId(), id);
-                return new ApiResponse<>(MessageUtils.getMessage("resume.edit.forbidden"), null, HttpStatus.FORBIDDEN.value());
+                throw new ForbiddenException(MessageUtils.getMessage("resume.edit.forbidden"));
             }
 
             cv.setFileName(resumeUploadDTO.getFile().getOriginalFilename());
@@ -167,19 +174,17 @@ public class ResumeServiceImpl implements ResumeService {
                 data = toByteArray(resumeUploadDTO.getFile().getInputStream());
             } catch (Exception e) {
                 log.warn("File processing failed during resume update for CV: {}", id);
-                return new ApiResponse<>(MessageUtils.getMessage("resume.upload.failed"), null, HttpStatus.INTERNAL_SERVER_ERROR.value());
+                throw new RuntimeException(MessageUtils.getMessage("resume.upload.failed"));
             }
             if (data.length == 0) {
                 log.warn("Empty file uploaded during resume update for CV: {}", id);
-                return new ApiResponse<>(MessageUtils.getMessage("message.error"), null, HttpStatus.INTERNAL_SERVER_ERROR.value());
+                throw new RuntimeException(MessageUtils.getMessage("message.error"));
             }
 
             producer.uploadToCloud(new CloudUploadMessage(data, key, resumeUploadDTO.getFile().getOriginalFilename()));
             resumeRepository.save(cv);
 
             log.info("Resume updated — cv: {}, dispatched cloud upload for user: {}", id, user.getId());
-
-            return new ApiResponse<>(MessageUtils.getMessage("message.success"), null, HttpStatus.OK.value());
         } finally {
             MDC.remove(MDC_USER_ID);
             MDC.remove(MDC_CV_ID);
@@ -187,9 +192,9 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public ApiResponse<String> deleteResume(long id, User user) {
+    public void deleteResume(long id, User user) {
         if (user == null) {
-            return new ApiResponse<>(MessageUtils.getMessage("message.unauthorized"), null, HttpStatus.UNAUTHORIZED.value());
+            throw new UnauthorizedException(MessageUtils.getMessage("message.unauthorized"));
         }
 
         try {
@@ -198,20 +203,17 @@ public class ResumeServiceImpl implements ResumeService {
 
             Optional<Resume> cvOpt = resumeRepository.findById(id);
             if (cvOpt.isEmpty()) {
-                return new ApiResponse<>(MessageUtils.getMessage("resume.not_found"), null, HttpStatus.NOT_FOUND.value());
+                throw new ResourceNotFoundException(MessageUtils.getMessage("resume.not_found"));
             }
             Resume cv = cvOpt.get();
             if (cv.getUser() == null || !user.getEmail().equals(cv.getUser().getEmail())) {
                 log.warn("Resume delete forbidden — user: {} does not own CV: {}", user.getId(), id);
-                return new ApiResponse<>(MessageUtils.getMessage("resume.delete.forbidden"), null, HttpStatus.FORBIDDEN.value());
+                throw new ForbiddenException(MessageUtils.getMessage("resume.delete.forbidden"));
             }
 
             cv.markDeleted();
             resumeRepository.save(cv);
-
             log.info("Resume soft-deleted — cv: {} by user: {}", id, user.getId());
-
-            return new ApiResponse<>(MessageUtils.getMessage("message.success"), null, HttpStatus.OK.value());
         } finally {
             MDC.remove(MDC_USER_ID);
             MDC.remove(MDC_CV_ID);
@@ -250,86 +252,81 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public ApiResponse<ResumeUrlDTO> getResumeViewUrl(long id, User user) {
+    public ResumeUrlDTO getResumeViewUrl(long id, User user) {
         if (user == null) {
-            return new ApiResponse<>(MessageUtils.getMessage("message.unauthorized"), null, HttpStatus.UNAUTHORIZED.value());
+            throw new UnauthorizedException(MessageUtils.getMessage("message.unauthorized"));
         }
         Optional<Resume> cvOpt = resumeRepository.findById(id);
         if (cvOpt.isEmpty()) {
-            return new ApiResponse<>(MessageUtils.getMessage("resume.not_found"), null, HttpStatus.NOT_FOUND.value());
+            throw new ResourceNotFoundException(MessageUtils.getMessage("resume.not_found"));
         }
         Resume cv = cvOpt.get();
         if (cv.getUser() == null || !user.getEmail().equals(cv.getUser().getEmail())) {
-            return new ApiResponse<>(MessageUtils.getMessage("resume.view.forbidden"), null, HttpStatus.FORBIDDEN.value());
+            throw new ForbiddenException(MessageUtils.getMessage("resume.view.forbidden"));
         }
-
         try {
             String url = s3PresignedUrlService.generateViewUrl(cv.getKeyCf(), DEFAULT_URL_EXPIRATION_MINUTES);
-            ResumeUrlDTO urlDTO = new ResumeUrlDTO(cv.getId(), cv.getFileName(), url, DEFAULT_URL_EXPIRATION_MINUTES);
-            return new ApiResponse<>(MessageUtils.getMessage("message.success"), urlDTO, HttpStatus.OK.value());
+            return new ResumeUrlDTO(cv.getId(), cv.getFileName(), url, DEFAULT_URL_EXPIRATION_MINUTES);
         } catch (Exception e) {
             log.warn("Failed to generate view URL for CV: {}, user: {}", id, user.getId());
-            return new ApiResponse<>(MessageUtils.getMessage("resume.url.generate_failed"), null, HttpStatus.INTERNAL_SERVER_ERROR.value());
+            throw new RuntimeException(MessageUtils.getMessage("resume.url.generate_failed"));
         }
     }
 
     @Override
-    public ApiResponse<ResumeUrlDTO> getResumeDownloadUrl(long id, User user) {
+    public ResumeUrlDTO getResumeDownloadUrl(long id, User user) {
         if (user == null) {
-            return new ApiResponse<>(MessageUtils.getMessage("message.unauthorized"), null, HttpStatus.UNAUTHORIZED.value());
+            throw new UnauthorizedException(MessageUtils.getMessage("message.unauthorized"));
         }
         Optional<Resume> cvOpt = resumeRepository.findById(id);
         if (cvOpt.isEmpty()) {
-            return new ApiResponse<>(MessageUtils.getMessage("resume.not_found"), null, HttpStatus.NOT_FOUND.value());
+            throw new ResourceNotFoundException(MessageUtils.getMessage("resume.not_found"));
         }
         Resume cv = cvOpt.get();
         if (cv.getUser() == null || !user.getEmail().equals(cv.getUser().getEmail())) {
-            return new ApiResponse<>(MessageUtils.getMessage("resume.download.forbidden"), null, HttpStatus.FORBIDDEN.value());
+            throw new ForbiddenException(MessageUtils.getMessage("resume.download.forbidden"));
         }
 
         try {
             String url = s3PresignedUrlService.generateDownloadUrl(cv.getKeyCf(), cv.getFileName(), DEFAULT_URL_EXPIRATION_MINUTES);
-            ResumeUrlDTO urlDTO = new ResumeUrlDTO(cv.getId(), cv.getFileName(), url, DEFAULT_URL_EXPIRATION_MINUTES);
-            return new ApiResponse<>(MessageUtils.getMessage("message.success"), urlDTO, HttpStatus.OK.value());
+            return new ResumeUrlDTO(cv.getId(), cv.getFileName(), url, DEFAULT_URL_EXPIRATION_MINUTES);
         } catch (Exception e) {
             log.warn("Failed to generate download URL for CV: {}, user: {}", id, user.getId());
-            return new ApiResponse<>(MessageUtils.getMessage("resume.url.generate_failed"), null, HttpStatus.INTERNAL_SERVER_ERROR.value());
+            throw new RuntimeException(MessageUtils.getMessage("resume.url.generate_failed"));
         }
     }
 
     @Override
-    public ApiResponse<ResumeUrlDTO> getResumeViewUrlForHirer(long id) {
+    public ResumeUrlDTO getResumeViewUrlForHirer(long id) {
         Optional<Resume> cvOpt = resumeRepository.findById(id);
         if (cvOpt.isEmpty()) {
-            return new ApiResponse<>(MessageUtils.getMessage("resume.not_found"), null, HttpStatus.NOT_FOUND.value());
+            throw new ResourceNotFoundException(MessageUtils.getMessage("resume.not_found"));
         }
         Resume cv = cvOpt.get();
 
         try {
             String url = s3PresignedUrlService.generateViewUrl(cv.getKeyCf(), DEFAULT_URL_EXPIRATION_MINUTES);
-            ResumeUrlDTO urlDTO = new ResumeUrlDTO(cv.getId(), cv.getFileName(), url, DEFAULT_URL_EXPIRATION_MINUTES);
-            return new ApiResponse<>(MessageUtils.getMessage("message.success"), urlDTO, HttpStatus.OK.value());
+            return new ResumeUrlDTO(cv.getId(), cv.getFileName(), url, DEFAULT_URL_EXPIRATION_MINUTES);
         } catch (Exception e) {
             log.warn("Failed to generate hirer view URL for CV: {}", id);
-            return new ApiResponse<>(MessageUtils.getMessage("resume.url.generate_failed"), null, HttpStatus.INTERNAL_SERVER_ERROR.value());
+            throw new RuntimeException(MessageUtils.getMessage("resume.url.generate_failed"));
         }
     }
 
     @Override
-    public ApiResponse<ResumeUrlDTO> getResumeDownloadUrlForHirer(long id) {
+    public ResumeUrlDTO getResumeDownloadUrlForHirer(long id) {
         Optional<Resume> cvOpt = resumeRepository.findById(id);
         if (cvOpt.isEmpty()) {
-            return new ApiResponse<>(MessageUtils.getMessage("resume.not_found"), null, HttpStatus.NOT_FOUND.value());
+            throw new ResourceNotFoundException(MessageUtils.getMessage("resume.not_found"));
         }
         Resume cv = cvOpt.get();
 
         try {
             String url = s3PresignedUrlService.generateDownloadUrl(cv.getKeyCf(), cv.getFileName(), DEFAULT_URL_EXPIRATION_MINUTES);
-            ResumeUrlDTO urlDTO = new ResumeUrlDTO(cv.getId(), cv.getFileName(), url, DEFAULT_URL_EXPIRATION_MINUTES);
-            return new ApiResponse<>(MessageUtils.getMessage("message.success"), urlDTO, HttpStatus.OK.value());
+            return new ResumeUrlDTO(cv.getId(), cv.getFileName(), url, DEFAULT_URL_EXPIRATION_MINUTES);
         } catch (Exception e) {
             log.warn("Failed to generate hirer download URL for CV: {}", id);
-            return new ApiResponse<>(MessageUtils.getMessage("resume.url.generate_failed"), null, HttpStatus.INTERNAL_SERVER_ERROR.value());
+            throw new RuntimeException(MessageUtils.getMessage("resume.url.generate_failed"));
         }
     }
 

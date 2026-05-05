@@ -3,7 +3,7 @@ package com.job_web.controller.home;
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.dto.job.JobCardView;
 import com.job_web.service.cache.HomeCategoryCacheService;
-import com.job_web.utills.MessageUtils;
+import com.job_web.utils.MessageUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

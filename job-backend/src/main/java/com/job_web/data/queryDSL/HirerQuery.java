@@ -6,6 +6,7 @@ import com.job_web.models.QHirer;
 import com.job_web.models.QJob;
 import com.job_web.models.QUser;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -18,8 +19,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 @RequiredArgsConstructor
@@ -36,14 +39,13 @@ public class HirerQuery {
 
         if (StringUtils.hasText(search)) {
             where.and(hirer.companyName.containsIgnoreCase(search)
-                    .or(user.email.containsIgnoreCase(search)));
+                    .or(user.email.value.containsIgnoreCase(search)));
         }
 
         if (StringUtils.hasText(status)) {
             where.and(hirer.status.eq(status.toUpperCase()));
         }
 
-        // We'll fetch Raw data and map manually because of Instant to LocalDate conversion
         JPAQuery<com.querydsl.core.Tuple> query = queryFactory
                 .select(
                         hirer.id,
@@ -74,9 +76,8 @@ public class HirerQuery {
                         .id(String.valueOf(tuple.get(hirer.id)))
                         .name(tuple.get(hirer.companyName))
                         .industry("Technology") // Mock
-                        .registrationDate(tuple.get(hirer.createDate) != null ? 
-                                LocalDate.ofInstant(tuple.get(hirer.createDate), ZoneId.systemDefault()) : null)
-                        .activeJobs(tuple.get(job.id.count()).intValue())
+                        .registrationDate(LocalDate.from(Objects.requireNonNull(tuple.get(hirer.createDate))))
+                        .activeJobs(Objects.requireNonNull(tuple.get(job.id.count())).intValue())
                         .kycStatus(kycStatus != null ? kycStatus : "verified")
                         .accountStatus(tuple.get(hirer.status))
                         .avatarInitials(getInitials(tuple.get(hirer.companyName)))

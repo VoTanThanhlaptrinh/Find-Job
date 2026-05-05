@@ -3,20 +3,21 @@ package com.job_web.service.blog.impl;
 import com.job_web.data.BlogRepository;
 import com.job_web.data.CommentRepository;
 import com.job_web.data.LikeRepository;
-import com.job_web.dto.common.ApiResponse;
 import com.job_web.dto.blog.BlogDTO;
+import com.job_web.exception.ForbiddenException;
+import com.job_web.exception.ResourceNotFoundException;
+import com.job_web.mapper.BlogMapper;
 import com.job_web.models.Blog;
 import com.job_web.models.Comment;
 import com.job_web.models.Like;
 import com.job_web.models.User;
 import com.job_web.service.blog.BlogService;
-import com.job_web.utills.MessageUtils;
+import com.job_web.utils.MessageUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -27,70 +28,69 @@ public class BlogServiceImpl implements BlogService {
     private final BlogRepository blogRepository;
     private final CommentRepository commentRepository;
     private final LikeRepository likeRepository;
-
+    private final BlogMapper blogMapper;
     @Override
-    public ApiResponse<String> postBlog(BlogDTO blogDTO, User user) {
-        Blog blog = blogDTO.toBlog();
+    public String postBlog(BlogDTO blogDTO, User user) {
+        Blog blog = blogMapper.toBlog(blogDTO);
         blog.setAuthor(user);
         blogRepository.save(blog);
-        return new ApiResponse<>(MessageUtils.getMessage("blog.create.success"), null, HttpStatus.CREATED.value());
+        return MessageUtils.getMessage("blog.create.success");
     }
 
     @Override
-    public ApiResponse<String> updateBlog(long id, BlogDTO blogDTO, User user) {
+    public String updateBlog(long id, BlogDTO blogDTO, User user) {
         Optional<Blog> blogOpt = blogRepository.findBlogById(id);
         if (blogOpt.isEmpty()) {
-            return new ApiResponse<>(MessageUtils.getMessage("blog.not_found"), null, HttpStatus.NOT_FOUND.value());
+            throw new ResourceNotFoundException(MessageUtils.getMessage("blog.not_found"));
         }
         Blog blog = blogOpt.get();
         if (blog.getAuthor() != null && blog.getAuthor().getId() != user.getId()) {
-            return new ApiResponse<>(MessageUtils.getMessage("blog.edit.forbidden"), null, HttpStatus.FORBIDDEN.value());
+            throw new ForbiddenException(MessageUtils.getMessage("blog.edit.forbidden"));
         }
-        blogDTO.applyTo(blog);
+        blogMapper.applyTo(blogDTO,blog);
         blogRepository.save(blog);
-        return new ApiResponse<>(MessageUtils.getMessage("blog.update.success"), null, HttpStatus.OK.value());
+        return MessageUtils.getMessage("blog.update.success");
     }
 
     @Override
-    public ApiResponse<String> deleteBlog(long id) {
+    public String deleteBlog(long id) {
         Optional<Blog> blogOpt = blogRepository.findBlogById(id);
         if (blogOpt.isEmpty()) {
-            return new ApiResponse<>(MessageUtils.getMessage("blog.not_found"), null, HttpStatus.NOT_FOUND.value());
+            throw new ResourceNotFoundException(MessageUtils.getMessage("blog.not_found"));
         }
         Blog blog = blogOpt.get();
         blog.markDeleted();
         blogRepository.save(blog);
-        return new ApiResponse<>(MessageUtils.getMessage("blog.delete.success"), null, HttpStatus.OK.value());
+        return MessageUtils.getMessage("blog.delete.success");
     }
 
     @Override
-    public ApiResponse<Page<Blog>> getBlogs(final int pageIndex, final int pageSize) {
+    public Page<Blog> getBlogs(final int pageIndex, final int pageSize) {
         Pageable pageable = PageRequest.of(pageIndex, pageSize);
         Page<Blog> blogs = blogRepository.findAll(pageable);
-        return new ApiResponse<>(MessageUtils.getMessage("blog.get.success"), blogs, HttpStatus.OK.value());
+        return blogs;
     }
 
     @Override
-    public ApiResponse<Blog> getBlogById(long id) {
+    public Blog getBlogById(long id) {
         return blogRepository.findBlogById(id)
-                .map(blog -> new ApiResponse<>(MessageUtils.getMessage("blog.get.success"), blog, HttpStatus.OK.value()))
-                .orElseGet(() -> new ApiResponse<>(MessageUtils.getMessage("blog.not_found"), null, HttpStatus.NOT_FOUND.value()));
+                .orElseThrow(() -> new ResourceNotFoundException(MessageUtils.getMessage("blog.not_found")));
     }
 
     @Override
-    public ApiResponse<String> comment(Comment comment, User user) {
+    public String comment(Comment comment, User user) {
         comment.setUser(user);
         comment.markActive();
         commentRepository.save(comment);
-        return new ApiResponse<>(MessageUtils.getMessage("blog.comment.success"), null, HttpStatus.CREATED.value());
+        return MessageUtils.getMessage("blog.comment.success");
     }
 
     @Override
-    public ApiResponse<String> like(final long id, User user) {
+    public String like(final long id, User user) {
         Optional<Blog> blog = blogRepository.findBlogById(id);
 
         if (blog.isEmpty()) {
-            return new ApiResponse<>(MessageUtils.getMessage("blog.not_found"), null, HttpStatus.NOT_FOUND.value());
+            throw new ResourceNotFoundException(MessageUtils.getMessage("blog.not_found"));
         }
         Optional<Like> like = likeRepository.findLatestByUserIdAndBlogId(user.getId(), blog.get().getId());
         like.ifPresentOrElse(
@@ -106,29 +106,29 @@ public class BlogServiceImpl implements BlogService {
                     likeRepository.save(like1);
                 }
         );
-        return new ApiResponse<>(MessageUtils.getMessage("blog.like.success"), null, HttpStatus.OK.value());
+        return MessageUtils.getMessage("blog.like.success");
     }
 
     @Override
-    public ApiResponse<String> unlike(long id, User user) {
+    public String unlike(long id, User user) {
         Optional<Blog> blog = blogRepository.findBlogById(id);
 
         if (blog.isEmpty()) {
-            return new ApiResponse<>(MessageUtils.getMessage("blog.not_found"), null, HttpStatus.NOT_FOUND.value());
+            throw new ResourceNotFoundException(MessageUtils.getMessage("blog.not_found"));
         }
         Optional<Like> like = likeRepository.findLatestByUserIdAndBlogId(user.getId(), blog.get().getId());
         like.ifPresent(l -> {
             l.markDeleted();
             likeRepository.save(l);
         });
-        return new ApiResponse<>(MessageUtils.getMessage("blog.unlike.success"), null, HttpStatus.OK.value());
+        return MessageUtils.getMessage("blog.unlike.success");
     }
 
     @Override
-    public ApiResponse<Page<Comment>> getComments(int pageIndex, int pageSize) {
+    public Page<Comment> getComments(int pageIndex, int pageSize) {
         Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by("createDate").descending());
         Page<Comment> comments = commentRepository.findAll(pageable);
-        return new ApiResponse<>(MessageUtils.getMessage("blog.get.success"), comments, HttpStatus.OK.value());
+        return comments;
     }
 
 }

@@ -9,6 +9,7 @@ import com.job_web.message.MessageProducer;
 import com.job_web.models.User;
 import com.job_web.service.account.AccountService;
 import com.job_web.service.support.VerificationService;
+import com.job_web.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -27,6 +28,7 @@ public class AccountServiceImpl implements AccountService {
     private final UserRepository userRepository;
     private final VerificationService verifyService;
     private final MessageProducer mailProducer;
+    private final UserMapper userMapper;
 
     private static final String MDC_USER_ID = "userId";
 
@@ -38,9 +40,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public UserInfo getDetailUser(User user) {
-        // Read-only query — no MDC / no logging needed.
-        // RequestLoggingFilter already covers the HTTP layer.
-        return UserInfo.fromUser(user);
+        return userMapper.toUserInfo(user);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class AccountServiceImpl implements AccountService {
                 throw new BadRequestException("auth.password.current_mismatch");
             }
 
-            user.setPassword(encoder.encode(newPassword));
+            user.setPassword(new com.job_web.models.vo.Password(encoder.encode(newPassword)));
             userRepository.save(user);
 
             log.info("Password changed successfully for user: {}", user.getId());
@@ -71,7 +71,7 @@ public class AccountServiceImpl implements AccountService {
 
             log.info("Profile update requested for user: {}", user.getId());
 
-            userInfo.update(user);
+            userMapper.updateUser(userInfo, user);
             userRepository.save(user);
 
             log.info("Profile updated successfully for user: {}", user.getId());

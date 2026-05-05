@@ -2,6 +2,7 @@ package com.job_web.seeder;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.job_web.constant.EmploymentType;
 import com.job_web.constant.RoleConstants;
 import com.job_web.data.AddressRepository;
 import com.job_web.data.HirerRepository;
@@ -131,11 +132,11 @@ public class MasterDataSeeder implements CommandLineRunner {
 
         User admin = new User();
         admin.setFullName(DEFAULT_ADMIN_NAME);
-        admin.setEmail(uniqueEmail(DEFAULT_ADMIN_EMAIL));
-        admin.setPassword(passwordEncoder.encode(DEFAULT_PASSWORD));
+        admin.setEmail(new com.job_web.models.vo.EmailAddress(uniqueEmail(DEFAULT_ADMIN_EMAIL)));
+        admin.setPassword(new com.job_web.models.vo.Password(passwordEncoder.encode(DEFAULT_PASSWORD)));
         admin.setRole(RoleConstants.ROLE_ADMIN);
         admin.setAddress("Ho Chi Minh City");
-        admin.setMobile("0900000001");
+        admin.setMobile(new com.job_web.models.vo.PhoneNumber("0900000001"));
         admin.setDateOfBirth(LocalDate.of(1990, 1, 1));
         admin.setAccountLocked(false);
         admin.setEnabled(true);
@@ -158,11 +159,11 @@ public class MasterDataSeeder implements CommandLineRunner {
             // Tạo User cho Nhà tuyển dụng
             User user = new User();
             user.setFullName("Hirer " + (i + 1));
-            user.setEmail(email);
-            user.setPassword(passwordEncoder.encode(DEFAULT_PASSWORD));
+            user.setEmail(new com.job_web.models.vo.EmailAddress(email));
+            user.setPassword(new com.job_web.models.vo.Password(passwordEncoder.encode(DEFAULT_PASSWORD)));
             user.setRole(RoleConstants.ROLE_HIRER);
             user.setAddress(ADDRESS_SEEDS.get(i % ADDRESS_SEEDS.size()).city());
-            user.setMobile("09000000" + (10 + i));
+            user.setMobile(new com.job_web.models.vo.PhoneNumber("09000000" + (10 + i)));
             user.setDateOfBirth(LocalDate.of(1990, 1, 1).plusDays(i * 120L));
             user.setAccountLocked(false);
             user.setEnabled(true);
@@ -176,13 +177,10 @@ public class MasterDataSeeder implements CommandLineRunner {
             hirer.setUser(user);
             hirer.setCompanyName(COMPANY_NAMES.get(i));
             hirer.setDescription(COMPANY_DESC.get(i));
-            hirer.setSocialLink("https://company.example/" + COMPANY_NAMES.get(i).toLowerCase());
+            hirer.setSocialLink(new com.job_web.models.vo.SocialLink("https://company.example/" + COMPANY_NAMES.get(i).toLowerCase()));
 
-            // Set Logo cho Hirer (hoặc thuộc tính tương đương trong Entity của bạn)
-            // hirer.setLogo(COMPANY_LOGOS.get(i));
-
-            hirer.setCreateDate(now.minus(Duration.ofDays(60 + i)));
-            hirer.setModifiedDate(now.minus(Duration.ofDays(30 + i)));
+            hirer.setCreateDate(LocalDateTime.now());
+            hirer.setModifiedDate(LocalDateTime.now());
             hirers.add(hirerRepository.save(hirer));
         }
 
@@ -291,7 +289,7 @@ public class MasterDataSeeder implements CommandLineRunner {
         job.setRequireDetails(j.getJobRequirement());
         job.setSkill(j.getJobSkill());
         job.setMoreDetail(j.getMoreDetail());
-        job.setYearOfExperience(j.getYearOfExperience());
+        job.setYearOfExperience(new com.job_web.models.vo.ExperienceYears(j.getYearOfExperience()));
         job.setTime(j.getTime());
 
         // 1. Set Hirer (Lấy ngẫu nhiên hoặc theo ID giả lập từ JSON)

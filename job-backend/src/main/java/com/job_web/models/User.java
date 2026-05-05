@@ -11,6 +11,7 @@ import java.util.StringTokenizer;
 
 
 import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -19,13 +20,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
-
-@Data
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
@@ -35,25 +31,32 @@ import lombok.NoArgsConstructor;
 		@Index(name = "mulitIndex1", columnList = "id, email"),})
 @SQLRestriction("status <> 'DELETED'")
 public class User extends StatusEntity implements UserDetails, Principal {
+	@Setter
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	private String fullName;
-	private String password;
+	@Embedded
+	private com.job_web.models.vo.Password password;
 	private LocalDate dateOfBirth;
 	private String role;
 	@Column(unique = true)
-	private String email;
+	@Embedded
+	private com.job_web.models.vo.EmailAddress email;
 	private String address;
-	private String mobile;
+	@Embedded
+	private com.job_web.models.vo.PhoneNumber mobile;
+	@Setter
 	private boolean accountLocked;
 	private boolean enabled;
 	private boolean active;
+	@Setter
 	private boolean oauth2Enabled;
+	@Setter
 	@CreatedDate
 	@Column(nullable = false, updatable = false)
 	private LocalDateTime createDate;
-	
+	@Setter
 	@LastModifiedDate
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
@@ -78,7 +81,7 @@ public class User extends StatusEntity implements UserDetails, Principal {
 	@Override
 	public String getPassword() {
 		// TODO Auto-generated method stub
-		return password;
+		return password.getValue();
 	}
 
 	@Override
@@ -114,13 +117,68 @@ public class User extends StatusEntity implements UserDetails, Principal {
 	@Override
 	public String getName() {
 		// TODO Auto-generated method stub
-		return email;
+		return email.getValue();
 	}
 
 	@Override
 	public String getUsername() {
-		// TODO Auto-generated method stub
-		return email;
+		return email != null ? email.getValue() : null;
+	}
+
+	public String getEmail() {
+		return email != null ? email.getValue() : null;
+	}
+
+	public String getMobile() {
+		return mobile != null ? mobile.getValue() : null;
+	}
+
+	public void setPassword(com.job_web.models.vo.Password password) {
+		this.password = password;
+	}
+
+	public void setDateOfBirth(LocalDate dateOfBirth) {
+		if (dateOfBirth == null) {
+			throw new com.job_web.exception.BadRequestException(com.job_web.utils.MessageUtils.getMessage("validation.dob.required"));
+		}
+		if (dateOfBirth.isAfter(LocalDate.now())) {
+			throw new com.job_web.exception.BadRequestException(com.job_web.utils.MessageUtils.getMessage("validation.dob.past"));
+		}
+		this.dateOfBirth = dateOfBirth;
+	}
+
+	public void setEmail(com.job_web.models.vo.EmailAddress email) {
+		this.email = email;
+	}
+
+	public void setFullName(String fullName) {
+		if (fullName == null || fullName.trim().isEmpty()) {
+			throw new com.job_web.exception.BadRequestException(com.job_web.utils.MessageUtils.getMessage("validation.fullname.required"));
+		}
+		this.fullName = fullName;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public void setRole(String role) {
+		if (role == null || role.trim().isEmpty()) {
+			throw new com.job_web.exception.BadRequestException(com.job_web.utils.MessageUtils.getMessage("validation.role.required"));
+		}
+		this.role = role;
+	}
+
+	public void setMobile(com.job_web.models.vo.PhoneNumber mobile) {
+		this.mobile = mobile;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 }
 

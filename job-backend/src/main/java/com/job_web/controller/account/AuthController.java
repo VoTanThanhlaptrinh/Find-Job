@@ -8,7 +8,7 @@ import com.job_web.dto.common.ApiResponse;
 import com.job_web.models.CurrentUser;
 import com.job_web.models.User;
 import com.job_web.service.account.AuthService;
-import com.job_web.utills.MessageUtils;
+import com.job_web.utils.MessageUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;

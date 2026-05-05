@@ -1,5 +1,6 @@
 package com.job_web.service.job;
 
+import com.job_web.constant.EmploymentType;
 import com.job_web.dto.job.AddressJobCount;
 import com.job_web.dto.job.JobCardView;
 import com.job_web.dto.job.JobResponse;
@@ -17,7 +18,7 @@ public interface JobQueryService {
 
     Page<JobCardView> getListJobByAddress(String address, int page, int amount);
 
-    Page<JobCardView> filterBetterSalaryAndHasAddressAndInTimes(int pageIndex, int pageSize, int min, int max, List<String> cities, List<String> times, String title);
+    Page<JobCardView> filterBetterSalaryAndHasAddressAndInTimes(int pageIndex, int pageSize, int min, int max, List<String> cities, List<EmploymentType> times, String title);
 
     Page<JobResponse> getHirerJobPost(int pageIndex, int pageSize, String email);
 

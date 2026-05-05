@@ -1,5 +1,6 @@
 package web_application.home;
 
+import com.job_web.constant.EmploymentType;
 import com.job_web.controller.home.HomeFeedController;
 import com.job_web.dto.job.JobCardView;
 import com.job_web.service.cache.HomeCategoryCacheService;
@@ -45,7 +46,7 @@ class HomeFeedControllerTest {
         @DisplayName("HM01: Anonymous van lay duoc feed trang chu")
         void getInit_Success() throws Exception {
             List<JobCardView> jobs = List.of(
-                    new JobCardView(1L, "Java Developer", "Ho Chi Minh", "1000-1500", "Full-time")
+                    new JobCardView(1L, "Java Developer", "Ho Chi Minh", "1000-1500", EmploymentType.Full_time)
             );
             when(homeCategoryCacheService.getHomeInitData()).thenReturn(jobs);
 

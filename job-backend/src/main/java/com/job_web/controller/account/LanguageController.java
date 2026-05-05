@@ -2,7 +2,7 @@ package com.job_web.controller.account;
 
 import com.job_web.config.I18nConfig;
 import com.job_web.dto.common.ApiResponse;
-import com.job_web.utills.MessageUtils;
+import com.job_web.utils.MessageUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;

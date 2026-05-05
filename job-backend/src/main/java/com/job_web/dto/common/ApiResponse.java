@@ -9,6 +9,9 @@ public record ApiResponse<T>(
     public ApiResponse(String message, T data, int status) {
         this(message, data, status, null);
     }
+    public ApiResponse(String message, T data) {
+        this(message, data, 200,null);
+    }
 
     public String getMessage() {
         return message;

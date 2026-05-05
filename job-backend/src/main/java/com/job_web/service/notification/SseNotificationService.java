@@ -10,7 +10,7 @@ public interface SseNotificationService {
      * Đăng ký client SSE để nhận thông báo cho resume cụ thể
      * Kiểm tra quyền sở hữu resume trước khi cho phép subscribe
      */
-    ApiResponse<SseEmitter> subscribe(Long resumeId, User user);
+    SseEmitter subscribe(Long resumeId, User user);
     
     /**
      * Gửi thông báo đến client đang subscribe resumeId

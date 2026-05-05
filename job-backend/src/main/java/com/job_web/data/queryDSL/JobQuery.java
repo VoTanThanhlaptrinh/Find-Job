@@ -1,5 +1,6 @@
 package com.job_web.data.queryDSL;
 
+import com.job_web.constant.EmploymentType;
 import com.job_web.dto.job.*;
 import com.job_web.models.EntityStatus;
 import com.job_web.models.Job;
@@ -88,7 +89,7 @@ public class JobQuery {
                 .selectFrom(job)
                 .where(
                         job.status.eq(ACTIVE_STATUS),
-                        time == null ? null : job.time.eq(time)
+                        time == null ? null : job.time.eq(EmploymentType.valueOf(time))
                 )
                 .orderBy(job.createDate.desc());
 
@@ -97,7 +98,7 @@ public class JobQuery {
                 .from(job)
                 .where(
                         job.status.eq(ACTIVE_STATUS),
-                        time == null ? null : job.time.eq(time)
+                        time == null ? null : job.time.eq(EmploymentType.valueOf(time))
                 );
 
         return fetchPage(pageable, contentQuery, countQuery);
@@ -188,7 +189,7 @@ public class JobQuery {
         return fetchPage(pageable, contentQuery, countQuery);
     }
 
-    public Page<JobCardView> filterBetterSalaryAndHasAddressAndInTimes(int pageIndex, int pageSize, int min, int max, List<String> cities, List<String> times, String title) {
+    public Page<JobCardView> filterBetterSalaryAndHasAddressAndInTimes(int pageIndex, int pageSize, int min, int max, List<String> cities, List<EmploymentType> times, String title) {
         QJob job = QJob.job;
         QAddress address = QAddress.address;
         Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by("createDate").descending());
@@ -248,7 +249,7 @@ public class JobQuery {
                 .leftJoin(job.address, address)
                 .leftJoin(job.applies, apply).on(apply.status.eq(ACTIVE_STATUS))
                 .where(
-                        user.email.eq(email),
+                        user.email.value.eq(email),
                         job.status.eq(ACTIVE_STATUS),
                         hirer.status.eq(ACTIVE_STATUS),
                         user.status.eq(ACTIVE_STATUS),
@@ -264,7 +265,7 @@ public class JobQuery {
                 .join(hirer.user, user)
                 .leftJoin(job.address, address)
                 .where(
-                        user.email.eq(email),
+                        user.email.value.eq(email),
                         job.status.eq(ACTIVE_STATUS),
                         hirer.status.eq(ACTIVE_STATUS),
                         user.status.eq(ACTIVE_STATUS),
@@ -287,7 +288,7 @@ public class JobQuery {
                 .join(hirer.user, user)
                 .leftJoin(job.address, address)
                 .where(
-                        user.email.eq(email),
+                        user.email.value.eq(email),
                         job.status.eq(ACTIVE_STATUS),
                         hirer.status.eq(ACTIVE_STATUS),
                         user.status.eq(ACTIVE_STATUS),
@@ -311,7 +312,7 @@ public class JobQuery {
                 .join(apply.job, job)
                 .leftJoin(job.address, address)
                 .where(
-                        user.email.eq(email),
+                        user.email.value.eq(email),
                         apply.status.eq(ACTIVE_STATUS),
                         job.status.eq(ACTIVE_STATUS),
                         user.status.eq(ACTIVE_STATUS),
@@ -326,7 +327,7 @@ public class JobQuery {
                 .join(apply.job, job)
                 .leftJoin(job.address, address)
                 .where(
-                        user.email.eq(email),
+                        user.email.value.eq(email),
                         apply.status.eq(ACTIVE_STATUS),
                         job.status.eq(ACTIVE_STATUS),
                         user.status.eq(ACTIVE_STATUS),

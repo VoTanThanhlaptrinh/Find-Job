@@ -95,7 +95,7 @@ class AuthServiceImplRoleFlowTest {
         when(userRepository.saveAndFlush(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(userRepository.findByEmail("hirer@test.com")).thenAnswer(invocation -> {
             User user = new User();
-            user.setEmail("hirer@test.com");
+            user.setEmail(new com.job_web.models.vo.EmailAddress("hirer@test.com"));
             user.setFullName("Recruiter Test");
             user.setRole(RoleConstants.ROLE_HIRER);
             return Optional.of(user);
@@ -129,7 +129,7 @@ class AuthServiceImplRoleFlowTest {
     void loginHirer_UserAccountRejected() {
         LoginDTO dto = new LoginDTO("user@test.com", "password123");
         User user = new User();
-        user.setEmail("user@test.com");
+        user.setEmail(new com.job_web.models.vo.EmailAddress("user@test.com"));
         user.setRole(RoleConstants.ROLE_USER);
         when(request.getRemoteAddr()).thenReturn("127.0.0.1");
         when(spamService.checkIpSpamLogin("127.0.0.1")).thenReturn(false);

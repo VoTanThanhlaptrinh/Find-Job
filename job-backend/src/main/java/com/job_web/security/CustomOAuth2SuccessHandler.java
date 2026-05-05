@@ -43,7 +43,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         User user = userRepository.findByEmail(principal.getAttribute("email")).orElse(null);
         if (user == null) {
             user = new User();
-            user.setEmail(Objects.requireNonNull(principal.getAttribute("email")).toString());
+            user.setEmail(new com.job_web.models.vo.EmailAddress(Objects.requireNonNull(principal.getAttribute("email")).toString()));
             user.setFullName(Objects.requireNonNull(principal.getAttribute("name")).toString());
             user.setActive(true);
             user.setRole("ROLE_USER");

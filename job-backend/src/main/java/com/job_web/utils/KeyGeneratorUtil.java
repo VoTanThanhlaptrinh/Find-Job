@@ -1,4 +1,4 @@
-package com.job_web.utills;
+package com.job_web.utils;
 
 import com.github.f4b6a3.uuid.UuidCreator;
 

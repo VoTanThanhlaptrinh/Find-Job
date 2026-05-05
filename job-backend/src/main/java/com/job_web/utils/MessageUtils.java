@@ -1,4 +1,4 @@
-package com.job_web.utills;
+package com.job_web.utils;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;

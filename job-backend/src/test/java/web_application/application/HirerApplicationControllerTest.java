@@ -70,12 +70,11 @@ class HirerApplicationControllerTest {
                 }
             };
             Page<CandidateDTO> page = new PageImpl<>(List.of(candidate));
-            ApiResponse<Page<CandidateDTO>> response = new ApiResponse<>("success", page, HttpStatus.OK.value());
-            when(applyService.getAllCandidateAppliedJob(eq(0), eq(10), eq(1L))).thenReturn(response);
+            when(applyService.getAllCandidateAppliedJob(eq(0), eq(10), eq(1L))).thenReturn(page);
 
             mockMvc.perform(get(BASE_URL + "/jobs/1/candidates/0/10"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.message").value("success"))
+                    .andExpect(jsonPath("$.message").isNotEmpty())
                     .andExpect(jsonPath("$.data.content[0].email").value("candidate@test.com"));
         }
 
