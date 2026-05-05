@@ -48,10 +48,9 @@ class UserApplicationControllerTest {
         @DisplayName("UA01: Tra ve trang thai da ung tuyen thanh cong")
         @WithMockUser(username = "user@test.com", roles = "USER")
         void hasApplied_Success() throws Exception {
-            ApiResponse<Boolean> response = new ApiResponse<>("success", true, HttpStatus.OK.value());
-            when(applyService.hasApplied(any(), eq(1L))).thenReturn(response);
+            when(applyService.hasApplied(any(), eq(1L))).thenReturn(true);
 
-            mockMvc.perform(get(BASE_URL + "/applications/jobs/1/status"))
+            mockMvc.perform(get(BASE_URL + "/applications/1/status"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.message").value("success"))
                     .andExpect(jsonPath("$.data").value(true));
@@ -61,7 +60,7 @@ class UserApplicationControllerTest {
         @DisplayName("UA02: Tra ve 400 khi jobId khong hop le")
         @WithMockUser(username = "user@test.com", roles = "USER")
         void hasApplied_InvalidJobId() throws Exception {
-            mockMvc.perform(get(BASE_URL + "/applications/jobs/invalid/status"))
+            mockMvc.perform(get(BASE_URL + "/applications/invalid/status"))
                     .andExpect(status().isBadRequest());
         }
     }
@@ -73,7 +72,7 @@ class UserApplicationControllerTest {
         @Test
         @DisplayName("UA03: Tra ve 401 khi chua dang nhap")
         void hasApplied_Unauthorized() throws Exception {
-            mockMvc.perform(get(BASE_URL + "/applications/jobs/1/status"))
+            mockMvc.perform(get(BASE_URL + "/applications/1/status"))
                     .andExpect(status().isUnauthorized());
         }
 
@@ -81,7 +80,7 @@ class UserApplicationControllerTest {
         @DisplayName("UA04: Tra ve 403 khi HIRER truy cap endpoint cua USER")
         @WithMockUser(username = "hirer@test.com", roles = "HIRER")
         void hasApplied_ForbiddenForHirer() throws Exception {
-            mockMvc.perform(get(BASE_URL + "/applications/jobs/1/status"))
+            mockMvc.perform(get(BASE_URL + "/applications/1/status"))
                     .andExpect(status().isForbidden());
         }
     }

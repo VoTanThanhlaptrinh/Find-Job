@@ -10,18 +10,20 @@ import com.job_web.dto.application.ApplyCvWithUploadRequest;
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.dto.application.CandidateDTO;
 import com.job_web.dto.message.CloudUploadMessage;
+import com.job_web.exception.BadRequestException;
+import com.job_web.exception.ResourceNotFoundException;
 import com.job_web.message.MessageProducer;
 import com.job_web.models.Apply;
-import com.job_web.models.Job;
 import com.job_web.models.Resume;
 import com.job_web.models.User;
 import com.job_web.service.application.ApplyService;
 import com.job_web.service.application.ResumeService;
 import com.job_web.service.support.FileService;
-import com.job_web.utills.KeyGeneratorUtil;
-import com.job_web.utills.MessageUtils;
+import com.job_web.utils.KeyGeneratorUtil;
+import com.job_web.utils.MessageUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.jdt.core.compiler.InvalidInputException;
 import org.slf4j.MDC;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -49,9 +51,9 @@ public class ApplyServiceImpl implements ApplyService {
     private static final String MDC_JOB_ID = "jobId";
     private static final String MDC_CV_ID = "cvId";
 
-    @Transactional(rollbackFor = {Exception.class, Throwable.class})
+    @Transactional(rollbackFor = { Exception.class, Throwable.class })
     @Override
-    public ApiResponse<String> applyWithExistingCv(ApplyCvWithExistingRequest request, User user) {
+    public void applyWithExistingCv(ApplyCvWithExistingRequest request, User user) {
         try {
             MDC.put(MDC_USER_ID, String.valueOf(user.getId()));
             MDC.put(MDC_JOB_ID, String.valueOf(request.jobId()));
@@ -62,25 +64,25 @@ public class ApplyServiceImpl implements ApplyService {
 
             var currentUser = userRepository.findByEmail(user.getEmail());
             if (currentUser.isEmpty()) {
-                return new ApiResponse<>(MessageUtils.getMessage("auth.user.not_found"), null, HttpStatus.BAD_REQUEST.value());
+                throw new ResourceNotFoundException(MessageUtils.getMessage("auth.user.not_found"));
             }
             var job = jobRepository.findById(request.jobId());
             if (job.isEmpty()) {
-                return new ApiResponse<>(MessageUtils.getMessage("job.not_found"), null, HttpStatus.BAD_REQUEST.value());
+                throw new ResourceNotFoundException(MessageUtils.getMessage("job.not_found"));
             }
             var resume = resumeRepository.findById(request.existingCvId());
             if (resume.isEmpty()) {
-                return new ApiResponse<>(MessageUtils.getMessage("resume.not_found"), null, HttpStatus.BAD_REQUEST.value());
+                throw new ResourceNotFoundException(MessageUtils.getMessage("resume.not_found"));
             }
             if (applyRepository.findByJobAndUser(currentUser.get().getEmail(), request.jobId()).isPresent()) {
                 log.warn("Duplicate application blocked — user: {} already applied to job: {}",
                         currentUser.get().getId(), request.jobId());
-                return new ApiResponse<>(MessageUtils.getMessage("application.already_applied"), null, HttpStatus.BAD_REQUEST.value());
+                throw new BadRequestException(MessageUtils.getMessage("application.already_applied"));
             }
             if (resumeRepository.countOwnedByUser(request.existingCvId(), currentUser.get().getEmail()) == 0) {
                 log.warn("CV ownership violation — user: {} does not own CV: {}",
                         currentUser.get().getId(), request.existingCvId());
-                return new ApiResponse<>(MessageUtils.getMessage("resume.not_owned"), null, HttpStatus.BAD_REQUEST.value());
+                throw new BadRequestException(MessageUtils.getMessage("resume.not_owned"));
             }
 
             Apply apply = new Apply();
@@ -93,7 +95,6 @@ public class ApplyServiceImpl implements ApplyService {
             log.info("Application completed — user: {} applied to job: {} with existing CV: {}",
                     currentUser.get().getId(), request.jobId(), request.existingCvId());
 
-            return new ApiResponse<>(MessageUtils.getMessage("application.success"), null, HttpStatus.OK.value());
         } finally {
             MDC.remove(MDC_USER_ID);
             MDC.remove(MDC_JOB_ID);
@@ -101,9 +102,9 @@ public class ApplyServiceImpl implements ApplyService {
         }
     }
 
-    @Transactional(rollbackFor = {Exception.class, Throwable.class})
+    @Transactional(rollbackFor = { Exception.class, Throwable.class })
     @Override
-    public ApiResponse<String> applyWithUploadCv(ApplyCvWithUploadRequest request, User user) throws IOException {
+    public void applyWithUploadCv(ApplyCvWithUploadRequest request, User user) throws IOException {
         try {
             MDC.put(MDC_USER_ID, String.valueOf(user.getId()));
             MDC.put(MDC_JOB_ID, String.valueOf(request.getJobId()));
@@ -113,22 +114,22 @@ public class ApplyServiceImpl implements ApplyService {
 
             var currentUser = userRepository.findByEmail(user.getEmail());
             if (currentUser.isEmpty()) {
-                return new ApiResponse<>(MessageUtils.getMessage("auth.user.not_found"), null, HttpStatus.BAD_REQUEST.value());
+                throw new ResourceNotFoundException(MessageUtils.getMessage("auth.user.not_found"));
             }
             if (applyRepository.findByJobAndUser(currentUser.get().getEmail(), request.getJobId()).isPresent()) {
                 log.warn("Duplicate application blocked — user: {} already applied to job: {}",
                         currentUser.get().getId(), request.getJobId());
-                return new ApiResponse<>(MessageUtils.getMessage("application.already_applied"), null, HttpStatus.BAD_REQUEST.value());
+                throw new BadRequestException(MessageUtils.getMessage("application.already_applied"));
             }
             var job = jobRepository.findById(request.getJobId());
             if (job.isEmpty()) {
-                return new ApiResponse<>(MessageUtils.getMessage("job.not_found"), null, HttpStatus.BAD_REQUEST.value());
+                throw new ResourceNotFoundException(MessageUtils.getMessage("job.not_found"));
             }
             long activeResumeCount = resumeRepository.countActiveByUserEmail(currentUser.get().getEmail());
             if (activeResumeCount >= 5) {
                 log.warn("Resume quota exceeded — user: {} has {} active resumes (max: 5)",
                         currentUser.get().getId(), activeResumeCount);
-                return new ApiResponse<>(MessageUtils.getMessage("resume.max_count"), null, HttpStatus.BAD_REQUEST.value());
+                throw new BadRequestException(MessageUtils.getMessage("resume.max_count"));
             }
 
             var resume = new Resume();
@@ -159,8 +160,6 @@ public class ApplyServiceImpl implements ApplyService {
 
             log.info("Application completed — user: {} applied to job: {} with new CV: {}",
                     currentUser.get().getId(), request.getJobId(), resume.getId());
-
-            return new ApiResponse<>(MessageUtils.getMessage("application.success"), null, HttpStatus.OK.value());
         } finally {
             MDC.remove(MDC_USER_ID);
             MDC.remove(MDC_JOB_ID);
@@ -169,16 +168,17 @@ public class ApplyServiceImpl implements ApplyService {
     }
 
     @Override
-    public ApiResponse<Page<CandidateDTO>> getAllCandidateAppliedJob(int pageIndex, int pageSize, long jobId) {
+    public Page<CandidateDTO> getAllCandidateAppliedJob(int pageIndex, int pageSize, long jobId) {
         Page<CandidateDTO> page = applyRepository.getAllCandidateAppliedJob(jobId, PageRequest.of(pageIndex, pageSize));
-        int status = page.isEmpty() ? HttpStatus.NOT_FOUND.value() : HttpStatus.OK.value();
-        String message = status == 200 ? MessageUtils.getMessage("message.success") : MessageUtils.getMessage("message.not_found");
-        return new ApiResponse<>(message, page, status);
+        if (page.isEmpty()) {
+            throw new ResourceNotFoundException(MessageUtils.getMessage("message.not_found"));
+        }
+        return page;
     }
 
     @Override
-    public ApiResponse<Boolean> hasApplied(String email, long jobId) {
+    public Boolean hasApplied(String email, long jobId) {
         Optional<Long> optionalApply = applyRepository.findByJobAndUser(email, jobId);
-        return new ApiResponse<>(MessageUtils.getMessage("message.success"),optionalApply.isPresent() , HttpStatus.OK.value());
+        return optionalApply.isPresent();
     }
 }

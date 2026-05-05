@@ -75,7 +75,7 @@ class UserResumeControllerTest {
         @WithMockUser(username = TEST_USER_EMAIL, roles = "USER")
         void getResumeViewUrl_Success() throws Exception {
             ApiResponse<ResumeUrlDTO> response = new ApiResponse<>("success", validResumeUrlDTO, HttpStatus.OK.value());
-            when(resumeService.getResumeViewUrl(eq(VALID_RESUME_ID), any())).thenReturn(response);
+            when(resumeService.getResumeViewUrl(eq(VALID_RESUME_ID), any())).thenReturn(validResumeUrlDTO);
 
             mockMvc.perform(get(BASE_URL + "/" + VALID_RESUME_ID + "/view")
                             .contentType(MediaType.APPLICATION_JSON))
@@ -99,8 +99,7 @@ class UserResumeControllerTest {
         @DisplayName("U03: Trả về 404 khi resume không tồn tại")
         @WithMockUser(username = TEST_USER_EMAIL, roles = "USER")
         void getResumeViewUrl_ResumeNotFound() throws Exception {
-            ApiResponse<ResumeUrlDTO> response = new ApiResponse<>("Resume not found.", null, HttpStatus.NOT_FOUND.value());
-            when(resumeService.getResumeViewUrl(eq(INVALID_RESUME_ID), any())).thenReturn(response);
+            when(resumeService.getResumeViewUrl(eq(INVALID_RESUME_ID), any())).thenReturn(null);
 
             mockMvc.perform(get(BASE_URL + "/" + INVALID_RESUME_ID + "/view")
                             .contentType(MediaType.APPLICATION_JSON))
@@ -113,12 +112,8 @@ class UserResumeControllerTest {
         @DisplayName("U04: Trả về 403 khi user cố xem resume của người khác")
         @WithMockUser(username = TEST_USER_EMAIL, roles = "USER")
         void getResumeViewUrl_Forbidden() throws Exception {
-            ApiResponse<ResumeUrlDTO> response = new ApiResponse<>(
-                    "You do not have permission to view this resume.", 
-                    null, 
-                    HttpStatus.FORBIDDEN.value()
-            );
-            when(resumeService.getResumeViewUrl(eq(VALID_RESUME_ID), any())).thenReturn(response);
+
+            when(resumeService.getResumeViewUrl(eq(VALID_RESUME_ID), any())).thenReturn(null);
 
             mockMvc.perform(get(BASE_URL + "/" + VALID_RESUME_ID + "/view")
                             .contentType(MediaType.APPLICATION_JSON))
@@ -130,8 +125,7 @@ class UserResumeControllerTest {
         @DisplayName("U09: Trả về 404 khi ID = 0 (invalid)")
         @WithMockUser(username = TEST_USER_EMAIL, roles = "USER")
         void getResumeViewUrl_InvalidIdZero() throws Exception {
-            ApiResponse<ResumeUrlDTO> response = new ApiResponse<>("Resume not found.", null, HttpStatus.NOT_FOUND.value());
-            when(resumeService.getResumeViewUrl(eq(0L), any())).thenReturn(response);
+            when(resumeService.getResumeViewUrl(eq(0L), any())).thenReturn(null);
 
             mockMvc.perform(get(BASE_URL + "/0/view")
                             .contentType(MediaType.APPLICATION_JSON))
@@ -156,8 +150,7 @@ class UserResumeControllerTest {
         @DisplayName("U05: Tải resume thành công khi đã đăng nhập và là chủ sở hữu")
         @WithMockUser(username = TEST_USER_EMAIL, roles = "USER")
         void getResumeDownloadUrl_Success() throws Exception {
-            ApiResponse<ResumeUrlDTO> response = new ApiResponse<>("success", validResumeUrlDTO, HttpStatus.OK.value());
-            when(resumeService.getResumeDownloadUrl(eq(VALID_RESUME_ID), any())).thenReturn(response);
+            when(resumeService.getResumeDownloadUrl(eq(VALID_RESUME_ID), any())).thenReturn(validResumeUrlDTO);
 
             mockMvc.perform(get(BASE_URL + "/" + VALID_RESUME_ID + "/download")
                             .contentType(MediaType.APPLICATION_JSON))
@@ -180,8 +173,7 @@ class UserResumeControllerTest {
         @DisplayName("U07: Trả về 404 khi resume không tồn tại")
         @WithMockUser(username = TEST_USER_EMAIL, roles = "USER")
         void getResumeDownloadUrl_ResumeNotFound() throws Exception {
-            ApiResponse<ResumeUrlDTO> response = new ApiResponse<>("Resume not found.", null, HttpStatus.NOT_FOUND.value());
-            when(resumeService.getResumeDownloadUrl(eq(INVALID_RESUME_ID), any())).thenReturn(response);
+            when(resumeService.getResumeDownloadUrl(eq(INVALID_RESUME_ID), any())).thenReturn(null);
 
             mockMvc.perform(get(BASE_URL + "/" + INVALID_RESUME_ID + "/download")
                             .contentType(MediaType.APPLICATION_JSON))
@@ -193,12 +185,7 @@ class UserResumeControllerTest {
         @DisplayName("U08: Trả về 403 khi user cố tải resume của người khác")
         @WithMockUser(username = TEST_USER_EMAIL, roles = "USER")
         void getResumeDownloadUrl_Forbidden() throws Exception {
-            ApiResponse<ResumeUrlDTO> response = new ApiResponse<>(
-                    "You do not have permission to download this resume.", 
-                    null, 
-                    HttpStatus.FORBIDDEN.value()
-            );
-            when(resumeService.getResumeDownloadUrl(eq(VALID_RESUME_ID), any())).thenReturn(response);
+            when(resumeService.getResumeDownloadUrl(eq(VALID_RESUME_ID), any())).thenReturn(null);
 
             mockMvc.perform(get(BASE_URL + "/" + VALID_RESUME_ID + "/download")
                             .contentType(MediaType.APPLICATION_JSON))
@@ -216,7 +203,7 @@ class UserResumeControllerTest {
         @WithMockUser(username = TEST_USER_EMAIL, roles = "USER")
         void responseFormat_CorrectStructure() throws Exception {
             ApiResponse<ResumeUrlDTO> response = new ApiResponse<>("success", validResumeUrlDTO, HttpStatus.OK.value());
-            when(resumeService.getResumeViewUrl(eq(VALID_RESUME_ID), any())).thenReturn(response);
+            when(resumeService.getResumeViewUrl(eq(VALID_RESUME_ID), any())).thenReturn(validResumeUrlDTO);
 
             mockMvc.perform(get(BASE_URL + "/" + VALID_RESUME_ID + "/view")
                             .contentType(MediaType.APPLICATION_JSON))

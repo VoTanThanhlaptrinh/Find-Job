@@ -5,6 +5,7 @@ import com.job_web.dto.application.ResumeUrlDTO;
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.models.Resume;
 import com.job_web.service.application.ResumeService;
+import com.job_web.utils.MessageUtils;
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
@@ -28,19 +29,20 @@ public class HirerResumeController {
 
     @GetMapping("/users/{email}")
     public ResponseEntity<ApiResponse<List<ResumeDTO>>> listResumesByUser(@PathVariable @Email String email) {
-        ApiResponse<List<ResumeDTO>> res = resumeService.getResumesByUser(email);
-        return ResponseEntity.status(res.getStatus()).body(res);
+        List<ResumeDTO> res = resumeService.getResumesByUser(email);
+        return ResponseEntity.ok().body(new ApiResponse<>(MessageUtils.getMessage("message.success"), res, HttpStatus.OK.value()));
+
     }
 
     @GetMapping("/{id}/view")
     public ResponseEntity<ApiResponse<ResumeUrlDTO>> getResumeViewUrl(@PathVariable("id") long id) {
-        ApiResponse<ResumeUrlDTO> res = resumeService.getResumeViewUrlForHirer(id);
-        return ResponseEntity.status(res.getStatus()).body(res);
+        ResumeUrlDTO res = resumeService.getResumeViewUrlForHirer(id);
+        return ResponseEntity.ok().body(new ApiResponse<>(MessageUtils.getMessage("message.success"), res, HttpStatus.OK.value()));
     }
 
     @GetMapping("/{id}/download")
     public ResponseEntity<ApiResponse<ResumeUrlDTO>> getResumeDownloadUrl(@PathVariable("id") long id) {
-        ApiResponse<ResumeUrlDTO> res = resumeService.getResumeDownloadUrlForHirer(id);
-        return ResponseEntity.status(res.getStatus()).body(res);
+        ResumeUrlDTO res = resumeService.getResumeDownloadUrlForHirer(id);
+        return ResponseEntity.ok().body(new ApiResponse<>(MessageUtils.getMessage("message.success"), res, HttpStatus.OK.value()));
     }
 }

@@ -1,6 +1,5 @@
 package com.job_web.dto.blog;
 
-import com.job_web.models.Blog;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -15,18 +14,6 @@ public record BlogDTO(
         @NotBlank(message = "{validation.blog.content.required}")
         String content
 ) {
-    public Blog toBlog() {
-        Blog blog = new Blog();
-        applyTo(blog);
-        return blog;
-    }
-
-    public void applyTo(Blog blog) {
-        blog.setTitle(title);
-        blog.setDescription(description);
-        blog.setContent(content);
-    }
-
     public String getTitle() {
         return title;
     }

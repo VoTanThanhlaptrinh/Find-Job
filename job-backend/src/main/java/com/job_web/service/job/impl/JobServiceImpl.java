@@ -1,14 +1,16 @@
 package com.job_web.service.job.impl;
 
+import com.job_web.constant.EmploymentType;
 import com.job_web.data.AddressRepository;
 import com.job_web.data.HirerRepository;
 import com.job_web.data.JobRepository;
 import com.job_web.dto.job.JobCardView;
 import com.job_web.dto.job.JobDTO;
 import com.job_web.dto.job.JobDetailView;
-import com.job_web.dto.job.JobViewMapper;
+import com.job_web.mapper.JobViewMapper;
 import com.job_web.exception.ForbiddenException;
 import com.job_web.exception.ResourceNotFoundException;
+import com.job_web.mapper.JobMapper;
 import com.job_web.models.Address;
 import com.job_web.models.Hirer;
 import com.job_web.models.Job;
@@ -33,16 +35,16 @@ public class JobServiceImpl implements JobService {
     private final HirerRepository hirerRepository;
     private final AddressRepository addressRepository;
     private final DefaultRepositoryTagsProvider repositoryTagsProvider;
-
+    private final JobMapper jobMapper;
     private static final String MDC_USER_ID = "userId";
     private static final String MDC_JOB_ID = "jobId";
-
+    private final JobViewMapper jobViewMapper;
     @Override
     public JobDetailView getJobDetailById(Long id) {
         // Read-only — no logging needed.
         Job job = jobRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("job.not_found"));
-        return JobViewMapper.toJobDetailView(job);
+        return jobViewMapper.toJobDetailView(job);
     }
 
     @Override
@@ -70,7 +72,7 @@ public class JobServiceImpl implements JobService {
                 throw new ForbiddenException("job.address.forbidden");
             }
 
-            Job job = jobDTO.toJob();
+            Job job = jobMapper.toJob(jobDTO);
             job.setAddress(address);
             job.setHirer(hirer);
             jobRepository.save(job);
@@ -113,7 +115,7 @@ public class JobServiceImpl implements JobService {
                 throw new ForbiddenException("job.address.forbidden");
             }
 
-            jobDTO.updateJob(job);
+            jobMapper.updateJob(jobDTO,job);
             job.setAddress(address);
             job.setHirer(hirer);
             jobRepository.save(job);
@@ -161,7 +163,7 @@ public class JobServiceImpl implements JobService {
                 t.get("title", String.class),
                 t.get("address", String.class),
                 t.get("salary", String.class),
-                t.get("time", String.class)
+                t.get("time", EmploymentType.class)
         )).toList();
     }
 }

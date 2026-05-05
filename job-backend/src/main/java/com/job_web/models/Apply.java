@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Setter
 @EqualsAndHashCode(callSuper = true)
 @SQLRestriction("status <> 'DELETED'")
 public class Apply extends StatusEntity {
@@ -37,6 +36,7 @@ public class Apply extends StatusEntity {
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
+    @Setter
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime applyDate;
@@ -44,6 +44,27 @@ public class Apply extends StatusEntity {
     @LastModifiedDate
     @Column(insertable = false)
     private LocalDateTime lastModifyDate;
+
+    public void setUser(User user) {
+		if(user == null){
+			throw new NullPointerException("user is null");
+		}
+		this.user = user;
+	}
+
+	public void setResume(Resume resume) {
+		if(resume == null){
+			throw new NullPointerException("Resume is null");
+		}
+		this.resume = resume;
+	}
+
+	public void setJob(Job job) {
+		if(job == null){
+			throw new NullPointerException("Job is null");
+		}
+		this.job = job;
+	}
 }
 
 

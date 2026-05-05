@@ -7,9 +7,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@Setter
 @MappedSuperclass
 public abstract class StatusEntity {
+    @Setter
     @Column(nullable = false)
     private String status;
 

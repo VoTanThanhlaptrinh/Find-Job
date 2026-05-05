@@ -2,6 +2,7 @@ package com.job_web.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.annotation.CreatedDate;
@@ -10,7 +11,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -35,6 +36,20 @@ public class Like extends StatusEntity {
     @LastModifiedDate
     @Column(insertable = false)
     private LocalDateTime lastModifiedDate;
+
+    public void setUser(User user) {
+        if(user == null){
+            throw new NullPointerException("user is null");
+        }
+        this.user = user;
+    }
+
+    public void setBlog(Blog blog) {
+        if(blog == null){
+            throw new NullPointerException("user is null");
+        }
+        this.blog = blog;
+    }
 }
 
 

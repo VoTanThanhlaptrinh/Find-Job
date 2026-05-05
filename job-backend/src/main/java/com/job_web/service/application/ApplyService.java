@@ -11,8 +11,8 @@ import java.io.IOException;
 
 
 public interface ApplyService {
-    ApiResponse<String> applyWithExistingCv(ApplyCvWithExistingRequest request, User user);
-    ApiResponse<String> applyWithUploadCv(ApplyCvWithUploadRequest request, User user) throws IOException;
-    ApiResponse<Page<CandidateDTO>> getAllCandidateAppliedJob(int pageIndex, int pageSize, long jobId);
-    ApiResponse<Boolean> hasApplied(String email, long jobId);
+    void applyWithExistingCv(ApplyCvWithExistingRequest request, User user);
+    void applyWithUploadCv(ApplyCvWithUploadRequest request, User user) throws IOException;
+    Page<CandidateDTO> getAllCandidateAppliedJob(int pageIndex, int pageSize, long jobId);
+    Boolean hasApplied(String email, long jobId);
 }

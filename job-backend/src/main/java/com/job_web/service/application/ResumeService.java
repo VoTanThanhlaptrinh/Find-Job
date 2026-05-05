@@ -13,26 +13,26 @@ import java.io.InputStream;
 import java.util.List;
 
 public interface ResumeService {
-    ApiResponse<List<ResumeView>> getListResumeOfUser(User user);
+    List<ResumeView> getListResumeOfUser(User user);
 
-    ApiResponse<List<ResumeDTO>> getResumesByUser(String email);
+    List<ResumeDTO> getResumesByUser(String email);
 
-    ApiResponse<ResumeDetailDTO> getResumeDetail(long id, User user);
+    ResumeDetailDTO getResumeDetail(long id, User user);
 
-    ApiResponse<ResumeView> createResume(ResumeUploadDTO resumeUploadDTO, User user);
+    ResumeView createResume(ResumeUploadDTO resumeUploadDTO, User user);
 
-    ApiResponse<String> updateResume(long id, ResumeUploadDTO resumeUploadDTO, User user);
+    void updateResume(long id, ResumeUploadDTO resumeUploadDTO, User user);
 
-    ApiResponse<String> deleteResume(long id, User user);
+    void deleteResume(long id, User user);
 
     void uploadResumeToCloud(byte[] data, String key, String originalName);
     byte[] toByteArray(InputStream inputStream) throws IOException;
 
-    ApiResponse<ResumeUrlDTO> getResumeViewUrl(long id, User user);
+    ResumeUrlDTO getResumeViewUrl(long id, User user);
 
-    ApiResponse<ResumeUrlDTO> getResumeDownloadUrl(long id, User user);
+    ResumeUrlDTO getResumeDownloadUrl(long id, User user);
 
-    ApiResponse<ResumeUrlDTO> getResumeViewUrlForHirer(long id);
+    ResumeUrlDTO getResumeViewUrlForHirer(long id);
 
-    ApiResponse<ResumeUrlDTO> getResumeDownloadUrlForHirer(long id);
+    ResumeUrlDTO getResumeDownloadUrlForHirer(long id);
 }

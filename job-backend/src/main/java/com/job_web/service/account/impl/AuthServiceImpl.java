@@ -13,6 +13,7 @@ import com.job_web.exception.BadRequestException;
 import com.job_web.exception.ForbiddenException;
 import com.job_web.exception.ResourceNotFoundException;
 import com.job_web.exception.UnauthorizedException;
+import com.job_web.mapper.RegistrationFormMapper;
 import com.job_web.message.MessageProducer;
 import com.job_web.models.Hirer;
 import com.job_web.models.User;
@@ -22,7 +23,7 @@ import com.job_web.service.security.RefreshTokenService;
 import com.job_web.service.support.ReferenceService;
 import com.job_web.service.support.SpamService;
 import com.job_web.service.support.VerificationService;
-import com.job_web.utills.MessageUtils;
+import com.job_web.utils.MessageUtils;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -40,8 +41,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.time.Instant;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -59,7 +60,7 @@ public class AuthServiceImpl implements AuthService {
     private final SpamService spamService;
     private final JwtService jwtService;
     private final Environment environment;
-
+    private final RegistrationFormMapper mapper;
     private static final String MDC_USER_ID = "userId";
 
     @Value("${app.cookie.secure}")
@@ -319,7 +320,7 @@ public class AuthServiceImpl implements AuthService {
         try {
             MDC.put(MDC_USER_ID, String.valueOf(user.getId()));
 
-            user.setPassword(encoder.encode(resetDTO.getNewPass()));
+            user.setPassword(new com.job_web.models.vo.Password(encoder.encode(resetDTO.getNewPass())));
             userRepository.save(user);
             verifyService.delete("ref-email:" + email);
             verifyService.delete("random:" + resetDTO.getRandom());
@@ -342,7 +343,7 @@ public class AuthServiceImpl implements AuthService {
     private String registerByRole(RegistationForm registationForm, String role) {
         log.info("Registration started for role: {}", role);
 
-        User user = registationForm.toUser(encoder, role);
+        User user = mapper.toUser(registationForm,encoder, role);
         userRepository.saveAndFlush(user);
 
         try {
@@ -364,13 +365,12 @@ public class AuthServiceImpl implements AuthService {
 
     private void createHirer(User user) {
         Hirer hirer = new Hirer();
-        Instant now = Instant.now();
         hirer.setUser(user);
         hirer.setCompanyName(user.getFullName());
         hirer.setDescription("");
-        hirer.setSocialLink("");
-        hirer.setCreateDate(now);
-        hirer.setModifiedDate(now);
+        hirer.setSocialLink(new com.job_web.models.vo.SocialLink(""));
+        hirer.setCreateDate(LocalDateTime.now());
+        hirer.setModifiedDate(LocalDateTime.now());
         hirer.setAddresses(new ArrayList<>());
         hirerRepository.save(hirer);
     }

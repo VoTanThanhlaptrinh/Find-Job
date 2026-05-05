@@ -2,10 +2,12 @@ package com.job_web.service.notification.impl;
 
 import com.job_web.data.ResumeRepository;
 import com.job_web.dto.common.ApiResponse;
+import com.job_web.exception.ForbiddenException;
+import com.job_web.exception.UnauthorizedException;
 import com.job_web.models.Resume;
 import com.job_web.models.User;
 import com.job_web.service.notification.SseNotificationService;
-import com.job_web.utills.MessageUtils;
+import com.job_web.utils.MessageUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -32,9 +34,9 @@ public class SseNotificationServiceImpl implements SseNotificationService {
     private static final String MDC_CV_ID = "cvId";
 
     @Override
-    public ApiResponse<SseEmitter> subscribe(Long resumeId, User user) {
+    public SseEmitter subscribe(Long resumeId, User user) {
         if (user == null) {
-            return new ApiResponse<>(MessageUtils.getMessage("message.unauthorized"), null, HttpStatus.UNAUTHORIZED.value());
+           throw new UnauthorizedException(MessageUtils.getMessage("message.unauthorized"));
         }
 
         try {
@@ -43,7 +45,7 @@ public class SseNotificationServiceImpl implements SseNotificationService {
 
             if (!isResumeOwnedByUser(resumeId, user.getEmail())) {
                 log.warn("SSE subscribe forbidden — user: {} does not own CV: {}", user.getId(), resumeId);
-                return new ApiResponse<>(MessageUtils.getMessage("resume.access.forbidden"), null, HttpStatus.FORBIDDEN.value());
+                throw new ForbiddenException(MessageUtils.getMessage("resume.access.forbidden"));
             }
 
             // Close existing emitter if present
@@ -80,11 +82,11 @@ public class SseNotificationServiceImpl implements SseNotificationService {
             } catch (IOException e) {
                 log.warn("Failed to send initial SSE event for CV: {}", resumeId);
                 emitters.remove(resumeId);
-                return new ApiResponse<>(MessageUtils.getMessage("notification.sse.failed"), null, HttpStatus.INTERNAL_SERVER_ERROR.value());
+                throw new RuntimeException(MessageUtils.getMessage("notification.sse.failed"));
             }
 
             log.info("SSE client subscribed for CV: {} by user: {}", resumeId, user.getId());
-            return new ApiResponse<>(MessageUtils.getMessage("message.success"), emitter, HttpStatus.OK.value());
+            return emitter;
         } finally {
             MDC.remove(MDC_USER_ID);
             MDC.remove(MDC_CV_ID);

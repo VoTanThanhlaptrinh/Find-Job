@@ -1,7 +1,7 @@
 package com.job_web.dto.job;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.job_web.models.Job;
+import com.job_web.constant.EmploymentType;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -10,7 +10,6 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
-import java.time.ZoneOffset;
 
 public record JobDTO(
         @NotBlank(message = "{validation.job.name.required}")
@@ -20,7 +19,7 @@ public record JobDTO(
         long addressId,
 
         @NotBlank(message = "{validation.job.type.required}")
-        String jobType,
+        EmploymentType jobType,
 
         @Size(max = 255)
         String salary,
@@ -51,26 +50,6 @@ public record JobDTO(
         return deadlineCV != null && deadlineCV.isAfter(LocalDate.now());
     }
 
-    public void updateJob(Job job) {
-        job.setTime(jobType);
-        job.setDescription(jobDescription);
-        job.setRequireDetails(jobRequirement);
-        job.setSalary(salary);
-        job.setTitle(jobName);
-        if(moreDetail != null && !moreDetail.isEmpty()){
-            job.setMoreDetail(moreDetail);
-        }
-        if(headcount != null && headcount > 0){
-            job.setHeadcount(headcount);
-        }
-    }
-
-    public Job toJob() {
-        Job job = new Job();
-        updateJob(job);
-        return job;
-    }
-
     public String getJobName() {
         return jobName;
     }
@@ -79,7 +58,7 @@ public record JobDTO(
         return addressId;
     }
 
-    public String getJobType() {
+    public EmploymentType getJobType() {
         return jobType;
     }
 

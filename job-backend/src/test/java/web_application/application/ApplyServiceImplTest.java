@@ -15,7 +15,7 @@ import com.job_web.models.User;
 import com.job_web.service.application.ResumeService;
 import com.job_web.service.application.impl.ApplyServiceImpl;
 import com.job_web.service.support.FileService;
-import com.job_web.utills.MessageUtils;
+import com.job_web.utils.MessageUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -84,11 +84,11 @@ class ApplyServiceImplTest {
         void applyWithUploadCv_Success_WithDetachedUser() throws IOException {
             User detachedUser = new User();
             detachedUser.setId(7L);
-            detachedUser.setEmail("user@test.com");
+            detachedUser.setEmail(new com.job_web.models.vo.EmailAddress("user@test.com"));
 
             User managedUser = new User();
             managedUser.setId(7L);
-            managedUser.setEmail("user@test.com");
+            managedUser.setEmail(new com.job_web.models.vo.EmailAddress("user@test.com"));
 
             Job job = new Job();
             job.setId(800L);
@@ -110,12 +110,11 @@ class ApplyServiceImplTest {
             when(resumeRepository.save(any(Resume.class))).thenAnswer(invocation -> invocation.getArgument(0));
             when(applyRepository.save(any(Apply.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-            ApiResponse<String> response = applyService.applyWithUploadCv(request, detachedUser);
+            applyService.applyWithUploadCv(request, detachedUser);
 
             ArgumentCaptor<Apply> applyCaptor = ArgumentCaptor.forClass(Apply.class);
             verify(applyRepository).save(applyCaptor.capture());
 
-            assertEquals(200, response.getStatus());
             assertSame(managedUser, applyCaptor.getValue().getUser());
             assertEquals(800L, applyCaptor.getValue().getJob().getId());
         }
@@ -124,10 +123,10 @@ class ApplyServiceImplTest {
         @DisplayName("AU02: Chan upload khi da co 5 CV")
         void applyWithUploadCv_MaxResumeCount() throws IOException {
             User detachedUser = new User();
-            detachedUser.setEmail("user@test.com");
+            detachedUser.setEmail(new com.job_web.models.vo.EmailAddress("user@test.com"));
 
             User managedUser = new User();
-            managedUser.setEmail("user@test.com");
+            managedUser.setEmail(new com.job_web.models.vo.EmailAddress("user@test.com"));
 
             MockMultipartFile file = new MockMultipartFile(
                     "cvFile",
@@ -142,9 +141,9 @@ class ApplyServiceImplTest {
             when(jobRepository.findById(800L)).thenReturn(Optional.of(new Job()));
             when(resumeRepository.countActiveByUserEmail("user@test.com")).thenReturn(5L);
 
-            ApiResponse<String> response = applyService.applyWithUploadCv(request, detachedUser);
-
-            assertEquals(400, response.getStatus());
+            org.junit.jupiter.api.Assertions.assertThrows(com.job_web.exception.BadRequestException.class, () -> {
+                applyService.applyWithUploadCv(request, detachedUser);
+            });
         }
     }
 
@@ -157,11 +156,11 @@ class ApplyServiceImplTest {
         void applyWithExistingCv_Success_WithDetachedUser() {
             User detachedUser = new User();
             detachedUser.setId(7L);
-            detachedUser.setEmail("user@test.com");
+            detachedUser.setEmail(new com.job_web.models.vo.EmailAddress("user@test.com"));
 
             User managedUser = new User();
             managedUser.setId(7L);
-            managedUser.setEmail("user@test.com");
+            managedUser.setEmail(new com.job_web.models.vo.EmailAddress("user@test.com"));
 
             Job job = new Job();
             job.setId(123L);
@@ -178,12 +177,11 @@ class ApplyServiceImplTest {
             when(resumeRepository.countOwnedByUser(456L, "user@test.com")).thenReturn(1L);
             when(applyRepository.save(any(Apply.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-            ApiResponse<String> response = applyService.applyWithExistingCv(request, detachedUser);
+            applyService.applyWithExistingCv(request, detachedUser);
 
             ArgumentCaptor<Apply> applyCaptor = ArgumentCaptor.forClass(Apply.class);
             verify(applyRepository).save(applyCaptor.capture());
 
-            assertEquals(200, response.getStatus());
             assertSame(managedUser, applyCaptor.getValue().getUser());
             assertEquals(456L, applyCaptor.getValue().getResume().getId());
         }

@@ -3,7 +3,7 @@ package com.job_web.controller.account.user;
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.models.CurrentUser;
 import com.job_web.models.User;
-import com.job_web.utills.MessageUtils;
+import com.job_web.utils.MessageUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

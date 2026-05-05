@@ -32,7 +32,7 @@ public class CandidateQuery {
 
         if (StringUtils.hasText(search)) {
             where.and(candidate.fullName.containsIgnoreCase(search)
-                    .or(candidate.email.containsIgnoreCase(search)));
+                    .or(candidate.email.value.containsIgnoreCase(search)));
         }
 
         // Mapping to DTO
@@ -40,7 +40,7 @@ public class CandidateQuery {
                 .select(
                         candidate.id,
                         candidate.fullName,
-                        candidate.email,
+                        candidate.email.value,
                         candidate.modifiedDate,
                         candidate.status
                 )
@@ -61,11 +61,11 @@ public class CandidateQuery {
                 .map(tuple -> JobSeekerListItem.builder()
                         .id("cand_" + tuple.get(candidate.id))
                         .fullName(tuple.get(candidate.fullName))
-                        .email(tuple.get(candidate.email))
+                        .email(tuple.get(candidate.email.value))
                         .profession("Job Seeker") // Mock
                         .resumeStatus(resumeStatus != null ? resumeStatus : "available")
                         .lastActiveAt(tuple.get(candidate.modifiedDate) != null ? 
-                                tuple.get(candidate.modifiedDate).toLocalDateTime() : LocalDateTime.now())
+                                tuple.get(candidate.modifiedDate) : LocalDateTime.now())
                         .avatarInitials(getInitials(tuple.get(candidate.fullName)))
                         .build())
                 .toList();

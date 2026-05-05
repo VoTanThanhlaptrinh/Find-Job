@@ -7,7 +7,7 @@ import com.job_web.dto.admin.dashboard.RevenueTrendResponse;
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.dto.common.PageResponse;
 import com.job_web.service.admin.AdminService;
-import com.job_web.utills.MessageUtils;
+import com.job_web.utils.MessageUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

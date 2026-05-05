@@ -1,5 +1,6 @@
 package com.job_web.dto.job;
 
+import com.job_web.constant.EmploymentType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +14,7 @@ public class JobDTOJson implements Serializable {
     private String jobSkill;
     private String moreDetail;
     private String title;
-    private String time;
+    private EmploymentType time;
     private Integer yearOfExperience;
     private Long addressId;
     private Long hirerId;

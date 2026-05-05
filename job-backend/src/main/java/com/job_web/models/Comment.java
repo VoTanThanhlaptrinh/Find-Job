@@ -6,15 +6,12 @@ import java.time.LocalDateTime;
 import jakarta.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
-@Data
+@Getter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -41,6 +38,12 @@ public class Comment extends StatusEntity {
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
 
+	public void setUser(User user) {
+		if(user == null){
+			throw new NullPointerException("user is null");
+		}
+		this.user = user;
+	}
 }
 
 

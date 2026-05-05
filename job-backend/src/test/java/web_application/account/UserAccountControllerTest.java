@@ -61,7 +61,7 @@ class UserAccountControllerTest {
 
     private User buildUser(String email, String role) {
         User user = new User();
-        user.setEmail(email);
+        user.setEmail(new com.job_web.models.vo.EmailAddress(email));
         user.setRole(role);
         user.setEnabled(true);
         return user;

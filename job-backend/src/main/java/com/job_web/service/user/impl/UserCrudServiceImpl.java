@@ -94,17 +94,17 @@ public class UserCrudServiceImpl implements UserCrudService {
 
     private void applyDtoToUser(User user, UserCrudDTO dto, boolean isCreate) {
         user.setFullName(dto.getFullName());
-        user.setEmail(dto.getEmail());
+        user.setEmail(new com.job_web.models.vo.EmailAddress(dto.getEmail()));
         user.setRole(dto.getRole());
         user.setDateOfBirth(dto.getDateOfBirth());
         user.setAddress(dto.getAddress());
-        user.setMobile(dto.getMobile());
+        user.setMobile(dto.getMobile() != null && !dto.getMobile().trim().isEmpty() ? new com.job_web.models.vo.PhoneNumber(dto.getMobile()) : null);
         user.setAccountLocked(Boolean.TRUE.equals(dto.getAccountLocked()));
         user.setActive(Boolean.TRUE.equals(dto.getActive()));
         user.setEnabled(Boolean.TRUE.equals(dto.getEnabled()));
         user.setOauth2Enabled(Boolean.TRUE.equals(dto.getOauth2Enabled()));
         if (isCreate || dto.getPassword() != null) {
-            user.setPassword(passwordEncoder.encode(dto.getPassword()));
+            user.setPassword(new com.job_web.models.vo.Password(passwordEncoder.encode(dto.getPassword())));
         }
     }
 

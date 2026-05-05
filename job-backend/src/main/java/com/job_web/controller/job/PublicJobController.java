@@ -10,7 +10,7 @@ import com.job_web.dto.job.JobFilterDTO;
 import com.job_web.service.cache.HomeCategoryCacheService;
 import com.job_web.service.job.JobQueryService;
 import com.job_web.service.job.JobService;
-import com.job_web.utills.MessageUtils;
+import com.job_web.utils.MessageUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;

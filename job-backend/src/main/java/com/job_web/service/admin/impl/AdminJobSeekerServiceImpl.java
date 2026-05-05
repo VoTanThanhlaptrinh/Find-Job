@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -52,8 +53,8 @@ public class AdminJobSeekerServiceImpl implements AdminJobSeekerService {
     public void createJobSeeker(JobSeekerRequest request) {
         Candidate candidate = new Candidate();
         candidate.setFullName(request.getFullName());
-        candidate.setEmail(request.getEmail());
-        candidate.setCreateDate(new Timestamp(System.currentTimeMillis()));
+        candidate.setEmail(new com.job_web.models.vo.EmailAddress(request.getEmail()));
+        candidate.setCreateDate(LocalDateTime.now());
         candidate.setStatus("ACTIVE");
         candidateRepository.save(candidate);
     }

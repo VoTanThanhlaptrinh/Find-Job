@@ -1,6 +1,6 @@
 package com.job_web.security;
 
-import com.job_web.utills.PayloadMaskingUtil;
+import com.job_web.utils.PayloadMaskingUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -4,10 +4,7 @@ import jakarta.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -16,14 +13,16 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @SQLRestriction("status <> 'DELETED'")
 @EntityListeners(AuditingEntityListener.class)
 public class Resume extends StatusEntity {
-	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id
+	@Setter
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonIgnore
@@ -35,10 +34,31 @@ public class Resume extends StatusEntity {
 	private String keyCf;
 	private String fileName;
 	private String title;
-    @CreatedDate
-    private LocalDateTime createDate;
-    @LastModifiedDate
-    private LocalDateTime lastModifyDate;
+
+	@Setter
+	@CreatedDate
+	private LocalDateTime createDate;
+	@LastModifiedDate
+	private LocalDateTime lastModifyDate;
+
+	public void setUser(User user) {
+		if (user == null) {
+			throw new NullPointerException("user is null");
+		}
+		this.user = user;
+	}
+
+	public void setKeyCf(String key) {
+		if (key == null) {
+			throw new NullPointerException("keyCf is null");
+		}
+		this.keyCf = key;
+	}
+
+	public void setFileName(String originalFilename) {
+		if (originalFilename == null) {
+			throw new NullPointerException("keyCf is null");
+		}
+		this.fileName = originalFilename;
+	}
 }
-
-

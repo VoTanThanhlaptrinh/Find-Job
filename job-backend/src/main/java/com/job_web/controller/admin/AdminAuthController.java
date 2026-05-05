@@ -1,14 +1,9 @@
 package com.job_web.controller.admin;
 
-import com.job_web.dto.admin.auth.AdminLoginRequest;
-import com.job_web.dto.admin.auth.AdminLoginResponse;
-import com.job_web.dto.admin.auth.AdminLogoutRequest;
-import com.job_web.dto.admin.auth.AdminRefreshRequest;
 import com.job_web.dto.auth.LoginDTO;
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.service.account.AuthService;
-import com.job_web.service.admin.AdminService;
-import com.job_web.utills.MessageUtils;
+import com.job_web.utils.MessageUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping(path = "api/auth/admin", produces = "application/json")

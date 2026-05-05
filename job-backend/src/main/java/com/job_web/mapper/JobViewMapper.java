@@ -1,14 +1,21 @@
-package com.job_web.dto.job;
+package com.job_web.mapper;
 
+import com.job_web.dto.job.HirerJobPostView;
+import com.job_web.dto.job.JobCardView;
+import com.job_web.dto.job.JobDetailView;
+import com.job_web.dto.job.JobResponse;
 import com.job_web.models.Job;
+import jakarta.persistence.Column;
+import org.springframework.stereotype.Component;
 
 import java.time.ZoneOffset;
 
-public final class JobViewMapper {
-    private JobViewMapper() {
+@Component
+public class JobViewMapper {
+    public JobViewMapper() {
     }
 
-    public static JobCardView toJobCardView(Job job) {
+    public JobCardView toJobCardView(Job job) {
         return new JobCardView(
                 job.getId(),
                 job.getTitle(),
@@ -18,7 +25,7 @@ public final class JobViewMapper {
         );
     }
 
-    public static JobDetailView toJobDetailView(Job job) {
+    public JobDetailView toJobDetailView(Job job) {
         String expiredDate = job.getExpiredDate() == null
                 ? ""
                 : job.getExpiredDate().atOffset(ZoneOffset.UTC).toLocalDate().toString();
@@ -28,7 +35,7 @@ public final class JobViewMapper {
                 extractStreet(job),
                 job.getDescription(),
                 job.getSalary(),
-                job.getTime(),
+                job.getTime().toString(),
                 job.getRequireDetails(),
                 job.getSkill(),
                 expiredDate,
@@ -36,7 +43,7 @@ public final class JobViewMapper {
         );
     }
 
-    public static HirerJobPostView toHirerJobPostView(JobResponse job) {
+    public HirerJobPostView toHirerJobPostView(JobResponse job) {
         return new HirerJobPostView(
                 job.getId(),
                 job.getTitle(),

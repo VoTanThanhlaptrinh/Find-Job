@@ -71,8 +71,7 @@ class HirerResumeControllerTest {
         @DisplayName("H01: Xem resume thành công với quyền HIRER")
         @WithMockUser(username = TEST_HIRER_EMAIL, roles = "HIRER")
         void getResumeViewUrl_Success() throws Exception {
-            ApiResponse<ResumeUrlDTO> response = new ApiResponse<>("success", validResumeUrlDTO, HttpStatus.OK.value());
-            when(resumeService.getResumeViewUrlForHirer(eq(VALID_RESUME_ID))).thenReturn(response);
+            when(resumeService.getResumeViewUrlForHirer(eq(VALID_RESUME_ID))).thenReturn(validResumeUrlDTO);
 
             mockMvc.perform(get(BASE_URL + "/" + VALID_RESUME_ID + "/view")
                             .contentType(MediaType.APPLICATION_JSON))
@@ -97,7 +96,7 @@ class HirerResumeControllerTest {
         @WithMockUser(username = TEST_HIRER_EMAIL, roles = "HIRER")
         void getResumeViewUrl_ResumeNotFound() throws Exception {
             ApiResponse<ResumeUrlDTO> response = new ApiResponse<>("Resume not found.", null, HttpStatus.NOT_FOUND.value());
-            when(resumeService.getResumeViewUrlForHirer(eq(INVALID_RESUME_ID))).thenReturn(response);
+            when(resumeService.getResumeViewUrlForHirer(eq(INVALID_RESUME_ID))).thenReturn(null);
 
             mockMvc.perform(get(BASE_URL + "/" + INVALID_RESUME_ID + "/view")
                             .contentType(MediaType.APPLICATION_JSON))
@@ -125,7 +124,7 @@ class HirerResumeControllerTest {
         @WithMockUser(username = TEST_HIRER_EMAIL, roles = "HIRER")
         void getResumeDownloadUrl_Success() throws Exception {
             ApiResponse<ResumeUrlDTO> response = new ApiResponse<>("success", validResumeUrlDTO, HttpStatus.OK.value());
-            when(resumeService.getResumeDownloadUrlForHirer(eq(VALID_RESUME_ID))).thenReturn(response);
+            when(resumeService.getResumeDownloadUrlForHirer(eq(VALID_RESUME_ID))).thenReturn(validResumeUrlDTO);
 
             mockMvc.perform(get(BASE_URL + "/" + VALID_RESUME_ID + "/download")
                             .contentType(MediaType.APPLICATION_JSON))
@@ -149,7 +148,7 @@ class HirerResumeControllerTest {
         @WithMockUser(username = TEST_HIRER_EMAIL, roles = "HIRER")
         void getResumeDownloadUrl_ResumeNotFound() throws Exception {
             ApiResponse<ResumeUrlDTO> response = new ApiResponse<>("Resume not found.", null, HttpStatus.NOT_FOUND.value());
-            when(resumeService.getResumeDownloadUrlForHirer(eq(INVALID_RESUME_ID))).thenReturn(response);
+            when(resumeService.getResumeDownloadUrlForHirer(eq(INVALID_RESUME_ID))).thenReturn(null);
 
             mockMvc.perform(get(BASE_URL + "/" + INVALID_RESUME_ID + "/download")
                             .contentType(MediaType.APPLICATION_JSON))
@@ -166,8 +165,7 @@ class HirerResumeControllerTest {
         @DisplayName("ADMIN có thể truy cập endpoint HIRER")
         @WithMockUser(username = "admin@test.com", roles = {"ADMIN", "HIRER"})
         void adminCanAccessHirerEndpoint() throws Exception {
-            ApiResponse<ResumeUrlDTO> response = new ApiResponse<>("success", validResumeUrlDTO, HttpStatus.OK.value());
-            when(resumeService.getResumeViewUrlForHirer(eq(VALID_RESUME_ID))).thenReturn(response);
+            when(resumeService.getResumeViewUrlForHirer(eq(VALID_RESUME_ID))).thenReturn(validResumeUrlDTO);
 
             mockMvc.perform(get(BASE_URL + "/" + VALID_RESUME_ID + "/view")
                             .contentType(MediaType.APPLICATION_JSON))
@@ -191,8 +189,7 @@ class HirerResumeControllerTest {
         @DisplayName("Response JSON format đúng chuẩn")
         @WithMockUser(username = TEST_HIRER_EMAIL, roles = "HIRER")
         void responseFormat_CorrectStructure() throws Exception {
-            ApiResponse<ResumeUrlDTO> response = new ApiResponse<>("success", validResumeUrlDTO, HttpStatus.OK.value());
-            when(resumeService.getResumeViewUrlForHirer(eq(VALID_RESUME_ID))).thenReturn(response);
+            when(resumeService.getResumeViewUrlForHirer(eq(VALID_RESUME_ID))).thenReturn(validResumeUrlDTO);
 
             mockMvc.perform(get(BASE_URL + "/" + VALID_RESUME_ID + "/view")
                             .contentType(MediaType.APPLICATION_JSON))

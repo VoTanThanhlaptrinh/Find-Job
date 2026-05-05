@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
@@ -59,7 +60,7 @@ public class AdminEmployerServiceImpl implements AdminEmployerService {
                 .id(String.valueOf(hirer.getId()))
                 .name(hirer.getCompanyName())
                 .industry("Technology")
-                .registrationDate(LocalDateTime.ofInstant(hirer.getCreateDate(), ZoneId.systemDefault()).toLocalDate())
+                .registrationDate(LocalDate.from(hirer.getCreateDate()))
                 .activeJobs(hirer.getJobsPost() != null ? hirer.getJobsPost().size() : 0)
                 .kycStatus("verified")
                 .accountStatus(hirer.getStatus())

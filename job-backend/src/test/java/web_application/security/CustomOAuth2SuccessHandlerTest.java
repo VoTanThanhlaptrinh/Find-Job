@@ -47,7 +47,7 @@ class CustomOAuth2SuccessHandlerTest {
         ReflectionTestUtils.setField(handler, "isSecure", false);
 
         User user = new User();
-        user.setEmail("user@test.com");
+        user.setEmail(new com.job_web.models.vo.EmailAddress("user@test.com"));
         user.setRole("ROLE_USER");
         user.setEnabled(true);
         user.setActive(true);

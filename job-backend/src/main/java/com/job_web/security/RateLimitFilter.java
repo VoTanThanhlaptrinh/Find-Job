@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.job_web.constant.RateLimitConstants;
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.service.security.RateLimitService;
-import com.job_web.utills.MessageUtils;
+import com.job_web.utils.MessageUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

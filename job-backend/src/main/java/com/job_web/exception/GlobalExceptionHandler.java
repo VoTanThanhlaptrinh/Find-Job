@@ -1,7 +1,7 @@
 package com.job_web.exception;
 
 import com.job_web.dto.common.ApiResponse;
-import com.job_web.utills.MessageUtils;
+import com.job_web.utils.MessageUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;

@@ -1,4 +1,4 @@
-package com.job_web.utills;
+package com.job_web.utils;
 
 import java.util.Set;
 import java.util.regex.Pattern;

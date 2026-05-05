@@ -3,8 +3,10 @@ package com.job_web.controller.application;
 import com.job_web.dto.application.CandidateDTO;
 import com.job_web.dto.common.ApiResponse;
 import com.job_web.service.application.ApplyService;
+import com.job_web.utils.MessageUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +23,7 @@ public class HirerApplicationController {
     public ResponseEntity<ApiResponse<Page<CandidateDTO>>> getAllCandidateAppliedJob(@PathVariable int pageIndex,
                                                                                      @PathVariable int pageSize,
                                                                                      @PathVariable long jobId) {
-        ApiResponse<Page<CandidateDTO>> res = applyService.getAllCandidateAppliedJob(pageIndex, pageSize, jobId);
-        return ResponseEntity.status(res.getStatus()).body(res);
+        Page<CandidateDTO> page = applyService.getAllCandidateAppliedJob(pageIndex, pageSize, jobId);
+        return ResponseEntity.ok().body(new ApiResponse<>(MessageUtils.getMessage("message.success"),page, HttpStatus.OK.value()));
     }
 }
