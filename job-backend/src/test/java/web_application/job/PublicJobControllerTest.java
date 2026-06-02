@@ -1,13 +1,13 @@
 package web_application.job;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.job_web.constant.EmploymentType;
-import com.job_web.controller.job.PublicJobController;
-import com.job_web.dto.job.JobCardView;
-import com.job_web.dto.job.JobFilterDTO;
-import com.job_web.service.cache.HomeCategoryCacheService;
-import com.job_web.service.job.JobQueryService;
-import com.job_web.service.job.JobService;
+import com.job_web.recruiment.domain.vo.EmploymentType;
+import com.job_web.recruiment.api.PublicJobController;
+import com.job_web.recruiment.api.dto.JobCardView;
+import com.job_web.recruiment.api.dto.JobFilterDTO;
+import com.job_web.recruiment.infrastructure.cache.CategoryCacheService;
+import com.job_web.recruiment.application.JobQueryService;
+import com.job_web.recruiment.application.JobService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -49,7 +49,7 @@ class PublicJobControllerTest {
     private JobQueryService jobQueryService;
 
     @MockBean
-    private HomeCategoryCacheService homeCategoryCacheService;
+    private CategoryCacheService categoryCacheService;
 
     private static final String BASE_URL = "/api/jobs";
 

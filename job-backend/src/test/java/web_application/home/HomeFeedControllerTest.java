@@ -1,9 +1,9 @@
 package web_application.home;
 
-import com.job_web.constant.EmploymentType;
-import com.job_web.controller.home.HomeFeedController;
-import com.job_web.dto.job.JobCardView;
-import com.job_web.service.cache.HomeCategoryCacheService;
+import com.job_web.recruiment.domain.vo.EmploymentType;
+import com.job_web.recruiment.api.HomeFeedController;
+import com.job_web.recruiment.api.dto.JobCardView;
+import com.job_web.recruiment.infrastructure.cache.CategoryCacheService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ class HomeFeedControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private HomeCategoryCacheService homeCategoryCacheService;
+    private CategoryCacheService categoryCacheService;
 
     private static final String BASE_URL = "/api/home";
 
@@ -48,7 +48,7 @@ class HomeFeedControllerTest {
             List<JobCardView> jobs = List.of(
                     new JobCardView(1L, "Java Developer", "Ho Chi Minh", "1000-1500", EmploymentType.Full_time)
             );
-            when(homeCategoryCacheService.getHomeInitData()).thenReturn(jobs);
+            when(categoryCacheService.getHomeInitData()).thenReturn(jobs);
 
             mockMvc.perform(get(BASE_URL + "/init")
                             .accept(MediaType.APPLICATION_JSON))

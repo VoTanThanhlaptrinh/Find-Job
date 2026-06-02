@@ -1,21 +1,22 @@
 package web_application.account;
 
-import com.job_web.constant.RoleConstants;
-import com.job_web.data.HirerRepository;
-import com.job_web.data.UserRepository;
-import com.job_web.dto.auth.LoginDTO;
-import com.job_web.dto.auth.RegistationForm;
-import com.job_web.exception.BadRequestException;
-import com.job_web.exception.ForbiddenException;
-import com.job_web.message.MessageProducer;
-import com.job_web.models.Hirer;
-import com.job_web.models.User;
-import com.job_web.service.account.impl.AuthServiceImpl;
-import com.job_web.service.security.JwtService;
-import com.job_web.service.security.RefreshTokenService;
-import com.job_web.service.support.ReferenceService;
-import com.job_web.service.support.SpamService;
-import com.job_web.service.support.VerificationService;
+import com.job_web.identity.domain.vo.EmailAddress;
+import com.job_web.identity.domain.vo.RoleConstants;
+import com.job_web.recruiment.domain.repository.RecruitmentRepository;
+import com.job_web.identity.domain.repository.UserRepository;
+import com.job_web.identity.api.dto.LoginDTO;
+import com.job_web.identity.api.dto.RegistationForm;
+import com.job_web.shared.domain.exception.BadRequestException;
+import com.job_web.shared.domain.exception.ForbiddenException;
+import com.job_web.shared.infrastructure.message.MessageProducer;
+import com.job_web.recruiment.domain.model.Recruiment;
+import com.job_web.identity.domain.model.User;
+import com.job_web.identity.application.impl.AuthServiceImpl;
+import com.job_web.identity.application.JwtService;
+import com.job_web.identity.application.RefreshTokenService;
+import com.job_web.shared.application.ReferenceService;
+import com.job_web.shared.application.SpamService;
+import com.job_web.shared.application.VerificationService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -50,7 +51,7 @@ class AuthServiceImplRoleFlowTest {
     private UserRepository userRepository;
 
     @Mock
-    private HirerRepository hirerRepository;
+    private RecruitmentRepository recruitmentRepository;
 
     @Mock
     private ReferenceService refService;
@@ -95,7 +96,7 @@ class AuthServiceImplRoleFlowTest {
         when(userRepository.saveAndFlush(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(userRepository.findByEmail("hirer@test.com")).thenAnswer(invocation -> {
             User user = new User();
-            user.setEmail(new com.job_web.models.vo.EmailAddress("hirer@test.com"));
+            user.setEmail(new EmailAddress("hirer@test.com"));
             user.setFullName("Recruiter Test");
             user.setRole(RoleConstants.ROLE_HIRER);
             return Optional.of(user);
@@ -107,7 +108,7 @@ class AuthServiceImplRoleFlowTest {
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
         verify(userRepository).saveAndFlush(userCaptor.capture());
         assertEquals(RoleConstants.ROLE_HIRER, userCaptor.getValue().getRole());
-        verify(hirerRepository).save(any(Hirer.class));
+        verify(recruitmentRepository).save(any(Recruiment.class));
         verify(messageProducer).sendMail(any());
         assertEquals("hirer@test.com", username);
     }
@@ -129,7 +130,7 @@ class AuthServiceImplRoleFlowTest {
     void loginHirer_UserAccountRejected() {
         LoginDTO dto = new LoginDTO("user@test.com", "password123");
         User user = new User();
-        user.setEmail(new com.job_web.models.vo.EmailAddress("user@test.com"));
+        user.setEmail(new EmailAddress("user@test.com"));
         user.setRole(RoleConstants.ROLE_USER);
         when(request.getRemoteAddr()).thenReturn("127.0.0.1");
         when(spamService.checkIpSpamLogin("127.0.0.1")).thenReturn(false);

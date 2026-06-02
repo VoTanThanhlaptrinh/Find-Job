@@ -1,7 +1,7 @@
 package web_application.security;
 
-import com.job_web.service.security.JwtFamilyService;
-import com.job_web.service.security.impl.JwtServiceImpl;
+import com.job_web.identity.application.JwtFamilyService;
+import com.job_web.identity.application.impl.JwtServiceImpl;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

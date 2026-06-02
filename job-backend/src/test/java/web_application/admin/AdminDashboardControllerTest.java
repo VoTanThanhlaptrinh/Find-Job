@@ -1,11 +1,11 @@
 package web_application.admin;
 
-import com.job_web.controller.admin.AdminDashboardController;
-import com.job_web.dto.admin.dashboard.DashboardSummaryResponse;
-import com.job_web.dto.admin.dashboard.PendingJobItem;
-import com.job_web.dto.common.PageResponse;
-import com.job_web.service.admin.AdminService;
-import com.job_web.utils.MessageUtils;
+import com.job_web.admin.api.AdminDashboardController;
+import com.job_web.admin.api.dto.dashboard.DashboardSummaryResponse;
+import com.job_web.admin.api.dto.dashboard.PendingJobItem;
+import com.job_web.shared.domain.model.PageResponse;
+import com.job_web.admin.application.AdminService;
+import com.job_web.shared.utils.MessageUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

@@ -183,23 +183,23 @@ messageProducer.uploadToCloud(new CloudUploadMessage(...));
 messageProducer.processAI(new ResumeParsingMessage(...));
 ```
 
-### 3.6. BlogServiceImpl — BlogMapper chưa inject đúng
+### 3.6. BlogServiceImpl — BlogMapper chưa inject đúng (Đã giải quyết ✅)
 
 ```java
-// ❌ Thiếu final — sẽ NullPointerException runtime
-private BlogMapper blogMapper; // không phải final, không trong constructor
+// ✅ Đã thêm final và inject qua constructor
+private final BlogMapper blogMapper;
 ```
 
-### 3.7. Một số entity dùng NullPointerException thay vì domain exception
+### 3.7. Một số entity dùng NullPointerException thay vì domain exception (Đã giải quyết ✅)
 
 ```java
-// ❌ Apply.java, Resume.java, Comment.java, Like.java, Blog.java, Hirer.java
-throw new NullPointerException("user is null"); // Nên dùng BadRequestException
+// ✅ Đã thay thế bằng BadRequestException trong Apply.java, Resume.java, v.v.
+throw new com.job_web.exception.BadRequestException("user is null"); 
 ```
 
-### 3.8. `shared/` package rỗng
+### 3.8. `shared/` package rỗng (Đã giải quyết ✅)
 
-Đã tạo nhưng chưa di chuyển `StatusEntity`, `EntityStatus`, `ApiResponse`, `PageResponse` vào.
+Đã di chuyển `StatusEntity`, `EntityStatus`, `ApiResponse`, `PageResponse` vào package `shared/`.
 
 ### 3.9. Import thừa
 
@@ -259,24 +259,24 @@ graph TB
 
 #### 1A. Fix tức thì (< 1 ngày)
 
-- [ ] Fix `BlogServiceImpl`: inject `BlogMapper` qua constructor (`final` + `@RequiredArgsConstructor`)
-- [ ] Thay `NullPointerException` → `BadRequestException` trong `Apply`, `Resume`, `Comment`, `Like`, `Hirer`, `Blog`
-- [ ] Xóa import thừa (`ApiResponse`, `Timestamp`, `Instant`)
-- [ ] Fix `EmploymentType` enum naming: `Full_time` → `FULL_TIME`, etc.
+- [x] Fix `BlogServiceImpl`: inject `BlogMapper` qua constructor (`final` + `@RequiredArgsConstructor`)
+- [x] Thay `NullPointerException` → `BadRequestException` trong `Apply`, `Resume`, `Comment`, `Like`, `Hirer`, `Blog`
+- [x] Xóa import thừa (`ApiResponse`, `Timestamp`, `Instant`)
+- [x] Fix `EmploymentType` enum naming: `Full_time` → `FULL_TIME`, etc.
 
 #### 1B. Cải thiện domain model (1-3 ngày)
 
-- [ ] Di chuyển `StatusEntity`, `EntityStatus` → `shared/domain/`
-- [ ] Di chuyển `ApiResponse`, `PageResponse` → `shared/api/`
+- [x] Di chuyển `StatusEntity`, `EntityStatus` → `shared/`
+- [x] Di chuyển `ApiResponse`, `PageResponse` → `shared/`
 - [ ] Sử dụng `DateRange` VO ở nơi phù hợp (ví dụ: Job posting period)
 - [ ] Thêm `ExperienceYears` VO cho `Resume.yoe`
-- [ ] Tạo domain method `Job.isExpired()`, `Job.isOwnedBy(Hirer)`
+- [x] Thêm domain methods (`Job.isExpired()`, `Job.isOwnedBy(Hirer)`)
 - [ ] Tạo domain method `JobApplication.submit(Job, Resume, User)` — factory method
 
 #### 1C. Rename theo Ubiquitous Language (cần coordinate với frontend)
 
-- [ ] `Apply` → `JobApplication`
-- [ ] `Hirer` → `Employer`
+- [x] `Apply` → `JobApplication`
+- [x] `Hirer` → `Employer` (Hiện đang dùng `Recruiment`)
 - [ ] `Job.time` → `Job.employmentType`
 - [ ] `Resume.keyCf` → `Resume.storageKey`
 - [ ] `Resume.yoe` → `Resume.yearsOfExperience`
@@ -443,13 +443,13 @@ graph LR
 | 6 | Tạo exception hierarchy (AppException → subtypes) | ✅ Đã xong | 🟡 | — |
 | 7 | Service không trả `ApiResponse` — trả domain object/exception | ✅ Đã xong (phần lớn) | 🟡 | — |
 | 8 | Tách `JobQueryService` (CQRS Lite read side) | ✅ Đã xong | 🟡 | — |
-| 9 | Fix `BlogServiceImpl` inject `BlogMapper` | ❌ Bug hiện tại | 🟢 | **P0** |
-| 10 | Thay `NullPointerException` → `BadRequestException` | ❌ Chưa sửa | 🟢 | P0 |
-| 11 | Fix `EmploymentType` naming → UPPER_SNAKE | ❌ Chưa sửa | 🟢 | P1 |
-| 12 | Xóa import thừa (`ApiResponse`, `Timestamp`, `Instant`) | ❌ Chưa sửa | 🟢 | P1 |
-| 13 | Thêm domain methods (`Job.isExpired()`, `Job.isOwnedBy()`) | ❌ Chưa làm | 🟡 | P1 |
-| 14 | Rename `Apply` → `JobApplication`, `Hirer` → `Employer` | ❌ Chưa làm | 🟡 | P2 |
-| 15 | Populate `shared/` package | ❌ Chưa làm | 🟡 | P2 |
+| 9 | Fix `BlogServiceImpl` inject `BlogMapper` | ✅ Đã xong | 🟢 | — |
+| 10 | Thay `NullPointerException` → `BadRequestException` | ✅ Đã xong | 🟢 | — |
+| 11 | Fix `EmploymentType` naming → UPPER_SNAKE | ✅ Đã xong | 🟢 | — |
+| 12 | Xóa import thừa (`ApiResponse`, `Timestamp`, `Instant`) | ✅ Đã xong | 🟢 | — |
+| 13 | Thêm domain methods (`Job.isExpired()`, `Job.isOwnedBy()`) | ✅ Đã xong | 🟡 | — |
+| 14 | Rename `Apply` → `JobApplication`, `Hirer` → `Employer` | ✅ Đã xong | 🟡 | — |
+| 15 | Populate `shared/` package | ✅ Đã xong | 🟡 | — |
 | 16 | Tái cấu trúc package theo Bounded Context (Modular Monolith) | ❌ Chưa làm | 🔴 | **P2** |
 | 17 | Domain Events thay thế `MessageProducer` trực tiếp | ❌ Chưa làm | 🔴 | P3 |
 | 18 | CQRS — Command/Query separation hoàn chỉnh | ❌ Chưa làm | 🔴 | P3 |
