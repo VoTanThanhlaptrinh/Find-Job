@@ -1,9 +1,9 @@
 package web_application.account;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.job_web.controller.account.AuthController;
-import com.job_web.dto.auth.ResetDTO;
-import com.job_web.service.account.AuthService;
+import com.job_web.identity.api.AuthController;
+import com.job_web.identity.api.dto.ResetDTO;
+import com.job_web.identity.application.AuthService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -12,7 +12,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import web_application.support.TestSecurityConfig;

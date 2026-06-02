@@ -2,9 +2,9 @@ package web_application.account;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.job_web.JobPortalWebApplication;
-import com.job_web.dto.auth.LoginDTO;
-import com.job_web.dto.auth.RegistationForm;
-import com.job_web.service.account.AuthService;
+import com.job_web.identity.api.dto.LoginDTO;
+import com.job_web.identity.api.dto.RegistationForm;
+import com.job_web.identity.application.AuthService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

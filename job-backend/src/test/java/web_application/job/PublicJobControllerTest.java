@@ -1,13 +1,13 @@
 package web_application.job;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.job_web.constant.EmploymentType;
-import com.job_web.controller.job.PublicJobController;
-import com.job_web.dto.job.JobCardView;
-import com.job_web.dto.job.JobFilterDTO;
-import com.job_web.service.cache.HomeCategoryCacheService;
-import com.job_web.service.job.JobQueryService;
-import com.job_web.service.job.JobService;
+import com.job_web.recruiment.domain.vo.EmploymentType;
+import com.job_web.recruiment.api.PublicJobController;
+import com.job_web.recruiment.api.dto.JobCardView;
+import com.job_web.recruiment.api.dto.JobFilterDTO;
+import com.job_web.recruiment.infrastructure.cache.CategoryCacheService;
+import com.job_web.recruiment.application.JobQueryService;
+import com.job_web.recruiment.application.JobService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -49,7 +49,7 @@ class PublicJobControllerTest {
     private JobQueryService jobQueryService;
 
     @MockBean
-    private HomeCategoryCacheService homeCategoryCacheService;
+    private CategoryCacheService categoryCacheService;
 
     private static final String BASE_URL = "/api/jobs";
 
@@ -61,7 +61,7 @@ class PublicJobControllerTest {
         @DisplayName("PJ01: Anonymous van xem duoc danh sach job public")
         void getNewestJobs_Success() throws Exception {
             Page<JobCardView> page = new PageImpl<>(List.of(
-                    new JobCardView(1L, "Java Developer", "Da Nang", "1000-1500", EmploymentType.Full_time)
+                    new JobCardView(1L, "Java Developer", "Da Nang", "1000-1500", EmploymentType.FULL_TIME)
             ));
             when(jobQueryService.getListJobNewest(eq(0), eq(10))).thenReturn(page);
 
@@ -84,12 +84,12 @@ class PublicJobControllerTest {
                     1000,
                     2000,
                     List.of("Ho Chi Minh"),
-                    List.of(EmploymentType.Full_time),
+                    List.of(EmploymentType.FULL_TIME),
                     "Java"
             );
             when(jobQueryService.filterBetterSalaryAndHasAddressAndInTimes(
                     eq(0), eq(10), eq(1000), eq(2000),
-                    eq(List.of("Ho Chi Minh")), eq(List.of(EmploymentType.Full_time)), eq("Java")
+                    eq(List.of("Ho Chi Minh")), eq(List.of(EmploymentType.FULL_TIME)), eq("Java")
             )).thenReturn(Page.empty());
 
             mockMvc.perform(post(BASE_URL + "/filter")

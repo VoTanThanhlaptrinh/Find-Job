@@ -1,10 +1,11 @@
 package web_application.security;
 
-import com.job_web.data.UserRepository;
-import com.job_web.models.User;
-import com.job_web.security.CustomOAuth2SuccessHandler;
-import com.job_web.service.security.JwtService;
-import com.job_web.service.security.RefreshTokenService;
+import com.job_web.identity.domain.repository.UserRepository;
+import com.job_web.identity.domain.model.User;
+import com.job_web.identity.domain.vo.EmailAddress;
+import com.job_web.identity.infrastructure.filter.CustomOAuth2SuccessHandler;
+import com.job_web.identity.application.JwtService;
+import com.job_web.identity.application.RefreshTokenService;
 import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -47,7 +48,7 @@ class CustomOAuth2SuccessHandlerTest {
         ReflectionTestUtils.setField(handler, "isSecure", false);
 
         User user = new User();
-        user.setEmail(new com.job_web.models.vo.EmailAddress("user@test.com"));
+        user.setEmail(new EmailAddress("user@test.com"));
         user.setRole("ROLE_USER");
         user.setEnabled(true);
         user.setActive(true);
@@ -63,7 +64,7 @@ class CustomOAuth2SuccessHandlerTest {
                 "google"
         );
 
-        when(userRepository.findByEmail("user@test.com")).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail_Value("user@test.com")).thenReturn(Optional.of(user));
         when(jwtService.generateToken(user)).thenReturn("access-token");
         when(refreshTokenService.createRefreshToken("user@test.com")).thenReturn("refresh-token");
 

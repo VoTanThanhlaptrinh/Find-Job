@@ -1,7 +1,8 @@
 package web_application.account;
 
 import com.job_web.JobPortalWebApplication;
-import com.job_web.models.User;
+import com.job_web.identity.domain.model.User;
+import com.job_web.identity.domain.vo.EmailAddress;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +62,7 @@ class UserAccountControllerTest {
 
     private User buildUser(String email, String role) {
         User user = new User();
-        user.setEmail(new com.job_web.models.vo.EmailAddress(email));
+        user.setEmail(new EmailAddress(email));
         user.setRole(role);
         user.setEnabled(true);
         return user;

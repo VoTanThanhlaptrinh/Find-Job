@@ -1,13 +1,13 @@
 package web_application.admin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.job_web.controller.admin.AdminAuthController;
-import com.job_web.dto.admin.auth.AdminLoginRequest;
-import com.job_web.dto.auth.LoginDTO;
-import com.job_web.service.account.AuthService;
+import com.job_web.admin.api.AdminAuthController;
+import com.job_web.admin.api.dto.auth.AdminLoginRequest;
+import com.job_web.identity.api.dto.LoginDTO;
+import com.job_web.identity.application.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import com.job_web.utils.MessageUtils;
+import com.job_web.shared.utils.MessageUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

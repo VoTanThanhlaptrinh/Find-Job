@@ -1,9 +1,8 @@
 package web_application.application;
 
-import com.job_web.controller.application.UserApplicationController;
-import com.job_web.dto.common.ApiResponse;
-import com.job_web.service.application.ApplyService;
-import com.job_web.service.job.JobQueryService;
+import com.job_web.application_process.api.UserApplicationController;
+import com.job_web.application_process.application.JobApplicationService;
+import com.job_web.recruiment.application.JobQueryService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -12,7 +11,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import web_application.support.TestSecurityConfig;
@@ -33,7 +31,7 @@ class UserApplicationControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private ApplyService applyService;
+    private JobApplicationService jobApplicationService;
 
     @MockBean
     private JobQueryService jobQueryService;
@@ -48,7 +46,7 @@ class UserApplicationControllerTest {
         @DisplayName("UA01: Tra ve trang thai da ung tuyen thanh cong")
         @WithMockUser(username = "user@test.com", roles = "USER")
         void hasApplied_Success() throws Exception {
-            when(applyService.hasApplied(any(), eq(1L))).thenReturn(true);
+            when(jobApplicationService.hasApplied(any(), eq(1L))).thenReturn(true);
 
             mockMvc.perform(get(BASE_URL + "/applications/1/status"))
                     .andExpect(status().isOk())

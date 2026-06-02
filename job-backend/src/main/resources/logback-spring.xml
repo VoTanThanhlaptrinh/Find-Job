@@ -101,7 +101,7 @@
 
         <!-- DEV log levels -->
         <logger name="com.job_web" level="DEBUG"/>
-        <logger name="com.job_web.security.RequestLoggingFilter" level="DEBUG"/>
+        <logger name="com.job_web.shared.infrastructure.filter.RequestLoggingFilter" level="DEBUG"/>
 
         <!-- Suppress noisy framework loggers in dev -->
         <logger name="org.springframework" level="WARN"/>
@@ -188,7 +188,7 @@
 
         <!-- PROD log levels -->
         <logger name="com.job_web" level="INFO"/>
-        <logger name="com.job_web.security.RequestLoggingFilter" level="INFO"/>
+        <logger name="com.job_web.shared.infrastructure.filter.RequestLoggingFilter" level="INFO"/>
 
         <!-- Suppress framework noise in production -->
         <logger name="org.springframework" level="WARN"/>
