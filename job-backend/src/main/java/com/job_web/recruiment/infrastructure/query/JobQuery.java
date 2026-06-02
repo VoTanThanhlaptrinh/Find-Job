@@ -1,6 +1,6 @@
 package com.job_web.recruiment.infrastructure.query;
 
-import com.job_web.bc.recruiment.api.dto.*;
+import com.job_web.recruiment.api.dto.*;
 import com.job_web.recruiment.api.dto.*;
 import com.job_web.recruiment.domain.vo.EmploymentType;
 import com.job_web.shared.domain.model.EntityStatus;

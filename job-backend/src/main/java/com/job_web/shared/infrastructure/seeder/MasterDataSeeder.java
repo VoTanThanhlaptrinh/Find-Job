@@ -153,7 +153,6 @@ public class MasterDataSeeder implements CommandLineRunner {
 
     private List<Recruiment> seedHirers() {
         List<Recruiment> recruiments = new ArrayList<>();
-        Instant now = Instant.now();
 
         for (int i = 0; i < COMPANY_NAMES.size(); i++) {
             String baseEmail = "hirer" + (i + 1) + "@joblist.local";
@@ -276,9 +275,7 @@ public class MasterDataSeeder implements CommandLineRunner {
             }
 
             // Sử dụng TypeReference để định nghĩa List<JobDTO>
-            List<JobDTOJson> jobList = objectMapper.readValue(file, new TypeReference<List<JobDTOJson>>() {});
-
-            return jobList;
+            return objectMapper.readValue(file, new TypeReference<List<JobDTOJson>>() {});
 
         } catch (IOException e) {
             System.err.println("Lỗi khi convert danh sách JSON: " + e.getMessage());
