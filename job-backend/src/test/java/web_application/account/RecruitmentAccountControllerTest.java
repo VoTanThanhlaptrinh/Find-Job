@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(classes = JobPortalWebApplication.class)
 @AutoConfigureMockMvc
-class RecruimentAccountControllerTest {
+class RecruitmentAccountControllerTest {
 
     @Autowired
     private MockMvc mockMvc;

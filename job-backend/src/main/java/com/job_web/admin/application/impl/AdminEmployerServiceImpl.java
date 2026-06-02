@@ -1,14 +1,14 @@
 package com.job_web.admin.application.impl;
 
 import com.job_web.recruiment.domain.repository.RecruitmentRepository;
-import com.job_web.admin.infrastructure.query.HirerQuery;
+import com.job_web.admin.infrastructure.query.RecruitmentQuery;
 import com.job_web.admin.api.dto.employer.EmployerDetail;
 import com.job_web.admin.api.dto.employer.EmployerListItem;
 import com.job_web.admin.api.dto.employer.EmployerMetricsResponse;
 import com.job_web.admin.api.dto.employer.EmployerStatusRequest;
 import com.job_web.shared.domain.model.PageResponse;
 import com.job_web.shared.domain.exception.ResourceNotFoundException;
-import com.job_web.recruiment.domain.model.Recruiment;
+import com.job_web.recruiment.domain.model.Recruitment;
 import com.job_web.admin.application.AdminEmployerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,7 +23,7 @@ import java.time.LocalDate;
 public class AdminEmployerServiceImpl implements AdminEmployerService {
 
     private final RecruitmentRepository recruitmentRepository;
-    private final HirerQuery hirerQuery;
+    private final RecruitmentQuery recruitmentQuery;
     private final AdminPaginationMapper paginationMapper;
 
     @Override
@@ -42,7 +42,7 @@ public class AdminEmployerServiceImpl implements AdminEmployerService {
     @Override
     public PageResponse<EmployerListItem> getEmployers(int page, int pageSize, String search, String kycStatus, String status) {
         Pageable pageable = PageRequest.of(page - 1, pageSize);
-        Page<EmployerListItem> employers = hirerQuery.findEmployers(search, kycStatus, status, pageable);
+        Page<EmployerListItem> employers = recruitmentQuery.findEmployers(search, kycStatus, status, pageable);
         return PageResponse.<EmployerListItem>builder()
                 .items(employers.getContent())
                 .pagination(paginationMapper.map(page, pageSize, employers))
@@ -51,31 +51,31 @@ public class AdminEmployerServiceImpl implements AdminEmployerService {
 
     @Override
     public EmployerDetail getEmployerDetail(long id) {
-        Recruiment recruiment = recruitmentRepository.findById(id)
+        Recruitment recruitment = recruitmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Employer not found"));
 
         return EmployerDetail.builder()
-                .id(String.valueOf(recruiment.getId()))
-                .name(recruiment.getCompanyName())
+                .id(String.valueOf(recruitment.getId()))
+                .name(recruitment.getCompanyName())
                 .industry("Technology")
-                .registrationDate(LocalDate.from(recruiment.getCreateDate()))
-                .activeJobs(recruiment.getJobsPost() != null ? recruiment.getJobsPost().size() : 0)
+                .registrationDate(LocalDate.from(recruitment.getCreateDate()))
+                .activeJobs(recruitment.getJobsPost() != null ? recruitment.getJobsPost().size() : 0)
                 .kycStatus("verified")
-                .accountStatus(recruiment.getStatus())
-                .contactEmail(recruiment.getUser() != null ? recruiment.getUser().getEmail() : "")
-                .contactPhone(recruiment.getUser() != null ? recruiment.getUser().getMobile() : "")
+                .accountStatus(recruitment.getStatus())
+                .contactEmail(recruitment.getUser() != null ? recruitment.getUser().getEmail() : "")
+                .contactPhone(recruitment.getUser() != null ? recruitment.getUser().getMobile() : "")
                 .build();
     }
 
     @Override
     public void updateEmployerStatus(long id, EmployerStatusRequest request) {
-        Recruiment recruiment = recruitmentRepository.findById(id)
+        Recruitment recruitment = recruitmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Employer not found"));
         if ("suspend".equalsIgnoreCase(request.getAction())) {
-            recruiment.setStatus("SUSPENDED");
+            recruitment.setStatus("SUSPENDED");
         } else if ("activate".equalsIgnoreCase(request.getAction())) {
-            recruiment.setStatus("ACTIVE");
+            recruitment.setStatus("ACTIVE");
         }
-        recruitmentRepository.save(recruiment);
+        recruitmentRepository.save(recruitment);
     }
 }

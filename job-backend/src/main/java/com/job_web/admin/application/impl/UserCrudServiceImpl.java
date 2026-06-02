@@ -29,7 +29,7 @@ public class UserCrudServiceImpl implements UserCrudService {
 
     @Override
     public void createUser(UserCrudDTO userDTO) {
-        if (userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
+        if (userRepository.findByEmail_Value(userDTO.getEmail()).isPresent()) {
             log.warn("User creation failed — email already exists");
             throw new BadRequestException("account.email.exists");
         }
@@ -43,7 +43,7 @@ public class UserCrudServiceImpl implements UserCrudService {
     @Override
     public UserResponseDTO getUserByEmail(String email) {
         // Read-only — no logging needed.
-        return userRepository.findByEmail(email)
+        return userRepository.findByEmail_Value(email)
                 .map(this::toResponse)
                 .orElseThrow(() -> new ResourceNotFoundException("auth.user.not_found"));
     }
@@ -62,7 +62,7 @@ public class UserCrudServiceImpl implements UserCrudService {
             User user = userRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("auth.user.not_found"));
 
-            if (!user.getEmail().equals(userDTO.getEmail()) && userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
+            if (!user.getEmail().equals(userDTO.getEmail()) && userRepository.findByEmail_Value(userDTO.getEmail()).isPresent()) {
                 log.warn("User update failed — target email already exists for user: {}", id);
                 throw new BadRequestException("account.email.exists");
             }

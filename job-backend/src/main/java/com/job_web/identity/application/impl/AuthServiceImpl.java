@@ -17,7 +17,7 @@ import com.job_web.shared.domain.exception.ResourceNotFoundException;
 import com.job_web.shared.domain.exception.UnauthorizedException;
 import com.job_web.identity.mapper.RegistrationFormMapper;
 import com.job_web.shared.infrastructure.message.MessageProducer;
-import com.job_web.recruiment.domain.model.Recruiment;
+import com.job_web.recruiment.domain.model.Recruitment;
 import com.job_web.identity.domain.model.User;
 import com.job_web.identity.application.AuthService;
 import com.job_web.identity.application.JwtService;
@@ -88,7 +88,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void sendLinkActivate(String email) {
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmail_Value(email)
                 .orElseThrow(() -> new BadRequestException("auth.user.not_found"));
 
         try {
@@ -114,7 +114,7 @@ public class AuthServiceImpl implements AuthService {
     public void activeAccount(String token) {
         final String activate = jwtService.extractUsername(token);
         String[] values = StringUtils.delimitedListToStringArray(activate, "|");
-        User user = userRepository.findByEmail(values[0])
+        User user = userRepository.findByEmail_Value(values[0])
                 .orElseThrow(() -> new BadRequestException("auth.user.not_found"));
 
         try {
@@ -156,7 +156,7 @@ public class AuthServiceImpl implements AuthService {
             throw new AppException(spamService.getMessageLoginSpam(ip), HttpStatus.TOO_MANY_REQUESTS);
         }
 
-        User user = userRepository.findByEmail(loginDTO.getUsername())
+        User user = userRepository.findByEmail_Value(loginDTO.getUsername())
                 .orElseThrow(() -> new ResourceNotFoundException("auth.email.not_found"));
 
         try {
@@ -260,7 +260,7 @@ public class AuthServiceImpl implements AuthService {
         }
         spamService.addIpSpamEmail(ip);
 
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmail_Value(email)
                 .orElseThrow(() -> new BadRequestException("auth.email.not_found"));
 
         try {
@@ -316,7 +316,7 @@ public class AuthServiceImpl implements AuthService {
             throw new BadRequestException("auth.verification.code_expired");
         }
         String email = verifyService.getValue(resetDTO.getRandom()).toString();
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmail_Value(email)
                 .orElseThrow(() -> new BadRequestException("auth.verification.failed"));
 
         try {
@@ -366,15 +366,15 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private void createHirer(User user) {
-        Recruiment recruiment = new Recruiment();
-        recruiment.setUser(user);
-        recruiment.setCompanyName(user.getFullName());
-        recruiment.setDescription("");
-        recruiment.setSocialLink(new SocialLink(""));
-        recruiment.setCreateDate(LocalDateTime.now());
-        recruiment.setModifiedDate(LocalDateTime.now());
-        recruiment.setAddresses(new ArrayList<>());
-        recruitmentRepository.save(recruiment);
+        Recruitment recruitment = new Recruitment();
+        recruitment.setUser(user);
+        recruitment.setCompanyName(user.getFullName());
+        recruitment.setDescription("");
+        recruitment.setSocialLink(new SocialLink(""));
+        recruitment.setCreateDate(LocalDateTime.now());
+        recruitment.setModifiedDate(LocalDateTime.now());
+        recruitment.setAddresses(new ArrayList<>());
+        recruitmentRepository.save(recruitment);
     }
 
     private void validateAccountRole(User user, String expectedRole) {

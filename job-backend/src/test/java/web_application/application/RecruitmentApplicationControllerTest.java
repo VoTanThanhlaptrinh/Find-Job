@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(HirerApplicationController.class)
 @AutoConfigureMockMvc
 @Import(TestSecurityConfig.class)
-class RecruimentApplicationControllerTest {
+class RecruitmentApplicationControllerTest {
 
     @Autowired
     private MockMvc mockMvc;

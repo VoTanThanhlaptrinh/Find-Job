@@ -1,10 +1,10 @@
 package com.job_web.admin.infrastructure.query;
 
 import com.job_web.admin.api.dto.employer.EmployerListItem;
+import com.job_web.identity.domain.model.QUser;
+import com.job_web.recruiment.domain.model.QJob;
+import com.job_web.recruiment.domain.model.QRecruiment;
 import com.job_web.shared.domain.model.EntityStatus;
-import com.job_web.models.QHirer;
-import com.job_web.models.QJob;
-import com.job_web.models.QUser;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -21,11 +21,11 @@ import java.util.Objects;
 
 @Repository
 @RequiredArgsConstructor
-public class HirerQuery {
+public class RecruitmentQuery {
     private final JPAQueryFactory queryFactory;
 
     public Page<EmployerListItem> findEmployers(String search, String kycStatus, String status, Pageable pageable) {
-        QHirer hirer = QHirer.hirer;
+        QRecruiment hirer = QRecruiment.recruiment;
         QUser user = QUser.user;
         QJob job = QJob.job;
 

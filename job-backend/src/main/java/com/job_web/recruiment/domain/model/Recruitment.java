@@ -22,7 +22,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @SQLRestriction("status <> 'DELETED'")
-public class Recruiment extends StatusEntity {
+public class Recruitment extends StatusEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
@@ -43,7 +43,7 @@ public class Recruiment extends StatusEntity {
 	@LastModifiedDate
 	@Column(updatable = true)
 	private LocalDateTime modifiedDate;
-	@OneToMany(mappedBy = "hirer", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "recruitment", fetch = FetchType.LAZY)
 	private List<Job> jobsPost;
 	@Setter
 	@OneToMany(targetEntity = Address.class, fetch = FetchType.LAZY)

@@ -2,6 +2,7 @@ package com.job_web.identity.application.impl;
 
 import com.job_web.identity.domain.repository.UserRepository;
 import com.job_web.identity.domain.vo.Password;
+import com.job_web.identity.mapper.UserMapper;
 import com.job_web.shared.api.message.dto.MailMessage;
 import com.job_web.identity.api.dto.UserInfo;
 import com.job_web.shared.domain.exception.AppException;
@@ -10,7 +11,6 @@ import com.job_web.shared.infrastructure.message.MessageProducer;
 import com.job_web.identity.domain.model.User;
 import com.job_web.identity.application.AccountService;
 import com.job_web.shared.application.VerificationService;
-import com.job_web.identity.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;

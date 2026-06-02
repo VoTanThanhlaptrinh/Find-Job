@@ -51,7 +51,7 @@ public class Job extends StatusEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "hirer_id")
 	@JsonIgnore
-	private Recruiment recruiment;
+	private Recruitment recruitment;
 	@Setter
 	@CreatedDate
 	@Column(nullable = false)
@@ -130,11 +130,11 @@ public class Job extends StatusEntity {
 		this.address = address;
 	}
 
-	public void setRecruiment(Recruiment recruiment) {
-		if (recruiment == null) {
+	public void setRecruitment(Recruitment recruitment) {
+		if (recruitment == null) {
 			throw new BadRequestException(MessageUtils.getMessage("validation.job.hirer.required"));
 		}
-		this.recruiment = recruiment;
+		this.recruitment = recruitment;
 	}
 
 	public void setSkill(String skill) {
@@ -155,8 +155,8 @@ public class Job extends StatusEntity {
 		return expiredDate != null && expiredDate.isBefore(LocalDateTime.now());
 	}
 
-	public boolean isOwnedBy(Recruiment h) {
-		return recruiment != null && h != null && recruiment.getId() == h.getId();
+	public boolean isOwnedBy(Recruitment h) {
+		return recruitment != null && h != null && recruitment.getId() == h.getId();
 	}
 }
 

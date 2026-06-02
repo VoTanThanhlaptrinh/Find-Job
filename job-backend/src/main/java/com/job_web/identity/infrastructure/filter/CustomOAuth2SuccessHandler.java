@@ -39,7 +39,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         OAuth2AuthenticationToken authenticationToken = (OAuth2AuthenticationToken) authentication;
         OAuth2User principal = authenticationToken.getPrincipal();
-        User user = userRepository.findByEmail(principal.getAttribute("email")).orElse(null);
+        User user = userRepository.findByEmail_Value(principal.getAttribute("email")).orElse(null);
         if (user == null) {
             user = new User();
             user.setEmail(new EmailAddress(Objects.requireNonNull(principal.getAttribute("email")).toString()));

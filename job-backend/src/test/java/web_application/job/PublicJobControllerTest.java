@@ -61,7 +61,7 @@ class PublicJobControllerTest {
         @DisplayName("PJ01: Anonymous van xem duoc danh sach job public")
         void getNewestJobs_Success() throws Exception {
             Page<JobCardView> page = new PageImpl<>(List.of(
-                    new JobCardView(1L, "Java Developer", "Da Nang", "1000-1500", EmploymentType.Full_time)
+                    new JobCardView(1L, "Java Developer", "Da Nang", "1000-1500", EmploymentType.FULL_TIME)
             ));
             when(jobQueryService.getListJobNewest(eq(0), eq(10))).thenReturn(page);
 
@@ -84,12 +84,12 @@ class PublicJobControllerTest {
                     1000,
                     2000,
                     List.of("Ho Chi Minh"),
-                    List.of(EmploymentType.Full_time),
+                    List.of(EmploymentType.FULL_TIME),
                     "Java"
             );
             when(jobQueryService.filterBetterSalaryAndHasAddressAndInTimes(
                     eq(0), eq(10), eq(1000), eq(2000),
-                    eq(List.of("Ho Chi Minh")), eq(List.of(EmploymentType.Full_time)), eq("Java")
+                    eq(List.of("Ho Chi Minh")), eq(List.of(EmploymentType.FULL_TIME)), eq("Java")
             )).thenReturn(Page.empty());
 
             mockMvc.perform(post(BASE_URL + "/filter")

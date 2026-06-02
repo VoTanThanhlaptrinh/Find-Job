@@ -1,8 +1,8 @@
 package com.job_web.application_process.infrastructure.query;
 
 import com.job_web.application_process.api.dto.ResumeView;
+import com.job_web.application_process.domain.model.QResume;
 import com.job_web.shared.domain.model.EntityStatus;
-import com.job_web.models.QResume;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;

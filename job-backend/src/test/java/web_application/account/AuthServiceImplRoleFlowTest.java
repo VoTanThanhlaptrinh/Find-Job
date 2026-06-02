@@ -2,6 +2,7 @@ package web_application.account;
 
 import com.job_web.identity.domain.vo.EmailAddress;
 import com.job_web.identity.domain.vo.RoleConstants;
+import com.job_web.recruiment.domain.model.Recruitment;
 import com.job_web.recruiment.domain.repository.RecruitmentRepository;
 import com.job_web.identity.domain.repository.UserRepository;
 import com.job_web.identity.api.dto.LoginDTO;
@@ -9,7 +10,6 @@ import com.job_web.identity.api.dto.RegistationForm;
 import com.job_web.shared.domain.exception.BadRequestException;
 import com.job_web.shared.domain.exception.ForbiddenException;
 import com.job_web.shared.infrastructure.message.MessageProducer;
-import com.job_web.recruiment.domain.model.Recruiment;
 import com.job_web.identity.domain.model.User;
 import com.job_web.identity.application.impl.AuthServiceImpl;
 import com.job_web.identity.application.JwtService;
@@ -94,7 +94,7 @@ class AuthServiceImplRoleFlowTest {
         when(environment.getActiveProfiles()).thenReturn(new String[]{"dev"});
         when(encoder.encode("password123")).thenReturn("encoded-password");
         when(userRepository.saveAndFlush(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        when(userRepository.findByEmail("hirer@test.com")).thenAnswer(invocation -> {
+        when(userRepository.findByEmail_Value("hirer@test.com")).thenAnswer(invocation -> {
             User user = new User();
             user.setEmail(new EmailAddress("hirer@test.com"));
             user.setFullName("Recruiter Test");
@@ -108,7 +108,7 @@ class AuthServiceImplRoleFlowTest {
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
         verify(userRepository).saveAndFlush(userCaptor.capture());
         assertEquals(RoleConstants.ROLE_HIRER, userCaptor.getValue().getRole());
-        verify(recruitmentRepository).save(any(Recruiment.class));
+        verify(recruitmentRepository).save(any(Recruitment.class));
         verify(messageProducer).sendMail(any());
         assertEquals("hirer@test.com", username);
     }
@@ -122,7 +122,7 @@ class AuthServiceImplRoleFlowTest {
                 () -> authService.loginUser(dto, request, new MockHttpServletResponse()));
 
         assertEquals("auth.login.user.role_invalid", ex.getMessage());
-        verify(userRepository, never()).findByEmail(any());
+        verify(userRepository, never()).findByEmail_Value(any());
     }
 
     @Test
@@ -134,7 +134,7 @@ class AuthServiceImplRoleFlowTest {
         user.setRole(RoleConstants.ROLE_USER);
         when(request.getRemoteAddr()).thenReturn("127.0.0.1");
         when(spamService.checkIpSpamLogin("127.0.0.1")).thenReturn(false);
-        when(userRepository.findByEmail("user@test.com")).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail_Value("user@test.com")).thenReturn(Optional.of(user));
 
         ForbiddenException ex = assertThrows(ForbiddenException.class,
                 () -> authService.loginHirer(dto, request, new MockHttpServletResponse()));

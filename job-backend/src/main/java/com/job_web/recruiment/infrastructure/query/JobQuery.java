@@ -1,15 +1,15 @@
 package com.job_web.recruiment.infrastructure.query;
 
+import com.job_web.application_process.domain.model.QJobApplication;
+import com.job_web.identity.domain.model.QUser;
 import com.job_web.recruiment.api.dto.*;
 import com.job_web.recruiment.api.dto.*;
+import com.job_web.recruiment.domain.model.QAddress;
+import com.job_web.recruiment.domain.model.QJob;
+import com.job_web.recruiment.domain.model.QRecruitment;
 import com.job_web.recruiment.domain.vo.EmploymentType;
 import com.job_web.shared.domain.model.EntityStatus;
 import com.job_web.recruiment.domain.model.Job;
-import com.job_web.models.QAddress;
-import com.job_web.models.QApply;
-import com.job_web.models.QHirer;
-import com.job_web.models.QJob;
-import com.job_web.models.QUser;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Projections;
@@ -32,13 +32,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JobQuery {
     private static final String ACTIVE_STATUS = EntityStatus.ACTIVE.name();
+    private static final QJob job = QJob.job;
+    private static final QAddress address = QAddress.address;
+    private static final QRecruitment hirer = QRecruitment.recruitment;
+    private static final QUser user = QUser.user;
+    private static final QJobApplication apply = QJobApplication.jobApplication;
 
     private final JPAQueryFactory queryFactory;
 
     public List<JobCardView> findJobsByCity(String cityName) {
-        QJob job = QJob.job;
-        QAddress address = QAddress.address;
-
         return queryFactory
                 .select(jobCardProjection(job, address))
                 .from(job)
@@ -70,8 +72,6 @@ public class JobQuery {
     }
 
     public List<Job> findByTitle(String title) {
-        QJob job = QJob.job;
-
         return queryFactory
                 .selectFrom(job)
                 .where(
@@ -104,8 +104,6 @@ public class JobQuery {
     }
 
     public Page<JobCardView> getListJobNewest(int page, int amount) {
-        QJob job = QJob.job;
-        QAddress address = QAddress.address;
         Pageable pageable = PageRequest.of(page, amount, Sort.by("createDate").descending());
 
         JPAQuery<JobCardView> contentQuery = queryFactory
@@ -141,9 +139,6 @@ public class JobQuery {
     }
 
     public List<AddressJobCount> getAddressJobCount() {
-        QJob job = QJob.job;
-        QAddress address = QAddress.address;
-
         return queryFactory
                 .select(Projections.constructor(AddressJobCount.class,
                         address.city.coalesce("Chưa xác định"), // Xử lý nếu city bị null do leftJoin
@@ -223,11 +218,6 @@ public class JobQuery {
     }
 
     public Page<JobResponse> getHirerJobPost(int pageIndex, int pageSize, String email) {
-        QJob job = QJob.job;
-        QAddress address = QAddress.address;
-        QHirer hirer = QHirer.hirer;
-        QUser user = QUser.user;
-        QApply apply = QApply.apply;
         Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by("createDate").descending());
 
         JPAQuery<JobResponse> contentQuery = queryFactory
@@ -243,7 +233,7 @@ public class JobQuery {
                         job.headcount
                 ))
                 .from(job)
-                .join(job.hirer, hirer)
+                .join(job.recruitment, hirer)
                 .join(hirer.user, user)
                 .leftJoin(job.address, address)
                 .leftJoin(job.applies, apply).on(apply.status.eq(ACTIVE_STATUS))
@@ -260,7 +250,7 @@ public class JobQuery {
         JPAQuery<Long> countQuery = queryFactory
                 .select(job.count())
                 .from(job)
-                .join(job.hirer, hirer)
+                .join(job.recruitment, hirer)
                 .join(hirer.user, user)
                 .leftJoin(job.address, address)
                 .where(
@@ -275,15 +265,10 @@ public class JobQuery {
     }
 
     public long countHirerJobPost(String email) {
-        QJob job = QJob.job;
-        QAddress address = QAddress.address;
-        QHirer hirer = QHirer.hirer;
-        QUser user = QUser.user;
-
         Long total = queryFactory
                 .select(job.count())
                 .from(job)
-                .join(job.hirer, hirer)
+                .join(job.recruitment, hirer)
                 .join(hirer.user, user)
                 .leftJoin(job.address, address)
                 .where(
@@ -299,11 +284,6 @@ public class JobQuery {
     }
 
     public Page<JobCardView> listJobUserApplied(Pageable pageable, String email) {
-        QApply apply = QApply.apply;
-        QJob job = QJob.job;
-        QUser user = QUser.user;
-        QAddress address = QAddress.address;
-
         JPAQuery<JobCardView> contentQuery = queryFactory
                 .select(jobCardProjection(job,address))
                 .from(apply)

@@ -6,6 +6,7 @@ import com.job_web.identity.domain.vo.EmailAddress;
 import com.job_web.identity.domain.vo.Password;
 import com.job_web.identity.domain.vo.PhoneNumber;
 import com.job_web.identity.domain.vo.RoleConstants;
+import com.job_web.recruiment.domain.model.Recruitment;
 import com.job_web.recruiment.domain.repository.AddressRepository;
 import com.job_web.recruiment.domain.repository.RecruitmentRepository;
 import com.job_web.recruiment.domain.repository.JobRepository;
@@ -16,7 +17,6 @@ import com.job_web.recruiment.api.dto.JdDataContext;
 import com.job_web.recruiment.api.dto.JobDTOJson;
 import com.job_web.recruiment.api.dto.VectorizeJdRequest;
 import com.job_web.recruiment.domain.model.Address;
-import com.job_web.recruiment.domain.model.Recruiment;
 import com.job_web.recruiment.domain.model.Job;
 import com.job_web.identity.domain.model.User;
 import com.job_web.application_process.application.ApiService;
@@ -31,12 +31,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @Component
@@ -100,21 +103,21 @@ public class MasterDataSeeder implements CommandLineRunner {
 
         seedAdminIfNeeded();
 
-        List<Recruiment> recruiments = new ArrayList<>();
-        recruitmentRepository.findAll().forEach(recruiments::add);
+        List<Recruitment> recruitments = new ArrayList<>();
+        recruitmentRepository.findAll().forEach(recruitments::add);
 
-        if (recruiments.isEmpty()) {
+        if (recruitments.isEmpty()) {
             log.info("Chưa có dữ liệu Hirer, tiến hành tạo mới...");
-            recruiments = seedHirers();
-            ensureAddresses(recruiments);
+            recruitments = seedHirers();
+            ensureAddresses(recruitments);
         }
         if (jobRepository.count() == 0) {
             log.info("Tiến hành đọc file JSON và tạo dữ liệu Job...");
             var jobsJson = convertJsonFileToList("C:/Users/DELL/Downloads/job_data_500.json");
             jobsJson.addAll(convertJsonFileToList("C:/Users/DELL/Downloads/job_data_vn_300.json"));
-            List<Recruiment> finalRecruiments = recruiments;
+            List<Recruitment> finalRecruitments = recruitments;
             List<Job> jobEntities = jobsJson.stream()
-                    .map(dto -> convertJob(dto, finalRecruiments))
+                    .map(dto -> convertJob(dto, finalRecruitments))
                     .toList();
 
             jobRepository.saveAll(jobEntities);
@@ -151,8 +154,8 @@ public class MasterDataSeeder implements CommandLineRunner {
         log.info("Seeded admin account: {}", admin.getEmail());
     }
 
-    private List<Recruiment> seedHirers() {
-        List<Recruiment> recruiments = new ArrayList<>();
+    private List<Recruitment> seedHirers() {
+        List<Recruitment> recruitments = new ArrayList<>();
 
         for (int i = 0; i < COMPANY_NAMES.size(); i++) {
             String baseEmail = "hirer" + (i + 1) + "@joblist.local";
@@ -175,35 +178,35 @@ public class MasterDataSeeder implements CommandLineRunner {
             userRepository.save(user);
 
             // Tạo thông tin Hirer
-            Recruiment recruiment = new Recruiment();
-            recruiment.setUser(user);
-            recruiment.setCompanyName(COMPANY_NAMES.get(i));
-            recruiment.setDescription(COMPANY_DESC.get(i));
-            recruiment.setSocialLink(new SocialLink("https://company.example/" + COMPANY_NAMES.get(i).toLowerCase()));
+            Recruitment recruitment = new Recruitment();
+            recruitment.setUser(user);
+            recruitment.setCompanyName(COMPANY_NAMES.get(i));
+            recruitment.setDescription(COMPANY_DESC.get(i));
+            recruitment.setSocialLink(new SocialLink("https://company.example/" + COMPANY_NAMES.get(i).toLowerCase()));
 
-            recruiment.setCreateDate(LocalDateTime.now());
-            recruiment.setModifiedDate(LocalDateTime.now());
-            recruiments.add(recruitmentRepository.save(recruiment));
+            recruitment.setCreateDate(LocalDateTime.now());
+            recruitment.setModifiedDate(LocalDateTime.now());
+            recruitments.add(recruitmentRepository.save(recruitment));
         }
 
-        return recruiments;
+        return recruitments;
     }
 
-    private List<Address> ensureAddresses(List<Recruiment> recruiments) {
+    private List<Address> ensureAddresses(List<Recruitment> recruitments) {
         List<Address> existingAddresses = addressRepository.findAll();
         if (!existingAddresses.isEmpty()) {
             return existingAddresses;
         }
 
         log.info("Chưa có dữ liệu Address, tiến hành tạo mới...");
-        return seedAddresses(recruiments);
+        return seedAddresses(recruitments);
     }
 
-    private List<Address> seedAddresses(List<Recruiment> recruiments) {
+    private List<Address> seedAddresses(List<Recruitment> recruitments) {
         List<Address> addresses = new ArrayList<>();
         List<List<Address>> hirerAddresses = new ArrayList<>();
 
-        for (int i = 0; i < recruiments.size(); i++) {
+        for (int i = 0; i < recruitments.size(); i++) {
             List<Address> ownedAddresses = new ArrayList<>();
             // Mỗi công ty sẽ có 2 địa chỉ
             for (int j = 0; j < 2; j++) {
@@ -226,13 +229,13 @@ public class MasterDataSeeder implements CommandLineRunner {
         addressRepository.saveAll(addresses);
 
         // Map địa chỉ vào Hirer và User
-        for (int i = 0; i < recruiments.size(); i++) {
-            Recruiment recruiment = recruiments.get(i);
+        for (int i = 0; i < recruitments.size(); i++) {
+            Recruitment recruitment = recruitments.get(i);
             List<Address> ownedAddresses = hirerAddresses.get(i);
-            recruiment.setAddresses(ownedAddresses);
-            recruiments.set(i, recruitmentRepository.save(recruiment));
+            recruitment.setAddresses(ownedAddresses);
+            recruitments.set(i, recruitmentRepository.save(recruitment));
 
-            User user = recruiment.getUser();
+            User user = recruitment.getUser();
             if (user != null && !ownedAddresses.isEmpty()) {
                 user.setAddress(formatAddress(ownedAddresses.get(0)));
                 userRepository.save(user);
@@ -249,11 +252,11 @@ public class MasterDataSeeder implements CommandLineRunner {
     private String uniqueEmail(String baseEmail) {
         String email = baseEmail;
         int counter = 1;
-        while (userRepository.findByEmail(email).isPresent()) {
+        while (userRepository.findByEmail_Value(email).isPresent()) {
             int at = baseEmail.indexOf('@');
             String prefix = at >= 0 ? baseEmail.substring(0, at) : baseEmail;
             String domain = at >= 0 ? baseEmail.substring(at) : "@joblist.local";
-            email = prefix + "+" + counter + domain;
+            email = prefix + counter + domain;
             counter++;
         }
         return email;
@@ -282,7 +285,7 @@ public class MasterDataSeeder implements CommandLineRunner {
             return new ArrayList<>();
         }
     }
-    private Job convertJob(JobDTOJson j, List<Recruiment> recruiments) {
+    private Job convertJob(JobDTOJson j, List<Recruitment> recruitments) {
         Job job = new Job();
         job.setTitle(j.getTitle());
         job.setDescription(j.getJobDescription());
@@ -293,12 +296,12 @@ public class MasterDataSeeder implements CommandLineRunner {
         job.setTime(j.getTime());
 
         // 1. Set Hirer (Lấy ngẫu nhiên hoặc theo ID giả lập từ JSON)
-        Recruiment randomRecruiment = recruiments.get(random.nextInt(recruiments.size()));
-        job.setRecruiment(randomRecruiment);
+        Recruitment randomRecruitment = recruitments.get(random.nextInt(recruitments.size()));
+        job.setRecruitment(randomRecruitment);
 
         // 2. Set Address (Lấy một địa chỉ trong danh sách địa chỉ của Hirer đó)
-        if (randomRecruiment.getAddresses() != null && !randomRecruiment.getAddresses().isEmpty()) {
-            job.setAddress(randomRecruiment.getAddresses().get(0));
+        if (randomRecruitment.getAddresses() != null && !randomRecruitment.getAddresses().isEmpty()) {
+            job.setAddress(randomRecruitment.getAddresses().get(0));
         }
 
         // 3. Set Expired Date (Ngẫu nhiên từ 15 đến 60 ngày tới)
@@ -342,23 +345,33 @@ public class MasterDataSeeder implements CommandLineRunner {
     /**
      * Vectorize danh sách các Job đã lưu
      */
+    private final ExecutorService executor = Executors.newFixedThreadPool(5);
+
     private void vectorizeJobs(List<Job> jobs) {
         log.info("Bắt đầu vectorize {} công việc...", jobs.size());
-        int successCount = 0;
-        int failCount = 0;
 
-        for (Job job : jobs) {
-            try {
-                VectorizeJdRequest request = createVectorizeJdRequest(job);
-                apiService.vectorizeJd(request);
-                successCount++;
-            } catch (Exception e) {
-                failCount++;
-                log.warn("Không thể vectorize job ID {}: {}", job.getId(), e.getMessage());
-            }
-        }
+        // We must use AtomicInteger because standard ints are not thread-safe
+        AtomicInteger successCount = new AtomicInteger(0);
+        AtomicInteger failCount = new AtomicInteger(0);
 
-        log.info("✅ Hoàn tất vectorize: {} thành công, {} thất bại", successCount, failCount);
+        // Map each job to an asynchronous task
+        List<CompletableFuture<Void>> futures = jobs.stream()
+                .map(job -> CompletableFuture.runAsync(() -> {
+                    try {
+                        VectorizeJdRequest request = createVectorizeJdRequest(job);
+                        apiService.vectorizeJd(request); // This still has your MDC logic, which is great!
+                        successCount.incrementAndGet();
+                    } catch (Exception e) {
+                        failCount.incrementAndGet();
+                        log.warn("Không thể vectorize job ID {}: {}", job.getId(), e.getMessage());
+                    }
+                }, executor)) // Pass the custom thread pool here
+                .toList();
+
+        // Block the main thread here until all 800 background tasks are finished
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+
+        log.info("✅ Hoàn tất vectorize: {} thành công, {} thất bại", successCount.get(), failCount.get());
     }
 
     /**
@@ -367,7 +380,7 @@ public class MasterDataSeeder implements CommandLineRunner {
     private VectorizeJdRequest createVectorizeJdRequest(Job job) {
         VectorizeJdRequest request = new VectorizeJdRequest();
         request.setJobId(job.getId());
-        request.setUserId(job.getRecruiment().getId());
+        request.setUserId(job.getRecruitment().getId());
         request.setRequiredYearsExperience(job.getYearOfExperience());
         request.setDeadlineDate(LocalDate.from(job.getExpiredDate()));
 

@@ -1,11 +1,11 @@
 package com.job_web.admin.infrastructure.query;
 
 import com.job_web.admin.api.dto.job.AdminJobListItem;
+import com.job_web.application_process.domain.model.QJobApplication;
+import com.job_web.recruiment.domain.model.QAddress;
+import com.job_web.recruiment.domain.model.QJob;
+import com.job_web.recruiment.domain.model.QRecruitment;
 import com.job_web.shared.domain.model.EntityStatus;
-import com.job_web.models.QAddress;
-import com.job_web.models.QApply;
-import com.job_web.models.QHirer;
-import com.job_web.models.QJob;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -25,9 +25,9 @@ public class AdminJobQuery {
 
     public Page<AdminJobListItem> findJobs(String search, String category, String status, Pageable pageable) {
         QJob job = QJob.job;
-        QHirer hirer = QHirer.hirer;
+        QRecruitment hirer = QRecruitment.recruitment;
         QAddress address = QAddress.address;
-        QApply apply = QApply.apply;
+        QJobApplication apply = QJobApplication.jobApplication;
 
         BooleanBuilder where = new BooleanBuilder();
         where.and(job.status.ne(EntityStatus.DELETED.name()));
@@ -52,7 +52,7 @@ public class AdminJobQuery {
                         job.applies.size()
                 )
                 .from(job)
-                .leftJoin(job.hirer, hirer)
+                .leftJoin(job.recruitment, hirer)
                 .leftJoin(job.address, address)
                 .where(where)
                 .offset(pageable.getOffset())
@@ -61,7 +61,7 @@ public class AdminJobQuery {
         JPAQuery<Long> countQuery = queryFactory
                 .select(job.count())
                 .from(job)
-                .leftJoin(job.hirer, hirer)
+                .leftJoin(job.recruitment, hirer)
                 .where(where);
 
         List<com.querydsl.core.Tuple> tuples = query.fetch();

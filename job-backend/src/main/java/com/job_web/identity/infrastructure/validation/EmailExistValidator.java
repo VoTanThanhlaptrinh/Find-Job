@@ -12,7 +12,7 @@ public class EmailExistValidator implements ConstraintValidator<EmailExist, Stri
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext context) {
 		// TODO Auto-generated method stub
-		return value == null || !userRepository.findByEmail(value).isPresent();
+		return value == null || !userRepository.findByEmail_Value(value).isPresent();
 	}
 
 }

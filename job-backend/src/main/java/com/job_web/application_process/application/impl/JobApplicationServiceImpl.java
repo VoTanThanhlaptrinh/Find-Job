@@ -60,7 +60,7 @@ public class JobApplicationServiceImpl implements JobApplicationService {
             log.info("Processing job application with existing CV for user: {}, job: {}, cv: {}",
                     user.getId(), request.jobId(), request.existingCvId());
 
-            var currentUser = userRepository.findByEmail(user.getEmail());
+            var currentUser = userRepository.findByEmail_Value(user.getEmail());
             if (currentUser.isEmpty()) {
                 throw new ResourceNotFoundException(MessageUtils.getMessage("auth.user.not_found"));
             }
@@ -110,7 +110,7 @@ public class JobApplicationServiceImpl implements JobApplicationService {
             log.info("Processing job application with CV upload for user: {}, job: {}, file: {}",
                     user.getId(), request.getJobId(), request.getCvFile().getOriginalFilename());
 
-            var currentUser = userRepository.findByEmail(user.getEmail());
+            var currentUser = userRepository.findByEmail_Value(user.getEmail());
             if (currentUser.isEmpty()) {
                 throw new ResourceNotFoundException(MessageUtils.getMessage("auth.user.not_found"));
             }

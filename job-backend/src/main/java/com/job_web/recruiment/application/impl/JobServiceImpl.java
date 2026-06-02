@@ -12,7 +12,7 @@ import com.job_web.shared.domain.exception.ForbiddenException;
 import com.job_web.shared.domain.exception.ResourceNotFoundException;
 import com.job_web.recruiment.mapper.JobMapper;
 import com.job_web.recruiment.domain.model.Address;
-import com.job_web.recruiment.domain.model.Recruiment;
+import com.job_web.recruiment.domain.model.Recruitment;
 import com.job_web.recruiment.domain.model.Job;
 import com.job_web.identity.domain.model.User;
 import com.job_web.recruiment.application.JobService;
@@ -60,26 +60,26 @@ public class JobServiceImpl implements JobService {
 
             log.info("Creating job post — title: {}, hirer user: {}", jobDTO.getJobName(), user.getId());
 
-            Recruiment recruiment = recruitmentRepository.findHirerByUserIs(user)
+            Recruitment recruitment = recruitmentRepository.findHirerByUserIs(user)
                     .orElseThrow(() -> new ForbiddenException("message.forbidden"));
 
             Address address = addressRepository.findById(jobDTO.getAddressId())
                     .orElseThrow(() -> new ResourceNotFoundException("message.not_found"));
 
-            if (!recruiment.isExistAddress(address)) {
+            if (!recruitment.isExistAddress(address)) {
                 log.warn("Job creation forbidden — hirer: {} does not own address: {}",
-                        recruiment.getId(), jobDTO.getAddressId());
+                        recruitment.getId(), jobDTO.getAddressId());
                 throw new ForbiddenException("job.address.forbidden");
             }
 
             Job job = jobMapper.toJob(jobDTO);
             job.setAddress(address);
-            job.setRecruiment(recruiment);
+            job.setRecruitment(recruitment);
             jobRepository.save(job);
 
             MDC.put(MDC_JOB_ID, String.valueOf(job.getId()));
             log.info("Job post created — job: {}, title: {}, by hirer: {}",
-                    job.getId(), job.getTitle(), recruiment.getId());
+                    job.getId(), job.getTitle(), recruitment.getId());
         } finally {
             MDC.remove(MDC_USER_ID);
             MDC.remove(MDC_JOB_ID);
@@ -98,10 +98,10 @@ public class JobServiceImpl implements JobService {
             Job job = jobRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("job.not_found"));
 
-            Recruiment recruiment = recruitmentRepository.findHirerByUserIs(user)
+            Recruitment recruitment = recruitmentRepository.findHirerByUserIs(user)
                     .orElseThrow(() -> new ForbiddenException("message.forbidden"));
 
-            if (job.getRecruiment() == null || job.getRecruiment().getId() != recruiment.getId()) {
+            if (job.getRecruitment() == null || job.getRecruitment().getId() != recruitment.getId()) {
                 log.warn("Job update forbidden — user: {} is not owner of job: {}", user.getId(), id);
                 throw new ForbiddenException("job.edit.forbidden");
             }
@@ -109,15 +109,15 @@ public class JobServiceImpl implements JobService {
             Address address = addressRepository.findById(jobDTO.getAddressId())
                     .orElseThrow(() -> new ResourceNotFoundException("message.not_found"));
 
-            if (!recruiment.isExistAddress(address)) {
+            if (!recruitment.isExistAddress(address)) {
                 log.warn("Job update forbidden — hirer: {} does not own address: {}",
-                        recruiment.getId(), jobDTO.getAddressId());
+                        recruitment.getId(), jobDTO.getAddressId());
                 throw new ForbiddenException("job.address.forbidden");
             }
 
             jobMapper.updateJob(jobDTO,job);
             job.setAddress(address);
-            job.setRecruiment(recruiment);
+            job.setRecruitment(recruitment);
             jobRepository.save(job);
 
             log.info("Job post updated — job: {}, title: {}", id, job.getTitle());
@@ -137,10 +137,10 @@ public class JobServiceImpl implements JobService {
             Job job = jobRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("job.not_found"));
 
-            Recruiment recruiment = recruitmentRepository.findHirerByUserIs(user)
+            Recruitment recruitment = recruitmentRepository.findHirerByUserIs(user)
                     .orElseThrow(() -> new ForbiddenException("message.forbidden"));
 
-            if (job.getRecruiment() == null || job.getRecruiment().getId() != recruiment.getId()) {
+            if (job.getRecruitment() == null || job.getRecruitment().getId() != recruitment.getId()) {
                 log.warn("Job deletion forbidden — user: {} is not owner of job: {}", user.getId(), id);
                 throw new ForbiddenException("job.delete.forbidden");
             }

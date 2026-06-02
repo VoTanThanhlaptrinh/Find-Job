@@ -1,9 +1,9 @@
 package com.job_web.admin.infrastructure.query;
 
 import com.job_web.admin.api.dto.seeker.JobSeekerListItem;
+import com.job_web.application_process.domain.model.QCandidate;
+import com.job_web.identity.domain.model.QUser;
 import com.job_web.shared.domain.model.EntityStatus;
-import com.job_web.models.QCandidate;
-import com.job_web.models.QUser;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;

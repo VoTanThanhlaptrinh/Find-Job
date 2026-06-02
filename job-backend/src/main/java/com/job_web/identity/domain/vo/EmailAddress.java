@@ -13,7 +13,7 @@ import com.job_web.shared.utils.MessageUtils;
 @EqualsAndHashCode
 public class EmailAddress {
 
-    private static final String EMAIL_PATTERN = "^[A-Za-z0-9+_.-]+@(.+)$";
+    private static final String EMAIL_PATTERN = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$";
     private static final Pattern PATTERN = Pattern.compile(EMAIL_PATTERN);
 
     @Column(name = "email", length = 255)

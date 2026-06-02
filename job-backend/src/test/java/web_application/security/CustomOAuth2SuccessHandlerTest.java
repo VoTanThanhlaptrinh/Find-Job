@@ -64,7 +64,7 @@ class CustomOAuth2SuccessHandlerTest {
                 "google"
         );
 
-        when(userRepository.findByEmail("user@test.com")).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail_Value("user@test.com")).thenReturn(Optional.of(user));
         when(jwtService.generateToken(user)).thenReturn("access-token");
         when(refreshTokenService.createRefreshToken("user@test.com")).thenReturn("refresh-token");
 

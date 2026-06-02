@@ -102,7 +102,7 @@ class JobApplicationServiceImplTest {
             );
             ApplyCvWithUploadRequest request = new ApplyCvWithUploadRequest(800L, file, null);
 
-            when(userRepository.findByEmail("user@test.com")).thenReturn(Optional.of(managedUser));
+            when(userRepository.findByEmail_Value("user@test.com")).thenReturn(Optional.of(managedUser));
             when(jobApplicationRepository.findByJobAndUser("user@test.com", 800L)).thenReturn(Optional.empty());
             when(jobRepository.findById(800L)).thenReturn(Optional.of(job));
             when(resumeRepository.countActiveByUserEmail("user@test.com")).thenReturn(0L);
@@ -137,7 +137,7 @@ class JobApplicationServiceImplTest {
             );
             ApplyCvWithUploadRequest request = new ApplyCvWithUploadRequest(800L, file, null);
 
-            when(userRepository.findByEmail("user@test.com")).thenReturn(Optional.of(managedUser));
+            when(userRepository.findByEmail_Value("user@test.com")).thenReturn(Optional.of(managedUser));
             when(jobApplicationRepository.findByJobAndUser("user@test.com", 800L)).thenReturn(Optional.empty());
             when(jobRepository.findById(800L)).thenReturn(Optional.of(new Job()));
             when(resumeRepository.countActiveByUserEmail("user@test.com")).thenReturn(5L);
@@ -171,7 +171,7 @@ class JobApplicationServiceImplTest {
 
             ApplyCvWithExistingRequest request = new ApplyCvWithExistingRequest(123L, 456L, null);
 
-            when(userRepository.findByEmail("user@test.com")).thenReturn(Optional.of(managedUser));
+            when(userRepository.findByEmail_Value("user@test.com")).thenReturn(Optional.of(managedUser));
             when(jobRepository.findById(123L)).thenReturn(Optional.of(job));
             when(resumeRepository.findById(456L)).thenReturn(Optional.of(resume));
             when(jobApplicationRepository.findByJobAndUser("user@test.com", 123L)).thenReturn(Optional.empty());

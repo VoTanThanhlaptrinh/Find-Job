@@ -79,7 +79,7 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
                                 .id(String.valueOf(job.getId()))
                                 .title(job.getTitle())
                                 .subtitle("Required: " + job.getSkill())
-                                .company(job.getRecruiment() != null ? job.getRecruiment().getCompanyName() : "Unknown")
+                                .company(job.getRecruitment() != null ? job.getRecruitment().getCompanyName() : "Unknown")
                                 .postDate(job.getCreateDate().toLocalDate())
                                 .status("pending")
                                 .build())

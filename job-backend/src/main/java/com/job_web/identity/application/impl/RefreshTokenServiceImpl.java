@@ -28,7 +28,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 	@Override
 	public String createRefreshToken(String username) {
 		// Success path — no INFO logging (high traffic, covered by Controller logs).
-		Optional<User> user = userRepository.findByEmail(username);
+		Optional<User> user = userRepository.findByEmail_Value(username);
 		if (user.isPresent()) {
 			return jwtService.generateRefreshToken(user.get(), Duration.ofSeconds(refreshTokenTtlSeconds).toMillis());
 		} else {

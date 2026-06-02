@@ -3,6 +3,7 @@ package com.job_web.recruiment.domain.repository;
 import com.job_web.recruiment.api.dto.JobCardView;
 import com.job_web.recruiment.domain.model.Job;
 import jakarta.persistence.Tuple;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,10 +17,10 @@ public interface JobRepository extends JpaRepository<Job, Long> {
     @Query("""
         SELECT j FROM Job j WHERE j.status = :status
     """)
-    org.springframework.data.domain.Page<Job> findByStatus(String status, Pageable pageable);
+    Page<Job> findByStatus(String status, Pageable pageable);
 
     @Query("""
-        SELECT new com.job_web.dto.job.JobCardView(
+        SELECT new com.job_web.recruiment.api.dto.JobCardView(
             j.id,
             j.title,
             j.address.city,
@@ -66,6 +67,7 @@ public interface JobRepository extends JpaRepository<Job, Long> {
                     (exp_dist * 0.6 + (skill_and_project_embedding <=> cv_skill_vec) * 0.4) AS final_dist
                 FROM stage_1_retrieval
                 ORDER BY final_dist ASC
+                HAVING skill_dist >= 0.7
                 LIMIT 15
             )
             SELECT
