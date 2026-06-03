@@ -3,7 +3,7 @@ package com.job_web.admin.infrastructure.query;
 import com.job_web.admin.api.dto.employer.EmployerListItem;
 import com.job_web.identity.domain.model.QUser;
 import com.job_web.recruiment.domain.model.QJob;
-import com.job_web.recruiment.domain.model.QRecruiment;
+import com.job_web.recruiment.domain.model.QRecruitment;
 import com.job_web.shared.domain.model.EntityStatus;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -25,7 +25,7 @@ public class RecruitmentQuery {
     private final JPAQueryFactory queryFactory;
 
     public Page<EmployerListItem> findEmployers(String search, String kycStatus, String status, Pageable pageable) {
-        QRecruiment hirer = QRecruiment.recruiment;
+        QRecruitment hirer = QRecruitment.recruitment;
         QUser user = QUser.user;
         QJob job = QJob.job;
 
