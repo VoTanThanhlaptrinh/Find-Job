@@ -1,0 +1,124 @@
+@if (isOpen) {
+<div
+  role="dialog"
+  aria-modal="true"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 px-4 backdrop-blur-sm"
+  (click)="onBackdropClick()"
+>
+  <div
+    class="relative bg-white w-full max-w-lg rounded-2xl shadow-xl border border-slate-200 overflow-hidden"
+    (click)="onModalContentClick($event)"
+  >
+    <!-- Modal Header -->
+    <div role="banner" class="px-8 py-6 border-b border-slate-100 flex justify-between items-center">
+      <div>
+        <h2 class="text-xl font-bold text-slate-800 tracking-tight">{{ title() }}</h2>
+        <p class="text-sm text-slate-500 mt-1">{{ subtitle() }}</p>
+      </div>
+      <button
+        type="button"
+        class="p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-400 hover:text-slate-600"
+        (click)="onClose($event)"
+        [title]="closeLabel()"
+      >
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <!-- Modal Content -->
+    <div role="main" class="p-8 space-y-6">
+      <!-- Dropzone Area -->
+      <label
+        class="group relative flex flex-col items-center justify-center w-full min-h-[200px] border-2 border-dashed border-slate-200 bg-slate-50/50 rounded-xl cursor-pointer hover:border-blue-400 hover:bg-blue-50/30 transition-all duration-200"
+      >
+        <input
+          #cvUploadInput
+          [accept]="acceptedExtensions"
+          class="hidden"
+          type="file"
+          (change)="onFileInputChange($event)"
+        />
+        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+          <div
+            class="w-14 h-14 bg-white border border-slate-200 rounded-2xl flex items-center justify-center text-blue-600 mb-4 shadow-sm group-hover:scale-105 transition-transform duration-200"
+          >
+            <span class="material-symbols-outlined text-3xl">cloud_upload</span>
+          </div>
+          <p class="mb-1 text-sm font-semibold text-slate-700">{{ dropzoneText() }}</p>
+          <p class="text-xs text-slate-500">{{ dropzoneSubtext() }}</p>
+        </div>
+      </label>
+
+      <!-- File Preview (Visible when a file is selected) -->
+      @if (selectedFile) {
+      <div
+        class="bg-white border border-slate-200 rounded-xl p-4 flex items-center gap-4 transition-all hover:border-slate-300 animate-in fade-in slide-in-from-bottom-2 duration-300"
+      >
+        <div
+          class="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
+          [ngClass]="{
+            'bg-rose-50 text-rose-500': selectedFileIconType === 'pdf',
+            'bg-blue-50 text-blue-500': selectedFileIconType === 'doc' || selectedFileIconType === 'docx',
+            'bg-slate-50 text-slate-500': selectedFileIconType === 'unknown'
+          }"
+        >
+          <span
+            class="material-symbols-outlined text-2xl"
+            style="font-variation-settings: 'FILL' 1;"
+          >
+            {{ selectedFileIconType === 'pdf' ? 'picture_as_pdf' : 'description' }}
+          </span>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-semibold text-slate-800 truncate">{{ selectedFile.name }}</p>
+          <div class="flex items-center gap-2 mt-0.5">
+            <span class="text-xs font-medium text-slate-500">{{ selectedFileSizeLabel }}</span>
+            <span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+            <span class="text-xs font-medium text-green-600 uppercase">{{ readyStatusLabel() }}</span>
+          </div>
+        </div>
+        <button
+          type="button"
+          class="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+          [title]="removeFileLabel()"
+          (click)="removeSelectedFile($event)"
+        >
+          <span class="material-symbols-outlined text-xl">delete</span>
+        </button>
+      </div>
+      }
+
+      <!-- Error Message -->
+      @if (errorMessage) {
+      <div
+        class="flex items-start gap-3 bg-red-50 border border-red-100 p-4 rounded-xl animate-in fade-in zoom-in-95 duration-200"
+      >
+        <span class="material-symbols-outlined text-red-500 text-xl">error</span>
+        <div class="text-sm">
+          <p class="text-red-800 font-semibold">{{ errorTitle() }}</p>
+          <p class="text-red-600/80">{{ errorMessage }}</p>
+        </div>
+      </div>
+      }
+    </div>
+
+    <!-- Modal Footer -->
+    <div role="contentinfo" class="px-8 py-5 bg-slate-50/80 border-t border-slate-100 flex justify-end items-center gap-3">
+      <button
+        type="button"
+        class="px-5 py-2.5 rounded-lg text-slate-600 font-semibold text-sm hover:bg-slate-200 transition-colors"
+        (click)="onClose()"
+      >
+        {{ cancelLabel() }}
+      </button>
+      <button
+        type="button"
+        class="px-7 py-2.5 rounded-lg bg-blue-600 text-white font-bold text-sm shadow-sm shadow-blue-200 hover:bg-blue-700 active:scale-[0.98] transition-all"
+        (click)="onSubmit()"
+      >
+        {{ uploadLabel() }}
+      </button>
+    </div>
+  </div>
+</div>
+}
