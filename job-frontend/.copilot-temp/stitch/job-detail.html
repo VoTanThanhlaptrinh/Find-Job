@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#f7f9fb",
+                        "surface-tint": "#0053db",
+                        "secondary-fixed": "#c9e6ff",
+                        "on-secondary-fixed-variant": "#004c6e",
+                        "on-background": "#191c1e",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "surface-variant": "#e0e3e5",
+                        "on-secondary-fixed": "#001e2f",
+                        "secondary": "#006591",
+                        "on-secondary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "surface-bright": "#f7f9fb",
+                        "inverse-surface": "#2d3133",
+                        "on-error-container": "#93000a",
+                        "error": "#ba1a1a",
+                        "inverse-primary": "#b4c5ff",
+                        "primary": "#004ac6",
+                        "surface-container-high": "#e6e8ea",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed-dim": "#ddb7ff",
+                        "outline-variant": "#c3c6d7",
+                        "on-secondary-container": "#004666",
+                        "on-primary-fixed": "#00174b",
+                        "error-container": "#ffdad6",
+                        "on-surface-variant": "#434655",
+                        "on-tertiary-container": "#faecff",
+                        "secondary-container": "#39b8fd",
+                        "outline": "#737686",
+                        "background": "#f7f9fb",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed": "#2c0051",
+                        "surface-dim": "#d8dadc",
+                        "on-tertiary-fixed-variant": "#6900b3",
+                        "surface-container-highest": "#e0e3e5",
+                        "primary-fixed": "#dbe1ff",
+                        "on-surface": "#191c1e",
+                        "primary-container": "#2563eb",
+                        "on-primary-container": "#eeefff",
+                        "tertiary": "#7a1bc8",
+                        "tertiary-fixed": "#f0dbff",
+                        "surface-container": "#eceef0",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f2f4f6",
+                        "secondary-fixed-dim": "#89ceff",
+                        "tertiary-container": "#943fe2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+            color: #191c1e;
+        }
+        .font-headline { font-family: 'Manrope', sans-serif; }
+        .glass-morphic {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl shadow-sm shadow-blue-500/5">
+<div class="flex justify-between items-center px-6 h-16 w-full max-w-7xl mx-auto">
+<div class="flex items-center gap-3 active:scale-95 duration-200">
+<span class="material-symbols-outlined text-blue-600 dark:text-blue-400">arrow_back</span>
+</div>
+<h1 class="font-headline font-semibold tracking-tight text-on-surface text-lg">Job Details</h1>
+<div class="active:scale-95 duration-200">
+<span class="font-headline font-bold text-blue-600 dark:text-blue-400 text-sm">Edit</span>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="pt-24 px-4 space-y-6">
+<!-- Atmospheric Blobs -->
+<div class="fixed top-0 left-0 w-full h-full pointer-events-none -z-10 overflow-hidden">
+<div class="absolute top-[-10%] right-[-10%] w-[300px] h-[300px] bg-primary-fixed opacity-30 rounded-full blur-[100px]"></div>
+<div class="absolute bottom-[20%] left-[-10%] w-[250px] h-[250px] bg-tertiary-fixed opacity-20 rounded-full blur-[100px]"></div>
+</div>
+<!-- Hero Card -->
+<section class="bg-surface-container-lowest rounded-3xl p-8 shadow-xl shadow-blue-500/5 relative overflow-hidden">
+<div class="relative z-10 space-y-4">
+<div class="flex justify-between items-start">
+<h2 class="font-headline font-extrabold text-2xl text-on-surface leading-tight tracking-tight max-w-[70%]">
+                        Senior Product Designer
+                    </h2>
+<div class="w-12 h-12 rounded-2xl bg-surface-container-low flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="share">share</span>
+</div>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant text-sm font-medium">
+<span class="material-symbols-outlined text-sm" data-icon="location_on">location_on</span>
+                    Ho Chi Minh City
+                </div>
+<div class="inline-flex items-center px-5 py-2 rounded-full bg-gradient-to-br from-blue-600 to-purple-500 text-white shadow-md shadow-blue-500/20">
+<span class="font-headline font-bold text-sm tracking-wide">25M - 35M</span>
+</div>
+</div>
+<!-- Decorative image element for textural context -->
+<div class="absolute top-0 right-0 w-32 h-full opacity-5">
+<img class="h-full w-full object-cover" data-alt="abstract flowing blue and purple gradient waves with subtle grain texture providing a professional atmosphere" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8YziuoGJJIH35qOhA5EFTF07CeanXVZDtNSNuOtSkZvyXNj1NnPds-sdyCpwKiLdOhvq_EVVy9hrBM6zNhARZtiaanedjraM6j6pxrpBo6x0PduolTugjj8q7ZmHcG0W9eHGSKpFbj8SaRzdyRyc-v6W2_mSX_aQ91pDxd96iEZlfPA7y5tgdaG0W5UvOXD_1elCTatka0_GgqX98K54b1wZXRteHrPBQU5QB0CrLhMGDV9iCLvhz_uAwdaC-c66xj8mivO0fjJw"/>
+</div>
+</section>
+<!-- Meta Grid -->
+<section class="grid grid-cols-3 gap-3">
+<div class="bg-surface-container-lowest p-5 rounded-3xl shadow-lg shadow-blue-500/5 flex flex-col items-center text-center space-y-2">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="group">group</span>
+<span class="text-xs font-label font-medium text-on-surface-variant">Số lượng</span>
+<span class="font-headline font-black text-xl text-on-surface">02</span>
+</div>
+<div class="bg-surface-container-lowest p-5 rounded-3xl shadow-lg shadow-blue-500/5 flex flex-col items-center text-center space-y-2">
+<span class="material-symbols-outlined text-tertiary text-xl" data-icon="calendar_today">calendar_today</span>
+<span class="text-xs font-label font-medium text-on-surface-variant">Hạn nộp</span>
+<span class="font-headline font-black text-[13px] text-on-surface leading-tight">30/10/23</span>
+</div>
+<div class="bg-surface-container-lowest p-5 rounded-3xl shadow-lg shadow-blue-500/5 flex flex-col items-center text-center space-y-2">
+<span class="material-symbols-outlined text-secondary text-xl" data-icon="schedule">schedule</span>
+<span class="text-xs font-label font-medium text-on-surface-variant">Loại hình</span>
+<span class="font-headline font-bold text-[11px] text-on-surface leading-tight">Toàn thời gian</span>
+</div>
+</section>
+<!-- Content Stack -->
+<div class="space-y-6">
+<!-- Mô tả công việc -->
+<section class="bg-surface-container-lowest rounded-3xl p-10 shadow-lg shadow-blue-500/5 border-none">
+<h3 class="font-headline font-bold text-lg mb-6 flex items-center gap-3">
+<span class="w-1.5 h-6 bg-primary rounded-full"></span>
+                    Mô tả công việc
+                </h3>
+<div class="space-y-4 text-on-surface-variant font-body leading-relaxed text-sm">
+<p class="flex gap-3">
+<span class="text-primary mt-1">•</span>
+                        Thiết kế giao diện người dùng (UI) cho các sản phẩm web và ứng dụng di động dựa trên nghiên cứu người dùng.
+                    </p>
+<p class="flex gap-3">
+<span class="text-primary mt-1">•</span>
+                        Phát triển wireframes, user flows, và prototypes để truyền đạt ý tưởng thiết kế một cách hiệu quả.
+                    </p>
+<p class="flex gap-3">
+<span class="text-primary mt-1">•</span>
+                        Hợp tác chặt chẽ với đội ngũ phát triển để đảm bảo tính khả thi về mặt kỹ thuật và chất lượng đầu ra.
+                    </p>
+<p class="flex gap-3">
+<span class="text-primary mt-1">•</span>
+                        Liên tục cập nhật các xu hướng thiết kế mới nhất và áp dụng vào dự án của công ty.
+                    </p>
+</div>
+</section>
+<!-- Yêu cầu công việc -->
+<section class="bg-surface-container-lowest rounded-3xl p-10 shadow-lg shadow-blue-500/5 border-none">
+<h3 class="font-headline font-bold text-lg mb-6 flex items-center gap-3">
+<span class="w-1.5 h-6 bg-tertiary rounded-full"></span>
+                    Yêu cầu công việc
+                </h3>
+<div class="space-y-4 text-on-surface-variant font-body leading-relaxed text-sm">
+<p class="flex gap-3">
+<span class="text-tertiary mt-1">•</span>
+                        Ít nhất 3 năm kinh nghiệm làm việc ở vị trí Product Designer hoặc UI/UX Designer.
+                    </p>
+<p class="flex gap-3">
+<span class="text-tertiary mt-1">•</span>
+                        Thành thạo các công cụ thiết kế như Figma, Adobe XD, Sketch và bộ Adobe Creative Suite.
+                    </p>
+<p class="flex gap-3">
+<span class="text-tertiary mt-1">•</span>
+                        Có tư duy thiết kế lấy người dùng làm trung tâm và khả năng giải quyết vấn đề tốt.
+                    </p>
+<p class="flex gap-3">
+<span class="text-tertiary mt-1">•</span>
+                        Khả năng giao tiếp tốt và làm việc nhóm hiệu quả trong môi trường Agile.
+                    </p>
+</div>
+</section>
+<!-- Quyền lợi -->
+<section class="bg-surface-container-lowest rounded-3xl p-10 shadow-lg shadow-blue-500/5 border-none">
+<h3 class="font-headline font-bold text-lg mb-6 flex items-center gap-3">
+<span class="w-1.5 h-6 bg-secondary-container rounded-full"></span>
+                    Quyền lợi
+                </h3>
+<div class="space-y-4 text-on-surface-variant font-body leading-relaxed text-sm">
+<p class="flex gap-3">
+<span class="text-secondary mt-1">•</span>
+                        Mức lương cạnh tranh và thưởng hiệu suất hàng năm dựa trên KPI rõ ràng.
+                    </p>
+<p class="flex gap-3">
+<span class="text-secondary mt-1">•</span>
+                        Môi trường làm việc năng động, trẻ trung và khuyến khích sự sáng tạo cá nhân.
+                    </p>
+<p class="flex gap-3">
+<span class="text-secondary mt-1">•</span>
+                        Được cung cấp đầy đủ trang thiết bị làm việc hiện đại (Macbook, màn hình 4K).
+                    </p>
+<p class="flex gap-3">
+<span class="text-secondary mt-1">•</span>
+                        Chế độ bảo hiểm sức khỏe cao cấp và các buổi teambuilding hàng quý.
+                    </p>
+</div>
+</section>
+</div>
+<!-- Sticky Application Stats (Contextual) -->
+<section class="bg-primary/5 rounded-3xl p-6 border border-primary/10 flex items-center justify-between">
+<div class="space-y-1">
+<p class="text-xs font-label text-primary font-bold uppercase tracking-wider">Candidate Pipeline</p>
+<div class="flex items-center gap-4">
+<div class="flex -space-x-3">
+<img class="w-8 h-8 rounded-full border-2 border-white" data-alt="professional portrait of a creative woman with a friendly smile against a soft studio background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvq3DzBGLTslwciWtTYKXTOubNhTscIsFVk4rXKAYYU948TFjS690Jsvi2ES4fLHoUOv6cw_vzxtY-RvioqgWbsZuWFz7kyl4NZ4kAIt9cKcy5wwXIlmVzQVC0UPKwQSSBrbjoYu-EhTqvKDBjKye52lDS2QXP0zzyf7QCVP3QnX7yrwv7f-vO7zbBmxylhfQRn5VB8jHuERbb8UKIRPWcd7kQq4NXK8JPy-opCSXlg7YaEFrSDtvea2ebP2_oaUe0PzQ96tX3AyI"/>
+<img class="w-8 h-8 rounded-full border-2 border-white" data-alt="clean headshot of a professional man in a casual shirt with warm natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJR87GnBKZtslw5HYYTe8uT430tF4ydUfpNT5W4AtVYl2qDKbVJwXdD47VIi2L11lpkCsWJ8Jl0C2eeh1UIR6sVnV5oprAjl1ahKJoYwWknAqySbaF_ScWJcDWdu5siKcgDphN-CZBUNkzXlsTT5Lhwn7PlIo5YLzDsyH_Dh-lVESequyEilH4l5SYXStomv1it7_iTcyfZkwzNm__91HV5-0532Hy1T0KORf21eV5GXGCGSje8syZuDGY9um6BUFdfZwFF2vaidc"/>
+<div class="w-8 h-8 rounded-full border-2 border-white bg-primary-fixed-dim flex items-center justify-center text-[10px] font-bold text-primary">+12</div>
+</div>
+<span class="text-sm font-headline font-semibold text-on-surface">Applied recently</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary" data-icon="trending_up">trending_up</span>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl rounded-t-[24px] shadow-[0_-4px_20px_rgba(0,74,198,0.05)]">
+<div class="flex justify-around items-center px-4 pb-6 pt-2">
+<!-- Dashboard -->
+<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 p-3 hover:text-blue-600 dark:hover:text-blue-400 transition-all active:scale-90 duration-300 ease-out">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-wide mt-1">Dashboard</span>
+</div>
+<!-- Jobs (Active) -->
+<div class="flex flex-col items-center justify-center bg-gradient-to-br from-blue-600 to-purple-500 text-white rounded-full p-3 shadow-lg shadow-blue-500/20 active:scale-90 duration-300 ease-out">
+<span class="material-symbols-outlined" data-icon="work" style="font-variation-settings: 'FILL' 1;">work</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-wide mt-0.5">Jobs</span>
+</div>
+<!-- Candidates -->
+<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 p-3 hover:text-blue-600 dark:hover:text-blue-400 transition-all active:scale-90 duration-300 ease-out">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-wide mt-1">Candidates</span>
+</div>
+<!-- Settings -->
+<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 p-3 hover:text-blue-600 dark:hover:text-blue-400 transition-all active:scale-90 duration-300 ease-out">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-wide mt-1">Settings</span>
+</div>
+</div>
+</nav>
+</body></html>

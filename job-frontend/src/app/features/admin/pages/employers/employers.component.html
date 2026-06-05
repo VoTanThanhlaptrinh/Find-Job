@@ -1,0 +1,162 @@
+<main class="bg-ad-surface min-h-screen p-6 md:p-10 text-ad-on-surface">
+  <section class="max-w-7xl mx-auto space-y-6">
+    <header class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div>
+        <h1 class="text-2xl md:text-3xl font-bold">Employers</h1>
+        <p class="text-ad-on-surface-variant mt-1">Du lieu tu admin/employers APIs</p>
+      </div>
+      <div class="flex w-full md:w-auto flex-col md:flex-row gap-2">
+        <input
+          type="text"
+          placeholder="Tim employer..."
+          class="w-full md:w-80 bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2"
+          (input)="onSearch($event)"
+        />
+        <select
+          class="px-3 py-2 bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl"
+          [value]="selectedKycStatus"
+          (change)="onKycStatusChange($event)"
+          title="KYC status"
+          aria-label="KYC status"
+        >
+          <option value="">All KYC</option>
+          <option value="verified">verified</option>
+          <option value="pending">pending</option>
+          <option value="rejected">rejected</option>
+        </select>
+        <select
+          class="px-3 py-2 bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl"
+          [value]="selectedAccountStatus"
+          (change)="onAccountStatusChange($event)"
+          title="Account status"
+          aria-label="Account status"
+        >
+          <option value="">All accounts</option>
+          <option value="active">active</option>
+          <option value="suspended">suspended</option>
+        </select>
+        <button
+          type="button"
+          class="px-4 py-2 bg-ad-primary text-ad-on-primary ad-rounded-xl text-sm font-medium disabled:opacity-60"
+          [disabled]="isExporting"
+          (click)="exportEmployers()"
+        >
+          {{ isExporting ? 'Exporting...' : 'Export CSV' }}
+        </button>
+      </div>
+    </header>
+
+    <div *ngIf="isLoadingMetrics" class="bg-ad-surface-container-low p-4 ad-rounded-xl">Dang tai metrics...</div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4" *ngIf="metrics as data">
+      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl">
+        <p class="text-sm text-ad-on-surface-variant">Tong employers</p>
+        <p class="text-2xl font-bold mt-1">{{ data.totalEmployers }}</p>
+        <p class="text-xs text-ad-on-surface-variant mt-1">+{{ data.totalEmployersGrowthPct }}%</p>
+      </article>
+      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl">
+        <p class="text-sm text-ad-on-surface-variant">KYC verified</p>
+        <p class="text-2xl font-bold mt-1">{{ data.kycVerified }}</p>
+        <p class="text-xs text-ad-on-surface-variant mt-1">{{ data.kycVerifiedPct }}%</p>
+      </article>
+      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl">
+        <p class="text-sm text-ad-on-surface-variant">Pending KYC</p>
+        <p class="text-2xl font-bold mt-1">{{ data.pendingKyc }}</p>
+      </article>
+      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl">
+        <p class="text-sm text-ad-on-surface-variant">Suspended</p>
+        <p class="text-2xl font-bold mt-1">{{ data.suspended }}</p>
+      </article>
+    </div>
+
+    <section class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 ad-rounded-xl overflow-hidden">
+      <div *ngIf="isLoadingList" class="p-4">Dang tai danh sach employers...</div>
+
+      <div *ngIf="!isLoadingList && employers.length === 0" class="p-4 text-ad-on-surface-variant">
+        Khong co employer nao.
+      </div>
+
+      <div *ngIf="!isLoadingList && employers.length > 0" class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-ad-surface-container-low text-left">
+            <tr>
+              <th class="px-4 py-3">Name</th>
+              <th class="px-4 py-3">Industry</th>
+              <th class="px-4 py-3">Active jobs</th>
+              <th class="px-4 py-3">KYC</th>
+              <th class="px-4 py-3">Account</th>
+              <th class="px-4 py-3 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let employer of employers; trackBy: trackByEmployer" class="border-t border-ad-outline-variant/10">
+              <td class="px-4 py-3">
+                <button
+                  type="button"
+                  class="font-semibold text-ad-primary hover:underline"
+                  (click)="selectEmployer(employer.id)"
+                >
+                  {{ employer.name }}
+                </button>
+                <p class="text-xs text-ad-on-surface-variant mt-1">{{ employer.registrationDate }}</p>
+              </td>
+              <td class="px-4 py-3">{{ employer.industry }}</td>
+              <td class="px-4 py-3">{{ employer.activeJobs }}</td>
+              <td class="px-4 py-3">{{ employer.kycStatus }}</td>
+              <td class="px-4 py-3">{{ employer.accountStatus }}</td>
+              <td class="px-4 py-3 text-right space-x-2">
+                <button
+                  type="button"
+                  class="px-2 py-1 ad-rounded-lg text-xs bg-amber-100 text-amber-700"
+                  (click)="changeStatus(employer, 'suspend')"
+                >
+                  Suspend
+                </button>
+                <button
+                  type="button"
+                  class="px-2 py-1 ad-rounded-lg text-xs bg-emerald-100 text-emerald-700"
+                  (click)="changeStatus(employer, 'restore')"
+                >
+                  Restore
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <footer class="px-4 py-3 border-t border-ad-outline-variant/10 flex items-center justify-between text-sm">
+        <span>Trang {{ currentPage }} / {{ totalPages }} - Tong {{ totalItems }}</span>
+        <div class="space-x-2">
+          <button
+            type="button"
+            class="px-3 py-1.5 ad-rounded-lg border border-ad-outline-variant/30 disabled:opacity-40"
+            [disabled]="currentPage <= 1"
+            (click)="goPrevPage()"
+          >
+            Truoc
+          </button>
+          <button
+            type="button"
+            class="px-3 py-1.5 ad-rounded-lg border border-ad-outline-variant/30 disabled:opacity-40"
+            [disabled]="currentPage >= totalPages"
+            (click)="goNextPage()"
+          >
+            Sau
+          </button>
+        </div>
+      </footer>
+    </section>
+
+    <section
+      *ngIf="selectedEmployer as detail"
+      class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-5 ad-rounded-xl"
+    >
+      <h2 class="text-lg font-semibold mb-2">Chi tiet employer</h2>
+      <p><span class="text-ad-on-surface-variant">Ten:</span> {{ detail.name }}</p>
+      <p><span class="text-ad-on-surface-variant">Email:</span> {{ detail.contactEmail }}</p>
+      <p><span class="text-ad-on-surface-variant">Phone:</span> {{ detail.contactPhone }}</p>
+      <p><span class="text-ad-on-surface-variant">Trang thai:</span> {{ detail.accountStatus }}</p>
+    </section>
+  </section>
+</main>

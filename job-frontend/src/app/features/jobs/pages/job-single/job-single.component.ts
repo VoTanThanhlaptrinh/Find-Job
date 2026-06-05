@@ -1,20 +1,24 @@
-import { Component, NO_ERRORS_SCHEMA, OnInit } from '@angular/core';
+import { Component, effect, NO_ERRORS_SCHEMA, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { take } from 'rxjs';
-import { HomeService } from '../../../home/services/home.service';
 import { JobDetailViewModel } from '../../../../shared/models/jobs/job-api-response.model';
 import { JobCardModel } from '../../../../shared/models/jobs/job-card.model';
-import { JobServiceService } from '../../services/job-service.service';
+import { JobService } from '../../services/job.service';
+import { SafeHtmlPipe } from '../../../../shared/pipes/safe-html.pipe';
+import { AuthService } from '../../../../core/services/auth.service';
+import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
+import { I18nService } from '../../../../core/i18n/i18n.service';
 
 @Component({
   selector: 'app-job-single',
-  imports: [RouterModule],
+  imports: [RouterModule, SafeHtmlPipe, TranslatePipe],
+  standalone: true,
   templateUrl: './job-single.component.html',
   styleUrl: './job-single.component.css',
   schemas: [NO_ERRORS_SCHEMA],
 })
 export class JobSingleComponent implements OnInit {
   jobId!: string;
+  private readonly currentJobId = signal<string>('');
   jobDetail: JobDetailViewModel = {
     id: '',
     title: '',
@@ -25,14 +29,56 @@ export class JobSingleComponent implements OnInit {
     requireDetails: '',
     skill: '',
     expiredDate: '',
+    headcount: 0
   };
   relatedJobs: JobCardModel[] = [];
+  hasApplied: boolean | null = null;
+  isCheckingApply = false;
 
   constructor(
-    private jobSerivce: JobServiceService,
+    private jobSerivce: JobService,
     private route: ActivatedRoute,
-    private homeService: HomeService
-  ) {}
+    private authService: AuthService,
+    private i18nService: I18nService,
+  ) {
+    this.jobSerivce.resetJobDetailState();
+    this.jobSerivce.resetCheckApplyState();
+
+    effect(() => {
+      this.jobDetail = this.jobSerivce.jobDetail$() ?? {
+        id: '',
+        title: '',
+        address: '',
+        description: '',
+        salary: 0,
+        time: '',
+        requireDetails: '',
+        skill: '',
+        expiredDate: '',
+        headcount: 0
+      };
+      this.hasApplied = this.jobSerivce.hasApplied$();
+      this.isCheckingApply = this.jobSerivce.isCheckingApply$();
+    });
+
+    effect(() => {
+      const jobId = this.currentJobId();
+      const isAuthReady = this.authService.isAuthReady();
+      const isLoggedIn = this.authService.isLoggedIn();
+
+      if (!jobId || !isAuthReady) {
+        return;
+      }
+
+      const parsedJobId = Number(jobId);
+      if (!isLoggedIn || Number.isNaN(parsedJobId) || parsedJobId <= 0) {
+        this.jobSerivce.resetCheckApplyState();
+        return;
+      }
+
+      this.jobSerivce.checkApplyJob(parsedJobId);
+    });
+  }
 
   carouselOptions = {
     loop: false,
@@ -54,42 +100,51 @@ export class JobSingleComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    this.getRelatedJobs();
     this.route.params.subscribe((params) => {
       this.jobId = params['id'];
+      this.currentJobId.set(this.jobId);
       this.getDetailJob(this.jobId);
     });
   }
 
   getDetailJob(id: string): void {
-    this.jobSerivce
-      .getDetailJob(id)
-      .pipe(take(1))
-      .subscribe({
-        next: (response) => {
-          this.jobDetail = response.data;
-        },
-        error: (error) => {
-          console.error('Error fetching job details:', error);
-        },
-      });
+    this.jobSerivce.getDetailJob(id);
   }
 
-  getRelatedJobs(): void {
-    this.homeService
-      .getData()
-      .pipe(take(1))
-      .subscribe({
-        next: (response) => {
-          this.relatedJobs = response.data.jobSoon.content;
-        },
-        error: (error) => {
-          console.error('Error fetching data:', error);
-        },
-      });
+  checkApplyStatus(): void {
+    const parsedJobId = Number(this.jobId);
+
+    if (!this.authService.isLoggedIn() || Number.isNaN(parsedJobId) || parsedJobId <= 0) {
+      this.jobSerivce.resetCheckApplyState();
+      this.hasApplied = null;
+      return;
+    }
+
+    this.jobSerivce.checkApplyJob(parsedJobId);
+  }
+
+  get showApplyButton(): boolean {
+    if (!this.authService.isAuthReady()) {
+      return false;
+    }
+
+    if (!this.authService.isLoggedIn()) {
+      return true;
+    }
+
+    return !this.isCheckingApply && this.hasApplied === false;
+  }
+
+  get showApplyDisabledState(): boolean {
+    if (!this.authService.isAuthReady()) {
+      return true;
+    }
+
+    return this.authService.isLoggedIn() && this.isCheckingApply;
   }
 
   formatMoney(value: number): string {
-    return `${value.toLocaleString('vi-VN')} VND`;
+    const locale = this.i18nService.currentLanguage === 'vi' ? 'vi-VN' : 'en-US';
+    return `${value.toLocaleString(locale)} VND`;
   }
 }

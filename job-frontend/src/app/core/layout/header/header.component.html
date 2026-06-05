@@ -1,95 +1,299 @@
-<header
-  id="header"
-  class="transition-colors duration-300 fixed"
-  [ngClass]="{
-    'bg-black': isScrolled,
-    'bg-transparent': !isScrolled,
-  }"
->
-  <div class="container">
-    <div class="flex justify-between items-center">
-      <div id="logo">
-        <a href="/"><img src="assets/web_css/img/logo.png" alt="" title="" /></a>
-      </div>
-      <c-navbar id="nav-menu-container" expand="lg">
-        <c-container>
-          <c-navbar-nav class="nav-menu">
-            <ng-container>
-              <c-nav-item class="menu-active">
-                <a cNavLink href="/">Trang chu</a>
+@if (isAuthReady) {
+  <header
+    id="header"
+    class="fixed z-50 w-full transition-colors duration-300"
+    [ngClass]="{
+      'bg-black': isScrolled,
+      'bg-transparent': !isScrolled,
+    }"
+  >
+    <div class="container">
+      <div class="flex justify-between items-center">
+        <div id="logo">
+          <a
+            routerLink="/"
+            [attr.aria-label]="'header.home' | t"
+            [title]="'header.home' | t"
+            ><img
+              title="img"
+              src="assets/web_css/img/logo.png"
+              [attr.alt]="'header.logoAlt' | t"
+              [title]="'header.home' | t"
+          /></a>
+        </div>
+        <div class="lg:hidden">
+          <button
+            title="btn"
+            type="button"
+            class="flex h-10 w-10 flex-col items-center justify-center gap-1 rounded-lg border border-white/35 bg-black/35"
+            [attr.aria-label]="'header.openMenu' | t"
+            [attr.title]="'header.openMenu' | t"
+            (click)="toggleMobileMenu()"
+          >
+            <span class="block h-0.5 w-5 bg-white"></span>
+            <span class="block h-0.5 w-5 bg-white"></span>
+            <span class="block h-0.5 w-5 bg-white"></span>
+          </button>
+        </div>
+
+        <c-navbar id="nav-menu-container" expand="lg" class="hidden lg:block">
+          <c-container>
+            <c-navbar-nav
+              class="nav-menu flex flex-row w-full items-center gap-x-2"
+            >
+              <ng-container>
+                <c-nav-item class="menu-active">
+                  <a cNavLink routerLink="/">{{ "header.home" | t }}</a>
+                </c-nav-item>
+                <c-nav-item>
+                  <a cNavLink routerLink="/category">{{ "header.jobs" | t }}</a>
+                </c-nav-item>
+              </ng-container>
+
+              <c-nav-item>
+                <a cNavLink routerLink="/blogHome">{{ "header.blog" | t }}</a>
               </c-nav-item>
               <c-nav-item>
-                <a cNavLink href="/category">Tim viec</a>
+                <a cNavLink routerLink="/contact">{{ "header.contact" | t }}</a>
               </c-nav-item>
-            </ng-container>
+              <c-nav-item>
+                <a cNavLink routerLink="/about">{{ "header.about" | t }}</a>
+              </c-nav-item>
 
-            <c-nav-item>
-              <a cNavLink href="/blogHome">Blog</a>
-            </c-nav-item>
-            <c-nav-item>
-              <a cNavLink href="/contact">Lien he</a>
-            </c-nav-item>
-            <c-nav-item>
-              <a cNavLink href="/about">Thong tin</a>
-            </c-nav-item>
-            @if (isLoggedIn) {
-              <ng-container>
-                <c-dropdown
-                  variant="nav-item"
-                  [popper]="false"
-                  autoClose="outside"
+              <div class="ml-4 flex items-center gap-2">
+                <span
+                  class="text-sm font-semibold"
+                  [ngClass]="
+                    currentLanguage === 'en' ? 'text-blue-600' : 'text-gray-400'
+                  "
+                  >EN</span
                 >
-                  <c-nav-item>
-                    <a cDropdownToggle cNavLink style="color: aliceblue">Tai khoan</a>
-                  </c-nav-item>
-                  <ul cDropdownMenu>
-                    <li>
-                      <button cDropdownItem (click)="goInfor()">
-                        Thong tin ca nhan
-                      </button>
-                    </li>
-                    <li>
-                      <button cDropdownItem (click)="goVerify()">
-                        Kich hoat tai khoan
-                      </button>
-                    </li>
-                    <li>
-                      <button cDropdownItem (click)="logout()">
-                        Dang xuat
-                      </button>
-                    </li>
-                  </ul>
-                </c-dropdown>
-              </ng-container>
-            } @else {
-              <ng-container class="flex flex-row justify-between w-full gap-x-2">
-                @if (isLoginPage) {
-                  <c-nav-item
-                    class="bg-white rounded-lg border-blue-900 border-2! px-4 py-2 mr-2"
+                <button
+                  type="button"
+                  class="relative inline-flex h-6 w-12 cursor-pointer items-center rounded-full border-2 border-transparent bg-slate-300 transition-colors duration-200 ease-in-out focus:outline-none"
+                  [ngClass]="
+                    currentLanguage === 'vi' ? 'bg-blue-600' : 'bg-slate-300'
+                  "
+                  (click)="
+                    switchLanguage(currentLanguage === 'vi' ? 'en' : 'vi')
+                  "
+                  title="Chuyển ngôn ngữ / Switch language"
+                >
+                  <span
+                    class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                    [ngClass]="
+                      currentLanguage === 'vi'
+                        ? 'translate-x-6'
+                        : 'translate-x-0'
+                    "
+                  ></span>
+                </button>
+                <span
+                  class="text-sm font-semibold"
+                  [ngClass]="
+                    currentLanguage === 'vi' ? 'text-blue-600' : 'text-gray-400'
+                  "
+                  >VI</span
+                >
+              </div>
+
+              @if (isLoggedIn) {
+                <div class="text-slate-50">
+                  <button matButton [matMenuTriggerFor]="menu">
+                    {{ "header.account" | t }}
+                  </button>
+                  <mat-menu
+                    #menu="matMenu"
+                    class="bg-white rounded-xl! shadow-md!"
                   >
-                    <a cNavLink href="/login" class="text-black!">Dang nhap</a>
-                  </c-nav-item>
-                } @else {
-                  <c-nav-item class="rounded-lg bg-blue-500 px-4 py-2 mr-2">
-                    <a cNavLink href="/login">Dang nhap</a>
-                  </c-nav-item>
-                }
-                @if (isRegisterPage) {
-                  <c-nav-item
-                    class="bg-white rounded-lg border-blue-900 border-2! px-4 py-2"
-                  >
-                    <a cNavLink href="/register" class="text-black!">Dang ky</a>
-                  </c-nav-item>
-                } @else {
-                  <c-nav-item class="rounded-lg bg-blue-500 px-4 py-2">
-                    <a cNavLink href="/register">Dang ky</a>
-                  </c-nav-item>
-                }
-              </ng-container>
-            }
-          </c-navbar-nav>
-        </c-container>
-      </c-navbar>
+                    <button
+                      mat-menu-item
+                      (click)="goInfor()"
+                      class="text-slate-50 hover:bg-gray-200!"
+                    >
+                      {{ "header.accountInfo" | t }}
+                    </button>
+                    <button
+                      mat-menu-item
+                      (click)="logout()"
+                      class="text-slate-50 hover:bg-gray-200!"
+                    >
+                      {{ "header.logout" | t }}
+                    </button>
+                  </mat-menu>
+                </div>
+              } @else {
+                <ng-container
+                  class="flex flex-row justify-between w-full gap-x-2"
+                >
+                  @if (isLoginPage) {
+                    <c-nav-item
+                      class="bg-white rounded-lg border-blue-900 border-2! px-2 py-1"
+                    >
+                      <a cNavLink routerLink="/login" class="text-black!">{{
+                        "header.login" | t
+                      }}</a>
+                    </c-nav-item>
+                  } @else {
+                    <c-nav-item class="rounded-lg bg-blue-500 px-2 py-1">
+                      <a cNavLink routerLink="/login">{{
+                        "header.login" | t
+                      }}</a>
+                    </c-nav-item>
+                  }
+                  @if (isRegisterPage) {
+                    <c-nav-item
+                      class="bg-white rounded-lg border-blue-900 border-2! px-2 py-1"
+                    >
+                      <a cNavLink routerLink="/register" class="text-black!">{{
+                        "header.register" | t
+                      }}</a>
+                    </c-nav-item>
+                  } @else {
+                    <c-nav-item class="rounded-lg bg-blue-500 px-2 py-1">
+                      <a cNavLink routerLink="/register">{{
+                        "header.register" | t
+                      }}</a>
+                    </c-nav-item>
+                  }
+                </ng-container>
+              }
+            </c-navbar-nav>
+          </c-container>
+        </c-navbar>
+      </div>
     </div>
-  </div>
-</header>
+  </header>
+
+  <div
+    class="fixed inset-0 z-50 bg-slate-950/50 transition-opacity duration-200 lg:hidden"
+    [class.opacity-100]="isMobileMenuOpen"
+    [class.pointer-events-auto]="isMobileMenuOpen"
+    [class.opacity-0]="!isMobileMenuOpen"
+    [class.pointer-events-none]="!isMobileMenuOpen"
+    (click)="closeMobileMenu()"
+  ></div>
+
+  <aside
+    role="dialog"
+    [attr.aria-label]="'header.navigationMenu' | t"
+    class="fixed right-0 top-0 z-50 flex h-screen w-[min(82vw,320px)] flex-col bg-white p-4 shadow-[-6px_0_18px_rgba(0,0,0,0.15)] transition-transform duration-200 ease-out lg:hidden"
+    [class.translate-x-0]="isMobileMenuOpen"
+    [class.translate-x-full]="!isMobileMenuOpen"
+  >
+    <button
+      type="button"
+      class="ml-auto border-none bg-transparent text-[30px] leading-none text-slate-900"
+      [attr.aria-label]="'header.closeMenu' | t"
+      [attr.title]="'header.closeMenu' | t"
+      (click)="closeMobileMenu()"
+    >
+      ×
+    </button>
+
+    <nav class="mt-2 flex flex-col items-center gap-2">
+      <a
+        routerLink="/"
+        class="rounded-[10px] px-3 py-2.5 font-semibold text-slate-900 hover:bg-slate-100"
+        (click)="closeMobileMenu()"
+        >{{ "header.home" | t }}</a
+      >
+      <a
+        routerLink="/category"
+        class="rounded-[10px] px-3 py-2.5 font-semibold text-slate-900 hover:bg-slate-100"
+        (click)="closeMobileMenu()"
+        >{{ "header.jobs" | t }}</a
+      >
+      <a
+        routerLink="/blogHome"
+        class="rounded-[10px] px-3 py-2.5 font-semibold text-slate-900 hover:bg-slate-100"
+        (click)="closeMobileMenu()"
+        >{{ "header.blog" | t }}</a
+      >
+      <a
+        routerLink="/contact"
+        class="rounded-[10px] px-3 py-2.5 font-semibold text-slate-900 hover:bg-slate-100"
+        (click)="closeMobileMenu()"
+        >{{ "header.contact" | t }}</a
+      >
+      <a
+        routerLink="/about"
+        class="rounded-[10px] px-3 py-2.5 font-semibold text-slate-900 hover:bg-slate-100"
+        (click)="closeMobileMenu()"
+        >{{ "header.about" | t }}</a
+      >
+
+      <div class="mt-4 mb-2 flex flex-col items-center gap-2">
+        <span class="text-sm font-medium text-slate-700">{{
+          "header.switchLanguage" | t
+        }}</span>
+        <div class="flex items-center gap-3">
+          <span
+            class="text-sm font-semibold"
+            [ngClass]="
+              currentLanguage === 'en' ? 'text-blue-600' : 'text-gray-400'
+            "
+            >EN</span
+          >
+          <button
+            type="button"
+            class="relative inline-flex h-7 w-14 cursor-pointer items-center rounded-full border-2 border-transparent bg-slate-300 transition-colors duration-200 ease-in-out focus:outline-none"
+            [ngClass]="
+              currentLanguage === 'vi' ? 'bg-blue-600' : 'bg-slate-300'
+            "
+            (click)="switchLanguage(currentLanguage === 'vi' ? 'en' : 'vi')"
+            title="Chuyển ngôn ngữ / Switch language"
+          >
+            <span
+              class="pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+              [ngClass]="
+                currentLanguage === 'vi' ? 'translate-x-7' : 'translate-x-0'
+              "
+            ></span>
+          </button>
+          <span
+            class="text-sm font-semibold"
+            [ngClass]="
+              currentLanguage === 'vi' ? 'text-blue-600' : 'text-gray-400'
+            "
+            >VI</span
+          >
+        </div>
+      </div>
+    </nav>
+    <div class="border bg-gray-600 h-0.5 w-full"></div>
+    @if (isLoggedIn) {
+      <div class="flex flex-col gap-2.5">
+        <button
+          type="button"
+          class="rounded-[10px] border-none bg-blue-600 px-3 py-2.5 text-center font-semibold text-white"
+          (click)="goInfor(); closeMobileMenu()"
+        >
+          {{ "header.accountInfo" | t }}
+        </button>
+        <button
+          type="button"
+          class="rounded-[10px] border-none bg-red-600 px-3 py-2.5 text-center font-semibold text-white"
+          (click)="logout(); closeMobileMenu()"
+        >
+          {{ "header.logout" | t }}
+        </button>
+      </div>
+    } @else {
+      <div class="flex flex-col gap-2.5">
+        <a
+          routerLink="/login"
+          class="rounded-[10px] bg-blue-600 px-3 py-2.5 text-center font-semibold text-blue-400"
+          (click)="closeMobileMenu()"
+          >{{ "header.login" | t }}</a
+        >
+        <a
+          routerLink="/register"
+          class="rounded-[10px] bg-blue-600 px-3 py-2.5 text-center font-semibold text-blue-400"
+          (click)="closeMobileMenu()"
+          >{{ "header.register" | t }}</a
+        >
+      </div>
+    }
+  </aside>
+}

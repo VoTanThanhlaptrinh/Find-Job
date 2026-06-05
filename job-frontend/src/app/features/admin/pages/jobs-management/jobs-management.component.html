@@ -1,0 +1,276 @@
+<main class="bg-ad-surface min-h-screen p-6 md:p-10 text-ad-on-surface">
+  <section class="max-w-7xl mx-auto space-y-6">
+    <header class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div>
+        <h1 class="text-2xl md:text-3xl font-bold">Jobs Management</h1>
+        <p class="text-ad-on-surface-variant mt-1">Du lieu tu admin/jobs APIs</p>
+      </div>
+      <div class="flex w-full md:w-auto flex-col md:flex-row gap-2">
+        <input
+          type="text"
+          placeholder="Tim job..."
+          class="w-full md:w-80 bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2"
+          (input)="onSearch($event)"
+        />
+        <select
+          class="px-3 py-2 bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl"
+          [value]="selectedCategory"
+          (change)="onCategoryChange($event)"
+          title="Category"
+          aria-label="Category"
+        >
+          <option value="">All categories</option>
+          <option value="engineering">engineering</option>
+          <option value="product">product</option>
+          <option value="design">design</option>
+          <option value="marketing">marketing</option>
+        </select>
+        <select
+          class="px-3 py-2 bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl"
+          [value]="selectedStatus"
+          (change)="onStatusFilterChange($event)"
+          title="Status"
+          aria-label="Status"
+        >
+          <option value="">All status</option>
+          <option value="active">active</option>
+          <option value="pending">pending</option>
+          <option value="expired">expired</option>
+          <option value="closed">closed</option>
+        </select>
+      </div>
+    </header>
+
+    <section class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-5 ad-rounded-xl">
+      <h2 class="text-lg font-semibold mb-4">Create Job</h2>
+      <form [formGroup]="createJobForm" (ngSubmit)="submitCreateJob()" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label for="jobTitle" class="text-sm font-medium">Title</label>
+          <input
+            id="jobTitle"
+            type="text"
+            formControlName="title"
+            class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2"
+            placeholder="Senior Backend Engineer"
+          />
+          <p *ngIf="isCreateFieldInvalid('title')" class="mt-1 text-xs text-red-600">Title is required.</p>
+        </div>
+
+        <div>
+          <label for="jobCompanyId" class="text-sm font-medium">Company ID</label>
+          <input
+            id="jobCompanyId"
+            type="text"
+            formControlName="companyId"
+            class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2"
+            placeholder="cmp-001"
+          />
+          <p *ngIf="isCreateFieldInvalid('companyId')" class="mt-1 text-xs text-red-600">Company ID is required.</p>
+        </div>
+
+        <div>
+          <label for="jobCategory" class="text-sm font-medium">Category</label>
+          <input
+            id="jobCategory"
+            type="text"
+            formControlName="category"
+            class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2"
+            placeholder="Engineering"
+          />
+          <p *ngIf="isCreateFieldInvalid('category')" class="mt-1 text-xs text-red-600">Category is required.</p>
+        </div>
+
+        <div>
+          <label for="jobLocation" class="text-sm font-medium">Location</label>
+          <input
+            id="jobLocation"
+            type="text"
+            formControlName="location"
+            class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2"
+            placeholder="Ho Chi Minh"
+          />
+          <p *ngIf="isCreateFieldInvalid('location')" class="mt-1 text-xs text-red-600">Location is required.</p>
+        </div>
+
+        <div>
+          <label for="jobExpiryDate" class="text-sm font-medium">Expiry Date</label>
+          <input
+            id="jobExpiryDate"
+            type="datetime-local"
+            formControlName="expiryDate"
+            class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2"
+          />
+          <p *ngIf="isCreateFieldInvalid('expiryDate')" class="mt-1 text-xs text-red-600">Expiry date is required.</p>
+        </div>
+
+        <div class="md:col-span-2">
+          <label for="jobDescription" class="text-sm font-medium">Description</label>
+          <textarea
+            id="jobDescription"
+            rows="4"
+            formControlName="description"
+            class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2"
+            placeholder="Describe role scope, requirements, and benefits."
+          ></textarea>
+          <p *ngIf="isCreateFieldInvalid('description')" class="mt-1 text-xs text-red-600">Description is required.</p>
+        </div>
+
+        <div class="md:col-span-2 flex justify-end">
+          <button
+            type="submit"
+            class="px-4 py-2 bg-ad-primary text-ad-on-primary ad-rounded-xl text-sm font-medium disabled:opacity-60"
+            [disabled]="isCreating"
+          >
+            {{ isCreating ? 'Creating...' : 'Create Job' }}
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <div *ngIf="isLoadingMetrics" class="bg-ad-surface-container-low p-4 ad-rounded-xl">Dang tai metrics...</div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4" *ngIf="metrics as data">
+      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl">
+        <p class="text-sm text-ad-on-surface-variant">Live postings</p>
+        <p class="text-2xl font-bold mt-1">{{ data.livePostings }}</p>
+        <p class="text-xs mt-1 text-ad-on-surface-variant">+{{ data.livePostingsGrowthPct }}%</p>
+      </article>
+      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl">
+        <p class="text-sm text-ad-on-surface-variant">Pending review</p>
+        <p class="text-2xl font-bold mt-1">{{ data.pendingReview }}</p>
+      </article>
+      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl">
+        <p class="text-sm text-ad-on-surface-variant">Applicants</p>
+        <p class="text-2xl font-bold mt-1">{{ data.totalApplicants }}</p>
+      </article>
+      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl sm:col-span-2">
+        <p class="text-sm text-ad-on-surface-variant">Avg time to hire</p>
+        <p class="text-2xl font-bold mt-1">{{ data.avgTimeToHireDays }} days</p>
+      </article>
+    </div>
+
+    <section class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl">
+      <form [formGroup]="bulkActionForm" (ngSubmit)="submitBulkAction()" class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div class="text-sm text-ad-on-surface-variant">
+          Selected jobs: <span class="font-semibold text-ad-on-surface">{{ selectedJobsCount }}</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <label for="bulkAction" class="text-sm">Bulk action</label>
+          <select
+            id="bulkAction"
+            formControlName="action"
+            class="px-3 py-2 border border-ad-outline-variant/30 ad-rounded-lg bg-ad-surface-container-low"
+          >
+            <option value="activate">activate</option>
+            <option value="suspend">suspend</option>
+            <option value="close">close</option>
+          </select>
+          <button
+            type="submit"
+            class="px-3 py-2 ad-rounded-lg bg-ad-primary text-ad-on-primary text-sm disabled:opacity-40"
+            [disabled]="selectedJobsCount === 0"
+          >
+            Apply
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 ad-rounded-xl overflow-hidden">
+      <div *ngIf="isLoadingList" class="p-4">Dang tai danh sach jobs...</div>
+      <div *ngIf="!isLoadingList && jobs.length === 0" class="p-4 text-ad-on-surface-variant">Khong co du lieu jobs.</div>
+
+      <div *ngIf="!isLoadingList && jobs.length > 0" class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-ad-surface-container-low text-left">
+            <tr>
+              <th class="px-4 py-3">
+                <input
+                  type="checkbox"
+                  [checked]="areAllJobsSelected"
+                  (change)="toggleSelectAll(($any($event.target)).checked)"
+                  title="Select all jobs"
+                  aria-label="Select all jobs"
+                />
+              </th>
+              <th class="px-4 py-3">Title</th>
+              <th class="px-4 py-3">Company</th>
+              <th class="px-4 py-3">Location</th>
+              <th class="px-4 py-3">Category</th>
+              <th class="px-4 py-3">Applications</th>
+              <th class="px-4 py-3">Status</th>
+              <th class="px-4 py-3">Expiry</th>
+              <th class="px-4 py-3 text-right">Cap nhat</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let job of jobs; trackBy: trackByJob" class="border-t border-ad-outline-variant/10">
+              <td class="px-4 py-3">
+                <input
+                  type="checkbox"
+                  [checked]="isJobSelected(job.id)"
+                  (change)="toggleJobSelection(job.id, ($any($event.target)).checked)"
+                  title="Select job"
+                  aria-label="Select job"
+                />
+              </td>
+              <td class="px-4 py-3 font-medium">{{ job.title }}</td>
+              <td class="px-4 py-3">{{ job.company }}</td>
+              <td class="px-4 py-3">{{ job.location }}</td>
+              <td class="px-4 py-3">{{ job.category }}</td>
+              <td class="px-4 py-3">{{ job.applications }} (+{{ job.newApplicationsToday }})</td>
+              <td class="px-4 py-3">{{ job.status }}</td>
+              <td class="px-4 py-3">{{ job.expiryDate }}</td>
+              <td class="px-4 py-3 text-right">
+                <div class="inline-flex items-center gap-2">
+                    <select
+                      #statusSelect
+                      class="px-2 py-1 border border-ad-outline-variant/30 ad-rounded-lg"
+                      aria-label="Job status"
+                      title="Job status"
+                      [value]="job.status"
+                    >
+                    <option value="active">active</option>
+                    <option value="pending">pending</option>
+                    <option value="expired">expired</option>
+                    <option value="closed">closed</option>
+                  </select>
+                  <button
+                    type="button"
+                    class="px-2 py-1 ad-rounded-lg bg-ad-primary text-ad-on-primary text-xs disabled:opacity-40"
+                    [disabled]="updatingStatusJobId === job.id"
+                    (click)="updateStatus(job, statusSelect.value)"
+                  >
+                    Luu
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <footer class="px-4 py-3 border-t border-ad-outline-variant/10 flex items-center justify-between text-sm">
+        <span>Trang {{ currentPage }} / {{ totalPages }} - Tong {{ totalItems }}</span>
+        <div class="space-x-2">
+          <button
+            type="button"
+            class="px-3 py-1.5 ad-rounded-lg border border-ad-outline-variant/30 disabled:opacity-40"
+            [disabled]="currentPage <= 1"
+            (click)="goPrevPage()"
+          >
+            Truoc
+          </button>
+          <button
+            type="button"
+            class="px-3 py-1.5 ad-rounded-lg border border-ad-outline-variant/30 disabled:opacity-40"
+            [disabled]="currentPage >= totalPages"
+            (click)="goNextPage()"
+          >
+            Sau
+          </button>
+        </div>
+      </footer>
+    </section>
+  </section>
+</main>

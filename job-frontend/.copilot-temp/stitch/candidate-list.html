@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Danh sách ứng viên - TalentHub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-low": "#f2f4f6",
+                        "secondary-fixed": "#c9e6ff",
+                        "background": "#f7f9fb",
+                        "on-primary-container": "#eeefff",
+                        "on-primary": "#ffffff",
+                        "surface-container-highest": "#e0e3e5",
+                        "surface-bright": "#f7f9fb",
+                        "tertiary-container": "#943fe2",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "on-tertiary-container": "#faecff",
+                        "tertiary": "#7a1bc8",
+                        "surface-container": "#eceef0",
+                        "outline-variant": "#c3c6d7",
+                        "surface-container-high": "#e6e8ea",
+                        "primary-fixed": "#dbe1ff",
+                        "on-secondary-fixed-variant": "#004c6e",
+                        "on-primary-fixed": "#00174b",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-secondary-fixed": "#001e2f",
+                        "on-background": "#191c1e",
+                        "primary-container": "#2563eb",
+                        "tertiary-fixed": "#f0dbff",
+                        "on-tertiary-fixed-variant": "#6900b3",
+                        "surface": "#f7f9fb",
+                        "inverse-primary": "#b4c5ff",
+                        "on-surface-variant": "#434655",
+                        "surface-tint": "#0053db",
+                        "secondary-fixed-dim": "#89ceff",
+                        "on-secondary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#2c0051",
+                        "on-secondary-container": "#004666",
+                        "on-error-container": "#93000a",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#ddb7ff",
+                        "error-container": "#ffdad6",
+                        "on-surface": "#191c1e",
+                        "inverse-surface": "#2d3133",
+                        "surface-dim": "#d8dadc",
+                        "secondary": "#006591",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "surface-variant": "#e0e3e5",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "outline": "#737686",
+                        "secondary-container": "#39b8fd",
+                        "primary": "#004ac6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-body text-on-surface min-h-screen flex overflow-hidden">
+<!-- Sidebar / Navigation Drawer -->
+<aside class="hidden md:flex flex-col w-72 h-full p-4 gap-2 border-r-0 bg-gradient-to-b from-white to-slate-50 dark:from-slate-900 dark:to-slate-950 z-50 sticky top-0 shrink-0">
+<div class="flex items-center gap-3 px-4 py-8">
+<span class="text-blue-700 dark:text-blue-400 font-bold text-2xl tracking-tighter font-headline">TalentHub</span>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:text-blue-600 transition-transform hover:translate-x-1 duration-300" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-medium text-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-blue-600 text-white rounded-full shadow-lg shadow-blue-500/20 transition-transform duration-300" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-medium text-sm">Candidates</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:text-blue-600 transition-transform hover:translate-x-1 duration-300" href="#">
+<span class="material-symbols-outlined">event_available</span>
+<span class="font-medium text-sm">Interviews</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:text-blue-600 transition-transform hover:translate-x-1 duration-300" href="#">
+<span class="material-symbols-outlined">account_tree</span>
+<span class="font-medium text-sm">Pipelines</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:text-blue-600 transition-transform hover:translate-x-1 duration-300" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-medium text-sm">Settings</span>
+</a>
+</nav>
+<div class="mt-auto p-4 bg-surface-container-low rounded-xl flex items-center gap-3">
+<img alt="Recruiter" class="w-10 h-10 rounded-full object-cover shadow-sm" data-alt="Professional headshot of a smiling male recruiter in business casual attire with soft office background lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuArGtp1ZnlMR0aP3fJNMJnZFLnpYVUOf4LSwJsKX94XqoYnQI0Sogn5JC37HhgrLoMuvVOw9lxGncKTwp1DzBBLt9KsWxQh8E6lUei9mHkMRQ3KQvNTYWfJKEr-Vi48e9Z9pZ6FqH6QlZesYv8qODmrw8AmIEpvwadHDxOA-NqgdyOmrSGc6SyfvZtxO187WHx9lrohBbQirAOOIPL9o_vHN9uLSfBoyQ-xF8SeUjrM-2r4iMa3FZCxuwH0pS-Oxky6NdRK8_cVNJg"/>
+<div class="overflow-hidden">
+<p class="text-sm font-bold text-on-surface truncate">Alex Rivera</p>
+<p class="text-xs text-on-surface-variant truncate">Senior Talent Lead</p>
+</div>
+</div>
+</aside>
+<main class="flex-1 overflow-y-auto relative pb-24 md:pb-8">
+<!-- TopAppBar -->
+<header class="w-full sticky top-0 z-50 bg-white/70 backdrop-blur-xl flex items-center justify-between px-6 py-4 max-w-full mx-auto shadow-sm shadow-blue-500/5">
+<div class="flex items-center gap-4">
+<button class="md:hidden p-2 hover:bg-blue-50 rounded-full transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="text-2xl font-['Manrope'] font-extrabold text-blue-700 tracking-tighter">Danh sách ứng viên</h1>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden sm:flex items-center gap-2 px-4 py-2 bg-surface-container-low rounded-full border border-outline-variant/15">
+<span class="material-symbols-outlined text-sm text-on-surface-variant">filter_list</span>
+<select class="bg-transparent border-none text-sm font-medium text-on-surface-variant focus:ring-0 cursor-pointer py-0">
+<option>Chọn tin tuyển dụng</option>
+<option>Senior Product Designer</option>
+<option>Frontend Developer (React)</option>
+<option>Backend Engineer (Node.js)</option>
+</select>
+</div>
+<button class="p-2 hover:bg-blue-50 rounded-full transition-colors active:scale-95 duration-200 text-blue-700">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-primary/10">
+<img alt="Profile" class="w-full h-full object-cover" data-alt="Recruiter profile photo portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDO-5C82ZWfgVmhoEJEEUNT3K3jPeKcSuxh6pgpwHCE3x3tDznfOWho8C1D6PLd5FqVyObKuebNL2s0Djy7CuXcn0kG7vUvPdYhv16w_Zr9cg3oF03TpDjXbClD4EhoCkWPwrv0IocZDBe1eopQaOU6VA2ftNFFc7s9i78RZFl-YC1E-KIEnX1lkfYSzw-47OekZkOZltLYwG8eLUgDT0H8YvRsK-lHkYXPnQNKX7QG-zfU6ozQtEw3WxGzii-XNZOXuB9ApDpcaP4"/>
+</div>
+</div>
+</header>
+<!-- Decorative Blurs -->
+<div class="absolute top-0 right-0 w-[500px] h-[500px] bg-primary-fixed/20 blur-[120px] rounded-full pointer-events-none -z-10"></div>
+<div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-tertiary-fixed/30 blur-[100px] rounded-full pointer-events-none -z-10"></div>
+<div class="p-6 md:p-8 max-w-7xl mx-auto space-y-8">
+<!-- Stats Row -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest p-6 rounded-3xl shadow-sm border border-outline-variant/10 relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl text-primary">groups</span>
+</div>
+<p class="text-sm font-medium text-on-surface-variant mb-1">Tổng ứng viên</p>
+<div class="flex items-end gap-3">
+<h2 class="text-4xl font-headline font-extrabold text-on-surface">1,248</h2>
+<span class="text-xs font-bold text-primary bg-primary-fixed px-2 py-1 rounded-full mb-1">+12%</span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest p-6 rounded-3xl shadow-sm border border-outline-variant/10 relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl text-tertiary">record_voice_over</span>
+</div>
+<p class="text-sm font-medium text-on-surface-variant mb-1">Đang phỏng vấn</p>
+<div class="flex items-end gap-3">
+<h2 class="text-4xl font-headline font-extrabold text-on-surface">42</h2>
+<span class="text-xs font-bold text-tertiary bg-tertiary-fixed px-2 py-1 rounded-full mb-1">Mới</span>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest p-6 rounded-3xl shadow-sm border border-outline-variant/10 relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl text-secondary">trending_up</span>
+</div>
+<p class="text-sm font-medium text-on-surface-variant mb-1">Mới tuần này</p>
+<div class="flex items-end gap-3">
+<h2 class="text-4xl font-headline font-extrabold text-on-surface">156</h2>
+<span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full mb-1">+24%</span>
+</div>
+</div>
+</div>
+<!-- Table Card -->
+<div class="bg-surface-container-lowest rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.02)] border border-outline-variant/5 overflow-hidden">
+<div class="p-8 border-b border-surface-container-low flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+<div>
+<h3 class="text-xl font-headline font-bold text-on-surface">Danh sách chi tiết</h3>
+<p class="text-sm text-on-surface-variant">Cập nhật lúc 09:42 AM hôm nay</p>
+</div>
+<div class="flex items-center gap-2 bg-surface-container rounded-full px-4 py-2 w-full sm:w-auto">
+<span class="material-symbols-outlined text-on-surface-variant">search</span>
+<input class="bg-transparent border-none text-sm focus:ring-0 w-full sm:w-48" placeholder="Tìm kiếm ứng viên..." type="text"/>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/50">
+<th class="px-8 py-5 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Ứng viên</th>
+<th class="px-8 py-5 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Vị trí</th>
+<th class="px-8 py-5 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Email</th>
+<th class="px-8 py-5 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Kinh nghiệm</th>
+<th class="px-8 py-5 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Trạng thái</th>
+<th class="px-8 py-5 text-xs font-bold text-on-surface-variant uppercase tracking-wider text-right">Thao tác</th>
+</tr>
+</thead>
+<tbody class="divide-y-0">
+<!-- Row 1 -->
+<tr class="hover:bg-blue-50/30 transition-colors group">
+<td class="px-8 py-6">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-bold">NH</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Nguyễn Hoàng Nam</p>
+<p class="text-xs text-on-surface-variant">ID: #CAN-9283</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-6 text-sm text-on-surface font-medium">Senior Product Designer</td>
+<td class="px-8 py-6 text-sm text-on-surface-variant">nam.nguyen@example.com</td>
+<td class="px-8 py-6">
+<span class="text-sm text-on-surface">5 năm</span>
+</td>
+<td class="px-8 py-6">
+<span class="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">Đang phỏng vấn</span>
+</td>
+<td class="px-8 py-6 text-right">
+<button class="text-primary text-sm font-bold hover:underline transition-all">Xem hồ sơ</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-blue-50/30 transition-colors">
+<td class="px-8 py-6">
+<div class="flex items-center gap-4">
+<img alt="Candidate" class="w-10 h-10 rounded-full object-cover" data-alt="Portrait of a professional young woman with light makeup and a gentle smile, bright studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARvAMtSKxrqBYskW_SqmB4xHGkjRxZk5Ysk719cH0YuKiQHbkRsc6qhH_3qV1HHbakuiFi6F1pxvzZeIRSCuoWOZVzxY7Y1h_gY6JWWAhPEkbUTw8UhWNXpG_dFjuYa5lnXahimg0Ls3a2dljJXLaJurqvb53a7E6_Yo-7EC_yy1CWF3mgRkPjCSI1izTNwTIZF7qVhsQPDvlSKagbXJ1OOxa0akaYtwTtEiNPPHCKKFnkTPtXxCxoXzHXwyNqHTdqWHsfedva-WQ"/>
+<div>
+<p class="text-sm font-bold text-on-surface">Trần Thị Mai</p>
+<p class="text-xs text-on-surface-variant">ID: #CAN-9284</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-6 text-sm text-on-surface font-medium">Frontend Developer</td>
+<td class="px-8 py-6 text-sm text-on-surface-variant">mai.tran@example.com</td>
+<td class="px-8 py-6">
+<span class="text-sm text-on-surface">3 năm</span>
+</td>
+<td class="px-8 py-6">
+<span class="bg-tertiary-fixed text-tertiary px-3 py-1 rounded-full text-xs font-semibold">Mới ứng tuyển</span>
+</td>
+<td class="px-8 py-6 text-right">
+<button class="text-primary text-sm font-bold hover:underline">Xem hồ sơ</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-blue-50/30 transition-colors">
+<td class="px-8 py-6">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-secondary-fixed flex items-center justify-center text-secondary font-bold">QD</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Lê Quang Dũng</p>
+<p class="text-xs text-on-surface-variant">ID: #CAN-9285</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-6 text-sm text-on-surface font-medium">Backend Engineer</td>
+<td class="px-8 py-6 text-sm text-on-surface-variant">dung.le@example.com</td>
+<td class="px-8 py-6">
+<span class="text-sm text-on-surface">7 năm</span>
+</td>
+<td class="px-8 py-6">
+<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">Đạt yêu cầu</span>
+</td>
+<td class="px-8 py-6 text-right">
+<button class="text-primary text-sm font-bold hover:underline">Xem hồ sơ</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-blue-50/30 transition-colors">
+<td class="px-8 py-6">
+<div class="flex items-center gap-4">
+<img alt="Candidate" class="w-10 h-10 rounded-full object-cover" data-alt="Close-up of a young man with dark hair and creative glasses, warm indoor lighting, friendly expression" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDEprk_kqfrt462LSI-ncDykaCieFYngGVWuxtEqbBfe15VZSHVo7kB_umgQKLJfJjsplNaRxsfXJ-Y-pauVzb8Eyw9B3ZtvNqIqD5ELVnSArmKOWYSfHOBEumA_98qGnosynbeyJrdB_cbhf7gjgeCxffuw_ZL3m4or-Ce27jToiMQkpmc3VGmvF-77IUJeZEtQ6ZB_irau4pOKfd5p8j2i2OjhOZ_LdpQmzoOPQQMPlkiGIUqP7CizQrZRAxLX1MguhLk-AqHraI"/>
+<div>
+<p class="text-sm font-bold text-on-surface">Phạm Minh Tuấn</p>
+<p class="text-xs text-on-surface-variant">ID: #CAN-9286</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-6 text-sm text-on-surface font-medium">Product Manager</td>
+<td class="px-8 py-6 text-sm text-on-surface-variant">tuan.pham@example.com</td>
+<td class="px-8 py-6">
+<span class="text-sm text-on-surface">4 năm</span>
+</td>
+<td class="px-8 py-6">
+<span class="bg-surface-container-highest text-on-surface-variant px-3 py-1 rounded-full text-xs font-semibold">Đang xem xét</span>
+</td>
+<td class="px-8 py-6 text-right">
+<button class="text-primary text-sm font-bold hover:underline">Xem hồ sơ</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-8 bg-surface-container-low/30 border-t border-surface-container-low flex justify-between items-center">
+<p class="text-sm text-on-surface-variant font-medium">Hiển thị 4 trong 1,248 ứng viên</p>
+<div class="flex gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">chevron_left</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-primary text-white font-bold">1</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white transition-colors font-medium">2</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white transition-colors font-medium">3</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile only) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pt-3 pb-6 md:hidden bg-white/80 backdrop-blur-2xl border-t border-slate-100 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] rounded-t-3xl">
+<a class="flex flex-col items-center justify-center text-slate-400" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[11px] font-semibold font-label mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400" href="#">
+<span class="material-symbols-outlined">search</span>
+<span class="text-[11px] font-semibold font-label mt-1">Search</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-blue-50 text-blue-700 rounded-2xl px-5 py-2" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-[11px] font-semibold font-label mt-1">Candidates</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[11px] font-semibold font-label mt-1">Profile</span>
+</a>
+</nav>
+<!-- Floating Action Button (Primary Intent) -->
+<button class="fixed bottom-24 right-6 md:bottom-8 md:right-8 w-14 h-14 bg-gradient-to-tr from-primary to-tertiary-container text-white rounded-full shadow-2xl flex items-center justify-center active:scale-90 transition-transform z-40">
+<span class="material-symbols-outlined">person_add</span>
+</button>
+</body></html>

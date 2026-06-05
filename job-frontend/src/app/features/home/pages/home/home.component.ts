@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, effect, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { take } from 'rxjs';
 import { HomeService } from '../../services/home.service';
@@ -8,6 +8,7 @@ import { DownloadAreaComponent } from '../../../../shared/components/download-ar
 import { JobCardComponent } from '../../../../shared/components/job-card/job-card.component';
 import { SearchFormComponent } from '../../../../shared/components/search-form/search-form.component';
 import { JobCardModel } from '../../../../shared/models/jobs/job-card.model';
+import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
 
 @Component({
   selector: 'app-home',
@@ -18,6 +19,7 @@ import { JobCardModel } from '../../../../shared/models/jobs/job-card.model';
     JobCardComponent,
     CallToActionComponent,
     DownloadAreaComponent,
+    TranslatePipe,
   ],
   standalone: true,
   templateUrl: './home.component.html',
@@ -25,27 +27,14 @@ import { JobCardModel } from '../../../../shared/models/jobs/job-card.model';
 })
 export class HomeComponent implements OnInit {
   jobPosts: JobCardModel[] = [];
-  relatedJobs: JobCardModel[] = [];
-
-  constructor(private homeService: HomeService) {}
-
-  ngOnInit(): void {
-    this.getData();
+  constructor(private homeService: HomeService) {
+    effect(() => {
+      this.jobPosts = this.homeService.jobPosts();
+    })
   }
 
-  getData(): void {
-    this.homeService
-      .getData()
-      .pipe(take(1))
-      .subscribe({
-        next: (response) => {
-          this.jobPosts = response.data.jobSalary.content;
-          this.relatedJobs = response.data.jobSoon.content;
-        },
-        error: (error) => {
-          console.error('Error fetching data:', error);
-        },
-      });
+  ngOnInit(): void {
+    this.homeService.getData();
   }
 
   trackById(index: number, item: JobCardModel): string | number {

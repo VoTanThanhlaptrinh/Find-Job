@@ -1,0 +1,163 @@
+<main class="bg-re-background min-h-screen p-6 md:p-10 text-re-on-surface">
+  <section class="max-w-6xl mx-auto space-y-6">
+    <header class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div>
+        <h1 class="text-2xl md:text-3xl font-bold">Danh sach ung vien</h1>
+        <p class="text-re-on-surface-variant mt-1">Theo tung tin tuyen dung cua nha tuyen dung</p>
+      </div>
+
+      <div class="w-full md:w-80">
+        <label for="job-selector" class="block text-sm font-medium mb-1">Chon tin tuyen dung</label>
+        <select
+          id="job-selector"
+          class="w-full bg-re-surface-container-low border border-re-outline-variant/30 re-rounded-xl px-3 py-2"
+          [value]="selectedJobId() ?? ''"
+          (change)="onSelectJob($event)"
+        >
+          <option value="">-- Chon tin --</option>
+          <option *ngFor="let job of jobs" [value]="job.id">{{ job.title }}</option>
+        </select>
+      </div>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <article class="bg-re-surface-container-lowest p-4 re-rounded-xl border border-re-outline-variant/20">
+        <p class="text-sm text-re-on-surface-variant">Tong ung vien</p>
+        <p class="text-2xl font-bold mt-1">{{ totalCandidates }}</p>
+      </article>
+      <article class="bg-re-surface-container-lowest p-4 re-rounded-xl border border-re-outline-variant/20">
+        <p class="text-sm text-re-on-surface-variant">Dang phong van</p>
+        <p class="text-2xl font-bold mt-1">{{ interviewingCount }}</p>
+      </article>
+      <article class="bg-re-surface-container-lowest p-4 re-rounded-xl border border-re-outline-variant/20">
+        <p class="text-sm text-re-on-surface-variant">Moi</p>
+        <p class="text-2xl font-bold mt-1">{{ newThisWeekCount }}</p>
+      </article>
+    </div>
+
+    <div *ngIf="isLoadingCandidates" class="bg-re-surface-container-low p-4 re-rounded-xl">
+      Dang tai danh sach ung vien...
+    </div>
+
+    <div
+      *ngIf="!isLoadingCandidates && candidates.length === 0"
+      class="bg-re-surface-container-low p-4 re-rounded-xl text-re-on-surface-variant"
+    >
+      Khong co ung vien cho tin da chon.
+    </div>
+
+    <div
+      *ngIf="!isLoadingCandidates && candidates.length > 0"
+      class="bg-re-surface-container-lowest border border-re-outline-variant/20 re-rounded-2xl overflow-hidden"
+    >
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-re-surface-container-low text-left">
+            <tr>
+              <th class="px-4 py-3">Ung vien</th>
+              <th class="px-4 py-3">Email</th>
+              <th class="px-4 py-3">Vi tri</th>
+              <th class="px-4 py-3">Kinh nghiem</th>
+              <th class="px-4 py-3">Trang thai</th>
+              <th class="px-4 py-3 text-right">Thao tac</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let candidate of candidates; trackBy: trackByCandidate"
+              class="border-t border-re-outline-variant/10"
+            >
+              <td class="px-4 py-3 font-medium">{{ candidate.name }}</td>
+              <td class="px-4 py-3 text-re-on-surface-variant">{{ candidate.email || 'Khong co email' }}</td>
+              <td class="px-4 py-3">{{ candidate.role }}</td>
+              <td class="px-4 py-3">{{ candidate.experience }}</td>
+              <td class="px-4 py-3">
+                <span class="px-2 py-1 re-rounded-full text-xs font-semibold" [ngClass]="statusClass(candidate.status)">
+                  {{ candidate.status }}
+                </span>
+              </td>
+              <td class="px-4 py-3 text-right">
+                <button
+                  type="button"
+                  class="px-3 py-1.5 re-rounded-lg bg-re-primary-fixed text-re-on-primary-fixed"
+                  (click)="viewCandidateResumes(candidate)"
+                >
+                  Xem CV
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="flex items-center justify-between px-4 py-3 border-t border-re-outline-variant/10">
+        <p class="text-sm text-re-on-surface-variant">
+          Trang {{ currentPage }} / {{ totalPages }}
+        </p>
+        <div class="flex gap-2">
+          <button
+            type="button"
+            class="px-3 py-1.5 re-rounded-lg border border-re-outline-variant/30 disabled:opacity-40"
+            [disabled]="!canGoPrev"
+            (click)="goPrevPage()"
+          >
+            Truoc
+          </button>
+          <button
+            type="button"
+            class="px-3 py-1.5 re-rounded-lg border border-re-outline-variant/30 disabled:opacity-40"
+            [disabled]="!canGoNext"
+            (click)="goNextPage()"
+          >
+            Sau
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <section
+      *ngIf="selectedCandidateEmail()"
+      class="bg-re-surface-container-lowest p-5 re-rounded-2xl border border-re-outline-variant/20 space-y-3"
+    >
+      <header>
+        <h2 class="font-semibold text-lg">CV cua {{ selectedCandidateEmail() }}</h2>
+      </header>
+
+      <div *ngIf="isLoadingResumes" class="text-re-on-surface-variant">
+        Dang tai CV...
+      </div>
+
+      <div *ngIf="!isLoadingResumes && resumes.length === 0" class="text-re-on-surface-variant">
+        Khong co CV nao.
+      </div>
+
+      <ul *ngIf="!isLoadingResumes && resumes.length > 0" class="space-y-2">
+        <li
+          *ngFor="let resume of resumes"
+          class="bg-re-surface-container p-3 re-rounded-xl flex flex-col gap-2 md:flex-row md:items-center md:justify-between"
+        >
+          <div>
+            <p class="font-medium">{{ resume.fileName }}</p>
+            <p class="text-xs text-re-on-surface-variant">{{ resume.createDate | date: 'dd/MM/yyyy HH:mm' }}</p>
+          </div>
+          <div class="flex gap-2">
+            <button
+              type="button"
+              class="px-3 py-1.5 re-rounded-lg bg-re-primary-fixed text-re-on-primary-fixed text-sm"
+              (click)="openResumeView(resume.id)"
+            >
+              Xem
+            </button>
+            <button
+              type="button"
+              class="px-3 py-1.5 re-rounded-lg bg-re-secondary-fixed text-re-on-secondary-fixed text-sm"
+              (click)="downloadResume(resume.id)"
+            >
+              Tai xuong
+            </button>
+          </div>
+        </li>
+      </ul>
+    </section>
+  </section>
+</main>

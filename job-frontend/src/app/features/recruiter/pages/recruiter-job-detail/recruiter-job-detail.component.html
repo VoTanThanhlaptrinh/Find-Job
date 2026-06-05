@@ -1,0 +1,67 @@
+<main class="bg-re-background min-h-screen p-6 md:p-10 text-re-on-surface">
+  <section class="max-w-5xl mx-auto space-y-6">
+    <header class="flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <h1 class="text-2xl md:text-3xl font-bold">Chi tiet tin tuyen dung</h1>
+        <p class="text-re-on-surface-variant">Ma tin: {{ jobId() || 'N/A' }}</p>
+      </div>
+      <a
+        class="px-4 py-2 re-rounded-full bg-re-surface-container-low border border-re-outline-variant/20"
+        routerLink="/recruiter/jobs"
+      >
+        Quay lai danh sach
+      </a>
+    </header>
+
+    <div *ngIf="isLoading()" class="bg-re-surface-container-low p-5 re-rounded-xl">
+      Dang tai chi tiet tin...
+    </div>
+
+    <div *ngIf="loadError()" class="bg-re-error-fixed text-re-on-error-fixed p-4 re-rounded-xl">
+      {{ loadError() }}
+    </div>
+
+    <article
+      *ngIf="!isLoading() && !loadError()"
+      class="bg-re-surface-container-lowest border border-re-outline-variant/20 p-6 re-rounded-2xl space-y-6"
+    >
+      <div>
+        <h2 class="text-xl md:text-2xl font-semibold">{{ jobDetail().title || 'Dang cap nhat tieu de' }}</h2>
+        <p class="text-re-on-surface-variant mt-1">{{ jobDetail().address || 'Dang cap nhat dia diem' }}</p>
+      </div>
+
+      <dl class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+        <div class="bg-re-surface-container p-4 re-rounded-xl">
+          <dt class="text-re-on-surface-variant">Luong</dt>
+          <dd class="font-semibold mt-1">{{ formatMoney(jobDetail().salary) }}</dd>
+        </div>
+        <div class="bg-re-surface-container p-4 re-rounded-xl">
+          <dt class="text-re-on-surface-variant">Hinh thuc</dt>
+          <dd class="font-semibold mt-1">{{ jobDetail().time || 'Dang cap nhat' }}</dd>
+        </div>
+        <div class="bg-re-surface-container p-4 re-rounded-xl">
+          <dt class="text-re-on-surface-variant">Chi tieu</dt>
+          <dd class="font-semibold mt-1">{{ jobDetail().headcount || 0 }}</dd>
+        </div>
+        <div class="bg-re-surface-container p-4 re-rounded-xl md:col-span-2">
+          <dt class="text-re-on-surface-variant">Ky nang</dt>
+          <dd class="font-semibold mt-1">{{ jobDetail().skill || 'Dang cap nhat' }}</dd>
+        </div>
+        <div class="bg-re-surface-container p-4 re-rounded-xl">
+          <dt class="text-re-on-surface-variant">Han nop</dt>
+          <dd class="font-semibold mt-1">{{ jobDetail().expiredDate || 'Dang cap nhat' }}</dd>
+        </div>
+      </dl>
+
+      <div class="space-y-3">
+        <h3 class="font-semibold text-lg">Mo ta cong viec</h3>
+        <p class="whitespace-pre-line text-re-on-surface-variant">{{ jobDetail().description || 'Chua co mo ta.' }}</p>
+      </div>
+
+      <div class="space-y-3">
+        <h3 class="font-semibold text-lg">Yeu cau</h3>
+        <p class="whitespace-pre-line text-re-on-surface-variant">{{ jobDetail().requireDetails || 'Chua co yeu cau.' }}</p>
+      </div>
+    </article>
+  </section>
+</main>

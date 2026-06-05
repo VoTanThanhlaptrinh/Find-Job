@@ -1,1 +1,13 @@
-<p>login-callback works!</p>
+<section class="flex min-h-[60vh] items-center justify-center px-4 py-12">
+  <div class="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm">
+    <div class="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-4 border-slate-200 border-t-blue-500"></div>
+    <h1 class="text-lg font-semibold text-slate-900">{{ 'loginCallback.title' | t }}</h1>
+    <p class="mt-2 text-sm text-slate-600">{{ 'loginCallback.description' | t }}</p>
+    <a
+      routerLink="/login"
+      class="mt-5 inline-flex items-center justify-center rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
+    >
+      {{ 'loginCallback.backToLogin' | t }}
+    </a>
+  </div>
+</section>

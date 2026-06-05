@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://your-backend-domain.com/api',
+  apiBaseUrl: 'https://find-job-ctkj.onrender.com/api',
   allowLocalApiOverride: false,
 };

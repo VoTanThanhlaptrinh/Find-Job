@@ -1,0 +1,22 @@
+{
+  "name": "projects/8467968580037015697",
+  "projectId": "8467968580037015697",
+  "title": "Recruiter Portal Bright",
+  "visibility": "PRIVATE",
+  "projectType": "PROJECT_DESIGN",
+  "origin": "STITCH",
+  "deviceType": "DESKTOP",
+  "designTheme": {
+    "colorMode": "LIGHT",
+    "font": "MANROPE",
+    "roundness": "ROUND_EIGHT",
+    "customColor": "#2563EB",
+    "headlineFont": "MANROPE",
+    "bodyFont": "INTER",
+    "labelFont": "INTER"
+  },
+  "screens": {},
+  "metadata": {
+    "userRole": "OWNER"
+  }
+}

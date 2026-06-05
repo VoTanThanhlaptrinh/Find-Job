@@ -1,11 +1,4 @@
-/*--------------------------- Color variations ----------------------*/
-/* Medium Layout: 1280px */
-/* Tablet Layout: 768px */
-/* Mobile Layout: 320px */
-/* Wide Mobile Layout: 480px */
-/* =================================== */
-/*  Basic Style
-/* =================================== */
+
 ::-moz-selection {
   /* Code for Firefox */
   background-color: #49e4fa;
@@ -2196,7 +2189,7 @@ body.mobile-nav-active #mobile-nav-toggle {
 }
 
 .section-gap {
-  padding: 120px 0;
+  padding: 30px 0;
 }
 
 .section-title {
@@ -2241,7 +2234,7 @@ body.mobile-nav-active #mobile-nav-toggle {
   height: 250px;              /* độ cao banner mong muốn */
 }
 .banner-area.relative#mini {
-  height: 65px;              /* độ cao banner mong muốn */
+  height: 70px;              /* độ cao banner mong muốn */
 }
 .primary-btn {
   background-color: #49e4fa;
@@ -2659,7 +2652,6 @@ body.mobile-nav-active #mobile-nav-toggle {
 .post-list .single-post .btns li i, .post-list .single-post .btns li a {
   text-transform: uppercase;
   font-weight: 500;
-  color: #222;
 }
 
 .post-list .single-post .btns li:hover {

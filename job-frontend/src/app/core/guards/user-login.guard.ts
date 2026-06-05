@@ -3,6 +3,7 @@ import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { RouterStateSnapshot, ActivatedRouteSnapshot } from '@angular/router';
 import {map, take} from 'rxjs';
+import { TokenService } from '../services/token.service';
 
 
 export const userLoginGuard: CanActivateFn = (
@@ -10,7 +11,8 @@ export const userLoginGuard: CanActivateFn = (
   state: RouterStateSnapshot
 ) => {
   const auth = inject(AuthService);
+  const token = inject(TokenService);
   const router: Router = inject(Router);
-  const protectRoutes: string[] = ['/infor']; // for check the url is protect by guard
-  return false;
+  const protectRoutes: string[] = ['/infor']; 
+  return token.getToken() !== null && auth.isLoggedIn() ? true : router.parseUrl('/login');
 };

@@ -1,0 +1,8 @@
+<svg width="120" height="140" viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="12" y="6" width="96" height="128" rx="14" fill="#F7FAFF"/>
+  <path d="M82 6L108 32H92C86.477 32 82 27.523 82 22V6Z" fill="#DCE9FF"/>
+  <path d="M82 6L108 32" stroke="#2D5EBB" stroke-width="3"/>
+  <rect x="12" y="90" width="96" height="44" rx="0" fill="#2D5EBB"/>
+  <text x="60" y="118" text-anchor="middle" font-family="Arial, sans-serif" font-size="25" font-weight="700" fill="white">DOC</text>
+  <rect x="12" y="6" width="96" height="128" rx="14" stroke="#2D5EBB" stroke-width="3"/>
+</svg>

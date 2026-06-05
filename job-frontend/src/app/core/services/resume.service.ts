@@ -1,0 +1,253 @@
+import { HttpClient } from '@angular/common/http';
+import { computed, Injectable, NgZone, signal } from '@angular/core';
+import { map, Observable, take } from 'rxjs';
+import { UtilitiesService } from './utilities.service';
+import { ResumeReviewInput } from '../../shared/models/jobs/resume-review-input.model';
+import { ApiResponse } from '../../shared/models/api-response.model';
+import { NotifyMessageService } from './notify-message.service';
+import { TokenService } from './token.service';
+import { EventSourceMessage, fetchEventSource } from '@microsoft/fetch-event-source';
+import { ResumePreview } from '../../shared/models/jobs/resume-preview.model';
+import { ResumeUrlDTO } from '../../shared/models/jobs/resume-url-dto.model';
+
+export type ResumeContext = 'user' | 'hirer';
+
+export interface UploadingFileState {
+    fileName: string;
+    status: 'uploading' | 'uploaded' | 'analyzing' | 'analyzed' | 'error';
+}
+
+@Injectable({
+    providedIn: 'root'
+})
+export class ResumeService {
+    private url: string;
+    private resumes = signal<ResumeReviewInput[]>([]);
+    private uploadingFile = signal<UploadingFileState | null>(null);
+    private isLoadingResumes = signal<boolean>(false);
+    private activeAnalysisController: AbortController | null = null;
+    private analysisTimeoutId: ReturnType<typeof setTimeout> | null = null;
+    readonly resumes$ = computed(() => this.resumes());
+    readonly uploadingFile$ = computed(() => this.uploadingFile());
+    readonly isLoadingResumes$ = computed(() => this.isLoadingResumes());
+    constructor(
+        private http: HttpClient,
+        private utilities: UtilitiesService,
+        private notificationService: NotifyMessageService,
+        private ngZone: NgZone,
+        private tokenService: TokenService
+    ) {
+        this.url = this.utilities.getURLDev();
+    }
+
+    getUserResumes() {
+        this.isLoadingResumes.set(true);
+        this.http.get<ApiResponse<ResumeReviewInput[]>>(`${this.url}/user/resumes`).pipe(take(1)).subscribe({
+            next: (response) => {
+                this.resumes.set(response.data);
+                this.isLoadingResumes.set(false);
+            },
+            error: () => {
+                this.resumes.set([]);
+                this.isLoadingResumes.set(false);
+            }
+        });
+    }
+
+    getResumeResourceUrl(resumeId: number, fileName: string, mode: 'inline' | 'attachment'): string {
+        const encodedFileName = encodeURIComponent(fileName);
+        const encodedResumeId = encodeURIComponent(String(resumeId));
+        return `${this.url}/${encodedResumeId}?mode=${mode}&fileName=${encodedFileName}`;
+    }
+
+    getResumeViewUrl(resumeId: number, context: ResumeContext = 'user'): Observable<string> {
+        const prefix = context === 'hirer' ? 'hirer' : 'user';
+        return this.http.get<ApiResponse<ResumeUrlDTO>>(
+            `${this.url}/${prefix}/resumes/${encodeURIComponent(resumeId)}/view`
+        ).pipe(
+            take(1),
+            map(response => response.data.url)
+        );
+    }
+
+    getResumeDownloadUrl(resumeId: number, context: ResumeContext = 'user'): Observable<string> {
+        const prefix = context === 'hirer' ? 'hirer' : 'user';
+        return this.http.get<ApiResponse<ResumeUrlDTO>>(
+            `${this.url}/${prefix}/resumes/${encodeURIComponent(resumeId)}/download`
+        ).pipe(
+            take(1),
+            map(response => response.data.url)
+        );
+    }
+
+    deleteResume(resumeId: number): Observable<unknown> {
+        const encodedResumeId = encodeURIComponent(String(resumeId));
+        this.resumes.update(resumes => resumes.filter(resume => resume.id !== resumeId));
+        return this.http.delete(`${this.url}/user/resumes/${encodedResumeId}`).pipe(take(1));
+    }
+    postResume(file: File) {
+        this.cleanupSSE();
+        this.uploadingFile.set({ fileName: file.name, status: 'uploading' });
+        const formData = new FormData();
+        formData.append('file', file);
+        this.http.post<ApiResponse<ResumePreview>>(`${this.url}/user/resumes`, formData).pipe(take(1)).subscribe({
+            next: (response) => {
+                const resumeId = response.data.id;
+                this.uploadingFile.set({ fileName: file.name, status: 'uploaded' });
+                this.listenForAnalysis(file.name, Number(resumeId));
+            },
+            error: (error) => {
+                this.uploadingFile.set({ fileName: file.name, status: 'error' });
+                this.notificationService.error(error.error.message);
+                setTimeout(() => this.uploadingFile.set(null), 3000);
+            }
+        });
+    }
+
+    private listenForAnalysis(fileName: string, resumeId: number): void {
+        this.uploadingFile.set({ fileName, status: 'analyzing' });
+
+        let analysisReceived = false;
+        let retryCount = 0;
+        const MAX_RETRIES = 3;
+
+        const token = this.tokenService.getToken();
+        const headers: Record<string, string> = {
+            Accept: 'text/event-stream'
+        };
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        const controller = new AbortController();
+        this.activeAnalysisController = controller;
+
+        this.analysisTimeoutId = setTimeout(() => {
+            this.ngZone.run(() => {
+                this.cleanupSSE();
+                this.uploadingFile.set({ fileName, status: 'error' });
+                this.notificationService.error('Phân tích CV quá thời gian. Vui lòng thử lại.');
+                setTimeout(() => this.uploadingFile.set(null), 3000);
+            });
+        }, 60000);
+
+        const handleMessage = (event: EventSourceMessage) => {
+            this.ngZone.run(() => {
+                this.cleanupSSE();
+
+                const { isSuccess, message } = this.parseAnalysisMessage(event.data);
+
+                if (isSuccess) {
+                    this.uploadingFile.set({ fileName, status: 'analyzed' });
+                    this.notificationService.success(message);
+                    setTimeout(() => {
+                        this.getUserResumes();
+                        this.uploadingFile.set(null);
+                    }, 2000);
+                } else {
+                    this.uploadingFile.set({ fileName, status: 'error' });
+                    this.notificationService.error('Phân tích CV lỗi: ' + message);
+                    setTimeout(() => this.uploadingFile.set(null), 3000);
+                }
+            });
+        };
+
+        void fetchEventSource(`${this.url}/notifications/${resumeId}`, {
+            method: 'GET',
+            headers,
+            signal: controller.signal,
+            openWhenHidden: true,
+            onopen: async (response) => {
+                if (!response.ok) {
+                    throw { status: response.status };
+                }
+            },
+            onmessage: (event) => {
+                if (event.event === 'connect') {
+                    console.log('Đã kết nối SSE:', event.data);
+                    return;
+                }
+                if (!event.data) {
+                    return;
+                }
+                analysisReceived = true;
+                handleMessage(event);
+            },
+            onclose: () => {
+                if (analysisReceived) {
+                    throw new Error('Analysis complete, stop retry');
+                }
+                retryCount++;
+                if (retryCount >= MAX_RETRIES) {
+                    throw new Error('Max retries reached');
+                }
+            },
+            onerror: (error: unknown) => {
+                throw error;
+            }
+        }).catch((error: unknown) => {
+            this.ngZone.run(() => {
+                if (controller.signal.aborted) {
+                    return;
+                }
+
+                this.cleanupSSE();
+                this.uploadingFile.set({ fileName, status: 'error' });
+                this.notificationService.error(this.resolveAnalysisConnectionError(error));
+                setTimeout(() => this.uploadingFile.set(null), 3000);
+            });
+        });
+    }
+
+    private parseAnalysisMessage(data: string): { isSuccess: boolean; message: string } {
+        let isSuccess = true;
+        let message = 'Phân tích CV hoàn tất.';
+
+        if (!data) {
+            return { isSuccess, message };
+        }
+
+        try {
+            const response = JSON.parse(data) as { status?: number; message?: string };
+            if (response.status !== undefined && response.status !== 200) {
+                isSuccess = false;
+            }
+            if (response.message) {
+                message = response.message;
+            }
+        } catch {
+            const normalized = data.toLowerCase();
+            if (normalized.includes('error') || normalized.includes('fail') || normalized.includes('lỗi')) {
+                isSuccess = false;
+            }
+            message = data;
+        }
+
+        return { isSuccess, message };
+    }
+
+    private resolveAnalysisConnectionError(error: unknown): string {
+        if (typeof error === 'object' && error !== null && 'status' in error) {
+            const status = Number((error as { status?: unknown }).status);
+            if (status === 401) {
+                return 'Bạn chưa đăng nhập hoặc phiên làm việc đã hết hạn.';
+            }
+            if (status === 403) {
+                return 'Bạn không có quyền thao tác trên CV này.';
+            }
+        }
+
+        return 'Lỗi kết nối khi phân tích CV. Vui lòng thử lại.';
+    }
+
+    private cleanupSSE(): void {
+        if (this.analysisTimeoutId) {
+            clearTimeout(this.analysisTimeoutId);
+            this.analysisTimeoutId = null;
+        }
+        if (this.activeAnalysisController) {
+            this.activeAnalysisController.abort();
+            this.activeAnalysisController = null;
+        }
+    }
+}

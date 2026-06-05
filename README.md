@@ -4,11 +4,11 @@ A full-stack recruitment platform built with `job-frontend` and `job-backend`, c
 
 ## Live Demo
 
-- Frontend-Seeker: `https://findjob-neon.vercel.app/`
-- Frontend-Recruiter: `https://findjob-neon.vercel.app/recruiter/login`
-- Backend API: `https://find-job-ctkj.onrender.com`
+- Frontend-Seeker: https://find-job-frontend.vercel.app/
+- Frontend-Recruiter: https://find-job-frontend.vercel.app/recruiter/login
+- Backend API: https://find-job-ctkj.onrender.com
 - Note: replace both links above with your real deployed URLs so HR can access the project directly.
-
+- Colab: https://drive.google.com/drive/folders/1TL2tvUoYDmMGSPcXMpOKi2H0OXFOIFiP?usp=sharing
 ## Key Strengths
 
 - Clear and realistic product scope: separate flows for `Candidate` and `Recruiter`, not just a landing page or basic CRUD.

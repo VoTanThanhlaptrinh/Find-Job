@@ -1,45 +1,28 @@
-import { Injectable } from '@angular/core';
-
-export interface LayoutVisibility {
-  showHeader: boolean;
-  showFooter: boolean;
-}
+import { computed, Injectable, signal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LayoutVisibilityService {
   private readonly hiddenHeaderRoutes = new Set([
-    '/login',
-    '/register',
-    '/forgot-pass',
-    '/verify',
-    '/activate',
     '/login-callback',
+    '/candidate-list',
+    '/post-job',
   ]);
 
-  private readonly hiddenLayoutPrefixes = ['/recruiter/'];
+  private readonly hiddenHeaderPrefixes = ['/recruiter', '/admin'];
+  private readonly hiddenFooterPrefixes = ['/recruiter', '/admin', '/infor'];
+  private readonly headerSignal =  signal<boolean>(false);
+  private readonly footerSignal = signal<boolean>(false);
+  headerComputed = computed(() => this.headerSignal());
+  footerComputed = computed(() => this.footerSignal());
 
-  getLayoutVisibility(url: string): LayoutVisibility {
+  checkUrlIsHidden(url: string) {
     const path = this.normalizePath(url);
-    const isHidden = this.isHiddenHeaderRoute(path);
-
-    return {
-      showHeader: !isHidden,
-      showFooter: !isHidden,
-    };
-  }
-
-  private isHiddenHeaderRoute(path: string): boolean {
-    if (this.hiddenHeaderRoutes.has(path)) {
-      return true;
-    }
-
-    if (path.startsWith('/reset-pass/')) {
-      return true;
-    }
-
-    return this.hiddenLayoutPrefixes.some((prefix) => path.startsWith(prefix));
+    const isHeaderHidden = this.hiddenHeaderRoutes.has(path) || this.hiddenHeaderPrefixes.some(prefix => path.startsWith(prefix));
+    const isFooterHidden = this.hiddenFooterPrefixes.some(prefix => path.startsWith(prefix));
+    this.headerSignal.set(!isHeaderHidden);
+    this.footerSignal.set(!isFooterHidden);
   }
 
   private normalizePath(url: string): string {

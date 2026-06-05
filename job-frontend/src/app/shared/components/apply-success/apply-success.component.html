@@ -1,0 +1,66 @@
+    <div class="min-h-screen bg-linear-to-br from-slate-50 to-indigo-50 flex items-center justify-center p-4 font-sans selection:bg-indigo-100">
+      <div class="bg-white rounded-4xl shadow-xl shadow-indigo-100/50 max-w-lg w-full p-8 md:p-10 text-center animate-fade-in-up relative overflow-hidden">
+        
+        <!-- Decoration blobs -->
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-green-50 rounded-full blur-2xl opacity-60"></div>
+        <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-indigo-50 rounded-full blur-2xl opacity-60"></div>
+
+        <!-- Success Icon with Animation -->
+        <div class="relative z-10 mx-auto flex items-center justify-center h-24 w-24 rounded-full bg-green-50 mb-6 success-icon-animate">
+          <div class="flex items-center justify-center h-16 w-16 rounded-full bg-green-100 text-green-500 shadow-inner">
+            <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Heading & Message -->
+        <div class="relative z-10">
+          <h2 class="text-3xl font-extrabold text-slate-800 mb-3 tracking-tight">Ứng Tuyển Thành Công!</h2>
+          <p class="text-slate-500 mb-8 leading-relaxed text-sm md:text-base">
+            Tuyệt vời! Chúng tôi đã nhận được hồ sơ của bạn. Đội ngũ tuyển dụng sẽ xem xét và liên hệ với bạn trong thời gian sớm nhất qua email hoặc số điện thoại.
+          </p>
+        </div>
+
+        <!-- Job Details Card -->
+        <div class="relative z-10 bg-slate-50/80 border border-slate-100 rounded-2xl p-6 mb-8 text-left shadow-sm">
+          <div class="flex items-center gap-2 mb-4">
+            <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+            </svg>
+            <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider">Thông tin ứng tuyển</h3>
+          </div>
+          
+          <div class="space-y-3">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center border-b border-slate-200/60 pb-3 gap-1">
+              <span class="text-slate-500 text-sm">Vị trí ứng tuyển</span>
+              <span class="font-semibold text-slate-800">{{ data().jobTitle }}</span>
+            </div>
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center border-b border-slate-200/60 pb-3 gap-1">
+              <span class="text-slate-500 text-sm">Công ty</span>
+              <span class="font-medium text-slate-700">{{ data().companyName }}</span>
+            </div>
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center border-b border-slate-200/60 pb-3 gap-1">
+              <span class="text-slate-500 text-sm">Thời gian nộp</span>
+              <span class="font-medium text-slate-700">{{ data().applyDate }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="relative z-10 flex flex-col sm:flex-row gap-3 justify-center">
+          <button (click)="goBackToJobs()" class="w-full sm:w-auto px-6 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl transition-all duration-200 ease-in-out transform hover:-translate-y-0.5 shadow-md shadow-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+            </svg>
+            Xem việc làm khác
+          </button>
+          <button (click)="goHome()" class="w-full sm:w-auto px-6 py-3.5 bg-white hover:bg-slate-50 text-slate-700 font-medium rounded-xl border border-slate-200 transition-all duration-200 ease-in-out shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-200 focus:ring-offset-2 flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+            </svg>
+            Về trang chủ
+          </button>
+        </div>
+      </div>
+    </div>

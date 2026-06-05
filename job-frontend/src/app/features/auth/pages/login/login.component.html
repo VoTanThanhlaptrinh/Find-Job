@@ -1,26 +1,40 @@
-
 <section class="banner-area relative" id="mini">
-  <div class="overlay overlay-bg">
-  </div>
+  <div class="overlay overlay-bg"></div>
 </section>
-<main class="min-h-screen bg-slate-100 py-6 px-2  mx-auto">
-  <section class="mx-auto max-w-5xl rounded-3xl bg-white shadow-xl ring-1 ring-slate-200">
-    <div class="grid md:grid-cols-2">
-      <aside class="hidden lg::flex flex-col justify-between bg-slate-900 p-10 text-white">
-        <div>
-          <p class="text-sm uppercase tracking-[0.2em] text-emerald-300">Job Portal</p>
-          <h1 class="mt-4 text-4xl font-bold text-white">Chào mừng bạn quay lại</h1>
-          <p class="mt-4 text-slate-300">
-            Đăng nhập để quản lý hồ sơ ứng tuyển hoặc tuyển dụng nhanh chóng.
-          </p>
-        </div>
-        <img src="assets/images/gemini_login_image_logo.png" alt="Login Illustration" class="w-full rounded-2xl object-cover">
-      </aside>
+<main class="min-h-screen bg-slate-100 py-6 px-2 mx-auto">
+  <section
+    class="mx-auto max-w-5xl rounded-3xl bg-white shadow-xl ring-1 ring-slate-200"
+  >
+    <div class="grid lg:grid-cols-2">
+      <div class="hidden lg:block">
+        <aside
+          class="flex flex-col justify-between bg-slate-900 p-10 text-white"
+        >
+          <div>
+            <p class="text-sm uppercase tracking-[0.2em] text-emerald-300">
+              Job Portal
+            </p>
+            <h1 class="mt-4 text-4xl font-bold text-white">
+              Chào mừng bạn quay lại
+            </h1>
+            <p class="mt-4 text-slate-300">
+              Đăng nhập để quản lý hồ sơ ứng tuyển hoặc tuyển dụng nhanh chóng.
+            </p>
+          </div>
+          <img
+            src="assets/images/gemini_login_image_logo.png"
+            alt="Login Illustration"
+            class="w-full rounded-2xl object-cover"
+          />
+        </aside>
+      </div>
 
       <div class="p-6 md:p-10">
         <div class="mx-auto max-w-md">
           <h2 class="text-2xl font-semibold text-slate-800">Đăng nhập</h2>
-          <p class="mt-2 text-sm text-slate-500">Nhập thông tin để tiếp tục sử dụng hệ thống.</p>
+          <p class="mt-2 text-sm text-slate-500">
+            Nhập thông tin để tiếp tục sử dụng hệ thống.
+          </p>
 
           <div class="mt-6 flex items-center gap-3">
             <a
@@ -32,15 +46,31 @@
             </a>
           </div>
 
-          <form class="mt-6 space-y-5" [formGroup]="loginForm" (ngSubmit)="onLogin()">
+          <form
+            class="mt-6 space-y-5"
+            [formGroup]="loginForm"
+            (ngSubmit)="onLogin()"
+          >
             <div>
-              <label for="username" class="mb-1 block text-sm font-medium text-slate-700">Tên người dùng hoặc Email</label>
+              <label
+                for="username"
+                class="mb-1 block text-sm font-medium text-slate-700"
+                >Tên người dùng hoặc Email</label
+              >
               <input
                 id="username"
                 type="text"
                 class="w-full rounded-xl border px-4 py-3 text-sm outline-none transition"
-                [class.border-red-500]="usernameControl.invalid && (usernameControl.touched || usernameControl.dirty)"
-                [class.border-slate-300]="!(usernameControl.invalid && (usernameControl.touched || usernameControl.dirty))"
+                [class.border-red-500]="
+                  usernameControl.invalid &&
+                  (usernameControl.touched || usernameControl.dirty)
+                "
+                [class.border-slate-300]="
+                  !(
+                    usernameControl.invalid &&
+                    (usernameControl.touched || usernameControl.dirty)
+                  )
+                "
                 [class.focus:ring-2]="true"
                 [class.focus:ring-emerald-200]="true"
                 [class.focus:border-emerald-500]="true"
@@ -48,22 +78,45 @@
                 formControlName="username"
                 autocomplete="username"
               />
-              @if (usernameControl.hasError('required') && (usernameControl.touched || usernameControl.dirty)) {
-              <p class="mt-1 text-xs text-red-600">Vui lòng nhập tên người dùng hoặc email.</p>
+              @if (
+                usernameControl.hasError("required") &&
+                (usernameControl.touched || usernameControl.dirty)
+              ) {
+                <p class="mt-1 text-xs text-red-600">
+                  Vui lòng nhập tên người dùng hoặc email.
+                </p>
               }
-              @if (usernameControl.hasError('usernameOrEmail') && (usernameControl.touched || usernameControl.dirty)) {
-              <p class="mt-1 text-xs text-red-600">Định dạng không hợp lệ. Nhập email hoặc username từ 4-30 ký tự.</p>
+              @if (
+                usernameControl.hasError("usernameOrEmail") &&
+                (usernameControl.touched || usernameControl.dirty)
+              ) {
+                <p class="mt-1 text-xs text-red-600">
+                  Định dạng không hợp lệ. Nhập email hoặc username từ 4-30 ký
+                  tự.
+                </p>
               }
             </div>
 
             <div>
-              <label for="password" class="mb-1 block text-sm font-medium text-slate-700">Mật khẩu</label>
+              <label
+                for="password"
+                class="mb-1 block text-sm font-medium text-slate-700"
+                >Mật khẩu</label
+              >
               <input
                 id="password"
                 type="password"
                 class="w-full rounded-xl border px-4 py-3 text-sm outline-none transition"
-                [class.border-red-500]="passwordControl.invalid && (passwordControl.touched || passwordControl.dirty)"
-                [class.border-slate-300]="!(passwordControl.invalid && (passwordControl.touched || passwordControl.dirty))"
+                [class.border-red-500]="
+                  passwordControl.invalid &&
+                  (passwordControl.touched || passwordControl.dirty)
+                "
+                [class.border-slate-300]="
+                  !(
+                    passwordControl.invalid &&
+                    (passwordControl.touched || passwordControl.dirty)
+                  )
+                "
                 [class.focus:ring-2]="true"
                 [class.focus:ring-emerald-200]="true"
                 [class.focus:border-emerald-500]="true"
@@ -71,19 +124,35 @@
                 formControlName="password"
                 autocomplete="current-password"
               />
-              @if (passwordControl.hasError('required') && (passwordControl.touched || passwordControl.dirty)) {
-              <p class="mt-1 text-xs text-red-600">Vui lòng nhập mật khẩu.</p>
+              @if (
+                passwordControl.hasError("required") &&
+                (passwordControl.touched || passwordControl.dirty)
+              ) {
+                <p class="mt-1 text-xs text-red-600">Vui lòng nhập mật khẩu.</p>
               }
-              @if (passwordControl.hasError('minlength') && (passwordControl.touched || passwordControl.dirty)) {
-              <p class="mt-1 text-xs text-red-600">Mật khẩu cần ít nhất 6 ký tự.</p>
+              @if (
+                passwordControl.hasError("minlength") &&
+                (passwordControl.touched || passwordControl.dirty)
+              ) {
+                <p class="mt-1 text-xs text-red-600">
+                  Mật khẩu cần ít nhất 6 ký tự.
+                </p>
               }
             </div>
 
             <div class="flex items-center justify-between text-sm">
-              <a [routerLink]="['/forgot-pass']" class="font-medium text-emerald-700 hover:text-emerald-600">Quên mật khẩu?</a>
+              <a
+                [routerLink]="['/forgot-pass']"
+                class="font-medium text-emerald-700 hover:text-emerald-600"
+                >Quên mật khẩu?</a
+              >
               <p class="text-slate-500">
                 Chưa có tài khoản?
-                <a [routerLink]="['/register']" class="font-semibold text-slate-700 hover:text-slate-900">Đăng ký</a>
+                <a
+                  [routerLink]="['/register']"
+                  class="font-semibold text-slate-700 hover:text-slate-900"
+                  >Đăng ký</a
+                >
               </p>
             </div>
 
@@ -93,9 +162,9 @@
               [disabled]="loginForm.invalid || isSubmitting"
             >
               @if (isSubmitting) {
-              Đang đăng nhập...
+                Đang đăng nhập...
               } @else {
-              Đăng nhập
+                Đăng nhập
               }
             </button>
           </form>

@@ -3,16 +3,21 @@ import { JobCardModel } from './job-card.model';
 
 export interface PagedPayload<T> {
   content: T[];
+  page?: {
+    size: number;
+    number: number;
+    totalElements: number;
+    totalPages: number;
+  }
 }
 
 export interface HomeInitViewModel {
-  jobSalary: PagedPayload<JobCardModel>;
   jobSoon: PagedPayload<JobCardModel>;
 }
 
 export interface AddressCountViewModel {
-  address: string;
-  amount: number;
+  city: string;
+  count: number;
 }
 
 export interface JobDetailViewModel {
@@ -25,25 +30,29 @@ export interface JobDetailViewModel {
   requireDetails: string;
   skill: string;
   expiredDate: string;
+  headcount: number;
 }
 
 export interface HirerJobViewModel {
-  id: string | number;
+  id: number;
   title: string;
   description: string;
   address: string;
-  salary: number;
+  salary: string;
   time: string;
   applies: number;
+  headcount: number;
+  status: string;
 }
+
+export type HirerJobPostView = HirerJobViewModel;
 
 export interface JobFilterPayload {
   pageIndex: number;
   pageSize: number;
-  min: number;
-  max: number;
   address: string[];
   times: string[];
+  title: string;
 }
 
 export type HomeInitApiResponse = ApiResponse<HomeInitViewModel>;
@@ -53,5 +62,5 @@ export type JobAddressCountApiResponse = ApiResponse<AddressCountViewModel[]>;
 export type JobDetailApiResponse = ApiResponse<JobDetailViewModel>;
 export type JobExistsApiResponse = ApiResponse<boolean>;
 export type JobSubmitApiResponse = ApiResponse<string | null>;
-export type HirerJobListApiResponse = ApiResponse<PagedPayload<HirerJobViewModel>>;
+export type HirerJobListApiResponse = ApiResponse<PagedPayload<HirerJobPostView>>;
 export type HirerJobCountApiResponse = ApiResponse<number>;
