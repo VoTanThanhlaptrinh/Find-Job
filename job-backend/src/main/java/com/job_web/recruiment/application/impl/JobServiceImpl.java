@@ -158,12 +158,24 @@ public class JobServiceImpl implements JobService {
     @Override
     public List<JobCardView> matchJobs(long cvId) {
         List<Tuple> tuples = jobRepository.matchJobs(cvId);
-        return tuples.stream().map(t -> new JobCardView(
-                t.get("id", Number.class).longValue(),
-                t.get("title", String.class),
-                t.get("address", String.class),
-                t.get("salary", String.class),
-                t.get("time", EmploymentType.class)
-        )).toList();
+        return tuples.stream().map(t -> {
+            String timeStr = t.get("time", String.class);
+
+            EmploymentType employmentType = null;
+            if (timeStr != null && !timeStr.trim().isEmpty()) {
+                try {
+                    employmentType = EmploymentType.valueOf(timeStr.trim().toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    System.err.println("Unrecognized EmploymentType in DB: " + timeStr);
+                }
+            }
+            return new JobCardView(
+                    t.get("id", Number.class).longValue(),
+                    t.get("title", String.class),
+                    t.get("address", String.class),
+                    t.get("salary", String.class),
+                    employmentType
+            );
+        }).toList();
     }
 }

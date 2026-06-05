@@ -113,10 +113,10 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       empty: 'Không tìm thấy công việc phù hợp với bộ lọc hiện tại.',
       paginatorLabel: 'Phân trang danh sách công việc',
       jobTypeOptions: {
-        fullTime: 'Toàn thời gian',
-        partTime: 'Bán thời gian',
-        remote: 'Làm từ xa',
-        hybrid: 'Linh hoạt',
+        FULL_TIME: 'Toàn thời gian',
+        PART_TIME: 'Bán thời gian',
+        REMOTE: 'Làm từ xa',
+        HYBRID: 'Linh hoạt',
       },
     },
     about: {
@@ -531,10 +531,10 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       empty: 'No jobs match your current filters.',
       paginatorLabel: 'Job list pagination',
       jobTypeOptions: {
-        fullTime: 'Full time',
-        partTime: 'Part time',
-        remote: 'Remote',
-        hybrid: 'Hybrid',
+        FULL_TIME: 'Full time',
+        PART_TIME: 'Part time',
+        REMOTE: 'Remote',
+        HYBRID: 'Hybrid',
       },
     },
     about: {
@@ -742,7 +742,7 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       careerAdviceBlog: 'Career advice blog',
     },
     recommendedJobs: {
-      title: 'Job recommendations for you',
+      title: 'Job recommendations',
       helperText: 'Discover opportunities tailored specifically for your profile',
       selectLabel: 'Based on resume',
       selectEmptyLabel: 'You have no resumes yet',

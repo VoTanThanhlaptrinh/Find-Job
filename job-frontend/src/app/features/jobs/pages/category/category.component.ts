@@ -3,6 +3,7 @@ import { AfterViewInit, Component, effect, inject, OnInit, PLATFORM_ID } from '@
 import { FormsModule } from '@angular/forms';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { PageEvent } from '@angular/material/paginator';
+import { ActivatedRoute } from '@angular/router';
 import { debounceTime, distinctUntilChanged, Subject, take } from 'rxjs';
 import { CallToActionComponent } from '../../../../shared/components/call-to-action/call-to-action.component';
 import { JobCardComponent } from '../../../../shared/components/job-card/job-card.component';
@@ -35,15 +36,15 @@ export class CategoryComponent implements OnInit, AfterViewInit {
   addressCount: AddressCountViewModel[] = [];
   jobs: JobCardModel[] = [];
   pageIndex = 0;
-  pageSize = 10;
+  pageSize = 5;
   length = 0;
   selectedAddresses = new Set<string>();
   selectedTypes = new Set<string>();
   jobTypes = [
-    { id: 'fullTime', value: 'Full time', checked: false },
-    { id: 'partTime', value: 'Part time', checked: false },
-    { id: 'remote', value: 'Remote', checked: false },
-    { id: 'hybrid', value: 'Hybrid', checked: false },
+    { id: 'FULL_TIME', value: 'FULL_TIME', checked: false },
+    { id: 'PART_TIME', value: 'PART_TIME', checked: false },
+    { id: 'REMOTE', value: 'REMOTE', checked: false },
+    { id: 'HYBRID', value: 'HYBRID', checked: false },
   ];
 
   private searchSubject = new Subject<string>();
@@ -53,23 +54,35 @@ export class CategoryComponent implements OnInit, AfterViewInit {
   constructor(
     private category: CategoryService,
     private i18nService: I18nService,
+    private route: ActivatedRoute,
   ) {
     effect(() => {
       this.addressCount = this.category.addressCount();
       this.jobs = this.category.jobs();
+      const totalJobs = this.category.totalJobs();
+
+      if (totalJobs !== null) {
+        this.length = totalJobs;
+      }
     });
   }
 
   ngOnInit(): void {
-    this.category.listJobsNewest(this.pageIndex, this.pageSize);
-    this.getAmount();
     this.getAddressCount();
     this.searchSubject.pipe(
-      debounceTime(400),        
-      distinctUntilChanged()    
+      debounceTime(400),
+      distinctUntilChanged()
     ).subscribe(searchValue => {
       this.executeSearch(searchValue);
     });
+
+    if (this.applyInitialQueryParams()) {
+      this.searchWithFilters(this.buildFilterPayload());
+      return;
+    }
+
+    this.category.listJobsNewest(this.pageIndex, this.pageSize);
+    this.getAmount();
   }
 
   ngAfterViewInit(): void {
@@ -101,7 +114,7 @@ export class CategoryComponent implements OnInit, AfterViewInit {
   }
 
   getAddressCount(): void {
-    this.category.getAddressCount();
+    this.category.loadAddressCount();
   }
 
   formatMoney(value: number): string {
@@ -207,7 +220,7 @@ export class CategoryComponent implements OnInit, AfterViewInit {
       pageSize: this.pageSize,
       address: Array.from(this.selectedAddresses),
       times: Array.from(this.selectedTypes),
-      title: this.title,
+      title: this.title.trim(),
     };
   }
 
@@ -273,10 +286,25 @@ export class CategoryComponent implements OnInit, AfterViewInit {
   }
 
   private executeSearch(value: string) {
-    this.title = value; // Cập nhật title chính thức
-    this.pageIndex = 0; // Reset về trang đầu
+    this.title = value;
+    this.pageIndex = 0;
     this.searchWithFilters(this.buildFilterPayload());
   }
+
+  private applyInitialQueryParams(): boolean {
+    const keyword = this.route.snapshot.queryParamMap.get('keyword')?.trim() ?? '';
+    const city = this.route.snapshot.queryParamMap.get('city')?.trim() ?? '';
+
+    this.title = keyword;
+    this.selectedAddresses.clear();
+
+    if (city.length > 0) {
+      this.selectedAddresses.add(city);
+    }
+
+    return keyword.length > 0 || city.length > 0;
+  }
+
   private scrollToTopIfNeeded(): void {
     if (!isPlatformBrowser(this.platformId)) {
       return;

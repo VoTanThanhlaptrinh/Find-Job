@@ -66,9 +66,9 @@ public interface JobRepository extends JpaRepository<Job, Long> {
                     (skill_and_project_embedding <=> cv_skill_vec) AS skill_dist,
                     (exp_dist * 0.6 + (skill_and_project_embedding <=> cv_skill_vec) * 0.4) AS final_dist
                 FROM stage_1_retrieval
+                where (exp_dist * 0.6 + (skill_and_project_embedding <=> cv_skill_vec) * 0.4) <= 0.5
                 ORDER BY final_dist ASC
-                HAVING skill_dist >= 0.7
-                LIMIT 15
+                LIMIT 10
             )
             SELECT
                 j.id,

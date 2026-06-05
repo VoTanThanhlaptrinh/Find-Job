@@ -1,4 +1,4 @@
-<form action="#" class="serach-form-area" method="post">
+<form class="serach-form-area" (ngSubmit)="onSubmit()">
     <div class="row justify-content-center form-wrap">
       <div class="col-lg-6 form-cols">
         <label for="search-title" class="sr-only">{{ 'searchForm.jobPlaceholder' | t }}</label>
@@ -7,6 +7,7 @@
           type="text"
           class="form-control"
           name="title"
+          [(ngModel)]="keyword"
           [placeholder]="'searchForm.jobPlaceholder' | t"
           [attr.aria-label]="'searchForm.jobPlaceholder' | t"
           [attr.title]="'searchForm.jobPlaceholder' | t"
@@ -15,12 +16,17 @@
       <div class="col-lg-4 form-cols ">
         <div class="default-select" id="default-selects">
           <label for="search-area" class="sr-only">{{ 'searchForm.area' | t }}</label>
-          <select id="search-area" title="area" class="form-control">
-            <option value="1">{{ 'searchForm.area' | t }}</option>
-            <option value="2">{{ 'searchForm.areaHCM' | t }}</option>
-            <option value="3">{{ 'searchForm.areaHN' | t }}</option>
-            <option value="4">{{ 'searchForm.areaDN' | t }}</option>
-            <option value="5">{{ 'searchForm.areaCT' | t }}</option>
+          <select
+            id="search-area"
+            title="area"
+            class="form-control"
+            name="city"
+            [(ngModel)]="selectedCity"
+          >
+            <option value="">{{ 'searchForm.area' | t }}</option>
+            @for (item of addressCount(); track item.city) {
+              <option [value]="item.city">{{ item.city }}</option>
+            }
           </select>
         </div>
       </div>

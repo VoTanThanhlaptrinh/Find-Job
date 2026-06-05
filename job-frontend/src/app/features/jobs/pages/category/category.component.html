@@ -42,7 +42,8 @@
                     [attr.aria-label]="item.city"
                     class="form-check-input"
                     type="checkbox"
-                    value="{{ item.city }}"
+                    [value]="item.city"
+                    [checked]="selectedAddresses.has(item.city)"
                     (change)="onFilterChange($event)"
                   />
                   <label

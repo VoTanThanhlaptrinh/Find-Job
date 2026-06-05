@@ -1,4 +1,10 @@
 .material-symbols-outlined {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  line-height: 1;
   font-variation-settings:
     'FILL' 0,
     'wght' 400,
@@ -8,10 +14,32 @@
 
 :host {
   display: block;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .font-display {
   font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.candidate-shell,
+.candidate-shell * {
+  box-sizing: border-box;
+}
+
+.candidate-shell,
+.candidate-sidebar {
+  max-width: 100%;
+}
+
+.candidate-sidebar {
+  will-change: width;
+}
+
+.sidebar-icon {
+  flex: 0 0 2.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
 }
 
 /* Hide scrollbar but keep functionality */
@@ -27,11 +55,15 @@ nav::-webkit-scrollbar-thumb {
 /* Mobile responsive fixes */
 @media (max-width: 768px) {
   aside {
-    width: 0 !important;
+    width: 4rem !important;
     border: none;
   }
   
   .ml-72, .ml-20 {
     margin-left: 0 !important;
+  }
+
+  .candidate-shell {
+    overflow-x: hidden;
   }
 }

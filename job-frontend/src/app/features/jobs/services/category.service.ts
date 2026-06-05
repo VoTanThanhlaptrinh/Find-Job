@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { computed, Injectable, signal } from '@angular/core';
-import { finalize, Observable, take } from 'rxjs';
+import { finalize, take, tap } from 'rxjs';
 import { UtilitiesService } from '../../../core/services/utilities.service';
 import {
   AddressCountViewModel,
@@ -22,6 +22,7 @@ export class CategoryService {
   private url: string;
   private jobData = signal<JobCardModel[]>([]);
   private addressData = signal<AddressCountViewModel[]>([]);
+  private totalJobData = signal<number | null>(null);
   private loadingJobs = signal(false);
   private activeJobRequests = 0;
   private loadingStartAt = 0;
@@ -29,6 +30,7 @@ export class CategoryService {
 
   jobs = computed(() => this.jobData());
   addressCount = computed(() => this.addressData());
+  totalJobs = computed(() => this.totalJobData());
   isLoadingJobs = computed(() => this.loadingJobs());
 
   constructor(private http: HttpClient, private utilities: UtilitiesService) {
@@ -85,6 +87,9 @@ export class CategoryService {
     ).subscribe({
       next: (response) => {
         this.jobData.set(response.data.content);
+        if (typeof response.data.totalElements === 'number') {
+          this.totalJobData.set(response.data.totalElements);
+        }
       },
       error: (error) => {
         console.error('Error fetching jobs:', error);
@@ -93,10 +98,17 @@ export class CategoryService {
   }
 
   getAmount() {
-    return this.http.get<JobCountApiResponse>(`${this.url}/jobs/count`).pipe(take(1));
+    return this.http.get<JobCountApiResponse>(`${this.url}/jobs/count`).pipe(
+      take(1),
+      tap((response) => this.totalJobData.set(response.data))
+    );
   }
 
-  getAddressCount() {
+  loadAddressCount(force = false): void {
+    if (!force && this.addressData().length > 0) {
+      return;
+    }
+
     this.http.get<JobAddressCountApiResponse>(`${this.url}/jobs/address-count`).pipe(take(1)).subscribe({
       next: (response) => {
         this.addressData.set(response.data);
@@ -107,6 +119,10 @@ export class CategoryService {
     });
   }
 
+  getAddressCount(): void {
+    this.loadAddressCount();
+  }
+
   filterWithAddressTimeSalary(filter: JobFilterPayload) {
     this.startJobsLoading();
     this.http.post<JobListApiResponse>(`${this.url}/jobs/filter`, filter).pipe(
@@ -115,6 +131,7 @@ export class CategoryService {
     ).subscribe({
       next: (response) => {
         this.jobData.set(response.data.content);
+        this.totalJobData.set(response.data.totalElements ?? response.data.content.length);
       },
       error: (error) => {
         console.error('Error filtering jobs:', error);

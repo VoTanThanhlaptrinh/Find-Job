@@ -1,56 +1,76 @@
 <section class="banner-area relative" id="mini">
   <div class="overlay overlay-bg"></div>
 </section>
-<div class="flex min-h-screen bg-slate-50 antialiased text-slate-900 font-sans">
+<div class="candidate-shell flex min-h-screen w-full max-w-full overflow-x-hidden bg-slate-50 antialiased text-slate-900 font-sans">
   <!-- SideNavBar Component -->
-  <aside 
+  <aside
     role="navigation"
-    class="fixed mt-70 left-0 top-0 flex flex-col h-[95vh] py-8 bg-white transition-all duration-300 ease-in-out border-r border-slate-200 z-50 overflow-hidden"
+    class="candidate-sidebar fixed left-0 top-0 z-50 flex h-screen flex-col overflow-hidden border-r border-slate-200 bg-white py-6 transition-all duration-300 ease-in-out"
     [ngClass]="isOpen ? 'w-72' : 'w-20'"
   >
     <!-- Brand Header -->
-    <div class="px-8 mb-10 whitespace-nowrap flex items-center justify-between">
-      <span *ngIf="isOpen" class="font-display text-2xl font-extrabold tracking-tight text-blue-600">Lumina Talent</span>
-      <button 
-        (click)="toggleSidebar()" 
-        class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:bg-slate-100 transition-colors"
+    <div
+      class="mb-8 flex h-12 items-center whitespace-nowrap"
+      [ngClass]="isOpen ? 'justify-between px-5' : 'justify-center px-0'"
+    >
+      <span
+        *ngIf="isOpen"
+        class="font-display text-2xl font-extrabold tracking-tight text-blue-600"
+        >Job Listing</span
       >
-        <span class="material-symbols-outlined">{{ isOpen ? 'menu_open' : 'menu' }}</span>
+      <button
+        (click)="toggleSidebar()"
+        class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:bg-slate-100 transition-colors"
+        type="button"
+      >
+        <span class="material-symbols-outlined">{{
+          isOpen ? "menu_open" : "menu"
+        }}</span>
       </button>
     </div>
     <!-- Navigation Tabs -->
-    <nav class="flex-1 space-y-1 px-4 overflow-y-auto">
+    <nav
+      class="flex-1 space-y-1 overflow-y-auto overflow-x-hidden"
+      [ngClass]="isOpen ? 'px-3' : 'px-2'"
+    >
       @for (item of translatedMenuItems(); track item.route) {
-        <a 
-          [routerLink]="item.route" 
+        <a
+          [routerLink]="item.route"
           routerLinkActive="text-blue-600 font-bold bg-blue-50"
           [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
-          class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-slate-600 hover:bg-slate-100 hover:text-blue-600 group"
+          class="flex min-w-0 items-center rounded-xl py-2.5 transition-all duration-200 text-slate-600 hover:bg-slate-100 hover:text-blue-600 group"
+          [ngClass]="isOpen ? 'justify-start gap-3 px-3' : 'justify-center gap-0 px-0'"
           (click)="onMenuItemClick()"
         >
-          <span class="material-symbols-outlined text-[22px]">{{ item.icon }}</span>
-          <span *ngIf="isOpen" class="whitespace-nowrap">{{ item.name }}</span>
+          <span class="sidebar-icon material-symbols-outlined text-[22px]">{{ item.icon }}</span>
+          <span *ngIf="isOpen" class="min-w-0 truncate whitespace-nowrap">{{ item.name }}</span>
         </a>
       }
     </nav>
 
     <!-- Footer Tab: Logout -->
-    <div class="mt-auto pt-6 px-4 border-t border-slate-100">
-      <a 
+    <div
+      class="mt-auto border-t border-slate-100 pt-5"
+      [ngClass]="isOpen ? 'px-3' : 'px-2'"
+    >
+      <a
         href="javascript:void(0)"
-        class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-slate-600 hover:bg-red-50 hover:text-red-600 group"
+        class="flex min-w-0 items-center rounded-xl py-2.5 transition-all duration-200 text-slate-600 hover:bg-red-50 hover:text-red-600 group"
+        [ngClass]="isOpen ? 'justify-start gap-3 px-3' : 'justify-center gap-0 px-0'"
       >
-        <span class="material-symbols-outlined text-[22px]">logout</span>
-        <span *ngIf="isOpen" class="font-medium whitespace-nowrap">{{ logoutLabel() }}</span>
+        <span class="sidebar-icon material-symbols-outlined text-[22px]">logout</span>
+        <span *ngIf="isOpen" class="min-w-0 truncate whitespace-nowrap font-medium">{{
+          logoutLabel()
+        }}</span>
       </a>
     </div>
   </aside>
 
-  <div 
-    class="flex-1 transition-all duration-300 ease-in-out"
+  <div
+    class="min-w-0 flex-1 w-full max-w-full overflow-x-hidden transition-all duration-300 ease-in-out"
     [ngClass]="isOpen ? 'ml-72' : 'ml-20'"
   >
-    <div class="p-4 md:p-8 min-h-[calc(100vh-5rem)]">
+    <div class="min-h-screen min-w-0 max-w-full overflow-x-hidden p-4 md:p-8">
       <!-- MAIN ROUTER OUTLET PRESERVED -->
       <router-outlet></router-outlet>
     </div>
