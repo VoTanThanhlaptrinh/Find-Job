@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, computed } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
@@ -6,10 +6,11 @@ import { CommonModule } from '@angular/common';
 import { AccountService } from '../../../core/services/account.service';
 import { NotifyMessageService } from '../../../core/services/notify-message.service';
 import { I18nService } from '../../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 
 @Component({
   selector: 'app-change-pass',
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslatePipe],
   templateUrl: './change-pass.component.html',
   styleUrl: './change-pass.component.css',
   standalone: true
@@ -23,24 +24,6 @@ export class ChangePassComponent implements OnInit {
   showOldPass = signal(false);
   showNewPass = signal(false);
   showConfirmPass = signal(false);
-
-  readonly title = computed(() => this.i18n.translate('changePassword.title'));
-  readonly subtitle = computed(() => this.i18n.translate('changePassword.subtitle'));
-  readonly verificationRequiredTitle = computed(() => this.i18n.translate('changePassword.verificationRequiredTitle'));
-  readonly verificationRequiredDesc = computed(() => this.i18n.translate('changePassword.verificationRequiredDesc'));
-  readonly verifyNowLabel = computed(() => this.i18n.translate('changePassword.verifyNow'));
-  readonly securityRequirementsLabel = computed(() => this.i18n.translate('changePassword.securityRequirements'));
-  readonly reqLengthLabel = computed(() => this.i18n.translate('changePassword.reqLength'));
-  readonly reqDigitLabel = computed(() => this.i18n.translate('changePassword.reqDigit'));
-  readonly reqSpecialLabel = computed(() => this.i18n.translate('changePassword.reqSpecial'));
-  readonly reqPeriodicLabel = computed(() => this.i18n.translate('changePassword.reqPeriodic'));
-  readonly currentPasswordLabel = computed(() => this.i18n.translate('changePassword.currentPassword'));
-  readonly newPasswordLabel = computed(() => this.i18n.translate('changePassword.newPassword'));
-  readonly confirmPasswordLabel = computed(() => this.i18n.translate('changePassword.confirmPassword'));
-  readonly placeholderCurrent = computed(() => this.i18n.translate('changePassword.placeholderCurrent'));
-  readonly placeholderNew = computed(() => this.i18n.translate('changePassword.placeholderNew'));
-  readonly placeholderConfirm = computed(() => this.i18n.translate('changePassword.placeholderConfirm'));
-  readonly updateButtonLabel = computed(() => this.i18n.translate('changePassword.updateButton'));
 
   readonly formGroup = new FormGroup({
     oldPass: new FormControl('', [Validators.required, Validators.minLength(6)]),

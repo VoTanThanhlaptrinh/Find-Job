@@ -94,9 +94,7 @@ export class ResumeService {
             next: (response) => {
                 const resumeId = response.data.id;
                 this.uploadingFile.set({ fileName: file.name, status: 'uploaded' });
-                setTimeout(() => {
-                    this.listenForAnalysis(file.name, Number(resumeId));
-                }, 1500);
+                this.listenForAnalysis(file.name, Number(resumeId));
             },
             error: (error) => {
                 this.uploadingFile.set({ fileName: file.name, status: 'error' });
@@ -108,6 +106,10 @@ export class ResumeService {
 
     private listenForAnalysis(fileName: string, resumeId: number): void {
         this.uploadingFile.set({ fileName, status: 'analyzing' });
+
+        let analysisReceived = false;
+        let retryCount = 0;
+        const MAX_RETRIES = 3;
 
         const token = this.tokenService.getToken();
         const headers: Record<string, string> = {
@@ -168,7 +170,17 @@ export class ResumeService {
                 if (!event.data) {
                     return;
                 }
+                analysisReceived = true;
                 handleMessage(event);
+            },
+            onclose: () => {
+                if (analysisReceived) {
+                    throw new Error('Analysis complete, stop retry');
+                }
+                retryCount++;
+                if (retryCount >= MAX_RETRIES) {
+                    throw new Error('Max retries reached');
+                }
             },
             onerror: (error: unknown) => {
                 throw error;

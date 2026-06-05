@@ -27,6 +27,7 @@ public class SseNotificationServiceImpl implements SseNotificationService {
     
     private final ResumeRepository resumeRepository;
     private final Map<Long, SseEmitter> emitters = new ConcurrentHashMap<>();
+    private final Map<Long, String> pendingNotifications = new ConcurrentHashMap<>();
 
     private static final String MDC_USER_ID = "userId";
     private static final String MDC_CV_ID = "cvId";
@@ -83,6 +84,22 @@ public class SseNotificationServiceImpl implements SseNotificationService {
                 throw new RuntimeException(MessageUtils.getMessage("notification.sse.failed"));
             }
 
+            String pending = pendingNotifications.remove(resumeId);
+            if (pending != null) {
+                try {
+                    emitter.send(SseEmitter.event()
+                            .name("notification")
+                            .data(pending));
+                    log.info("SSE notification (pending) sent for CV: {}", resumeId);
+                    emitter.complete();
+                    emitters.remove(resumeId);
+                } catch (IOException e) {
+                    log.warn("Failed to send pending SSE notification for CV: {} — removing emitter", resumeId);
+                    emitters.remove(resumeId);
+                    emitter.completeWithError(e);
+                }
+            }
+
             log.info("SSE client subscribed for CV: {} by user: {}", resumeId, user.getId());
             return emitter;
         } finally {
@@ -95,7 +112,8 @@ public class SseNotificationServiceImpl implements SseNotificationService {
     public void sendNotification(Long resumeId, String message) {
         SseEmitter emitter = emitters.get(resumeId);
         if (emitter == null) {
-            log.warn("No active SSE connection for CV: {}", resumeId);
+            pendingNotifications.put(resumeId, message);
+            log.info("No active SSE connection for CV: {} — stored as pending", resumeId);
             return;
         }
         
@@ -104,6 +122,8 @@ public class SseNotificationServiceImpl implements SseNotificationService {
                     .name("notification")
                     .data(message));
             log.info("SSE notification sent for CV: {}", resumeId);
+            emitter.complete();
+            emitters.remove(resumeId);
         } catch (IOException e) {
             log.warn("Failed to send SSE notification for CV: {} — removing emitter", resumeId);
             emitters.remove(resumeId);

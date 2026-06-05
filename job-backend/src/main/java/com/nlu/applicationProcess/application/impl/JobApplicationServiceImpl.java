@@ -17,7 +17,6 @@ import com.nlu.applicationProcess.domain.model.JobApplication;
 import com.nlu.applicationProcess.domain.model.Resume;
 import com.nlu.identity.domain.model.User;
 import com.nlu.applicationProcess.application.JobApplicationService;
-import com.nlu.applicationProcess.application.ResumeService;
 import com.nlu.shared.application.FileService;
 import com.nlu.shared.utils.KeyGeneratorUtil;
 import com.nlu.shared.utils.MessageUtils;
@@ -41,7 +40,6 @@ public class JobApplicationServiceImpl implements JobApplicationService {
     private final ResumeRepository resumeRepository;
     private final JobRepository jobRepository;
     private final UserRepository userRepository;
-    private final ResumeService resumeService;
     private final MessageProducer messageProducer;
     private final FileService fileService;
 
@@ -138,7 +136,7 @@ public class JobApplicationServiceImpl implements JobApplicationService {
             resume.setKeyCf(key);
             resume.setFileName(request.getCvFile().getOriginalFilename());
 
-            byte[] data = resumeService.toByteArray(request.getCvFile().getInputStream());
+            byte[] data = fileService.toByteArray(request.getCvFile().getInputStream());
             String rawText = fileService.extractTextFromFile(request.getCvFile().getInputStream());
 
             resumeRepository.save(resume);

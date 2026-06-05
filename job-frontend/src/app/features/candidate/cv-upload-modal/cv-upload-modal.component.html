@@ -12,14 +12,14 @@
     <!-- Modal Header -->
     <div role="banner" class="px-8 py-6 border-b border-slate-100 flex justify-between items-center">
       <div>
-        <h2 class="text-xl font-bold text-slate-800 tracking-tight">{{ title() }}</h2>
-        <p class="text-sm text-slate-500 mt-1">{{ subtitle() }}</p>
+        <h2 class="text-xl font-bold text-slate-800 tracking-tight">{{ 'cvUploadModal.title' | t }}</h2>
+        <p class="text-sm text-slate-500 mt-1">{{ 'cvUploadModal.subtitle' | t }}</p>
       </div>
       <button
         type="button"
         class="p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-400 hover:text-slate-600"
         (click)="onClose($event)"
-        [title]="closeLabel()"
+        [title]="'cvUploadModal.close' | t"
       >
         <span class="material-symbols-outlined">close</span>
       </button>
@@ -44,8 +44,8 @@
           >
             <span class="material-symbols-outlined text-3xl">cloud_upload</span>
           </div>
-          <p class="mb-1 text-sm font-semibold text-slate-700">{{ dropzoneText() }}</p>
-          <p class="text-xs text-slate-500">{{ dropzoneSubtext() }}</p>
+          <p class="mb-1 text-sm font-semibold text-slate-700">{{ 'cvUploadModal.dropzoneText' | t }}</p>
+          <p class="text-xs text-slate-500">{{ 'cvUploadModal.dropzoneSubtext' | t }}</p>
         </div>
       </label>
 
@@ -74,13 +74,13 @@
           <div class="flex items-center gap-2 mt-0.5">
             <span class="text-xs font-medium text-slate-500">{{ selectedFileSizeLabel }}</span>
             <span class="w-1 h-1 bg-slate-300 rounded-full"></span>
-            <span class="text-xs font-medium text-green-600 uppercase">{{ readyStatusLabel() }}</span>
+            <span class="text-xs font-medium text-green-600 uppercase">{{ 'cvUploadModal.readyStatus' | t }}</span>
           </div>
         </div>
         <button
           type="button"
           class="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
-          [title]="removeFileLabel()"
+          [title]="'cvUploadModal.removeFile' | t"
           (click)="removeSelectedFile($event)"
         >
           <span class="material-symbols-outlined text-xl">delete</span>
@@ -95,7 +95,7 @@
       >
         <span class="material-symbols-outlined text-red-500 text-xl">error</span>
         <div class="text-sm">
-          <p class="text-red-800 font-semibold">{{ errorTitle() }}</p>
+          <p class="text-red-800 font-semibold">{{ 'cvUploadModal.errorTitle' | t }}</p>
           <p class="text-red-600/80">{{ errorMessage }}</p>
         </div>
       </div>
@@ -109,14 +109,14 @@
         class="px-5 py-2.5 rounded-lg text-slate-600 font-semibold text-sm hover:bg-slate-200 transition-colors"
         (click)="onClose()"
       >
-        {{ cancelLabel() }}
+        {{ 'cvUploadModal.cancel' | t }}
       </button>
       <button
         type="button"
         class="px-7 py-2.5 rounded-lg bg-blue-600 text-white font-bold text-sm shadow-sm shadow-blue-200 hover:bg-blue-700 active:scale-[0.98] transition-all"
         (click)="onSubmit()"
       >
-        {{ uploadLabel() }}
+        {{ 'cvUploadModal.upload' | t }}
       </button>
     </div>
   </div>

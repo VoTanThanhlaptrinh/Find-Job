@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 @Slf4j
@@ -115,5 +117,18 @@ public class FileServiceImpl implements FileService {
         cleanText = cleanText.replaceAll("[ \t]+", " ");
         cleanText = cleanText.replaceAll("(?m)^[ \t]*\r?\n", "");
         return cleanText.trim();
+    }
+
+    @Override
+    public byte[] toByteArray(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        int nRead;
+        byte[] data = new byte[8192];
+
+        while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
+            buffer.write(data, 0, nRead);
+        }
+        buffer.flush();
+        return buffer.toByteArray();
     }
 }

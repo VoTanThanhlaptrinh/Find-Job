@@ -33,14 +33,14 @@
           class="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-bold tracking-tight"
         >
           <span class="material-symbols-outlined text-base">auto_awesome</span>
-          {{ aiMatchingLabel() }}
+          {{ 'recommendedJobs.aiMatching' | t }}
         </div>
         <h1
           class="text-3xl md:text-4xl font-extrabold text-on-surface tracking-tight"
         >
-          {{ title() }}
+          {{ 'recommendedJobs.title' | t }}
         </h1>
-        <p class="text-on-surface-variant text-lg">{{ helperText() }}</p>
+        <p class="text-on-surface-variant text-lg">{{ 'recommendedJobs.helperText' | t }}</p>
       </div>
       <!-- Resume Selector: Professional Component -->
       <div
@@ -49,7 +49,7 @@
         <label
           class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-2 ml-1"
           for="resume-select"
-          >{{ selectLabel() }}</label
+          >{{ 'recommendedJobs.selectLabel' | t }}</label
         >
         <div class="relative">
           <select
@@ -60,9 +60,9 @@
             [disabled]="isResumeLoading() || resumes().length === 0"
           >
             @if (isResumeLoading()) {
-              <option [ngValue]="null">{{ selectLoadingLabel() }}</option>
+              <option [ngValue]="null">{{ 'recommendedJobs.selectLoadingLabel' | t }}</option>
             } @else if (resumes().length === 0) {
-              <option [ngValue]="null">{{ selectEmptyLabel() }}</option>
+              <option [ngValue]="null">{{ 'recommendedJobs.selectEmptyLabel' | t }}</option>
             } @else {
               @for (resume of resumes(); track resume.id) {
                 <option [ngValue]="resume.id">{{ resume.fileName }}</option>
@@ -159,12 +159,12 @@
           </div>
         </div>
         <h2 class="text-3xl font-extrabold text-on-surface mb-3 tracking-tight">
-          {{ emptyJobTitle() }}
+          {{ 'recommendedJobs.emptyJobTitle' | t }}
         </h2>
         <p
           class="text-on-surface-variant max-w-lg mx-auto mb-10 text-lg leading-relaxed"
         >
-          {{ emptyJobDescription() }}
+          {{ 'recommendedJobs.emptyJobDescription' | t }}
         </p>
         <button
           (click)="selectedResumeId.set(null)"
@@ -174,7 +174,7 @@
             class="material-symbols-outlined group-hover:rotate-12 transition-transform"
             >edit_note</span
           >
-          {{ selectOtherResumeLabel() }}
+          {{ 'recommendedJobs.selectOtherResume' | t }}
         </button>
       </div>
     </div>
@@ -197,10 +197,10 @@
           <h2
             class="text-3xl md:text-4xl font-extrabold text-on-surface leading-tight tracking-tight"
           >
-            {{ emptyResumeTitle() }}
+            {{ 'recommendedJobs.emptyResumeTitle' | t }}
           </h2>
           <p class="text-on-surface-variant text-lg leading-relaxed max-w-md">
-            {{ emptyResumeDescription() }}
+            {{ 'recommendedJobs.emptyResumeDescription' | t }}
           </p>
           <div class="pt-4">
             <a
@@ -208,7 +208,7 @@
               class="inline-flex items-center gap-3 px-10 py-5 bg-primary text-on-primary rounded-2xl font-extrabold shadow-2xl shadow-primary/40 hover:shadow-primary/50 transition-all hover:-translate-y-1 active:translate-y-0"
             >
               <span class="material-symbols-outlined text-2xl">add_circle</span>
-              {{ emptyResumeAction() }}
+              {{ 'recommendedJobs.emptyResumeAction' | t }}
             </a>
           </div>
         </div>
@@ -230,7 +230,7 @@
               <span class="material-symbols-outlined text-primary-container"
                 >verified</span
               >
-              {{ aiAnalysisHintLabel() }}
+              {{ 'recommendedJobs.aiAnalysisHint' | t }}
             </p>
           </div>
         </div>

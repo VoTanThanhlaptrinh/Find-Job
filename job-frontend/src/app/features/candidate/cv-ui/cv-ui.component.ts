@@ -1,23 +1,22 @@
-import { Component, effect, OnInit, inject, computed } from '@angular/core';
+import { Component, effect, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SkeletonCvCardComponent } from '../../../shared/components/skeleton-cv-card/skeleton-cv-card.component';
 import { ResumeService, UploadingFileState } from '../../../core/services/resume.service';
-import { I18nService } from '../../../core/i18n/i18n.service';
 import { ResumeReviewComponent } from '../../../shared/components/resume-review/resume-review.component';
 import { LoadingComponent } from '../../../shared/components/loading/loading.component';
 import { CvUploadModalComponent } from '../cv-upload-modal/cv-upload-modal.component';
 import { ResumeReviewInput } from '../../../shared/models/jobs/resume-review-input.model';
+import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 
 @Component({
   selector: 'app-cv-ui',
   standalone: true,
-  imports: [CommonModule, ResumeReviewComponent, LoadingComponent, SkeletonCvCardComponent, CvUploadModalComponent],
+  imports: [CommonModule, ResumeReviewComponent, LoadingComponent, SkeletonCvCardComponent, CvUploadModalComponent, TranslatePipe],
   templateUrl: './cv-ui.component.html',
   styleUrl: './cv-ui.component.css'
 })
 export class CvUiComponent implements OnInit {
   private readonly resumeService = inject(ResumeService);
-  private readonly i18n = inject(I18nService);
 
   resumes: ResumeReviewInput[] = [];
   isLoading = false;
@@ -26,27 +25,10 @@ export class CvUiComponent implements OnInit {
   readonly skeleton = true;
   readonly skeletonRows = [1, 2, 3];
 
-  readonly title = computed(() => this.i18n.translate('cvList.title'));
-  readonly subtitle = computed(() => this.i18n.translate('cvList.subtitle'));
-  readonly addNewLabel = computed(() => this.i18n.translate('cvList.addNew'));
-  readonly totalCvLabel = computed(() => this.i18n.translate('cvList.totalCv'));
-  readonly pdfCvLabel = computed(() => this.i18n.translate('cvList.pdfCv'));
-  readonly docCvLabel = computed(() => this.i18n.translate('cvList.docCv'));
-  readonly latestUpdateLabel = computed(() => this.i18n.translate('cvList.latestUpdate'));
-  readonly analyzingTitle = computed(() => this.i18n.translate('cvList.analyzingTitle'));
-  readonly analyzingDesc = computed(() => this.i18n.translate('cvList.analyzingDesc'));
-  readonly uploadingLabel = computed(() => this.i18n.translate('cvList.uploading'));
-  readonly uploadSuccessLabel = computed(() => this.i18n.translate('cvList.uploadSuccess'));
-  readonly analyzedSuccessLabel = computed(() => this.i18n.translate('cvList.analyzedSuccess'));
-  readonly uploadFailedLabel = computed(() => this.i18n.translate('cvList.uploadFailed'));
-  readonly noCvLabel = computed(() => this.i18n.translate('cvList.noCv'));
-
   constructor() {
     effect(() => {
       this.resumes = this.resumeService.resumes$();
       this.isLoading = false;
-    });
-    effect(() => {
       this.uploadingFile = this.resumeService.uploadingFile$();
     });
   }

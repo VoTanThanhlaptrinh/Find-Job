@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, computed } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { I18nService } from '../../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 
 interface InforMenuItem {
   nameKey: string;
@@ -13,13 +13,11 @@ interface InforMenuItem {
 @Component({
   selector: 'app-infor',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TranslatePipe],
   templateUrl: './infor.component.html',
   styleUrl: './infor.component.css'
 })
 export class InforComponent {
-  private readonly i18n = inject(I18nService);
-
   isOpen = true;
   readonly userAvatar = 'assets/images/avatar.jpg';
   readonly userName = 'Candidate Name';
@@ -31,15 +29,6 @@ export class InforComponent {
     { nameKey: 'recommendedJobs.title', icon: 'work', route: '/infor/recommended-jobs' },
     { nameKey: 'candidateList.applied', icon: 'history', route: '/infor/history-apply' }
   ];
-
-  readonly translatedMenuItems = computed(() =>
-    this.menuItems.map(item => ({
-      ...item,
-      name: this.i18n.translate(item.nameKey)
-    }))
-  );
-
-  readonly logoutLabel = computed(() => this.i18n.translate('header.logout'));
 
   toggleSidebar(): void {
     this.isOpen = !this.isOpen;

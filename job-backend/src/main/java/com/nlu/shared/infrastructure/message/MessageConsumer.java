@@ -6,7 +6,7 @@ import com.nlu.shared.api.message.dto.ApiMessage;
 import com.nlu.shared.api.message.dto.CloudUploadMessage;
 import com.nlu.applicationProcess.application.ResumeParsingService;
 import com.nlu.applicationProcess.application.VectorizationClient;
-import com.nlu.applicationProcess.application.ResumeService;
+import com.nlu.shared.application.CloudStorageService;
 import com.nlu.shared.application.SseNotificationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -25,8 +25,9 @@ public class MessageConsumer {
 	private final MailService mailService;
     private final ResumeParsingService resumeParsingService;
     private final VectorizationClient vectorizationClient;
-    private final ResumeService resumeService;
+    private final CloudStorageService cloudStorageService;
     private final SseNotificationService sseNotificationService;
+
 	@RabbitListener(queues = "mailQueue")
     public void receiveMail(@Payload MailMessage message) {
         mailService.sendMessage(message.getTo(), message.getSubject(), message.getContent());
@@ -53,7 +54,7 @@ public class MessageConsumer {
     }
     @RabbitListener(queues = "cloudUploadQueue")
     public void uploadToCloud(@Payload CloudUploadMessage message) {
-        resumeService.uploadResumeToCloud(message.data(), message.key(), message.originalName());
+        cloudStorageService.uploadFile(message.data(), message.key(), message.originalName());
     }
 }
 

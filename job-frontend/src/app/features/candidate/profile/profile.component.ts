@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject, computed } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
-import { MatFormField, MatInput, MatSuffix } from '@angular/material/input';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { take } from 'rxjs';
 import { UserService } from '../../../core/services/user.service';
 import { NotifyMessageService } from '../../../core/services/notify-message.service';
 import { I18nService } from '../../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 
 interface UserUi {
   fullName: string;
@@ -27,6 +27,7 @@ interface UserUi {
     MatDatepickerToggle,
     MatDatepicker,
     MatDatepickerInput,
+    TranslatePipe
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
@@ -35,24 +36,6 @@ export class ProfileComponent implements OnInit {
   private readonly userService = inject(UserService);
   private readonly toastr = inject(NotifyMessageService);
   private readonly i18n = inject(I18nService);
-
-  readonly title = computed(() => this.i18n.translate('profile.title'));
-  readonly subtitle = computed(() => this.i18n.translate('profile.subtitle'));
-  readonly basicInfoLabel = computed(() => this.i18n.translate('profile.basicInfo'));
-  readonly professionalInfoLabel = computed(() => this.i18n.translate('profile.professionalInfo'));
-  readonly fullNameLabel = computed(() => this.i18n.translate('profile.fullName'));
-  readonly fullNamePlaceholder = computed(() => this.i18n.translate('profile.fullNamePlaceholder'));
-  readonly fullNameHint = computed(() => this.i18n.translate('profile.fullNameHint'));
-  readonly dobLabel = computed(() => this.i18n.translate('profile.dob'));
-  readonly phoneLabel = computed(() => this.i18n.translate('profile.phone'));
-  readonly phonePlaceholder = computed(() => this.i18n.translate('profile.phonePlaceholder'));
-  readonly addressLabel = computed(() => this.i18n.translate('profile.address'));
-  readonly addressPlaceholder = computed(() => this.i18n.translate('profile.addressPlaceholder'));
-  readonly bioLabel = computed(() => this.i18n.translate('profile.bio'));
-  readonly bioPlaceholder = computed(() => this.i18n.translate('profile.bioPlaceholder'));
-  readonly backLabel = computed(() => this.i18n.translate('profile.back'));
-  readonly cancelLabel = computed(() => this.i18n.translate('profile.cancel'));
-  readonly updateLabel = computed(() => this.i18n.translate('profile.update'));
 
   readonly formGroup = new FormGroup({
     fullName: new FormControl('', Validators.required),

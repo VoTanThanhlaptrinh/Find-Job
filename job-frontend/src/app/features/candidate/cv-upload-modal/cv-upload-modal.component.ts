@@ -1,11 +1,12 @@
-import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild, inject, computed } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { I18nService } from '../../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 
 @Component({
   selector: 'app-cv-upload-modal',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   templateUrl: './cv-upload-modal.component.html',
   styleUrl: './cv-upload-modal.component.css'
 })
@@ -21,17 +22,6 @@ export class CvUploadModalComponent implements OnChanges {
   errorMessage = '';
   readonly maxFileSize = 5 * 1024 * 1024;
   readonly acceptedExtensions = '.pdf,.doc,.docx';
-
-  readonly title = computed(() => this.i18n.translate('cvUploadModal.title'));
-  readonly subtitle = computed(() => this.i18n.translate('cvUploadModal.subtitle'));
-  readonly closeLabel = computed(() => this.i18n.translate('cvUploadModal.close'));
-  readonly dropzoneText = computed(() => this.i18n.translate('cvUploadModal.dropzoneText'));
-  readonly dropzoneSubtext = computed(() => this.i18n.translate('cvUploadModal.dropzoneSubtext'));
-  readonly readyStatusLabel = computed(() => this.i18n.translate('cvUploadModal.readyStatus'));
-  readonly errorTitle = computed(() => this.i18n.translate('cvUploadModal.errorTitle'));
-  readonly cancelLabel = computed(() => this.i18n.translate('cvUploadModal.cancel'));
-  readonly uploadLabel = computed(() => this.i18n.translate('cvUploadModal.upload'));
-  readonly removeFileLabel = computed(() => this.i18n.translate('cvUploadModal.removeFile'));
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['isOpen'] && !this.isOpen) {
