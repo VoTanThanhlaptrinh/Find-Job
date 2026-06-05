@@ -12,6 +12,7 @@ import {RouterLink} from '@angular/router';
 import {QuillModule} from 'ngx-quill';
 import {CommonModule} from '@angular/common';
 import {NotifyMessageService} from '../../../../core/services/notify-message.service';
+
 @Component({
   selector: 'app-post-job',
   imports: [FormsModule
