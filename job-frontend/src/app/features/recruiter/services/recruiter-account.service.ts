@@ -68,8 +68,8 @@ export class RecruiterAccountService {
       next: (response) => {
         const content = response.data?.content ?? [];
         this.candidates.set(content.map((candidate) => this.mapCandidate(candidate)));
-        this.candidatesTotal.set(response.data?.totalElements ?? 0);
-        this.candidatesTotalPages.set(response.data?.totalPages ?? 0);
+        this.candidatesTotal.set(response.data?.page?.totalElements ?? 0);
+        this.candidatesTotalPages.set(response.data?.page?.totalPages ?? 0);
         this.isLoadingCandidates.set(false);
       },
       error: () => {

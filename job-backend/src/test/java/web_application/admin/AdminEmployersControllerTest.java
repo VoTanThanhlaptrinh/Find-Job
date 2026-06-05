@@ -1,13 +1,13 @@
 package web_application.admin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.job_web.admin.api.AdminEmployersController;
-import com.job_web.admin.api.dto.employer.EmployerDetail;
-import com.job_web.admin.api.dto.employer.EmployerListItem;
-import com.job_web.admin.api.dto.employer.EmployerStatusRequest;
-import com.job_web.shared.domain.model.PageResponse;
-import com.job_web.admin.application.AdminService;
-import com.job_web.shared.utils.MessageUtils;
+import com.nlu.admin.api.AdminEmployersController;
+import com.nlu.admin.api.dto.employer.EmployerDetail;
+import com.nlu.admin.api.dto.employer.EmployerListItem;
+import com.nlu.admin.api.dto.employer.EmployerStatusRequest;
+import com.nlu.shared.domain.model.PageResponse;
+import com.nlu.admin.application.AdminService;
+import com.nlu.shared.utils.MessageUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

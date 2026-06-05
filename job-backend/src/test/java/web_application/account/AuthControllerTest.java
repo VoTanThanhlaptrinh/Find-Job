@@ -1,9 +1,9 @@
 package web_application.account;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.job_web.identity.api.AuthController;
-import com.job_web.identity.api.dto.ResetDTO;
-import com.job_web.identity.application.AuthService;
+import com.nlu.identity.api.AuthController;
+import com.nlu.identity.api.dto.ResetDTO;
+import com.nlu.identity.application.AuthService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

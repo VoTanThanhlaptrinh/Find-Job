@@ -3,31 +3,12 @@ import { JobCardModel } from './job-card.model';
 
 export interface PagedPayload<T> {
   content: T[];
-  pageable?: {
-    sort?: {
-      empty?: boolean;
-      unsorted?: boolean;
-      sorted?: boolean;
-    };
-    offset?: number;
-    pageNumber?: number;
-    pageSize?: number;
-    paged?: boolean;
-    unpaged?: boolean;
-  };
-  totalPages?: number;
-  totalElements?: number;
-  last?: boolean;
-  size?: number;
-  number?: number;
-  sort?: {
-    empty?: boolean;
-    unsorted?: boolean;
-    sorted?: boolean;
-  };
-  numberOfElements?: number;
-  first?: boolean;
-  empty?: boolean;
+  page?: {
+    size: number;
+    number: number;
+    totalElements: number;
+    totalPages: number;
+  }
 }
 
 export interface HomeInitViewModel {

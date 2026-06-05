@@ -111,7 +111,7 @@ export class JobService {
       }
     });
   }
-  
+
   getSuggestedJobsByResume(resumeId: number): void {
     this.isLoadingRecommendedJobs.set(true);
     this.recommendedJobs.set([]);
@@ -153,9 +153,9 @@ export class JobService {
       .subscribe({
         next: (response) => {
           const content = response.data?.content ?? [];
-          const totalPages = response.data?.totalPages;
-          const currentPage = response.data?.number ?? pageToLoad;
-          const isLastPageFromApi = response.data?.last;
+          const totalPages = response.data?.page?.totalPages;
+          const currentPage = response.data?.page?.number ?? pageToLoad;
+          const isLastPageFromApi = response.data?.page?.number === response.data?.page?.totalPages;
 
           this.appliedJobs.update((currentJobs) => [...currentJobs, ...content]);
 

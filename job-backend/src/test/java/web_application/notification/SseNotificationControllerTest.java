@@ -1,7 +1,7 @@
 package web_application.notification;
 
-import com.job_web.shared.api.SseNotificationController;
-import com.job_web.shared.application.SseNotificationService;
+import com.nlu.shared.api.SseNotificationController;
+import com.nlu.shared.application.SseNotificationService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

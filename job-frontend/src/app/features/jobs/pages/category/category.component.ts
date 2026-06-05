@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
-import { AfterViewInit, Component, effect, inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { AfterViewInit, Component, DestroyRef, effect, inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { PageEvent } from '@angular/material/paginator';
@@ -15,6 +15,7 @@ import { CategoryService } from '../../services/category.service';
 import { JobCardModel } from '../../../../shared/models/jobs/job-card.model';
 import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
 import { I18nService } from '../../../../core/i18n/i18n.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-category',
@@ -32,18 +33,19 @@ import { I18nService } from '../../../../core/i18n/i18n.service';
 })
 export class CategoryComponent implements OnInit, AfterViewInit {
   readonly pageSizeOptions = [5, 10, 25];
+  private readonly destroyRef = inject(DestroyRef);
   addressCount: AddressCountViewModel[] = [];
   jobs: JobCardModel[] = [];
   pageIndex = 0;
-  pageSize = 10;
+  pageSize = 5;
   length = 0;
   selectedAddresses = new Set<string>();
   selectedTypes = new Set<string>();
   jobTypes = [
-    { id: 'fullTime', value: 'Full time', checked: false },
-    { id: 'partTime', value: 'Part time', checked: false },
-    { id: 'remote', value: 'Remote', checked: false },
-    { id: 'hybrid', value: 'Hybrid', checked: false },
+    { id: 'FULL_TIME', value: 'FULL_TIME', checked: false },
+    { id: 'PART_TIME', value: 'PART_TIME', checked: false },
+    { id: 'REMOTE', value: 'REMOTE', checked: false },
+    { id: 'HYBRID', value: 'HYBRID', checked: false },
   ];
 
   private searchSubject = new Subject<string>();
@@ -57,51 +59,38 @@ export class CategoryComponent implements OnInit, AfterViewInit {
     effect(() => {
       this.addressCount = this.category.addressCount();
       this.jobs = this.category.jobs();
+
+      const total = this.category.totalJobs();
+      this.length = total !== null ? total : 0;
+    });
+    this.searchSubject.pipe(
+      debounceTime(400),
+      distinctUntilChanged(),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(searchValue => {
+      this.executeSearch(searchValue);
     });
   }
 
   ngOnInit(): void {
-    this.category.listJobsNewest(this.pageIndex, this.pageSize);
-    this.getAmount();
     this.getAddressCount();
-    this.searchSubject.pipe(
-      debounceTime(400),        
-      distinctUntilChanged()    
-    ).subscribe(searchValue => {
-      this.executeSearch(searchValue);
-    });
+    this.applyFilterState(this.category.getFilterSnapshot());
+    this.fetchJobs();
   }
 
   ngAfterViewInit(): void {
     this.scrollToTopIfNeeded();
   }
 
-  getAmount(): void {
-    this.category.getAmount().pipe(take(1)).subscribe({
-      next: (response) => {
-        this.length = response.data;
-      },
-      error: (error) => {
-        console.error('Error fetching jobs:', error);
-      },
-    });
-  }
-
   handlePage(event: PageEvent): void {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
     this.scrollToTopIfNeeded();
-
-    if (this.hasActiveFilters()) {
-      this.searchWithFilters(this.buildFilterPayload());
-      return;
-    }
-
-    this.category.listJobsNewest(this.pageIndex, this.pageSize);
+    this.fetchJobs();
   }
 
   getAddressCount(): void {
-    this.category.getAddressCount();
+    this.category.loadAddressCount();
   }
 
   formatMoney(value: number): string {
@@ -151,70 +140,37 @@ export class CategoryComponent implements OnInit, AfterViewInit {
     return Math.min((this.pageIndex + 1) * this.pageSize, this.length);
   }
 
-  get rowsPerPageLabel(): string {
-    return this.i18nService.currentLanguage === 'vi' ? 'Hien thi moi trang' : 'Rows per page';
-  }
-
-  get showingLabel(): string {
-    return this.i18nService.currentLanguage === 'vi' ? 'Hien thi' : 'Showing';
-  }
-
-  get ofLabel(): string {
-    return this.i18nService.currentLanguage === 'vi' ? 'tren' : 'of';
-  }
-
-  get previousLabel(): string {
-    return this.i18nService.currentLanguage === 'vi' ? 'Truoc' : 'Previous';
-  }
-
-  get nextLabel(): string {
-    return this.i18nService.currentLanguage === 'vi' ? 'Sau' : 'Next';
-  }
-
-  onFilterChange(event: Event): void {
-    const input = event.target as HTMLInputElement | null;
-
-    if (!input) {
-      return;
+  onFilterChange(filterType: 'ADDRESS' | 'JOB_TYPE', value: string, isChecked: boolean): void {
+    if (filterType === 'ADDRESS') {
+      isChecked ? this.selectedAddresses.add(value) : this.selectedAddresses.delete(value);
     }
+    else if (filterType === 'JOB_TYPE') {
+      isChecked ? this.selectedTypes.add(value) : this.selectedTypes.delete(value);
 
-    const value = input.value;
-    const checked = input.checked;
-
-    if (this.addressCount.some((item) => item.city === value)) {
-      if (checked) {
-        this.selectedAddresses.add(value);
-      } else {
-        this.selectedAddresses.delete(value);
-      }
-    }
-
-    if (this.jobTypes.some((item) => item.value === value)) {
-      if (checked) {
-        this.selectedTypes.add(value);
-      } else {
-        this.selectedTypes.delete(value);
+      const jobTypeObj = this.jobTypes.find(item => item.value === value);
+      if (jobTypeObj) {
+        jobTypeObj.checked = isChecked;
       }
     }
 
     this.pageIndex = 0;
-    this.searchWithFilters(this.buildFilterPayload());
+    this.fetchJobs();
   }
 
   private buildFilterPayload(): JobFilterPayload {
     return {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize,
-      address: Array.from(this.selectedAddresses),
-      times: Array.from(this.selectedTypes),
-      title: this.title,
+      address: this.selectedAddresses ? Array.from(this.selectedAddresses) : [],
+      times: this.selectedTypes ? Array.from(this.selectedTypes) : [],
+      title: this.title ? this.title.trim() : '',
     };
   }
 
   private hasActiveFilters(): boolean {
-    const hasAddress = this.selectedAddresses.size > 0;
-    const hasType = this.selectedTypes.size > 0;
-    const hasTitle = this.title.trim().length > 0;
+    const hasAddress = this.selectedAddresses ? this.selectedAddresses.size > 0 : false;
+    const hasType = this.selectedTypes ? this.selectedTypes.size > 0 : false;
+    const hasTitle = this.title ? this.title.trim().length > 0 : false;
 
     return hasAddress || hasType || hasTitle;
   }
@@ -273,10 +229,37 @@ export class CategoryComponent implements OnInit, AfterViewInit {
   }
 
   private executeSearch(value: string) {
-    this.title = value; // Cập nhật title chính thức
-    this.pageIndex = 0; // Reset về trang đầu
-    this.searchWithFilters(this.buildFilterPayload());
+    this.title = value || '';
+    this.pageIndex = 0;
+    this.fetchJobs();
   }
+
+  private applyFilterState(filter: JobFilterPayload | null | undefined): void {
+    if (!filter) return;
+
+    this.pageIndex = filter.pageIndex ?? 0;
+    this.pageSize = filter.pageSize ?? 5;
+    this.title = filter.title ?? '';
+    this.selectedAddresses = new Set(filter.address || []);
+    this.selectedTypes = new Set(filter.times || []);
+
+    this.jobTypes.forEach((job) => {
+      job.checked = this.selectedTypes.has(job.value);
+    });
+  }
+  private fetchJobs(): void {
+    if (this.hasActiveFilters()) {
+      this.searchWithFilters(this.buildFilterPayload());
+    }
+    else {
+      this.category.resetFilterPayload({
+        pageIndex: this.pageIndex,
+        pageSize: this.pageSize,
+      });
+      this.category.listJobsNewest(this.pageIndex, this.pageSize);
+    }
+  }
+
   private scrollToTopIfNeeded(): void {
     if (!isPlatformBrowser(this.platformId)) {
       return;

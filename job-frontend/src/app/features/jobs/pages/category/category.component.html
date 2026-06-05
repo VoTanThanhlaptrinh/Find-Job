@@ -9,50 +9,30 @@
       <div class="col-lg-4 sidebar">
         <div class="single-slidebar">
           <h4>{{ "category.filterByTitle" | t }}</h4>
-          <div
-            class="flex w-full items-center gap-2 px-2 py-2 bg-white cursor-pointer rounded-xl shadow-md border"
-          >
+          <div class="flex w-full items-center gap-2 px-2 py-2 bg-white cursor-pointer rounded-xl shadow-md border">
             <label for="category-title" class="sr-only">{{
               "category.titlePlaceholder" | t
-            }}</label>
-            <input
-              id="category-title"
-              [attr.title]="'category.titlePlaceholder' | t"
-              [attr.aria-label]="'category.titlePlaceholder' | t"
-              class="w-full outline-none border-none focus:ring-0"
-              type="text"
-              [placeholder]="'category.titlePlaceholder' | t"
-              value=""
-              name="title"
-              [ngModel]="title"
-              (ngModelChange)="onTitleChange($event)"
-            />
+              }}</label>
+            <input id="category-title" [attr.title]="'category.titlePlaceholder' | t"
+              [attr.aria-label]="'category.titlePlaceholder' | t" class="w-full outline-none border-none focus:ring-0"
+              type="text" [placeholder]="'category.titlePlaceholder' | t" value="" name="title" [ngModel]="title"
+              (ngModelChange)="onTitleChange($event)" />
           </div>
         </div>
         <div class="single-slidebar">
           <h4>{{ "category.filterByLocation" | t }}</h4>
           <div class="list-group cat-list overflow-y-auto max-h-75">
             @for (item of addressCount; track item.city) {
-              <div class="list-group-item flex justify-between">
-                <div class="form-check flex w-full items-center gap-2">
-                  <input
-                    title="input"
-                    [id]="'city-filter-' + $index"
-                    [attr.title]="item.city"
-                    [attr.aria-label]="item.city"
-                    class="form-check-input"
-                    type="checkbox"
-                    value="{{ item.city }}"
-                    (change)="onFilterChange($event)"
-                  />
-                  <label
-                    class="form-check-label"
-                    [attr.for]="'city-filter-' + $index"
-                    >{{ item.city }}</label
-                  >
-                </div>
-                <span>{{ item.count }}</span>
+            <div class="list-group-item flex justify-between">
+              <div class="form-check flex w-full items-center gap-2">
+                <input title="input" [id]="'city-filter-' + $index" [attr.title]="item.city"
+                  [attr.aria-label]="item.city" class="form-check-input" type="checkbox" [value]="item.city"
+                  [checked]="selectedAddresses.has(item.city)"
+                  (change)="onFilterChange('ADDRESS', item.city, $event.target.checked)" />
+                <label class="form-check-label" [attr.for]="'city-filter-' + $index">{{ item.city }}</label>
               </div>
+              <span>{{ item.count }}</span>
+            </div>
             }
           </div>
         </div>
@@ -61,24 +41,19 @@
           <h4>{{ "category.jobType" | t }}</h4>
           <div class="list-group cat-list">
             @for (job of jobTypes; track job.id) {
-              <div class="list-group-item flex flex-col justify-between">
-                <label class="form-switch">
-                  <label [attr.for]="'job-type-' + job.id" class="sr-only">{{
-                    "category.jobTypeOptions." + job.id | t
+            <div class="list-group-item flex flex-col justify-between">
+              <label class="form-switch">
+                <label [attr.for]="'job-type-' + job.id" class="sr-only">{{
+                  "category.jobTypeOptions." + job.id | t
                   }}</label>
-                  <input
-                    [id]="'job-type-' + job.id"
-                    type="checkbox"
-                    [checked]="job.checked"
-                    value="{{ job.value }}"
-                    [attr.title]="'category.jobTypeOptions.' + job.id | t"
-                    [attr.aria-label]="'category.jobTypeOptions.' + job.id | t"
-                    (change)="onFilterChange($event)"
-                  />
-                  <span>{{ "category.jobTypeOptions." + job.id | t }}</span>
-                  <span class="slider round"></span>
-                </label>
-              </div>
+                <input [id]="'job-type-' + job.id" type="checkbox" [checked]="job.checked" value="{{ job.value }}"
+                  [attr.title]="'category.jobTypeOptions.' + job.id | t"
+                  [attr.aria-label]="'category.jobTypeOptions.' + job.id | t"
+                  (change)="onFilterChange('JOB_TYPE', job.value, $event.target.checked)" />
+                <span>{{ "category.jobTypeOptions." + job.id | t }}</span>
+                <span class="slider round"></span>
+              </label>
+            </div>
             }
           </div>
         </div>
@@ -86,110 +61,77 @@
       <div class="col-lg-8 post-list">
         <div class="flex flex-col gap-y-2">
           @if (isLoadingJobs()) {
-            @for (skeleton of [1, 2, 3, 4, 5]; track skeleton) {
-              <app-skeleton-job-card></app-skeleton-job-card>
-            }
+          @for (skeleton of [1, 2, 3, 4, 5]; track skeleton) {
+          <app-skeleton-job-card></app-skeleton-job-card>
+          }
           } @else {
-            @for (item of jobs; track item.id) {
-              <app-job-card
-                [job]="item"
-                image="assets/web_css/img/post.png"
-                detailRoute="/single"
-              ></app-job-card>
-            } @empty {
-              <div>{{ "category.empty" | t }}</div>
-            }
+          @for (item of jobs; track item.id) {
+          <app-job-card [job]="item" image="assets/web_css/img/post.png" detailRoute="/single"></app-job-card>
+          } @empty {
+          <div>{{ "category.empty" | t }}</div>
+          }
           }
         </div>
         @if (length > 0) {
-          <section
-            class="mt-6 rounded-2xl bg-white/95 p-2 backdrop-blur-sm"
-            [attr.aria-label]="'category.paginatorLabel' | t"
-          >
-            <div class="flex w-full gap-4 items-center justify-center lg:justify-end">
-              <div class="hidden md:flex md:flex-col gap-3 sm:gap-4">
-                <label
-                  class="inline-flex shadow-md items-center p-2 gap-3 rounded-xl border border-slate-200 bg-slate-50 text-sm font-medium text-slate-700"
-                  for="page-size-select"
-                >
-                  <span>{{ rowsPerPageLabel }}</span>
-                  <select
-                    id="page-size-select"
-                    class="rounded-lg border border-slate-200 bg-white px-2 py-2 text-sm font-semibold text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10"
-                    [ngModel]="pageSize"
-                    (ngModelChange)="onPageSizeChange($event)"
-                  >
-                    @for (option of pageSizeOptions; track option) {
-                      <option [ngValue]="option">{{ option }}</option>
-                    }
-                  </select>
-                </label>
-              </div>
+        <section class="mt-6 rounded-2xl bg-white/95 p-2 backdrop-blur-sm"
+          [attr.aria-label]="'category.paginatorLabel' | t">
+          <div class="flex w-full gap-4 items-center justify-center lg:justify-end">
+            <div class="hidden md:flex md:flex-col gap-3 sm:gap-4">
+              <label
+                class="inline-flex shadow-md items-center p-2 gap-3 rounded-xl border border-slate-200 bg-slate-50 text-sm font-medium text-slate-700"
+                for="page-size-select">
+                <span>{{ 'pagination.rowsPerPage' | t }}</span>
+                <select id="page-size-select"
+                  class="rounded-lg border border-slate-200 bg-white px-2 py-2 text-sm font-semibold text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10"
+                  [ngModel]="pageSize" (ngModelChange)="onPageSizeChange($event)">
+                  @for (option of pageSizeOptions; track option) {
+                  <option [ngValue]="option">{{ option }}</option>
+                  }
+                </select>
+              </label>
+            </div>
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div
-                class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
-              >
-                <div
-                  class="inline-flex shadow-md flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-2 py-2"
-                >
-                  <button
-                    type="button"
-                    class="inline-flex items-center gap-2 rounded-xl px-2 py-2 text-sm font-semibold transition"
-                    [class.cursor-not-allowed]="pageIndex === 0"
-                    [class.opacity-50]="pageIndex === 0"
-                    [class.text-slate-400]="pageIndex === 0"
-                    [class.text-slate-700]="pageIndex > 0"
-                    [class.hover:bg-white]="pageIndex > 0"
-                    (click)="goToPreviousPage()"
-                    [disabled]="pageIndex === 0"
-                  >
-                    <span class="material-symbols-outlined text-[18px]"
-                      >chevron_left</span
-                    >
-                    <span class="hidden md:block">{{ previousLabel }}</span>
-                  </button>
+                class="inline-flex shadow-md flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-2 py-2">
+                <button type="button"
+                  class="inline-flex items-center gap-2 rounded-xl px-2 py-2 text-sm font-semibold transition"
+                  [class.cursor-not-allowed]="pageIndex === 0" [class.opacity-50]="pageIndex === 0"
+                  [class.text-slate-400]="pageIndex === 0" [class.text-slate-700]="pageIndex > 0"
+                  [class.hover:bg-white]="pageIndex > 0" (click)="goToPreviousPage()" [disabled]="pageIndex === 0">
+                  <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                  <span class="hidden md:block">{{ 'pagination.previous' | t }}</span>
+                </button>
 
-                  <div class="flex flex-wrap items-center gap-2">
-                    @for (pageItem of visiblePageItems; track $index) {
-                      @if (pageItem === "ellipsis") {
-                        <span class="px-1 text-slate-400">...</span>
-                      } @else {
-                        <button
-                          type="button"
-                          class="h-10 min-w-10 rounded-xl px-3 text-sm font-bold transition"
-                          [class.bg-blue-600]="isCurrentPage(pageItem)"
-                          [class.text-white]="isCurrentPage(pageItem)"
-                          [class.shadow-lg]="isCurrentPage(pageItem)"
-                          [class.shadow-blue-600/20]="isCurrentPage(pageItem)"
-                          [class.text-slate-700]="!isCurrentPage(pageItem)"
-                          [class.hover:bg-white]="!isCurrentPage(pageItem)"
-                          (click)="goToPage(pageItem)"
-                        >
-                          {{ pageItem }}
-                        </button>
-                      }
-                    }
-                  </div>
-
-                  <button
-                    type="button"
-                    class="inline-flex items-center gap-2 rounded-xl px-2 py-2 text-sm font-semibold transition"
-                    [class.cursor-not-allowed]="pageIndex + 1 >= totalPages"
-                    [class.opacity-50]="pageIndex + 1 >= totalPages"
-                    [class.text-slate-400]="pageIndex + 1 >= totalPages"
-                    [class.text-slate-700]="pageIndex + 1 < totalPages"
-                    [class.hover:bg-white]="pageIndex + 1 < totalPages"
-                    (click)="goToNextPage()"
-                    [disabled]="pageIndex + 1 >= totalPages"
-                  >
-                    <span class="hidden md:block">{{ nextLabel }}</span>
-                    <span class="material-symbols-outlined text-[18px]"
-                      >chevron_right</span
-                    >
+                <div class="flex flex-wrap items-center gap-2">
+                  @for (pageItem of visiblePageItems; track $index) {
+                  @if (pageItem === "ellipsis") {
+                  <span class="px-1 text-slate-400">...</span>
+                  } @else {
+                  <button type="button" class="h-10 min-w-10 rounded-xl px-3 text-sm font-bold transition"
+                    [class.bg-blue-600]="isCurrentPage(pageItem)" [class.text-white]="isCurrentPage(pageItem)"
+                    [class.shadow-lg]="isCurrentPage(pageItem)" [class.shadow-blue-600/20]="isCurrentPage(pageItem)"
+                    [class.text-slate-700]="!isCurrentPage(pageItem)" [class.hover:bg-white]="!isCurrentPage(pageItem)"
+                    (click)="goToPage(pageItem)">
+                    {{ pageItem }}
                   </button>
+                  }
+                  }
                 </div>
+
+                <button type="button"
+                  class="inline-flex items-center gap-2 rounded-xl px-2 py-2 text-sm font-semibold transition"
+                  [class.cursor-not-allowed]="pageIndex + 1 >= totalPages"
+                  [class.opacity-50]="pageIndex + 1 >= totalPages" [class.text-slate-400]="pageIndex + 1 >= totalPages"
+                  [class.text-slate-700]="pageIndex + 1 < totalPages"
+                  [class.hover:bg-white]="pageIndex + 1 < totalPages" (click)="goToNextPage()"
+                  [disabled]="pageIndex + 1 >= totalPages">
+                  <span class="hidden md:block">{{ 'pagination.next' | t }}</span>
+                  <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                </button>
               </div>
             </div>
-          </section>
+          </div>
+        </section>
         }
       </div>
     </div>

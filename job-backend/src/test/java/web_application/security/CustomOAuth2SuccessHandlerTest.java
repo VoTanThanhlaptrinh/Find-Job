@@ -1,11 +1,11 @@
 package web_application.security;
 
-import com.job_web.identity.domain.repository.UserRepository;
-import com.job_web.identity.domain.model.User;
-import com.job_web.identity.domain.vo.EmailAddress;
-import com.job_web.identity.infrastructure.filter.CustomOAuth2SuccessHandler;
-import com.job_web.identity.application.JwtService;
-import com.job_web.identity.application.RefreshTokenService;
+import com.nlu.identity.domain.repository.UserRepository;
+import com.nlu.identity.domain.model.User;
+import com.nlu.identity.domain.vo.EmailAddress;
+import com.nlu.identity.infrastructure.filter.CustomOAuth2SuccessHandler;
+import com.nlu.identity.application.JwtService;
+import com.nlu.identity.application.RefreshTokenService;
 import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;

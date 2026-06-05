@@ -1,6 +1,6 @@
 package web_application;
 
-import com.job_web.JobPortalWebApplication;
+import com.nlu.JobPortalWebApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 

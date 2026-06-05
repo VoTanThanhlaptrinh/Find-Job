@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   ═══════════════════════════════════════════════════════════════════════════════
-  LOGBACK CONFIGURATION — Job Portal Backend (com.job_web)
+  LOGBACK CONFIGURATION — Job Portal Backend (com.nlu)
   ═══════════════════════════════════════════════════════════════════════════════
 
   Architecture:
@@ -17,7 +17,7 @@
   Stack Trace Strategy:
     - Max 15 lines depth
     - Filters out Spring, Tomcat, CGLIB, Hibernate proxies
-    - Root cause and com.job_web frames always visible
+    - Root cause and com.nlu frames always visible
   ═══════════════════════════════════════════════════════════════════════════════
 -->
 <configuration>
@@ -66,7 +66,7 @@
 
         RESULT: Stack traces show ONLY:
           1. The exception message
-          2. com.job_web.* frames (OUR code)
+          2. com.nlu.* frames (OUR code)
           3. Root cause (Caused by:)
           4. Up to 15 frames total
       ════════════════════════════════════════════════════════════════════════
@@ -100,8 +100,8 @@
         </appender>
 
         <!-- DEV log levels -->
-        <logger name="com.job_web" level="DEBUG"/>
-        <logger name="com.job_web.shared.infrastructure.filter.RequestLoggingFilter" level="DEBUG"/>
+        <logger name="com.nlu" level="DEBUG"/>
+        <logger name="com.nlu.shared.infrastructure.filter.RequestLoggingFilter" level="DEBUG"/>
 
         <!-- Suppress noisy framework loggers in dev -->
         <logger name="org.springframework" level="WARN"/>
@@ -187,8 +187,8 @@
         </appender>
 
         <!-- PROD log levels -->
-        <logger name="com.job_web" level="INFO"/>
-        <logger name="com.job_web.shared.infrastructure.filter.RequestLoggingFilter" level="INFO"/>
+        <logger name="com.nlu" level="INFO"/>
+        <logger name="com.nlu.shared.infrastructure.filter.RequestLoggingFilter" level="INFO"/>
 
         <!-- Suppress framework noise in production -->
         <logger name="org.springframework" level="WARN"/>

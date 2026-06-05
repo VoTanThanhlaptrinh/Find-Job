@@ -1,9 +1,9 @@
 package web_application.home;
 
-import com.job_web.recruiment.domain.vo.EmploymentType;
-import com.job_web.recruiment.api.HomeFeedController;
-import com.job_web.recruiment.api.dto.JobCardView;
-import com.job_web.recruiment.infrastructure.cache.CategoryCacheService;
+import com.nlu.recruitment.domain.vo.EmploymentType;
+import com.nlu.recruitment.api.HomeFeedController;
+import com.nlu.recruitment.api.dto.JobCardView;
+import com.nlu.recruitment.infrastructure.cache.CategoryCacheService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

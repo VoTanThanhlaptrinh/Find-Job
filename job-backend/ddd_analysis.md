@@ -10,7 +10,7 @@
 ### Cấu trúc package hiện tại
 
 ```
-com.job_web/
+com.nlu/
 ├── config/          # Cross-cutting configs
 ├── constant/        # EmploymentType enum, RoleConstants, ApiConstants
 ├── controller/      # Tổ chức theo feature (account, job, application, blog, admin...)
@@ -144,7 +144,7 @@ AppException (abstract base, chứa HttpStatus)
 
 ### 3.1. Bounded Context chưa được tách (Nghiêm trọng nhất cho microservices)
 
-Tất cả code vẫn nằm **flat** trong `com.job_web.*`. Không có ranh giới module nào. Đây là **blocker #1** cho microservice migration.
+Tất cả code vẫn nằm **flat** trong `com.nlu.*`. Không có ranh giới module nào. Đây là **blocker #1** cho microservice migration.
 
 ### 3.2. Naming chưa theo Ubiquitous Language
 
@@ -194,7 +194,7 @@ private final BlogMapper blogMapper;
 
 ```java
 // ✅ Đã thay thế bằng BadRequestException trong Apply.java, Resume.java, v.v.
-throw new com.job_web.exception.BadRequestException("user is null"); 
+throw new com.nlu.exception.BadRequestException("user is null"); 
 ```
 
 ### 3.8. `shared/` package rỗng (Đã giải quyết ✅)
@@ -288,7 +288,7 @@ graph TB
 > **Đây là bước quan trọng nhất** — tách module trong monolith an toàn hơn nhiều so với nhảy thẳng sang microservices.
 
 ```
-com.job_web/
+com.nlu/
 ├── identity/                          # BC: Identity & Access
 │   ├── domain/
 │   │   ├── model/                     # User, Role

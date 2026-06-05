@@ -1,0 +1,31 @@
+package com.nlu.shared.domain.model;
+
+public record ApiResponse<T>(
+        String message,
+        T data,
+        int status,
+        String traceId
+) {
+    public ApiResponse(String message, T data, int status) {
+        this(message, data, status, null);
+    }
+    public ApiResponse(String message, T data) {
+        this(message, data, 200,null);
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public T getData() {
+        return data;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public String getTraceId() {
+        return traceId;
+    }
+}

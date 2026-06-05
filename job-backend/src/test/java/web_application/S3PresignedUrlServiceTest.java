@@ -1,6 +1,6 @@
 package web_application;
 
-import com.job_web.shared.application.impl.S3PresignedUrlServiceImpl;
+import com.nlu.shared.application.impl.S3PresignedUrlServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
