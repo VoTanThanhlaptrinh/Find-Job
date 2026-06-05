@@ -7,12 +7,6 @@ import { BlogHomeComponent } from './features/blog/pages/blog-home/blog-home.com
 import { BlogSingleComponent } from './features/blog/pages/blog-single/blog-single.component';
 import { ContactComponent } from './features/site/pages/contact/contact.component';
 import { CategoryComponent } from './features/jobs/pages/category/category.component';
-import { InforComponent } from './features/auth/candidate/infor/infor.component';
-import { ChangePassComponent } from './features/auth/candidate/change-pass/change-pass.component';
-import { CvUiComponent } from './features/auth/candidate/cv-ui/cv-ui.component';
-import { HistoryApplyComponent } from './features/auth/candidate/history-apply/history-apply.component';
-import { ProfileComponent } from './features/auth/candidate/profile/profile.component';
-import { RecommendedJobsComponent } from './features/auth/candidate/recommended-jobs/recommended-jobs.component';
 import { VerifyComponent } from './features/auth/pages/verify/verify.component';
 import { ActivateComponent } from './features/auth/pages/activate/activate.component';
 import { JobSingleComponent } from './features/jobs/pages/job-single/job-single.component';
@@ -22,6 +16,12 @@ import { ForgotPassComponent } from './features/auth/pages/forgot-pass/forgot-pa
 import { ResetPassComponent } from './features/auth/pages/reset-pass/reset-pass.component';
 import { userLoginGuard } from './core/guards/user-login.guard';
 import { ApplySuccessComponent } from './shared/components/apply-success/apply-success.component';
+import { InforComponent } from './features/candidate/infor/infor.component';
+import { ProfileComponent } from './features/candidate/profile/profile.component';
+import { ChangePassComponent } from './features/candidate/change-pass/change-pass.component';
+import { CvUiComponent } from './features/candidate/cv-ui/cv-ui.component';
+import { RecommendedJobsComponent } from './features/candidate/recommended-jobs/recommended-jobs.component';
+import { HistoryApplyComponent } from './features/candidate/history-apply/history-apply.component';
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   {
@@ -44,7 +44,6 @@ export const routes: Routes = [
   {
     path: 'infor',
     component: InforComponent,
-
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'profile' },
       { path: 'profile', component: ProfileComponent},

@@ -1,10 +1,10 @@
 package web_application;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.job_web.JobPortalWebApplication;
-import com.job_web.application_process.api.dto.ResumeUrlDTO;
-import com.job_web.shared.domain.model.ApiResponse;
-import com.job_web.application_process.application.ResumeService;
+import com.nlu.JobPortalWebApplication;
+import com.nlu.applicationProcess.api.dto.req.ResumeUrlDTO;
+import com.nlu.shared.domain.model.ApiResponse;
+import com.nlu.applicationProcess.application.ResumeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

@@ -1,13 +1,13 @@
 package web_application.job;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.job_web.recruiment.domain.vo.EmploymentType;
-import com.job_web.recruiment.api.PublicJobController;
-import com.job_web.recruiment.api.dto.JobCardView;
-import com.job_web.recruiment.api.dto.JobFilterDTO;
-import com.job_web.recruiment.infrastructure.cache.CategoryCacheService;
-import com.job_web.recruiment.application.JobQueryService;
-import com.job_web.recruiment.application.JobService;
+import com.nlu.recruitment.domain.vo.EmploymentType;
+import com.nlu.recruitment.api.PublicJobController;
+import com.nlu.recruitment.api.dto.JobCardView;
+import com.nlu.recruitment.api.dto.JobFilterDto;
+import com.nlu.recruitment.infrastructure.cache.CategoryCacheService;
+import com.nlu.recruitment.application.JobQueryService;
+import com.nlu.recruitment.application.JobService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -63,7 +63,7 @@ class PublicJobControllerTest {
             Page<JobCardView> page = new PageImpl<>(List.of(
                     new JobCardView(1L, "Java Developer", "Da Nang", "1000-1500", EmploymentType.FULL_TIME)
             ));
-            when(jobQueryService.getListJobNewest(eq(0), eq(10))).thenReturn(page);
+            when(jobQueryService.getNewestJobs(eq(0), eq(10))).thenReturn(page);
 
             mockMvc.perform(get(BASE_URL + "/newest/0/10"))
                     .andExpect(status().isOk())
@@ -78,7 +78,7 @@ class PublicJobControllerTest {
         @Test
         @DisplayName("PJ02: Anonymous van goi duoc filter public")
         void filterJobs_PublicEndpoint() throws Exception {
-            JobFilterDTO dto = new JobFilterDTO(
+            JobFilterDto dto = new JobFilterDto(
                     0,
                     10,
                     1000,
@@ -87,7 +87,7 @@ class PublicJobControllerTest {
                     List.of(EmploymentType.FULL_TIME),
                     "Java"
             );
-            when(jobQueryService.filterBetterSalaryAndHasAddressAndInTimes(
+            when(jobQueryService.findJobsBySalaryAddressAndEmploymentTypes(
                     eq(0), eq(10), eq(1000), eq(2000),
                     eq(List.of("Ho Chi Minh")), eq(List.of(EmploymentType.FULL_TIME)), eq("Java")
             )).thenReturn(Page.empty());

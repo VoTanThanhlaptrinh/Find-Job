@@ -13,6 +13,14 @@ import {
 import { JobCardModel } from '../../../shared/models/jobs/job-card.model';
 import { ApiResponse } from '../../../shared/models/api-response.model';
 
+const DEFAULT_JOB_FILTER: JobFilterPayload = {
+  pageIndex: 0,
+  pageSize: 5,
+  address: [],
+  times: [],
+  title: '',
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -24,6 +32,7 @@ export class CategoryService {
   private addressData = signal<AddressCountViewModel[]>([]);
   private totalJobData = signal<number | null>(null);
   private loadingJobs = signal(false);
+  private filterPayload = signal<JobFilterPayload>({ ...DEFAULT_JOB_FILTER });
   private activeJobRequests = 0;
   private loadingStartAt = 0;
   private hideLoadingTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -32,9 +41,36 @@ export class CategoryService {
   addressCount = computed(() => this.addressData());
   totalJobs = computed(() => this.totalJobData());
   isLoadingJobs = computed(() => this.loadingJobs());
+  jobFilter = computed(() => this.filterPayload());
 
   constructor(private http: HttpClient, private utilities: UtilitiesService) {
     this.url = utilities.getURLDev();
+  }
+
+  getFilterSnapshot(): JobFilterPayload {
+    return this.cloneFilter(this.filterPayload());
+  }
+
+  setFilterPayload(filter: JobFilterPayload): void {
+    this.filterPayload.set(this.cloneFilter(filter));
+  }
+
+  updateFilterPayload(partial: Partial<JobFilterPayload>): void {
+    this.filterPayload.update((current) => this.cloneFilter({ ...current, ...partial }));
+  }
+
+  resetFilterPayload(overrides: Partial<JobFilterPayload> = {}): void {
+    this.filterPayload.set(this.cloneFilter({ ...DEFAULT_JOB_FILTER, ...overrides }));
+  }
+
+  private cloneFilter(filter: JobFilterPayload): JobFilterPayload {
+    return {
+      pageIndex: Number.isFinite(filter.pageIndex) ? filter.pageIndex : DEFAULT_JOB_FILTER.pageIndex,
+      pageSize: Number.isFinite(filter.pageSize) ? filter.pageSize : DEFAULT_JOB_FILTER.pageSize,
+      address: Array.isArray(filter.address) ? [...filter.address] : [],
+      times: Array.isArray(filter.times) ? [...filter.times] : [],
+      title: (filter.title ?? '').trim(),
+    };
   }
 
   private startJobsLoading(): void {
@@ -87,8 +123,8 @@ export class CategoryService {
     ).subscribe({
       next: (response) => {
         this.jobData.set(response.data.content);
-        if (typeof response.data.totalElements === 'number') {
-          this.totalJobData.set(response.data.totalElements);
+        if (typeof response.data?.page?.totalElements === 'number') {
+          this.totalJobData.set(response.data.page.totalElements);
         }
       },
       error: (error) => {
@@ -125,13 +161,17 @@ export class CategoryService {
 
   filterWithAddressTimeSalary(filter: JobFilterPayload) {
     this.startJobsLoading();
-    this.http.post<JobListApiResponse>(`${this.url}/jobs/filter`, filter).pipe(
+    const normalizedFilter = this.cloneFilter(filter);
+    this.setFilterPayload(normalizedFilter);
+    this.http.post<JobListApiResponse>(`${this.url}/jobs/filter`, normalizedFilter).pipe(
       take(1),
       finalize(() => this.finishJobsLoading())
     ).subscribe({
       next: (response) => {
         this.jobData.set(response.data.content);
-        this.totalJobData.set(response.data.totalElements ?? response.data.content.length);
+        if (typeof response.data?.page?.totalElements === 'number') {
+          this.totalJobData.set(response.data.page.totalElements);
+        }
       },
       error: (error) => {
         console.error('Error filtering jobs:', error);

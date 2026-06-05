@@ -1,8 +1,8 @@
 package web_application.application;
 
-import com.job_web.application_process.api.UserApplicationController;
-import com.job_web.application_process.application.JobApplicationService;
-import com.job_web.recruiment.application.JobQueryService;
+import com.nlu.applicationProcess.api.UserApplicationController;
+import com.nlu.applicationProcess.application.JobApplicationService;
+import com.nlu.recruitment.application.JobQueryService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

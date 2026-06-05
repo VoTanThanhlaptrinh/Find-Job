@@ -1,10 +1,10 @@
 package web_application.account;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.job_web.JobPortalWebApplication;
-import com.job_web.identity.api.dto.LoginDTO;
-import com.job_web.identity.api.dto.RegistationForm;
-import com.job_web.identity.application.AuthService;
+import com.nlu.JobPortalWebApplication;
+import com.nlu.identity.api.dto.LoginDTO;
+import com.nlu.identity.api.dto.RegistrationForm;
+import com.nlu.identity.application.AuthService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,8 +69,8 @@ class RoleBasedAuthControllerTest {
     @Test
     @DisplayName("RA03: User register di dung luong /api/auth/user/register")
     void userRegister_UsesUserFlow() throws Exception {
-        RegistationForm dto = new RegistationForm("User Test", "user@test.com", "password123", "password123");
-        when(authService.registerUser(any(RegistationForm.class))).thenReturn("user@test.com");
+        RegistrationForm dto = new RegistrationForm("User Test", "user@test.com", "password123", "password123");
+        when(authService.registerUser(any(RegistrationForm.class))).thenReturn("user@test.com");
 
         mockMvc.perform(post("/api/auth/user/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -79,14 +79,14 @@ class RoleBasedAuthControllerTest {
                 .andExpect(jsonPath("$.data").value("user@test.com"))
                 .andExpect(jsonPath("$.status").value(200));
 
-        verify(authService).registerUser(any(RegistationForm.class));
+        verify(authService).registerUser(any(RegistrationForm.class));
     }
 
     @Test
     @DisplayName("RA04: Hirer register di dung luong /api/auth/hirer/register")
     void hirerRegister_UsesHirerFlow() throws Exception {
-        RegistationForm dto = new RegistationForm("Hirer Test", "hirer@test.com", "password123", "password123");
-        when(authService.registerHirer(any(RegistationForm.class))).thenReturn("hirer@test.com");
+        RegistrationForm dto = new RegistrationForm("Hirer Test", "hirer@test.com", "password123", "password123");
+        when(authService.registerHirer(any(RegistrationForm.class))).thenReturn("hirer@test.com");
 
         mockMvc.perform(post("/api/auth/hirer/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -95,6 +95,6 @@ class RoleBasedAuthControllerTest {
                 .andExpect(jsonPath("$.data").value("hirer@test.com"))
                 .andExpect(jsonPath("$.status").value(200));
 
-        verify(authService).registerHirer(any(RegistationForm.class));
+        verify(authService).registerHirer(any(RegistrationForm.class));
     }
 }

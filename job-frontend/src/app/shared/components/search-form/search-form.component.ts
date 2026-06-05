@@ -19,21 +19,24 @@ export class SearchFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.categoryService.loadAddressCount();
+    const filter = this.categoryService.getFilterSnapshot();
+    this.keyword = filter.title;
+    this.selectedCity = filter.address[0] ?? '';
   }
 
   onSubmit(): void {
     const keyword = this.keyword.trim();
     const city = this.selectedCity.trim();
-    const queryParams: { keyword?: string; city?: string } = {};
+    const currentFilter = this.categoryService.getFilterSnapshot();
 
-    if (keyword.length > 0) {
-      queryParams.keyword = keyword;
-    }
+    this.categoryService.setFilterPayload({
+      ...currentFilter,
+      pageIndex: 0,
+      address: city.length > 0 ? [city] : [],
+      times: [],
+      title: keyword,
+    });
 
-    if (city.length > 0) {
-      queryParams.city = city;
-    }
-
-    this.router.navigate(['/category'], { queryParams });
+    this.router.navigate(['/category']);
   }
 }

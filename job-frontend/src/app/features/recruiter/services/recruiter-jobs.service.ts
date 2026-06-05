@@ -59,8 +59,8 @@ export class RecruiterJobsService {
     ).pipe(take(1)).subscribe({
       next: (response) => {
         this.postedJobs.set(response.data?.content ?? []);
-        this.postedJobsTotalPages.set(response.data?.totalPages ?? 0);
-        this.postedJobsTotalCount.set(response.data?.totalElements ?? 0);
+        this.postedJobsTotalPages.set(response.data?.page?.totalPages ?? 0);
+        this.postedJobsTotalCount.set(response.data?.page?.totalElements ?? 0);
         this.isLoadingPostedJobs.set(false);
       },
       error: () => {

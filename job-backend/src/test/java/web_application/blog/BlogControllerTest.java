@@ -1,10 +1,10 @@
 package web_application.blog;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.job_web.content.api.BlogController;
-import com.job_web.content.api.dto.BlogDTO;
-import com.job_web.content.domain.model.Blog;
-import com.job_web.content.application.BlogService;
+import com.nlu.content.api.BlogController;
+import com.nlu.content.api.dto.BlogDTO;
+import com.nlu.content.domain.model.Blog;
+import com.nlu.content.application.BlogService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

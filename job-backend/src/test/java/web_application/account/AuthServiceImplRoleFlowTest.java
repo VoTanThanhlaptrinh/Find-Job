@@ -1,22 +1,22 @@
 package web_application.account;
 
-import com.job_web.identity.domain.vo.EmailAddress;
-import com.job_web.identity.domain.vo.RoleConstants;
-import com.job_web.recruiment.domain.model.Recruitment;
-import com.job_web.recruiment.domain.repository.RecruitmentRepository;
-import com.job_web.identity.domain.repository.UserRepository;
-import com.job_web.identity.api.dto.LoginDTO;
-import com.job_web.identity.api.dto.RegistationForm;
-import com.job_web.shared.domain.exception.BadRequestException;
-import com.job_web.shared.domain.exception.ForbiddenException;
-import com.job_web.shared.infrastructure.message.MessageProducer;
-import com.job_web.identity.domain.model.User;
-import com.job_web.identity.application.impl.AuthServiceImpl;
-import com.job_web.identity.application.JwtService;
-import com.job_web.identity.application.RefreshTokenService;
-import com.job_web.shared.application.ReferenceService;
-import com.job_web.shared.application.SpamService;
-import com.job_web.shared.application.VerificationService;
+import com.nlu.identity.domain.vo.EmailAddress;
+import com.nlu.identity.domain.vo.RoleConstants;
+import com.nlu.recruitment.domain.model.Recruitment;
+import com.nlu.recruitment.domain.repository.RecruitmentRepository;
+import com.nlu.identity.domain.repository.UserRepository;
+import com.nlu.identity.api.dto.LoginDTO;
+import com.nlu.identity.api.dto.RegistrationForm;
+import com.nlu.shared.domain.exception.BadRequestException;
+import com.nlu.shared.domain.exception.ForbiddenException;
+import com.nlu.shared.infrastructure.message.MessageProducer;
+import com.nlu.identity.domain.model.User;
+import com.nlu.identity.application.impl.AuthServiceImpl;
+import com.nlu.identity.application.JwtService;
+import com.nlu.identity.application.RefreshTokenService;
+import com.nlu.shared.application.ReferenceService;
+import com.nlu.shared.application.SpamService;
+import com.nlu.shared.application.VerificationService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -90,7 +90,7 @@ class AuthServiceImplRoleFlowTest {
     @Test
     @DisplayName("AS01: Dang ky hirer tao user role HIRER va tao ban ghi Hirer")
     void registerHirer_CreatesHirerFlow() {
-        RegistationForm form = new RegistationForm("Recruiter Test", "hirer@test.com", "password123", "password123");
+        RegistrationForm form = new RegistrationForm("Recruiter Test", "hirer@test.com", "password123", "password123");
         when(environment.getActiveProfiles()).thenReturn(new String[]{"dev"});
         when(encoder.encode("password123")).thenReturn("encoded-password");
         when(userRepository.saveAndFlush(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));

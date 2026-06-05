@@ -1,7 +1,7 @@
 package web_application.security;
 
-import com.job_web.identity.infrastructure.filter.JwtFilter;
-import com.job_web.identity.application.JwtService;
+import com.nlu.identity.infrastructure.filter.JwtFilter;
+import com.nlu.identity.application.JwtService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

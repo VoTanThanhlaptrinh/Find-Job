@@ -1,9 +1,9 @@
 package web_application.job;
 
-import com.job_web.recruiment.api.HirerJobController;
-import com.job_web.recruiment.api.dto.JobDTO;
-import com.job_web.recruiment.application.JobQueryService;
-import com.job_web.recruiment.application.JobService;
+import com.nlu.recruitment.api.HirerJobController;
+import com.nlu.recruitment.api.dto.JobDto;
+import com.nlu.recruitment.application.JobQueryService;
+import com.nlu.recruitment.application.JobService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -45,7 +45,7 @@ class RecruitmentJobControllerTest {
         @DisplayName("HJ01: Tao job thanh cong voi quyen HIRER")
         @WithMockUser(username = "hirer@test.com", roles = "HIRER")
         void createJob_Success() throws Exception {
-            org.mockito.Mockito.doNothing().when(jobService).createJob(any(JobDTO.class), any());
+            org.mockito.Mockito.doNothing().when(jobService).createJob(any(JobDto.class), any());
 
             mockMvc.perform(multipart(BASE_URL)
                             .param("jobName", "Java Developer")

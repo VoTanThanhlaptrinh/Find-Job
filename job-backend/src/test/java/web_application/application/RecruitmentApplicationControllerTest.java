@@ -1,8 +1,8 @@
 package web_application.application;
 
-import com.job_web.application_process.api.HirerApplicationController;
-import com.job_web.application_process.api.dto.CandidateDTO;
-import com.job_web.application_process.application.JobApplicationService;
+import com.nlu.applicationProcess.api.HirerApplicationController;
+import com.nlu.applicationProcess.api.dto.req.CandidateDTO;
+import com.nlu.applicationProcess.application.JobApplicationService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -68,7 +68,7 @@ class RecruitmentApplicationControllerTest {
                 }
             };
             Page<CandidateDTO> page = new PageImpl<>(List.of(candidate));
-            when(jobApplicationService.getAllCandidateAppliedJob(eq(0), eq(10), eq(1L))).thenReturn(page);
+            when(jobApplicationService.getCandidatesAppliedToJob(eq(0), eq(10), eq(1L))).thenReturn(page);
 
             mockMvc.perform(get(BASE_URL + "/jobs/1/candidates/0/10"))
                     .andExpect(status().isOk())

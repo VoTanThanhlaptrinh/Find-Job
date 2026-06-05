@@ -39,6 +39,13 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       copyrightSuffix: 'Tất cả quyền được bảo lưu | Phát triển với',
       byCompany: 'bởi',
     },
+    pagination: {
+      rowsPerPage: "Hiển thị mỗi trang",
+      showing: "Hiển thị",
+      of: "trên",
+      previous: "Trước",
+      next: "Sau"
+    },
     searchForm: {
       jobPlaceholder: 'Công việc bạn đang tìm là gì?',
       area: 'Khu vực',
@@ -236,7 +243,7 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       title: 'Danh sách ứng viên',
       subtitle: 'Theo dõi và quản lý ứng viên đang tham gia các vị trí tuyển dụng.',
       totalCandidates: 'Tổng ứng viên',
-      interviewing: 'Đang phỏng vấn',
+      applied: 'Đã ứng tuyển',
       newThisWeek: 'Mới trong tuần',
       selectJobLabel: 'Chọn bài đăng',
       selectJobPlaceholder: '-- Chọn công việc --',
@@ -457,6 +464,13 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       copyrightSuffix: 'All rights reserved | Built with',
       byCompany: 'by',
     },
+    pagination: {
+      rowsPerPage: "Rows per page",
+      showing: "Showing",
+      of: "of",
+      previous: "Previous",
+      next: "Next"
+    },
     searchForm: {
       jobPlaceholder: 'What job are you looking for?',
       area: 'Location',
@@ -654,7 +668,7 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       title: 'Candidate list',
       subtitle: 'Track and manage applicants across your open positions.',
       totalCandidates: 'Total candidates',
-      interviewing: 'Interviewing',
+      applied: 'Applied',
       newThisWeek: 'New this week',
       selectJobLabel: 'Select a job',
       selectJobPlaceholder: '-- Select a job --',

@@ -1,8 +1,8 @@
 package web_application.account;
 
-import com.job_web.JobPortalWebApplication;
-import com.job_web.identity.domain.model.User;
-import com.job_web.identity.domain.vo.EmailAddress;
+import com.nlu.JobPortalWebApplication;
+import com.nlu.identity.domain.model.User;
+import com.nlu.identity.domain.vo.EmailAddress;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
