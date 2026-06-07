@@ -25,7 +25,7 @@ public class ApiConstants {
             "/api/account/profile",
             "/api/account/password",
             "/api/account/oauth2",
-            "/api/notifications/**",
+            "/api/sse/**",
             "/api/blogs"            // POST blog
     };
 

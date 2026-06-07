@@ -7,7 +7,7 @@ import com.nlu.shared.api.message.dto.CloudUploadMessage;
 import com.nlu.applicationProcess.application.ResumeParsingService;
 import com.nlu.applicationProcess.application.VectorizationClient;
 import com.nlu.shared.application.CloudStorageService;
-import com.nlu.shared.application.SseNotificationService;
+import com.nlu.shared.application.SseEmitterService;
 import com.nlu.shared.domain.model.SseMessagePayload;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -27,7 +27,7 @@ public class MessageConsumer {
     private final MailService mailService;
     private final ResumeParsingService resumeParsingService;
     private final VectorizationClient vectorizationClient;
-    private final SseNotificationService sseNotificationService;
+    private final SseEmitterService sseEmitterService;
 
     @RabbitListener(queues = "mailQueue")
     public void receiveMail(@Payload MailMessage message) {
@@ -37,28 +37,28 @@ public class MessageConsumer {
     @RabbitListener(queues = "parsingQueue")
     public void parsingRawText(@Payload ResumeParsingMessage message) {
         try {
-            sseNotificationService.sendNotification(message.userId(), "resume-process",
+            sseEmitterService.sendEvent(message.userId(), "resume-process",
                     SseMessagePayload.builder()
                             .id(message.cvId())
                             .status("analyzing")
-                            .message("Parsing complete.")
+                            .message("AI is analyzing your resume...")
                             .build());
             var res = resumeParsingService.processResume(message.rawText());
             log.info(res.toString());
             vectorizationClient.vectorizeCv(new ResumeRequest(message.userId(), message.cvId(), res));
-            sseNotificationService.sendNotification(message.userId(), "resume-process",
+            sseEmitterService.sendEvent(message.userId(), "resume-process",
                     SseMessagePayload.builder()
                             .id(message.cvId())
                             .status("analyzed")
-                            .message("Parsing complete.")
+                            .message("Resume analysis complete")
                             .build());
 
         } catch (Exception e) {
             log.error("Error processing resume: {}", message.cvId(), e);
-            sseNotificationService.sendNotification(message.userId(), "resume-process", SseMessagePayload.builder()
+            sseEmitterService.sendEvent(message.userId(), "resume-process", SseMessagePayload.builder()
                     .id(message.cvId())
                     .status("failed")
-                    .message("Parsing failure.")
+                    .message("Resume analysis failed")
                     .build());
         }
     }
@@ -72,5 +72,3 @@ public class MessageConsumer {
         }
     }
 }
-
-

@@ -29,9 +29,9 @@ export class CvUiComponent implements OnInit {
   constructor() {
     effect(() => {
       this.resumes = this.resumeService.resumes$();
-      this.isLoading = false;
       this.uploadingFile = this.resumeService.uploadingFile$();
-      console.log(this.resumeService.uploadingFile$());
+      console.log('Resumes:', this.uploadingFile);
+      this.isLoading = this.resumeService.isLoadingResumes$();
     });
   }
 

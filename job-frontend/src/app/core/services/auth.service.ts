@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { computed, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import {
   catchError,
@@ -15,6 +15,7 @@ import { filter, map, tap } from 'rxjs/operators';
 import { ApiResponse } from '../../shared/models/api-response.model';
 import { TokenService } from './token.service';
 import { UtilitiesService } from './utilities.service';
+import { SseService } from './sse.service';
 
 interface RegisterResult {
   status: boolean;
@@ -25,6 +26,7 @@ interface RegisterResult {
   providedIn: 'root',
 })
 export class AuthService {
+  private sseService = inject(SseService);
   url = '';
   loginClick = signal(false);
   registerClick = signal(false);
@@ -176,6 +178,7 @@ export class AuthService {
   }
 
   logout(): void {
+    this.sseService.disconnect();
     this.http
       .get<any>(`${this.url}/auth/logout`, { withCredentials: true })
       .pipe(
@@ -210,6 +213,13 @@ export class AuthService {
         currentUrl: this.router.url,
         roles: this.tokenService.getTokenRoles(),
       });
+
+      // Kết nối/ngắt SSE theo trạng thái đăng nhập
+      if (value) {
+        this.sseService.connect();
+      } else {
+        this.sseService.disconnect();
+      }
     }
   }
 

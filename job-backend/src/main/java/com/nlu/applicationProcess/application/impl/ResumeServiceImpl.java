@@ -19,6 +19,8 @@ import com.nlu.applicationProcess.application.ResumeParsingService;
 import com.nlu.applicationProcess.application.ResumeService;
 import com.nlu.shared.application.FileService;
 import com.nlu.shared.application.S3PresignedUrlService;
+import com.nlu.shared.application.SseEmitterService;
+import com.nlu.shared.domain.model.SseMessagePayload;
 import com.nlu.shared.utils.KeyGeneratorUtil;
 import com.nlu.shared.utils.MessageUtils;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +40,7 @@ public class ResumeServiceImpl implements ResumeService {
     private final FileService fileService;
     private final MessageProducer producer;
     private final S3PresignedUrlService s3PresignedUrlService;
+    private final SseEmitterService sseEmitterService;
 
     private static final int DEFAULT_URL_EXPIRATION_MINUTES = 30;
 
@@ -111,6 +114,19 @@ public class ResumeServiceImpl implements ResumeService {
         // save to db
         resumeRepository.save(cv);
         MDC.put(MDC_CV_ID, String.valueOf(cv.getId()));
+
+        // send SSE event
+        try {
+            sseEmitterService.sendEvent(user.getId(), "resume-process",
+                    SseMessagePayload.builder()
+                            .id(cv.getId())
+                            .status("uploaded")
+                            .message("File uploaded to cloud successfully")
+                            .build());
+        } catch (Exception e) {
+            log.error("Failed to send SSE uploaded event for user: {}, cv: {}", user.getId(), cv.getId(), e);
+        }
+
         // analyze and vectorize resume
         producer.processAI(new ResumeParsingMessage(rawText, user.getId(), cv.getId()));
         log.info("Resume created — cv: {}, dispatched cloud upload and AI processing for user: {}",
