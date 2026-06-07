@@ -1,21 +1,17 @@
 import { HttpClient } from '@angular/common/http';
-import { computed, Injectable, NgZone, signal } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 import { map, Observable, take } from 'rxjs';
 import { UtilitiesService } from './utilities.service';
 import { ResumeReviewInput } from '../../shared/models/jobs/resume-review-input.model';
 import { ApiResponse } from '../../shared/models/api-response.model';
 import { NotifyMessageService } from './notify-message.service';
 import { TokenService } from './token.service';
-import { EventSourceMessage, fetchEventSource } from '@microsoft/fetch-event-source';
 import { ResumePreview } from '../../shared/models/jobs/resume-preview.model';
 import { ResumeUrlDTO } from '../../shared/models/jobs/resume-url-dto.model';
+import { SseService } from './sse.service';
+import { FileMessage, SseMessagePayload } from '../../shared/models/sse/sse.model';
 
 export type ResumeContext = 'user' | 'hirer';
-
-export interface UploadingFileState {
-    fileName: string;
-    status: 'uploading' | 'uploaded' | 'analyzing' | 'analyzed' | 'error';
-}
 
 @Injectable({
     providedIn: 'root'
@@ -23,21 +19,34 @@ export interface UploadingFileState {
 export class ResumeService {
     private url: string;
     private resumes = signal<ResumeReviewInput[]>([]);
-    private uploadingFile = signal<UploadingFileState | null>(null);
     private isLoadingResumes = signal<boolean>(false);
-    private activeAnalysisController: AbortController | null = null;
-    private analysisTimeoutId: ReturnType<typeof setTimeout> | null = null;
+    private readonly SSE_EVENT_NAME = 'resume-process';
+    readonly localFileData = signal<Partial<FileMessage>>({});
+    private counter = -10;
+
     readonly resumes$ = computed(() => this.resumes());
-    readonly uploadingFile$ = computed(() => this.uploadingFile());
     readonly isLoadingResumes$ = computed(() => this.isLoadingResumes());
+
+    readonly uploadingFile$ = computed<FileMessage | null>(() => {
+        const local = this.localFileData();
+        const sseEvent = this.sseService.latestEvents()[this.SSE_EVENT_NAME] as SseMessagePayload<Partial<FileMessage>> | undefined;
+        if (!local.name && !sseEvent) return null;
+
+        return {
+            id: sseEvent?.data?.id ?? sseEvent?.id ?? local.id ?? 0,
+            status: sseEvent?.data?.status ?? sseEvent?.status ?? local.status ?? 'pending',
+            name: sseEvent?.data?.name ?? local.name ?? 'Unknown_Resume'
+        };
+    });
     constructor(
         private http: HttpClient,
         private utilities: UtilitiesService,
         private notificationService: NotifyMessageService,
-        private ngZone: NgZone,
-        private tokenService: TokenService
+        private tokenService: TokenService,
+        private sseService: SseService,
     ) {
         this.url = this.utilities.getURLDev();
+        this.sseService.latestEvents()['resume-progress']
     }
 
     getUserResumes() {
@@ -86,168 +95,36 @@ export class ResumeService {
         return this.http.delete(`${this.url}/user/resumes/${encodedResumeId}`).pipe(take(1));
     }
     postResume(file: File) {
-        this.cleanupSSE();
-        this.uploadingFile.set({ fileName: file.name, status: 'uploading' });
+        this.localFileData.set({ name: file.name, status: 'uploading', id: ++this.counter });
         const formData = new FormData();
         formData.append('file', file);
-        this.http.post<ApiResponse<ResumePreview>>(`${this.url}/user/resumes`, formData).pipe(take(1)).subscribe({
+        this.http.post<ApiResponse<ResumePreview>>(`${this.url}/user/resumes`, formData).subscribe({
             next: (response) => {
                 const resumeId = response.data.id;
-                this.uploadingFile.set({ fileName: file.name, status: 'uploaded' });
-                this.listenForAnalysis(file.name, Number(resumeId));
+                this.localFileData.update(prev => ({ ...prev, status: 'uploaded' }));
+                this.sseService.connect(`${this.url}/api/notifications/${resumeId}`, [this.SSE_EVENT_NAME], { withCredentials: true });
             },
             error: (error) => {
-                this.uploadingFile.set({ fileName: file.name, status: 'error' });
+                this.localFileData.update(prev => ({ ...prev, status: 'error' }));
                 this.notificationService.error(error.error.message);
-                setTimeout(() => this.uploadingFile.set(null), 3000);
+                setTimeout(() => {
+                    this.localFileData.set({});
+                    this.sseService.disconnect();
+                }, 3000);
             }
         });
     }
 
-    private listenForAnalysis(fileName: string, resumeId: number): void {
-        this.uploadingFile.set({ fileName, status: 'analyzing' });
-
-        let analysisReceived = false;
-        let retryCount = 0;
-        const MAX_RETRIES = 3;
-
-        const token = this.tokenService.getToken();
+    // Thiết lập Headers
+    private getSseHeaders(): Record<string, string> {
         const headers: Record<string, string> = {
-            Accept: 'text/event-stream'
+            Accept: 'text/event-stream',
+            'Cache-Control': 'no-cache'
         };
+        const token = this.tokenService.getToken();
         if (token) {
             headers['Authorization'] = `Bearer ${token}`;
         }
-
-        const controller = new AbortController();
-        this.activeAnalysisController = controller;
-
-        this.analysisTimeoutId = setTimeout(() => {
-            this.ngZone.run(() => {
-                this.cleanupSSE();
-                this.uploadingFile.set({ fileName, status: 'error' });
-                this.notificationService.error('Phân tích CV quá thời gian. Vui lòng thử lại.');
-                setTimeout(() => this.uploadingFile.set(null), 3000);
-            });
-        }, 60000);
-
-        const handleMessage = (event: EventSourceMessage) => {
-            this.ngZone.run(() => {
-                this.cleanupSSE();
-
-                const { isSuccess, message } = this.parseAnalysisMessage(event.data);
-
-                if (isSuccess) {
-                    this.uploadingFile.set({ fileName, status: 'analyzed' });
-                    this.notificationService.success(message);
-                    setTimeout(() => {
-                        this.getUserResumes();
-                        this.uploadingFile.set(null);
-                    }, 2000);
-                } else {
-                    this.uploadingFile.set({ fileName, status: 'error' });
-                    this.notificationService.error('Phân tích CV lỗi: ' + message);
-                    setTimeout(() => this.uploadingFile.set(null), 3000);
-                }
-            });
-        };
-
-        void fetchEventSource(`${this.url}/notifications/${resumeId}`, {
-            method: 'GET',
-            headers,
-            signal: controller.signal,
-            openWhenHidden: true,
-            onopen: async (response) => {
-                if (!response.ok) {
-                    throw { status: response.status };
-                }
-            },
-            onmessage: (event) => {
-                if (event.event === 'connect') {
-                    console.log('Đã kết nối SSE:', event.data);
-                    return;
-                }
-                if (!event.data) {
-                    return;
-                }
-                analysisReceived = true;
-                handleMessage(event);
-            },
-            onclose: () => {
-                if (analysisReceived) {
-                    throw new Error('Analysis complete, stop retry');
-                }
-                retryCount++;
-                if (retryCount >= MAX_RETRIES) {
-                    throw new Error('Max retries reached');
-                }
-            },
-            onerror: (error: unknown) => {
-                throw error;
-            }
-        }).catch((error: unknown) => {
-            this.ngZone.run(() => {
-                if (controller.signal.aborted) {
-                    return;
-                }
-
-                this.cleanupSSE();
-                this.uploadingFile.set({ fileName, status: 'error' });
-                this.notificationService.error(this.resolveAnalysisConnectionError(error));
-                setTimeout(() => this.uploadingFile.set(null), 3000);
-            });
-        });
-    }
-
-    private parseAnalysisMessage(data: string): { isSuccess: boolean; message: string } {
-        let isSuccess = true;
-        let message = 'Phân tích CV hoàn tất.';
-
-        if (!data) {
-            return { isSuccess, message };
-        }
-
-        try {
-            const response = JSON.parse(data) as { status?: number; message?: string };
-            if (response.status !== undefined && response.status !== 200) {
-                isSuccess = false;
-            }
-            if (response.message) {
-                message = response.message;
-            }
-        } catch {
-            const normalized = data.toLowerCase();
-            if (normalized.includes('error') || normalized.includes('fail') || normalized.includes('lỗi')) {
-                isSuccess = false;
-            }
-            message = data;
-        }
-
-        return { isSuccess, message };
-    }
-
-    private resolveAnalysisConnectionError(error: unknown): string {
-        if (typeof error === 'object' && error !== null && 'status' in error) {
-            const status = Number((error as { status?: unknown }).status);
-            if (status === 401) {
-                return 'Bạn chưa đăng nhập hoặc phiên làm việc đã hết hạn.';
-            }
-            if (status === 403) {
-                return 'Bạn không có quyền thao tác trên CV này.';
-            }
-        }
-
-        return 'Lỗi kết nối khi phân tích CV. Vui lòng thử lại.';
-    }
-
-    private cleanupSSE(): void {
-        if (this.analysisTimeoutId) {
-            clearTimeout(this.analysisTimeoutId);
-            this.analysisTimeoutId = null;
-        }
-        if (this.activeAnalysisController) {
-            this.activeAnalysisController.abort();
-            this.activeAnalysisController = null;
-        }
+        return headers;
     }
 }

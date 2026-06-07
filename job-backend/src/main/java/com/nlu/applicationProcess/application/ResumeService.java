@@ -15,8 +15,6 @@ public interface ResumeService {
 
     ResumeView createResume(ResumeUploadDTO resumeUploadDTO, User user);
 
-    void updateResume(long id, ResumeUploadDTO resumeUploadDTO, User user);
-
     void deleteResume(long id, User user);
 
     ResumeUrlDTO getResumeViewUrl(long id, User user);

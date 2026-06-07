@@ -106,7 +106,7 @@ class JobApplicationServiceImplTest {
             when(jobApplicationRepository.findByJobAndUser("user@test.com", 800L)).thenReturn(Optional.empty());
             when(jobRepository.findById(800L)).thenReturn(Optional.of(job));
             when(resumeRepository.countActiveByUserEmail("user@test.com")).thenReturn(0L);
-            when(resumeService.toByteArray(any())).thenReturn("bytes".getBytes());
+            when(fileService.toByteArray(any())).thenReturn("bytes".getBytes());
             when(fileService.extractTextFromFile(any())).thenReturn("raw text");
             when(resumeRepository.save(any(Resume.class))).thenAnswer(invocation -> invocation.getArgument(0));
             when(jobApplicationRepository.save(any(JobApplication.class))).thenAnswer(invocation -> invocation.getArgument(0));

@@ -1,12 +1,13 @@
 import { Component, effect, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SkeletonCvCardComponent } from '../../../shared/components/skeleton-cv-card/skeleton-cv-card.component';
-import { ResumeService, UploadingFileState } from '../../../core/services/resume.service';
+import { ResumeService } from '../../../core/services/resume.service';
 import { ResumeReviewComponent } from '../../../shared/components/resume-review/resume-review.component';
 import { LoadingComponent } from '../../../shared/components/loading/loading.component';
 import { CvUploadModalComponent } from '../cv-upload-modal/cv-upload-modal.component';
 import { ResumeReviewInput } from '../../../shared/models/jobs/resume-review-input.model';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
+import { FileMessage } from '../../../shared/models/sse/sse.model';
 
 @Component({
   selector: 'app-cv-ui',
@@ -21,7 +22,7 @@ export class CvUiComponent implements OnInit {
   resumes: ResumeReviewInput[] = [];
   isLoading = false;
   isUploadModalOpen = false;
-  uploadingFile: UploadingFileState | null = null;
+  uploadingFile: FileMessage | null = null;
   readonly skeleton = true;
   readonly skeletonRows = [1, 2, 3];
 
@@ -30,6 +31,7 @@ export class CvUiComponent implements OnInit {
       this.resumes = this.resumeService.resumes$();
       this.isLoading = false;
       this.uploadingFile = this.resumeService.uploadingFile$();
+      console.log(this.resumeService.uploadingFile$());
     });
   }
 

@@ -1,91 +1,20 @@
-2026-06-03 12:35:31.504 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  com.nlu.JobPortalWebApplication -
-                    Starting JobPortalWebApplication using Java 17.0.12 with PID 2524 (D:\web-project\job-backend\target\classes started by DELL in D:\web-project\job-backend)
-2026-06-03 12:35:31.508 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  com.nlu.JobPortalWebApplication -
+2026-06-06 08:18:19.287 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  com.nlu.JobPortalWebApplication -
+                    Starting JobPortalWebApplication using Java 17.0.12 with PID 12280 (D:\web-project\job-backend\target\classes started by DELL in D:\web-project\job-backend)
+2026-06-06 08:18:19.292 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  com.nlu.JobPortalWebApplication -
                     The following 1 profile is active: "prod"
-2026-06-03 12:35:39.283 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  org.hibernate.orm.deprecation -
+2026-06-06 08:18:24.791 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  org.hibernate.orm.deprecation -
                     HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-06-03 12:35:46.649 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.j.a.application.impl.AIServiceImpl -
+2026-06-06 08:18:31.390 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.a.a.i.ResumeParsingServiceImpl -
                     AI resume parser agent initialized with model: deepseek-chat
-2026-06-03 12:35:47.007 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration -
+2026-06-06 08:18:32.511 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration -
                     spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-06-03 12:35:47.053 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer -
+2026-06-06 08:18:32.555 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer -
                     Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used for username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider.
-2026-06-03 12:35:47.894 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  o.s.b.a.t.ThymeleafAutoConfiguration$DefaultTemplateResolverConfiguration -
+2026-06-06 08:18:33.438 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  o.s.b.a.t.ThymeleafAutoConfiguration$DefaultTemplateResolverConfiguration -
                     Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
-2026-06-03 12:35:49.151 [AMQP Connection 3.1.91.93:5671] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  c.r.c.impl.ForgivingExceptionHandler -
-                    An unexpected connection driver error occurred (Exception message: Socket closed)
-2026-06-03 12:35:49.335 [AMQP Connection 3.1.91.93:5671] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  c.r.c.impl.ForgivingExceptionHandler -
-                    An unexpected connection driver error occurred (Exception message: Socket closed)
-2026-06-03 12:35:49.336 [org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#0-1] [traceId=N/A] [userId=] [jobId=] [cvId=] ERROR o.s.a.r.l.SimpleMessageListenerContainer -
-                    Failed to check/redeclare auto-delete queue(s).
-org.springframework.amqp.AmqpAuthenticationException: com.rabbitmq.client.AuthenticationFailureException: ACCESS_REFUSED - Login was refused using authentication mechanism PLAIN. For details see the broker logfile.
-	at java.base/java.lang.Thread.run(Thread.java:842) [13 skipped]
-Caused by: com.rabbitmq.client.AuthenticationFailureException: ACCESS_REFUSED - Login was refused using authentication mechanism PLAIN. For details see the broker logfile.
-	at com.rabbitmq.client.impl.AMQConnection.start(AMQConnection.java:395)
-	at com.rabbitmq.client.ConnectionFactory.newConnection(ConnectionFactory.java:1251)
-	at com.rabbitmq.client.ConnectionFactory.newConnection(ConnectionFactory.java:1198)
-	at java.base/java.lang.Thread.run(Thread.java:842) [14 skipped]
-2026-06-03 12:35:49.512 [AMQP Connection 3.1.91.93:5671] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  c.r.c.impl.ForgivingExceptionHandler -
-                    An unexpected connection driver error occurred (Exception message: Socket closed)
-2026-06-03 12:35:49.512 [org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#0-1] [traceId=N/A] [userId=] [jobId=] [cvId=] ERROR o.s.a.r.l.SimpleMessageListenerContainer -
-                    Consumer received fatal exception on startup
-org.springframework.amqp.rabbit.listener.exception.FatalListenerStartupException: Authentication failure
-	at java.base/java.lang.Thread.run(Thread.java:842) [3 skipped]
-Caused by: org.springframework.amqp.AmqpAuthenticationException: com.rabbitmq.client.AuthenticationFailureException: ACCESS_REFUSED - Login was refused using authentication mechanism PLAIN. For details see the broker logfile.
-	at java.base/java.lang.Thread.run(Thread.java:842) [11 skipped]
-	... 3 common frames omitted
-Caused by: com.rabbitmq.client.AuthenticationFailureException: ACCESS_REFUSED - Login was refused using authentication mechanism PLAIN. For details see the broker logfile.
-	at com.rabbitmq.client.impl.AMQConnection.start(AMQConnection.java:395)
-	at com.rabbitmq.client.ConnectionFactory.newConnection(ConnectionFactory.java:1251)
-	at com.rabbitmq.client.ConnectionFactory.newConnection(ConnectionFactory.java:1198)
-	at java.base/java.lang.Thread.run(Thread.java:842) [12 skipped]
-2026-06-03 12:35:49.518 [org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#0-1] [traceId=N/A] [userId=] [jobId=] [cvId=] ERROR o.s.a.r.l.SimpleMessageListenerContainer -
-                    Stopping container from aborted consumer
-2026-06-03 12:35:49.671 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext -
-                    Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'org.springframework.amqp.rabbit.config.internalRabbitListenerEndpointRegistry'
-2026-06-03 12:35:50.120 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] ERROR o.s.boot.SpringApplication -
-                    Application run failed
-org.springframework.context.ApplicationContextException: Failed to start bean 'org.springframework.amqp.rabbit.config.internalRabbitListenerEndpointRegistry'
-	at java.base/java.lang.Iterable.forEach(Iterable.java:75) [2 skipped]
-	at com.nlu.JobPortalWebApplication.main(JobPortalWebApplication.java:24) [10 skipped]
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
- [2 skipped]
-Caused by: org.springframework.amqp.AmqpIllegalStateException: Fatal exception on listener startup
-	at java.base/java.lang.Iterable.forEach(Iterable.java:75) [7 skipped]
-	at com.nlu.JobPortalWebApplication.main(JobPortalWebApplication.java:24) [10 skipped]
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
- [2 skipped]
-Caused by: org.springframework.amqp.rabbit.listener.exception.FatalListenerStartupException: Authentication failure
-	at java.base/java.lang.Thread.run(Thread.java:842) [3 skipped]
-Caused by: org.springframework.amqp.AmqpAuthenticationException: com.rabbitmq.client.AuthenticationFailureException: ACCESS_REFUSED - Login was refused using authentication mechanism PLAIN. For details see the broker logfile.
-	at java.base/java.lang.Thread.run(Thread.java:842) [11 skipped]
-	... 3 common frames omitted
-Caused by: com.rabbitmq.client.AuthenticationFailureException: ACCESS_REFUSED - Login was refused using authentication mechanism PLAIN. For details see the broker logfile.
-	at com.rabbitmq.client.impl.AMQConnection.start(AMQConnection.java:395)
-	at com.rabbitmq.client.ConnectionFactory.newConnection(ConnectionFactory.java:1251)
-	at com.rabbitmq.client.ConnectionFactory.newConnection(ConnectionFactory.java:1198)
-	at java.base/java.lang.Thread.run(Thread.java:842) [12 skipped]
-2026-06-03 12:44:19.886 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  com.nlu.JobPortalWebApplication -
-                    Starting JobPortalWebApplication using Java 17.0.12 with PID 17528 (D:\web-project\job-backend\target\classes started by DELL in D:\web-project\job-backend)
-2026-06-03 12:44:19.890 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  com.nlu.JobPortalWebApplication -
-                    The following 1 profile is active: "prod"
-2026-06-03 12:44:29.116 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  org.hibernate.orm.deprecation -
-                    HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-06-03 12:44:37.322 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.j.a.application.impl.AIServiceImpl -
-                    AI resume parser agent initialized with model: deepseek-chat
-2026-06-03 12:44:37.826 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration -
-                    spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-06-03 12:44:37.875 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer -
-                    Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used for username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider.
-2026-06-03 12:44:38.903 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  o.s.b.a.t.ThymeleafAutoConfiguration$DefaultTemplateResolverConfiguration -
-                    Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
-2026-06-03 12:44:44.916 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  com.nlu.JobPortalWebApplication -
-                    Started JobPortalWebApplication in 26.65 seconds (process running for 28.978)
-2026-06-03 12:44:45.640 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.j.r.i.cache.CategoryCacheService -
+2026-06-06 08:18:39.391 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  com.nlu.JobPortalWebApplication -
+                    Started JobPortalWebApplication in 21.071 seconds (process running for 22.57)
+2026-06-06 08:18:40.012 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.r.i.cache.CategoryCacheService -
                     Preloaded cache: home:init
-2026-06-03 12:44:46.074 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.j.r.i.cache.CategoryCacheService -
+2026-06-06 08:18:40.366 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.r.i.cache.CategoryCacheService -
                     Preloaded cache: home:category

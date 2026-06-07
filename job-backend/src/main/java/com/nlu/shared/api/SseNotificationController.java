@@ -20,17 +20,13 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 public class SseNotificationController {
     private final SseNotificationService sseNotificationService;
 
-    @GetMapping(value = "/{resumeId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public ResponseEntity<SseEmitter> subscribe(@PathVariable Long resumeId, @CurrentUser User currentUser) {
-        var res = sseNotificationService.subscribe(resumeId, currentUser);
-        return ResponseEntity.ok(res);
-    }
-
-    @PostMapping("/{resumeId}/send")
-    public ResponseEntity<ApiResponse<String>> sendNotification(
-            @PathVariable Long resumeId,
-            @RequestBody String message) {
-        sseNotificationService.sendNotification(resumeId, message);
-        return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("notification.sent"), null, HttpStatus.OK.value()));
+    @GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public ResponseEntity<SseEmitter> subscribe(@RequestParam("event") String event, @CurrentUser User currentUser) {
+        var res = sseNotificationService.subscribe(currentUser, event);
+        return ResponseEntity.ok()
+                .header("X-Accel-Buffering", "no")
+                .header("Cache-Control", "no-cache, no-transform")
+                .header("Connection", "keep-alive")
+                .body(res);
     }
 }

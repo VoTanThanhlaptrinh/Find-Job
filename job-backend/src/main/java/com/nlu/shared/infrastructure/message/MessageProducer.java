@@ -20,10 +20,6 @@ public class MessageProducer {
 	public void processAI(ResumeParsingMessage message) {
 		rabbitTemplate.convertAndSend("parsingExchange", "parsingRoutingKey", message);
 	}
-
-	public void uploadToCloud(CloudUploadMessage message) {
-		rabbitTemplate.convertAndSend("cloudUploadExchange", "cloudUploadRoutingKey", message);
-	}
 }
 
 

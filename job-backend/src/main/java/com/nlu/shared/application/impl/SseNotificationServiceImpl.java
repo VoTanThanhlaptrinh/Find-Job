@@ -6,148 +6,122 @@ import com.nlu.shared.domain.exception.UnauthorizedException;
 import com.nlu.applicationProcess.domain.model.Resume;
 import com.nlu.identity.domain.model.User;
 import com.nlu.shared.application.SseNotificationService;
+import com.nlu.shared.domain.model.SseMessagePayload;
 import com.nlu.shared.utils.MessageUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
+import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class SseNotificationServiceImpl implements SseNotificationService {
-    
-    private static final Long SSE_TIMEOUT = 30 * 60 * 1000L;
-    
-    private final ResumeRepository resumeRepository;
-    private final Map<Long, SseEmitter> emitters = new ConcurrentHashMap<>();
-    private final Map<Long, String> pendingNotifications = new ConcurrentHashMap<>();
+
+    private static final long SSE_TIMEOUT = 30 * 60 * 1000L; // Timeout 30 phút
+    private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
 
     private static final String MDC_USER_ID = "userId";
-    private static final String MDC_CV_ID = "cvId";
 
     @Override
-    public SseEmitter subscribe(Long resumeId, User user) {
+    public SseEmitter subscribe(User user, String eventName) {
         if (user == null) {
-           throw new UnauthorizedException(MessageUtils.getMessage("message.unauthorized"));
+            throw new UnauthorizedException(MessageUtils.getMessage("message.unauthorized"));
         }
 
         try {
             MDC.put(MDC_USER_ID, String.valueOf(user.getId()));
-            MDC.put(MDC_CV_ID, String.valueOf(resumeId));
 
-            if (!isResumeOwnedByUser(resumeId, user.getEmail())) {
-                log.warn("SSE subscribe forbidden — user: {} does not own CV: {}", user.getId(), resumeId);
-                throw new ForbiddenException(MessageUtils.getMessage("resume.access.forbidden"));
-            }
+            String routingKey = buildRoutingKey(user.getId(), eventName);
 
-            // Close existing emitter if present
-            SseEmitter existingEmitter = emitters.get(resumeId);
+            SseEmitter existingEmitter = emitters.get(routingKey);
             if (existingEmitter != null) {
                 existingEmitter.complete();
-                emitters.remove(resumeId);
-                log.info("Closed existing SSE connection for CV: {}", resumeId);
+                emitters.remove(routingKey);
+                log.info("Closed existing SSE connection for routing key: {}", routingKey);
             }
 
             SseEmitter emitter = new SseEmitter(SSE_TIMEOUT);
-            emitters.put(resumeId, emitter);
+            emitters.put(routingKey, emitter);
 
+            // Các callback này tự động kích hoạt khi Frontend gọi AbortController.abort()
             emitter.onCompletion(() -> {
-                log.info("SSE connection completed for CV: {}", resumeId);
-                emitters.remove(resumeId);
+                log.info("SSE connection completed (Client disconnected)");
+                emitters.remove(routingKey);
             });
 
             emitter.onTimeout(() -> {
-                log.info("SSE connection timed out for CV: {}", resumeId);
+                log.info("SSE connection timed out");
                 emitter.complete();
-                emitters.remove(resumeId);
+                emitters.remove(routingKey);
             });
 
             emitter.onError(ex -> {
-                log.warn("SSE connection error for CV: {}", resumeId);
-                emitters.remove(resumeId);
+                log.warn("SSE connection error");
+                emitters.remove(routingKey);
             });
 
+            // 1. Gửi tín hiệu kết nối đầu tiên
             try {
                 emitter.send(SseEmitter.event()
                         .name("connect")
-                        .data("Connected to SSE for resumeId: " + resumeId));
+                        .data(SseMessagePayload.builder()
+                                .status("CONNECTED")
+                                .message("Connected to SSE for userId: ")
+                                .build(), MediaType.APPLICATION_JSON));
             } catch (IOException e) {
-                log.warn("Failed to send initial SSE event for CV: {}", resumeId);
-                emitters.remove(resumeId);
+                log.warn("Failed to send initial SSE event");
+                emitters.remove(routingKey);
                 throw new RuntimeException(MessageUtils.getMessage("notification.sse.failed"));
             }
-
-            String pending = pendingNotifications.remove(resumeId);
-            if (pending != null) {
-                try {
-                    emitter.send(SseEmitter.event()
-                            .name("notification")
-                            .data(pending));
-                    log.info("SSE notification (pending) sent for CV: {}", resumeId);
-                    emitter.complete();
-                    emitters.remove(resumeId);
-                } catch (IOException e) {
-                    log.warn("Failed to send pending SSE notification for CV: {} — removing emitter", resumeId);
-                    emitters.remove(resumeId);
-                    emitter.completeWithError(e);
-                }
-            }
-
-            log.info("SSE client subscribed for CV: {} by user: {}", resumeId, user.getId());
             return emitter;
         } finally {
             MDC.remove(MDC_USER_ID);
-            MDC.remove(MDC_CV_ID);
         }
     }
 
     @Override
-    public void sendNotification(Long resumeId, String message) {
-        SseEmitter emitter = emitters.get(resumeId);
+    public void sendNotification(long userId, String eventName, SseMessagePayload<?> payload) {
+        String routingKey = buildRoutingKey(userId, eventName);
+        SseEmitter emitter = emitters.get(routingKey);
         if (emitter == null) {
-            pendingNotifications.put(resumeId, message);
-            log.info("No active SSE connection for CV: {} — stored as pending", resumeId);
+            log.info("No active SSE connection for routing key: {} — stored as pending", routingKey);
             return;
         }
-        
+
         try {
             emitter.send(SseEmitter.event()
-                    .name("notification")
-                    .data(message));
-            log.info("SSE notification sent for CV: {}", resumeId);
-            emitter.complete();
-            emitters.remove(resumeId);
+                    .name(eventName)
+                    .data(payload, MediaType.APPLICATION_JSON));
+            log.info("SSE notification ({}) sent for routing key: {}", eventName, routingKey);
         } catch (IOException e) {
-            log.warn("Failed to send SSE notification for CV: {} — removing emitter", resumeId);
-            emitters.remove(resumeId);
+            log.warn("Failed to send SSE notification for routing key: {}", routingKey);
+            emitters.remove(routingKey);
             emitter.completeWithError(e);
         }
     }
 
     @Override
-    public void removeEmitter(Long resumeId) {
-        SseEmitter emitter = emitters.remove(resumeId);
+    public void removeEmitter(long userId, String eventName) {
+        String routingKey = buildRoutingKey(userId, eventName);
+        SseEmitter emitter = emitters.remove(routingKey);
         if (emitter != null) {
             emitter.complete();
-            log.info("SSE emitter removed for CV: {}", resumeId);
+            log.info("SSE emitter removed manually for routing key: {}", routingKey);
         }
     }
 
-    @Override
-    public boolean isResumeOwnedByUser(Long resumeId, String userEmail) {
-        // Read-only ownership check — no logging needed.
-        Optional<Resume> resumeOpt = resumeRepository.findById(resumeId);
-        if (resumeOpt.isEmpty()) {
-            return false;
-        }
-        Resume resume = resumeOpt.get();
-        return resume.getUser() != null && userEmail.equals(resume.getUser().getEmail());
+    /* HELPER METHOD */
+    private String buildRoutingKey(long userId, String eventName) {
+        return userId + "-" + eventName;
     }
 }

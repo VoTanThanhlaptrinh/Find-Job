@@ -70,20 +70,6 @@ public class UserResumeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(MessageUtils.getMessage("message.success"), res, HttpStatus.CREATED.value()));
     }
 
-    @PutMapping(value = "/{id}", consumes = "multipart/form-data")
-    public ResponseEntity<ApiResponse<String>> updateResume(@PathVariable("id") long id,
-                                                            @Valid @ModelAttribute ResumeUploadDTO resumeUploadDTO,
-                                                            BindingResult bindingResult,
-                                                            @CurrentUser User currentUser) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, HttpStatus.BAD_REQUEST.value()));
-        }
-        resumeService.updateResume(id, resumeUploadDTO, currentUser);
-        return ResponseEntity.ok().body(new ApiResponse<>(MessageUtils.getMessage("message.success"), null, HttpStatus.OK.value()));
-
-    }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<String>> deleteResume(@PathVariable("id") long id, @CurrentUser User currentUser) {
         resumeService.deleteResume(id, currentUser);

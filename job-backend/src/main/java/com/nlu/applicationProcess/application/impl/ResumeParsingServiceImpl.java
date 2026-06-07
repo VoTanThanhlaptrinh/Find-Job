@@ -48,8 +48,6 @@ public class ResumeParsingServiceImpl implements ResumeParsingService {
 
     @Override
     public ResumeModel processResume(String rawText) {
-        // MDC userId/cvId is already set by the caller (message consumer).
-        // rawText may contain PII (name, email, phone) — never log its content.
         log.info("Starting AI resume parsing — input length: {} chars", rawText.length());
 
         long startTime = System.currentTimeMillis();

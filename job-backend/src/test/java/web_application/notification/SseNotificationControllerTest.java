@@ -38,42 +38,6 @@ class SseNotificationControllerTest {
     @DisplayName("POST /api/notifications/{resumeId}/send - Gui thong bao")
     class SendNotificationTests {
 
-        @Test
-        @DisplayName("SN01: Gui thong bao thanh cong khi da dang nhap")
-        @WithMockUser(username = "user@test.com", roles = "USER")
-        void sendNotification_Success() throws Exception {
-            doNothing().when(sseNotificationService).sendNotification(1L, "Interview invitation");
 
-            mockMvc.perform(post(BASE_URL + "/1/send")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content("Interview invitation"))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.message").value("Notification sent"))
-                    .andExpect(jsonPath("$.status").value(HttpStatus.OK.value()));
-        }
-
-        @Test
-        @DisplayName("SN02: Tra ve 400 khi resumeId khong hop le")
-        @WithMockUser(username = "user@test.com", roles = "USER")
-        void sendNotification_InvalidResumeId() throws Exception {
-            mockMvc.perform(post(BASE_URL + "/invalid/send")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content("Interview invitation"))
-                    .andExpect(status().isBadRequest());
-        }
-    }
-
-    @Nested
-    @DisplayName("Security Tests")
-    class SecurityTests {
-
-        @Test
-        @DisplayName("SN03: Tra ve 401 khi anonymous gui thong bao")
-        void sendNotification_Unauthorized() throws Exception {
-            mockMvc.perform(post(BASE_URL + "/1/send")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content("Interview invitation"))
-                    .andExpect(status().isUnauthorized());
-        }
     }
 }
