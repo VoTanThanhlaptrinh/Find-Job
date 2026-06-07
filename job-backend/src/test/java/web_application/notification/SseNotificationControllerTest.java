@@ -1,7 +1,7 @@
 package web_application.notification;
 
 import com.nlu.shared.api.SseNotificationController;
-import com.nlu.shared.application.SseNotificationService;
+import com.nlu.shared.application.SseEmitterService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -10,15 +10,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import web_application.support.TestSecurityConfig;
 
-import static org.mockito.Mockito.doNothing;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(SseNotificationController.class)
@@ -30,49 +30,31 @@ class SseNotificationControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private SseNotificationService sseNotificationService;
+    private SseEmitterService sseEmitterService;
 
-    private static final String BASE_URL = "/api/notifications";
+    private static final String CONNECT_URL = "/api/sse/connect";
 
     @Nested
-    @DisplayName("POST /api/notifications/{resumeId}/send - Gui thong bao")
-    class SendNotificationTests {
+    @DisplayName("GET /api/sse/connect - SSE Connection")
+    class ConnectTests {
 
         @Test
-        @DisplayName("SN01: Gui thong bao thanh cong khi da dang nhap")
-        @WithMockUser(username = "user@test.com", roles = "USER")
-        void sendNotification_Success() throws Exception {
-            doNothing().when(sseNotificationService).sendNotification(1L, "Interview invitation");
+        @DisplayName("Should return 200 with SSE stream when authenticated")
+        @WithMockUser(username = "user@test.com", roles = {"USER"})
+        void shouldReturnSseStream_whenAuthenticated() throws Exception {
+            SseEmitter emitter = new SseEmitter();
+            when(sseEmitterService.createEmitter(any())).thenReturn(emitter);
 
-            mockMvc.perform(post(BASE_URL + "/1/send")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content("Interview invitation"))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.message").value("Notification sent"))
-                    .andExpect(jsonPath("$.status").value(HttpStatus.OK.value()));
+            mockMvc.perform(get(CONNECT_URL)
+                            .accept(MediaType.TEXT_EVENT_STREAM_VALUE))
+                    .andExpect(status().isOk());
         }
 
         @Test
-        @DisplayName("SN02: Tra ve 400 khi resumeId khong hop le")
-        @WithMockUser(username = "user@test.com", roles = "USER")
-        void sendNotification_InvalidResumeId() throws Exception {
-            mockMvc.perform(post(BASE_URL + "/invalid/send")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content("Interview invitation"))
-                    .andExpect(status().isBadRequest());
-        }
-    }
-
-    @Nested
-    @DisplayName("Security Tests")
-    class SecurityTests {
-
-        @Test
-        @DisplayName("SN03: Tra ve 401 khi anonymous gui thong bao")
-        void sendNotification_Unauthorized() throws Exception {
-            mockMvc.perform(post(BASE_URL + "/1/send")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content("Interview invitation"))
+        @DisplayName("Should return 401 when not authenticated")
+        void shouldReturn401_whenNotAuthenticated() throws Exception {
+            mockMvc.perform(get(CONNECT_URL)
+                            .accept(MediaType.TEXT_EVENT_STREAM_VALUE))
                     .andExpect(status().isUnauthorized());
         }
     }

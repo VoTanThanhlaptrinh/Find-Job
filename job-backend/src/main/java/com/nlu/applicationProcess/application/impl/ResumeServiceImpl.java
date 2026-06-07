@@ -8,6 +8,7 @@ import com.nlu.applicationProcess.api.dto.req.ResumeUploadDTO;
 import com.nlu.applicationProcess.api.dto.req.ResumeUrlDTO;
 import com.nlu.shared.api.message.dto.CloudUploadMessage;
 import com.nlu.applicationProcess.api.dto.req.ResumeView;
+import com.nlu.shared.application.CloudStorageService;
 import com.nlu.shared.domain.exception.ForbiddenException;
 import com.nlu.shared.domain.exception.ResourceNotFoundException;
 import com.nlu.shared.domain.exception.UnauthorizedException;
@@ -18,12 +19,15 @@ import com.nlu.applicationProcess.application.ResumeParsingService;
 import com.nlu.applicationProcess.application.ResumeService;
 import com.nlu.shared.application.FileService;
 import com.nlu.shared.application.S3PresignedUrlService;
+import com.nlu.shared.application.SseEmitterService;
+import com.nlu.shared.domain.model.SseMessagePayload;
 import com.nlu.shared.utils.KeyGeneratorUtil;
 import com.nlu.shared.utils.MessageUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -35,13 +39,14 @@ public class ResumeServiceImpl implements ResumeService {
     private final ResumeQueryDSL resumeQueryDSL;
     private final FileService fileService;
     private final MessageProducer producer;
-    private final ResumeParsingService resumeParsingService;
     private final S3PresignedUrlService s3PresignedUrlService;
+    private final SseEmitterService sseEmitterService;
 
     private static final int DEFAULT_URL_EXPIRATION_MINUTES = 30;
 
     private static final String MDC_USER_ID = "userId";
     private static final String MDC_CV_ID = "cvId";
+    private final CloudStorageService cloudStorageService;
 
     @Override
     public List<ResumeView> getListResumeOfUser(User currentUser) {
@@ -60,89 +65,74 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
+    @Transactional
     public ResumeView createResume(ResumeUploadDTO resumeUploadDTO, User user) {
         if (user == null) {
             throw new UnauthorizedException(MessageUtils.getMessage("message.unauthorized"));
         }
+        MDC.put(MDC_USER_ID, String.valueOf(user.getId()));
 
+        log.info("Creating resume for user: {}, file: {}",
+                user.getId(), resumeUploadDTO.getFile().getOriginalFilename());
+
+        // initiate resume
+        Resume cv = new Resume();
+        cv.setUser(user);
+        cv.setFileName(resumeUploadDTO.getFile().getOriginalFilename());
+        String key = KeyGeneratorUtil.generateKey();
+        cv.setKeyCf(key);
+
+        //extract data
+        byte[] data;
+        String rawText;
         try {
-            MDC.put(MDC_USER_ID, String.valueOf(user.getId()));
-
-            log.info("Creating resume for user: {}, file: {}",
-                    user.getId(), resumeUploadDTO.getFile().getOriginalFilename());
-
-            Resume cv = new Resume();
-            cv.setUser(user);
-            cv.setFileName(resumeUploadDTO.getFile().getOriginalFilename());
-            String key = KeyGeneratorUtil.generateKey();
-            cv.setKeyCf(key);
-            byte[] data;
-            String rawText;
-            try {
-                data = fileService.toByteArray(resumeUploadDTO.getFile().getInputStream());
-                rawText = fileService.extractTextFromFile(resumeUploadDTO.getFile().getInputStream());
-                if (rawText == null || rawText.isEmpty()) {
-                    log.info("Standard text extraction yielded empty result for user: {} — falling back to OCR", user.getId());
-                    rawText = fileService.extractTextFromFileOcr(resumeUploadDTO.getFile());
-                }
-                rawText = fileService.cleanText(rawText);
-            } catch (Exception e) {
-                log.warn("File processing failed during resume creation for user: {}", user.getId());
-                throw new RuntimeException(MessageUtils.getMessage("resume.upload.failed"));
+            data = fileService.toByteArray(resumeUploadDTO.getFile().getInputStream());
+            rawText = fileService.extractTextFromFile(resumeUploadDTO.getFile().getInputStream());
+            if (rawText == null || rawText.isEmpty()) {
+                log.info("Standard text extraction yielded empty result for user: {} — falling back to OCR", user.getId());
+                rawText = fileService.extractTextFromFileOcr(resumeUploadDTO.getFile());
             }
-            if (data.length == 0) {
-                log.warn("Empty file uploaded during resume creation for user: {}", user.getId());
-                throw new RuntimeException(MessageUtils.getMessage("message.error"));
-            }
-
-            producer.uploadToCloud(new CloudUploadMessage(data, key, resumeUploadDTO.getFile().getOriginalFilename()));
-            resumeRepository.save(cv);
-            MDC.put(MDC_CV_ID, String.valueOf(cv.getId()));
-
-            producer.processAI(new ResumeParsingMessage(rawText, user.getId(), cv.getId()));
-
-            log.info("Resume created — cv: {}, dispatched cloud upload and AI processing for user: {}",
-                    cv.getId(), user.getId());
-
-            return new ResumeView(cv.getId(), cv.getFileName(), cv.getCreateDate());
-        } finally {
+            rawText = fileService.cleanText(rawText);
+        } catch (Exception e) {
+            log.warn("File processing failed during resume creation for user: {}", user.getId());
+            throw new RuntimeException(MessageUtils.getMessage("resume.upload.failed"));
+        }
+        if (data.length == 0) {
+            log.warn("Empty file uploaded during resume creation for user: {}", user.getId());
+            throw new RuntimeException(MessageUtils.getMessage("message.error"));
+        }
+        // upload to cloud
+        try {
+            cloudStorageService.uploadFile(data, key, resumeUploadDTO.getFile().getOriginalFilename());
+        }catch (Exception e) {
+            log.warn("File processing failed during resume creation for user: {}", user.getId());
+            throw new RuntimeException(MessageUtils.getMessage("resume.upload.failed"));
+        }finally {
             MDC.remove(MDC_USER_ID);
             MDC.remove(MDC_CV_ID);
         }
-    }
+        // save to db
+        resumeRepository.save(cv);
+        MDC.put(MDC_CV_ID, String.valueOf(cv.getId()));
 
-    @Override
-    public void updateResume(long id, ResumeUploadDTO resumeUploadDTO, User user) {
+        // send SSE event
         try {
-            MDC.put(MDC_USER_ID, String.valueOf(user.getId()));
-            MDC.put(MDC_CV_ID, String.valueOf(id));
-
-            log.info("Updating resume: {} for user: {}", id, user.getId());
-
-            Resume cv = findResumeAndAssertOwner(id, user, "resume.edit.forbidden");
-
-            cv.setFileName(resumeUploadDTO.getFile().getOriginalFilename());
-            String key = cv.getKeyCf();
-            byte[] data;
-            try {
-                data = fileService.toByteArray(resumeUploadDTO.getFile().getInputStream());
-            } catch (Exception e) {
-                log.warn("File processing failed during resume update for CV: {}", id);
-                throw new RuntimeException(MessageUtils.getMessage("resume.upload.failed"));
-            }
-            if (data.length == 0) {
-                log.warn("Empty file uploaded during resume update for CV: {}", id);
-                throw new RuntimeException(MessageUtils.getMessage("message.error"));
-            }
-
-            producer.uploadToCloud(new CloudUploadMessage(data, key, resumeUploadDTO.getFile().getOriginalFilename()));
-            resumeRepository.save(cv);
-
-            log.info("Resume updated — cv: {}, dispatched cloud upload for user: {}", id, user.getId());
-        } finally {
-            MDC.remove(MDC_USER_ID);
-            MDC.remove(MDC_CV_ID);
+            sseEmitterService.sendEvent(user.getId(), "resume-process",
+                    SseMessagePayload.builder()
+                            .id(cv.getId())
+                            .status("uploaded")
+                            .message("File uploaded to cloud successfully")
+                            .build());
+        } catch (Exception e) {
+            log.error("Failed to send SSE uploaded event for user: {}, cv: {}", user.getId(), cv.getId(), e);
         }
+
+        // analyze and vectorize resume
+        producer.processAI(new ResumeParsingMessage(rawText, user.getId(), cv.getId()));
+        log.info("Resume created — cv: {}, dispatched cloud upload and AI processing for user: {}",
+                cv.getId(), user.getId());
+
+        return new ResumeView(cv.getId(), cv.getFileName(), cv.getCreateDate());
     }
 
     @Override

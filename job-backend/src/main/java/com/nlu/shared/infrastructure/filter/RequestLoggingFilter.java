@@ -88,19 +88,28 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
                         ? (ContentCachingRequestWrapper) request
                         : new ContentCachingRequestWrapper(request, MAX_BODY_LOG_SIZE);
 
+        // [FIX 1]: Nhận diện SSE linh hoạt và an toàn hơn
+        String acceptHeader = request.getHeader("Accept");
+        boolean isSseRequest = request.getRequestURI().contains("/sse/") ||
+                (acceptHeader != null && acceptHeader.toLowerCase().contains("text/event-stream"));
+
         ContentCachingResponseWrapper wrappedResponse =
-                (response instanceof ContentCachingResponseWrapper)
+                (!isSseRequest && !(response instanceof ContentCachingResponseWrapper))
+                        ? new ContentCachingResponseWrapper(response)
+                        : (response instanceof ContentCachingResponseWrapper)
                         ? (ContentCachingResponseWrapper) response
-                        : new ContentCachingResponseWrapper(response);
+                        : null;
 
         long startTime = System.currentTimeMillis();
+
+        HttpServletResponse effectiveResponse = (wrappedResponse != null) ? wrappedResponse : response;
 
         try {
             // ── 3. Put trace ID into MDC ────────────────────────────────────
             org.slf4j.MDC.put(MDC_TRACE_ID_KEY, traceId);
 
             // ── 4. Echo the trace ID back in the response header ────────────
-            wrappedResponse.setHeader(CORRELATION_HEADER, traceId);
+            effectiveResponse.setHeader(CORRELATION_HEADER, traceId);
 
             // ── 5. Log incoming request summary ─────────────────────────────
             String clientIp = resolveClientIp(wrappedRequest);
@@ -119,41 +128,41 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
             }
 
             // ── 7. Continue the filter chain ────────────────────────────────
-            filterChain.doFilter(wrappedRequest, wrappedResponse);
+            filterChain.doFilter(wrappedRequest, effectiveResponse);
 
         } finally {
-            // ── 8. Log request body (available after chain execution) ───────
+            // ── 8. ALWAYS clear MDC (Làm ĐẦU TIÊN để chống thread pool leak) ──
+            org.slf4j.MDC.clear();
+
+            // [FIX 2]: KIỂM TRA TRẠNG THÁI ASYNC
+            // Nếu Request đang chạy bất đồng bộ (SseEmitter), luồng chính đã xong việc,
+            // tuyệt đối KHÔNG thực hiện các lệnh đóng/flush response ở bên dưới.
+            if (request.isAsyncStarted()) {
+                return;
+            }
+
+            // ── 9. Log request body (chỉ chạy với API đồng bộ) ───────────────
             logRequestBody(wrappedRequest);
 
-            // ── 9. Log response summary ─────────────────────────────────────
+            // ── 10. Log response summary ─────────────────────────────────────
             long duration = System.currentTimeMillis() - startTime;
-            int status = wrappedResponse.getStatus();
+            int status = effectiveResponse.getStatus();
 
             if (status >= 500) {
                 log.error("◄ [{} {}] completed in {}ms with status {}",
-                        wrappedRequest.getMethod(),
-                        wrappedRequest.getRequestURI(),
-                        duration,
-                        status);
+                        wrappedRequest.getMethod(), wrappedRequest.getRequestURI(), duration, status);
             } else if (status >= 400) {
                 log.warn("◄ [{} {}] completed in {}ms with status {}",
-                        wrappedRequest.getMethod(),
-                        wrappedRequest.getRequestURI(),
-                        duration,
-                        status);
+                        wrappedRequest.getMethod(), wrappedRequest.getRequestURI(), duration, status);
             } else {
                 log.info("◄ [{} {}] completed in {}ms with status {}",
-                        wrappedRequest.getMethod(),
-                        wrappedRequest.getRequestURI(),
-                        duration,
-                        status);
+                        wrappedRequest.getMethod(), wrappedRequest.getRequestURI(), duration, status);
             }
 
-            // ── 10. Copy cached body back to the actual response ────────────
-            wrappedResponse.copyBodyToResponse();
-
-            // ── 11. ALWAYS clear MDC (prevents thread-pool leaks) ───────────
-            org.slf4j.MDC.clear();
+            // ── 11. Copy cached body back to the actual response ────────────
+            if (wrappedResponse != null) {
+                wrappedResponse.copyBodyToResponse();
+            }
         }
     }
 

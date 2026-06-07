@@ -71,7 +71,7 @@
             @else { {{ 'cvList.uploadFailed' | t }} }
           </h3>
           <p class="text-slate-500 text-sm">
-            {{ uploadingFile.status === 'analyzing' ? ('cvList.analyzingDesc' | t) : uploadingFile.fileName }}
+            {{ uploadingFile.status === 'analyzing' ? ('cvList.analyzingDesc' | t) : uploadingFile.name }}
           </p>
         </div>
       </div>

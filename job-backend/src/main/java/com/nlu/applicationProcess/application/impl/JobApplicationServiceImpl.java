@@ -7,14 +7,14 @@ import com.nlu.identity.domain.repository.UserRepository;
 import com.nlu.applicationProcess.api.dto.client.ResumeParsingMessage;
 import com.nlu.applicationProcess.api.dto.req.ApplyCvWithExistingRequest;
 import com.nlu.applicationProcess.api.dto.req.ApplyCvWithUploadRequest;
-
 import com.nlu.applicationProcess.api.dto.req.CandidateDTO;
-import com.nlu.shared.api.message.dto.CloudUploadMessage;
+import com.nlu.shared.application.CloudStorageService;
 import com.nlu.shared.domain.exception.BadRequestException;
 import com.nlu.shared.domain.exception.ResourceNotFoundException;
 import com.nlu.shared.infrastructure.message.MessageProducer;
 import com.nlu.applicationProcess.domain.model.JobApplication;
 import com.nlu.applicationProcess.domain.model.Resume;
+import com.nlu.recruitment.domain.model.Job;
 import com.nlu.identity.domain.model.User;
 import com.nlu.applicationProcess.application.JobApplicationService;
 import com.nlu.shared.application.FileService;
@@ -28,7 +28,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -42,6 +41,7 @@ public class JobApplicationServiceImpl implements JobApplicationService {
     private final UserRepository userRepository;
     private final MessageProducer messageProducer;
     private final FileService fileService;
+    private final CloudStorageService cloudStorageService;
 
     private static final String MDC_USER_ID = "userId";
     private static final String MDC_JOB_ID = "jobId";
@@ -58,108 +58,106 @@ public class JobApplicationServiceImpl implements JobApplicationService {
             log.info("Processing job application with existing CV for user: {}, job: {}, cv: {}",
                     user.getId(), request.jobId(), request.existingCvId());
 
-            var currentUser = userRepository.findByEmail_Value(user.getEmail());
-            if (currentUser.isEmpty()) {
-                throw new ResourceNotFoundException(MessageUtils.getMessage("auth.user.not_found"));
-            }
-            var job = jobRepository.findById(request.jobId());
-            if (job.isEmpty()) {
-                throw new ResourceNotFoundException(MessageUtils.getMessage("job.not_found"));
-            }
-            var resume = resumeRepository.findById(request.existingCvId());
-            if (resume.isEmpty()) {
-                throw new ResourceNotFoundException(MessageUtils.getMessage("resume.not_found"));
-            }
-            if (jobApplicationRepository.findByJobAndUser(currentUser.get().getEmail(), request.jobId()).isPresent()) {
-                log.warn("Duplicate application blocked — user: {} already applied to job: {}",
-                        currentUser.get().getId(), request.jobId());
-                throw new BadRequestException(MessageUtils.getMessage("application.already_applied"));
-            }
-            if (resumeRepository.countOwnedByUser(request.existingCvId(), currentUser.get().getEmail()) == 0) {
+            // 1. Common Validation
+            ApplicationContext context = validateAndGetApplicationContext(user.getEmail(), request.jobId());
+
+            // 2. Specific Validation for Existing CV
+            var resume = resumeRepository.findById(request.existingCvId())
+                    .orElseThrow(() -> new ResourceNotFoundException(MessageUtils.getMessage("resume.not_found")));
+
+            if (resumeRepository.countOwnedByUser(request.existingCvId(), context.currentUser().getEmail()) == 0) {
                 log.warn("CV ownership violation — user: {} does not own CV: {}",
-                        currentUser.get().getId(), request.existingCvId());
+                        context.currentUser().getId(), request.existingCvId());
                 throw new BadRequestException(MessageUtils.getMessage("resume.not_owned"));
             }
 
-            JobApplication jobApplication = new JobApplication();
-            jobApplication.setJob(job.get());
-            jobApplication.setResume(resume.get());
-            jobApplication.setUser(currentUser.get());
-            jobApplication.setApplyDate(LocalDateTime.now());
-            jobApplicationRepository.save(jobApplication);
+            // 3. Save Application
+            createAndSaveJobApplication(context.job(), resume, context.currentUser());
 
             log.info("Application completed — user: {} applied to job: {} with existing CV: {}",
-                    currentUser.get().getId(), request.jobId(), request.existingCvId());
+                    context.currentUser().getId(), request.jobId(), request.existingCvId());
 
         } finally {
-            MDC.remove(MDC_USER_ID);
-            MDC.remove(MDC_JOB_ID);
-            MDC.remove(MDC_CV_ID);
+            clearMDC();
         }
     }
 
     @Transactional(rollbackFor = { Exception.class, Throwable.class })
     @Override
-    public void applyWithUploadCv(ApplyCvWithUploadRequest request, User user) throws IOException {
+    public void applyWithUploadCv(ApplyCvWithUploadRequest request, User user) {
         try {
             MDC.put(MDC_USER_ID, String.valueOf(user.getId()));
             MDC.put(MDC_JOB_ID, String.valueOf(request.getJobId()));
 
+            String originalFilename = request.getCvFile().getOriginalFilename();
             log.info("Processing job application with CV upload for user: {}, job: {}, file: {}",
-                    user.getId(), request.getJobId(), request.getCvFile().getOriginalFilename());
+                    user.getId(), request.getJobId(), originalFilename);
 
-            var currentUser = userRepository.findByEmail_Value(user.getEmail());
-            if (currentUser.isEmpty()) {
-                throw new ResourceNotFoundException(MessageUtils.getMessage("auth.user.not_found"));
-            }
-            if (jobApplicationRepository.findByJobAndUser(currentUser.get().getEmail(), request.getJobId()).isPresent()) {
-                log.warn("Duplicate application blocked — user: {} already applied to job: {}",
-                        currentUser.get().getId(), request.getJobId());
-                throw new BadRequestException(MessageUtils.getMessage("application.already_applied"));
-            }
-            var job = jobRepository.findById(request.getJobId());
-            if (job.isEmpty()) {
-                throw new ResourceNotFoundException(MessageUtils.getMessage("job.not_found"));
-            }
-            long activeResumeCount = resumeRepository.countActiveByUserEmail(currentUser.get().getEmail());
+            // 1. Common Validation
+            ApplicationContext context = validateAndGetApplicationContext(user.getEmail(), request.getJobId());
+
+            // 2. Quota Check
+            long activeResumeCount = resumeRepository.countActiveByUserEmail(context.currentUser().getEmail());
             if (activeResumeCount >= 5) {
                 log.warn("Resume quota exceeded — user: {} has {} active resumes (max: 5)",
-                        currentUser.get().getId(), activeResumeCount);
+                        context.currentUser().getId(), activeResumeCount);
                 throw new BadRequestException(MessageUtils.getMessage("resume.max_count"));
             }
 
-            var resume = new Resume();
-            resume.setUser(currentUser.get());
-            resume.setCreateDate(LocalDateTime.now());
+            // 3. Process File (Extract bytes and text)
+            byte[] data;
+            String rawText;
+            try {
+                data = fileService.toByteArray(request.getCvFile().getInputStream());
+                rawText = fileService.extractTextFromFile(request.getCvFile().getInputStream());
 
+                // Optional: Add OCR fallback here if fileService supports it, similar to your createResume logic
+                if (rawText == null || rawText.isEmpty()) {
+                    log.info("Standard text extraction empty, attempting OCR for user: {}", user.getId());
+                    // rawText = fileService.extractTextFromFileOcr(request.getCvFile());
+                }
+                rawText = fileService.cleanText(rawText);
+            } catch (Exception e) {
+                log.error("Failed to read or parse uploaded CV file for user: {}", user.getId(), e);
+                throw new BadRequestException(MessageUtils.getMessage("resume.upload.failed"));
+            }
+
+            if (data.length == 0) {
+                log.warn("Empty file uploaded during resume creation for user: {}", user.getId());
+                throw new BadRequestException(MessageUtils.getMessage("message.error")); // Or a more specific "empty file" message
+            }
+
+            // 4. SYNCHRONOUS Cloud Upload
             String key = KeyGeneratorUtil.generateKey();
-            resume.setKeyCf(key);
-            resume.setFileName(request.getCvFile().getOriginalFilename());
+            try {
+                // Ensure this method in CloudStorageService is a blocking/synchronous call
+                cloudStorageService.uploadFile(data, key, originalFilename);
+                log.info("Successfully uploaded file to Cloudflare R2 for user: {}, key: {}", user.getId(), key);
+            } catch (Exception e) {
+                log.error("Cloud storage upload failed for user: {}. Aborting application.", user.getId(), e);
+                // Throwing here triggers @Transactional rollback. Nothing is saved to DB.
+                throw new RuntimeException("Tải file lên cloud thất bại, vui lòng thử lại sau.");
+            }
 
-            byte[] data = fileService.toByteArray(request.getCvFile().getInputStream());
-            String rawText = fileService.extractTextFromFile(request.getCvFile().getInputStream());
+            // 5. Save Entities (Only executed if upload succeeds)
+            var resume = new Resume();
+            resume.setUser(context.currentUser());
+            resume.setCreateDate(LocalDateTime.now());
+            resume.setKeyCf(key);
+            resume.setFileName(originalFilename);
 
             resumeRepository.save(resume);
             MDC.put(MDC_CV_ID, String.valueOf(resume.getId()));
 
-            messageProducer.uploadToCloud(new CloudUploadMessage(data, key, request.getCvFile().getOriginalFilename()));
-            messageProducer.processAI(new ResumeParsingMessage(rawText, currentUser.get().getId(), resume.getId()));
-            log.info("Dispatched cloud upload and AI processing for CV: {}", resume.getId());
+            createAndSaveJobApplication(context.job(), resume, context.currentUser());
 
-            JobApplication jobApplication = new JobApplication();
-            jobApplication.setJob(job.get());
-            jobApplication.setResume(resume);
-            jobApplication.setUser(currentUser.get());
-            jobApplication.setApplyDate(LocalDateTime.now());
+            // 6. Trigger Asynchronous AI Processing
+            messageProducer.processAI(new ResumeParsingMessage(rawText, context.currentUser().getId(), resume.getId()));
 
-            jobApplicationRepository.save(jobApplication);
-
-            log.info("Application completed — user: {} applied to job: {} with new CV: {}",
-                    currentUser.get().getId(), request.getJobId(), resume.getId());
+            log.info("Application completed — user: {} applied to job: {} with new CV: {}. Dispatched AI processing.",
+                    context.currentUser().getId(), request.getJobId(), resume.getId());
         } finally {
-            MDC.remove(MDC_USER_ID);
-            MDC.remove(MDC_JOB_ID);
-            MDC.remove(MDC_CV_ID);
+            clearMDC();
         }
     }
 
@@ -174,7 +172,44 @@ public class JobApplicationServiceImpl implements JobApplicationService {
 
     @Override
     public Boolean hasApplied(String email, long jobId) {
-        Optional<Long> optionalApply = jobApplicationRepository.findByJobAndUser(email, jobId);
-        return optionalApply.isPresent();
+        return jobApplicationRepository.findByJobAndUser(email, jobId).isPresent();
     }
+
+    // --- Helper Methods ---
+
+    /**
+     * Centralizes common validation for finding user, finding job, and checking duplicate applications.
+     */
+    private ApplicationContext validateAndGetApplicationContext(String email, long jobId) {
+        User currentUser = userRepository.findByEmail_Value(email)
+                .orElseThrow(() -> new ResourceNotFoundException(MessageUtils.getMessage("auth.user.not_found")));
+
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new ResourceNotFoundException(MessageUtils.getMessage("job.not_found")));
+
+        if (jobApplicationRepository.findByJobAndUser(currentUser.getEmail(), jobId).isPresent()) {
+            log.warn("Duplicate application blocked — user: {} already applied to job: {}", currentUser.getId(), jobId);
+            throw new BadRequestException(MessageUtils.getMessage("application.already_applied"));
+        }
+
+        return new ApplicationContext(currentUser, job);
+    }
+
+    private void createAndSaveJobApplication(Job job, Resume resume, User user) {
+        JobApplication jobApplication = new JobApplication();
+        jobApplication.setJob(job);
+        jobApplication.setResume(resume);
+        jobApplication.setUser(user);
+        jobApplication.setApplyDate(LocalDateTime.now());
+        jobApplicationRepository.save(jobApplication);
+    }
+
+    private void clearMDC() {
+        MDC.remove(MDC_USER_ID);
+        MDC.remove(MDC_JOB_ID);
+        MDC.remove(MDC_CV_ID);
+    }
+
+    // Simple record to pass multiple validated entities back from the helper method
+    private record ApplicationContext(User currentUser, Job job) {}
 }
