@@ -49,7 +49,7 @@ public class JobViewMapper {
                 job.getDescription(),
                 job.getAddress(),
                 job.getSalary(),
-                job.getTime(),
+                job.getTime().name(),
                 job.getApplies(),
                 job.getHeadcount()
         );

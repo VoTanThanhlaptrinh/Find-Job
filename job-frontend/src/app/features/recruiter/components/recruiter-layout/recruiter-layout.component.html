@@ -1,0 +1,228 @@
+<div class="bg-re-surface font-body text-re-on-surface antialiased overflow-hidden min-h-screen">
+  <!-- Glowing Background blobs for Atmospheric Precision -->
+  <div
+    class="fixed top-[-10%] right-[-5%] w-[500px] h-[500px] bg-re-primary/5 rounded-full blur-[120px] pointer-events-none"
+  ></div>
+  <div
+    class="fixed bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-re-tertiary/5 rounded-full blur-[100px] pointer-events-none"
+  ></div>
+  
+  <div class="flex h-screen w-full relative z-10">
+    <!-- Desktop Sidebar (NavigationDrawer) -->
+    <aside
+      class="hidden md:flex flex-col py-8 fixed left-0 top-0 h-full w-72 bg-white dark:bg-slate-900 shadow-xl shadow-blue-900/5 z-50 border-none"
+    >
+      <div class="px-8 mb-10">
+        <span class="font-manrope font-extrabold text-2xl text-blue-700">Recruiter Portal</span>
+      </div>
+      <!-- Profile Header Section -->
+      <div class="px-8 mb-8 flex items-start gap-4">
+        <div class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 flex items-center justify-center font-bold text-lg shadow-sm shrink-0">
+          {{ avatarLetter() }}
+        </div>
+        <div class="flex flex-col overflow-hidden">
+          <span class="font-headline font-bold text-re-on-surface truncate" [title]="username()">{{ username() }}</span>
+          <span class="text-xs text-slate-500 font-medium">Recruiter</span>
+          <span
+            class="text-[10px] text-blue-600 font-bold tracking-wider uppercase mt-1"
+            >Talent Acquisition</span
+          >
+        </div>
+      </div>
+      <!-- Nav Links -->
+      <nav class="flex-1 space-y-1">
+        <a
+          class="text-slate-600 dark:text-slate-400 mx-4 py-3 px-6 rounded-full flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/5 transition-all hover:translate-x-1 duration-200 group"
+          routerLink="/recruiter/dashboard"
+          routerLinkActive="!bg-gradient-to-r !from-blue-600 !to-purple-500 !text-white shadow-lg shadow-blue-500/20"
+        >
+          <span class="material-symbols-outlined text-[20px] group-hover:text-blue-600">dashboard</span>
+          <span class="font-inter text-sm font-medium">Overview</span>
+        </a>
+        <a
+          class="text-slate-600 dark:text-slate-400 mx-4 py-3 px-6 rounded-full flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/5 transition-all hover:translate-x-1 duration-200 group"
+          routerLink="/recruiter/jobs"
+          routerLinkActive="!bg-gradient-to-r !from-blue-600 !to-purple-500 !text-white shadow-lg shadow-blue-500/20"
+        >
+          <span class="material-symbols-outlined text-[20px] group-hover:text-blue-600">work</span>
+          <span class="font-inter text-sm font-medium">Jobs</span>
+        </a>
+        <a
+          class="text-slate-600 dark:text-slate-400 mx-4 py-3 px-6 rounded-full flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/5 transition-all hover:translate-x-1 duration-200 group"
+          routerLink="/recruiter/candidates"
+          routerLinkActive="!bg-gradient-to-r !from-blue-600 !to-purple-500 !text-white shadow-lg shadow-blue-500/20"
+        >
+          <span class="material-symbols-outlined text-[20px] group-hover:text-blue-600">group</span>
+          <span class="font-inter text-sm font-medium">Candidates</span>
+        </a>
+        <a
+          class="text-slate-600 dark:text-slate-400 mx-4 py-3 px-6 rounded-full flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/5 transition-all hover:translate-x-1 duration-200 group"
+          routerLink="/recruiter/company-address"
+          routerLinkActive="!bg-gradient-to-r !from-blue-600 !to-purple-500 !text-white shadow-lg shadow-blue-500/20"
+        >
+          <span class="material-symbols-outlined text-[20px] group-hover:text-blue-600">location_on</span>
+          <span class="font-inter text-sm font-medium">Company Address</span>
+        </a>
+      </nav>
+      <!-- Bottom Action -->
+      <div class="mt-auto px-4">
+        <a
+          class="text-slate-400 py-3 px-6 rounded-full flex items-center gap-3 hover:bg-re-error-container/10 hover:text-re-error transition-all duration-200 group cursor-pointer"
+          (click)="onLogout()"
+        >
+          <span class="material-symbols-outlined text-[20px]">logout</span>
+          <span class="font-inter text-sm font-medium">Log out</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Mobile Sidebar Backdrop -->
+    <div
+      *ngIf="isMobileSidebarOpen()"
+      (click)="closeMobileSidebar()"
+      class="md:hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 transition-opacity duration-300"
+    ></div>
+
+    <!-- Mobile Sidebar Drawer -->
+    <aside
+      class="md:hidden fixed left-0 top-0 h-full w-72 bg-white dark:bg-slate-900 shadow-xl z-50 p-6 flex flex-col transition-transform duration-300 ease-in-out"
+      [class.translate-x-0]="isMobileSidebarOpen()"
+      [class.-translate-x-full]="!isMobileSidebarOpen()"
+    >
+      <!-- Logo/Title -->
+      <div class="flex items-center justify-between mb-8">
+        <span class="font-manrope font-extrabold text-2xl text-blue-700">Recruiter Portal</span>
+        <button (click)="closeMobileSidebar()" class="p-1 hover:bg-slate-100 rounded-full">
+          <span class="material-symbols-outlined text-slate-500">close</span>
+        </button>
+      </div>
+      
+      <!-- Profile Header Section -->
+      <div class="mb-8 flex items-start gap-4">
+        <div class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 flex items-center justify-center font-bold text-lg shadow-sm shrink-0">
+          {{ avatarLetter() }}
+        </div>
+        <div class="flex flex-col overflow-hidden">
+          <span class="font-headline font-bold text-re-on-surface truncate" [title]="username()">{{ username() }}</span>
+          <span class="text-xs text-slate-500 font-medium">Recruiter</span>
+          <span class="text-[10px] text-blue-600 font-bold tracking-wider uppercase mt-1">Talent Acquisition</span>
+        </div>
+      </div>
+
+      <!-- Nav Links -->
+      <nav class="flex-1 space-y-1">
+        <a
+          class="text-slate-600 dark:text-slate-400 py-3 px-6 rounded-full flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/5 transition-all duration-200 group"
+          routerLink="/recruiter/dashboard"
+          routerLinkActive="!bg-gradient-to-r !from-blue-600 !to-purple-500 !text-white shadow-lg shadow-blue-500/20"
+          (click)="closeMobileSidebar()"
+        >
+          <span class="material-symbols-outlined text-[20px] group-hover:text-blue-600">dashboard</span>
+          <span class="font-inter text-sm font-medium">Overview</span>
+        </a>
+        <a
+          class="text-slate-600 dark:text-slate-400 py-3 px-6 rounded-full flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/5 transition-all duration-200 group"
+          routerLink="/recruiter/jobs"
+          routerLinkActive="!bg-gradient-to-r !from-blue-600 !to-purple-500 !text-white shadow-lg shadow-blue-500/20"
+          (click)="closeMobileSidebar()"
+        >
+          <span class="material-symbols-outlined text-[20px] group-hover:text-blue-600">work</span>
+          <span class="font-inter text-sm font-medium">Jobs</span>
+        </a>
+        <a
+          class="text-slate-600 dark:text-slate-400 py-3 px-6 rounded-full flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/5 transition-all duration-200 group"
+          routerLink="/recruiter/candidates"
+          routerLinkActive="!bg-gradient-to-r !from-blue-600 !to-purple-500 !text-white shadow-lg shadow-blue-500/20"
+          (click)="closeMobileSidebar()"
+        >
+          <span class="material-symbols-outlined text-[20px] group-hover:text-blue-600">group</span>
+          <span class="font-inter text-sm font-medium">Candidates</span>
+        </a>
+        <a
+          class="text-slate-600 dark:text-slate-400 py-3 px-6 rounded-full flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/5 transition-all duration-200 group"
+          routerLink="/recruiter/company-address"
+          routerLinkActive="!bg-gradient-to-r !from-blue-600 !to-purple-500 !text-white shadow-lg shadow-blue-500/20"
+          (click)="closeMobileSidebar()"
+        >
+          <span class="material-symbols-outlined text-[20px] group-hover:text-blue-600">location_on</span>
+          <span class="font-inter text-sm font-medium">Company Address</span>
+        </a>
+      </nav>
+
+      <!-- Bottom Action -->
+      <div class="mt-auto">
+        <a
+          class="text-slate-400 py-3 px-6 rounded-full flex items-center gap-3 hover:bg-re-error-container/10 hover:text-re-error transition-all duration-200 cursor-pointer"
+          (click)="onLogout()"
+        >
+          <span class="material-symbols-outlined text-[20px]">logout</span>
+          <span class="font-inter text-sm font-medium">Log out</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content Canvas -->
+    <div role="main" class="flex-1 md:ml-72 flex flex-col min-h-screen overflow-hidden">
+      <!-- TopAppBar -->
+      <div role="banner"
+        class="w-full sticky top-0 z-40 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl shadow-sm shadow-blue-500/5 flex items-center justify-between px-8 h-20"
+      >
+        <div class="flex items-center gap-4">
+          <button
+            (click)="toggleMobileSidebar()"
+            class="md:hidden p-2 rounded-full hover:bg-slate-100 transition-colors"
+          >
+            <span class="material-symbols-outlined">menu</span>
+          </button>
+          <h1
+            class="font-manrope font-bold text-blue-600 dark:text-blue-400 text-xl tracking-tight"
+          >
+            {{ pageTitle() }}
+          </h1>
+        </div>
+        <div class="flex items-center gap-6">
+          <div
+            class="hidden lg:flex items-center bg-re-surface-container-low px-4 py-2 rounded-full gap-2"
+          >
+            <span class="material-symbols-outlined text-slate-400 text-[20px]"
+              >search</span
+            >
+            <input
+              class="bg-transparent border-none focus:ring-0 text-sm w-48 font-inter"
+              placeholder="Search candidates..."
+              type="text"
+            />
+          </div>
+          <button
+            class="relative p-2 rounded-full hover:bg-slate-100 transition-colors"
+          >
+            <span class="material-symbols-outlined text-slate-600"
+              >notifications</span
+            >
+            <span
+              class="absolute top-2 right-2 w-2 h-2 bg-re-error rounded-full"
+            ></span>
+          </button>
+          <div class="flex items-center gap-3 pl-4 border-l border-slate-100">
+            <div class="flex flex-col items-end hidden sm:flex">
+              <span class="text-sm font-bold font-headline"
+                >Recruiter Portal</span
+              >
+              <span class="text-[10px] text-slate-400 font-medium truncate max-w-[120px]" [title]="username()"
+                >{{ username() }}</span
+              >
+            </div>
+            <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 flex items-center justify-center font-bold shadow-sm ring-2 ring-white">
+              {{ avatarLetter() }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scrollable Content Area -->
+      <div class="flex-1 overflow-y-auto">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</div>

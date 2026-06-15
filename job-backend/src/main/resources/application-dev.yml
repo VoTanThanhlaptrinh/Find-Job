@@ -36,9 +36,9 @@ application:
         - JobList Team
   config:
     redis:
-      host-name: 127.0.0.1
-      username:
-      port: 6379
+      host-name: ${REDIS_HOST}
+      username: ${REDIS_USERNAME}
+      port: ${REDIS_PORT}
       password: ${REDIS_PASSWORD}
   ocr:
     api-key: ${OCR_API_KEY}

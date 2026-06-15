@@ -2,92 +2,41 @@
   <section class="max-w-6xl mx-auto space-y-6">
     <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-2xl md:text-3xl font-bold">Danh sach tin tuyen dung</h1>
+        <h1 class="text-2xl md:text-3xl font-bold">{{ 'recruiterJobList.title' | t }}</h1>
         <p class="text-re-on-surface-variant mt-1">
-          Tong so tin dang co: <span class="font-semibold">{{ totalPostedJobs }}</span>
+          {{ 'recruiterJobList.totalPostedJobs' | t }}: <span class="font-semibold">{{ totalPostedJobs }}</span>
         </p>
       </div>
 
       <a
-        class="inline-flex items-center gap-2 bg-re-primary text-re-on-primary px-4 py-2 re-rounded-full font-semibold"
+        class="inline-flex items-center gap-2 bg-re-primary text-re-on-primary px-4 py-2 rounded-full font-semibold"
         routerLink="/recruiter/jobs/post-job"
       >
         <span class="material-symbols-outlined">add</span>
-        Tao tin moi
+        {{ 'recruiterJobList.postJob' | t }}
       </a>
     </header>
 
     <div
       *ngIf="isLoading"
-      class="bg-re-surface-container-low p-5 re-rounded-xl text-re-on-surface-variant"
+      class="bg-re-surface-container-low p-5 rounded-xl text-re-on-surface-variant"
     >
-      Dang tai danh sach tin...
+      {{ 'recruiterJobList.loading' | t }}
     </div>
 
     <div
       *ngIf="!isLoading && jobs.length === 0"
-      class="bg-re-surface-container-low p-6 re-rounded-xl text-re-on-surface-variant"
+      class="bg-re-surface-container-low p-6 rounded-xl text-re-on-surface-variant"
     >
-      Chua co tin tuyen dung nao.
+      {{ 'recruiterJobList.empty' | t }}
     </div>
 
-    <div *ngIf="!isLoading && jobs.length > 0" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <article
+    <div *ngIf="!isLoading && jobs.length > 0" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <app-hirer-job-card
         *ngFor="let job of jobs; trackBy: trackByJob"
-        class="bg-re-surface-container-lowest border border-re-outline-variant/20 p-5 re-rounded-2xl space-y-4"
-      >
-        <div class="flex items-start justify-between gap-4">
-          <div class="space-y-1">
-            <h2 class="font-semibold text-lg leading-snug">{{ job.title }}</h2>
-            <p class="text-sm text-re-on-surface-variant">{{ job.address || 'Dang cap nhat dia diem' }}</p>
-          </div>
-          <span class="text-xs font-semibold px-2 py-1 re-rounded-full" [ngClass]="statusClass(job.status)">
-            {{ formatStatus(job.status) }}
-          </span>
-        </div>
-
-        <dl class="grid grid-cols-2 gap-3 text-sm">
-          <div class="bg-re-surface-container p-3 re-rounded-xl">
-            <dt class="text-re-on-surface-variant">Luong</dt>
-            <dd class="font-semibold">{{ job.salary || 'Dang cap nhat' }}</dd>
-          </div>
-          <div class="bg-re-surface-container p-3 re-rounded-xl">
-            <dt class="text-re-on-surface-variant">Hinh thuc</dt>
-            <dd class="font-semibold">{{ job.time || 'Dang cap nhat' }}</dd>
-          </div>
-          <div class="bg-re-surface-container p-3 re-rounded-xl">
-            <dt class="text-re-on-surface-variant">Ung vien</dt>
-            <dd class="font-semibold">{{ job.applies }}</dd>
-          </div>
-          <div class="bg-re-surface-container p-3 re-rounded-xl">
-            <dt class="text-re-on-surface-variant">Chi tieu</dt>
-            <dd class="font-semibold">{{ job.headcount }}</dd>
-          </div>
-        </dl>
-
-        <div class="flex flex-wrap gap-2 pt-2 border-t border-re-outline-variant/20">
-          <a
-            class="px-3 py-2 text-sm bg-re-primary-fixed text-re-on-primary-fixed re-rounded-full"
-            [routerLink]="['/recruiter/jobs/detail', job.id]"
-          >
-            Chi tiet
-          </a>
-          <a
-            class="px-3 py-2 text-sm bg-re-secondary-fixed text-re-on-secondary-fixed re-rounded-full"
-            [routerLink]="['/recruiter/candidates']"
-            [queryParams]="{ jobId: job.id }"
-          >
-            Xem ung vien
-          </a>
-          <button
-            type="button"
-            class="px-3 py-2 text-sm bg-re-error-fixed text-re-on-error-fixed re-rounded-full"
-            (click)="deleteJob(job.id)"
-          >
-            Xoa
-          </button>
-        </div>
-      </article>
+        [job]="job"
+        (delete)="deleteJob($event)"
+      ></app-hirer-job-card>
     </div>
 
     <footer
@@ -95,10 +44,10 @@
       class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between pt-2"
     >
       <div class="flex items-center gap-2 text-sm">
-        <label for="job-page-size">So dong/trang</label>
+        <label for="job-page-size">{{ 'pagination.rowsPerPage' | t }}</label>
         <select
           id="job-page-size"
-          class="bg-re-surface-container-low border border-re-outline-variant/20 re-rounded-lg px-2 py-1"
+          class="bg-re-surface-container-low border border-re-outline-variant/20 rounded-lg px-2 py-1"
           [value]="currentPageSize"
           (change)="onPageSizeChange($event)"
         >
@@ -109,17 +58,17 @@
       <div class="flex items-center gap-2">
         <button
           type="button"
-          class="px-3 py-1.5 re-rounded-lg border border-re-outline-variant/30 disabled:opacity-40"
+          class="px-3 py-1.5 rounded-lg border border-re-outline-variant/30 disabled:opacity-40"
           [disabled]="!canGoPrev"
           (click)="goPrevPage()"
         >
-          Truoc
+          {{ 'pagination.previous' | t }}
         </button>
 
         <button
           type="button"
           *ngFor="let page of pageButtons"
-          class="px-3 py-1.5 re-rounded-lg border border-re-outline-variant/30"
+          class="px-3 py-1.5 rounded-lg border border-re-outline-variant/30"
           [class.bg-re-primary]="page === currentPage"
           [class.text-re-on-primary]="page === currentPage"
           (click)="goToPage(page)"
@@ -129,13 +78,13 @@
 
         <button
           type="button"
-          class="px-3 py-1.5 re-rounded-lg border border-re-outline-variant/30 disabled:opacity-40"
+          class="px-3 py-1.5 rounded-lg border border-re-outline-variant/30 disabled:opacity-40"
           [disabled]="!canGoNext"
           (click)="goNextPage()"
         >
-          Sau
+          {{ 'pagination.next' | t }}
         </button>
       </div>
     </footer>
   </section>
-</main>
+</main>

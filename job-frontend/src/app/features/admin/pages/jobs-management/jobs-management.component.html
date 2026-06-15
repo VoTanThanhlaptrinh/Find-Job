@@ -9,11 +9,11 @@
         <input
           type="text"
           placeholder="Tim job..."
-          class="w-full md:w-80 bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2"
+          class="w-full md:w-80 bg-ad-surface-container-low border border-ad-outline-variant/20 rounded-xl px-3 py-2"
           (input)="onSearch($event)"
         />
         <select
-          class="px-3 py-2 bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl"
+          class="px-3 py-2 bg-ad-surface-container-low border border-ad-outline-variant/20 rounded-xl"
           [value]="selectedCategory"
           (change)="onCategoryChange($event)"
           title="Category"
@@ -26,7 +26,7 @@
           <option value="marketing">marketing</option>
         </select>
         <select
-          class="px-3 py-2 bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl"
+          class="px-3 py-2 bg-ad-surface-container-low border border-ad-outline-variant/20 rounded-xl"
           [value]="selectedStatus"
           (change)="onStatusFilterChange($event)"
           title="Status"
@@ -41,7 +41,7 @@
       </div>
     </header>
 
-    <section class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-5 ad-rounded-xl">
+    <section class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-5 rounded-xl">
       <h2 class="text-lg font-semibold mb-4">Create Job</h2>
       <form [formGroup]="createJobForm" (ngSubmit)="submitCreateJob()" class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
@@ -50,7 +50,7 @@
             id="jobTitle"
             type="text"
             formControlName="title"
-            class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2"
+            class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 rounded-xl px-3 py-2"
             placeholder="Senior Backend Engineer"
           />
           <p *ngIf="isCreateFieldInvalid('title')" class="mt-1 text-xs text-red-600">Title is required.</p>
@@ -62,7 +62,7 @@
             id="jobCompanyId"
             type="text"
             formControlName="companyId"
-            class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2"
+            class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 rounded-xl px-3 py-2"
             placeholder="cmp-001"
           />
           <p *ngIf="isCreateFieldInvalid('companyId')" class="mt-1 text-xs text-red-600">Company ID is required.</p>
@@ -74,7 +74,7 @@
             id="jobCategory"
             type="text"
             formControlName="category"
-            class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2"
+            class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 rounded-xl px-3 py-2"
             placeholder="Engineering"
           />
           <p *ngIf="isCreateFieldInvalid('category')" class="mt-1 text-xs text-red-600">Category is required.</p>
@@ -86,7 +86,7 @@
             id="jobLocation"
             type="text"
             formControlName="location"
-            class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2"
+            class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 rounded-xl px-3 py-2"
             placeholder="Ho Chi Minh"
           />
           <p *ngIf="isCreateFieldInvalid('location')" class="mt-1 text-xs text-red-600">Location is required.</p>
@@ -98,7 +98,7 @@
             id="jobExpiryDate"
             type="datetime-local"
             formControlName="expiryDate"
-            class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2"
+            class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 rounded-xl px-3 py-2"
           />
           <p *ngIf="isCreateFieldInvalid('expiryDate')" class="mt-1 text-xs text-red-600">Expiry date is required.</p>
         </div>
@@ -109,7 +109,7 @@
             id="jobDescription"
             rows="4"
             formControlName="description"
-            class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2"
+            class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 rounded-xl px-3 py-2"
             placeholder="Describe role scope, requirements, and benefits."
           ></textarea>
           <p *ngIf="isCreateFieldInvalid('description')" class="mt-1 text-xs text-red-600">Description is required.</p>
@@ -118,7 +118,7 @@
         <div class="md:col-span-2 flex justify-end">
           <button
             type="submit"
-            class="px-4 py-2 bg-ad-primary text-ad-on-primary ad-rounded-xl text-sm font-medium disabled:opacity-60"
+            class="px-4 py-2 bg-ad-primary text-ad-on-primary rounded-xl text-sm font-medium disabled:opacity-60"
             [disabled]="isCreating"
           >
             {{ isCreating ? 'Creating...' : 'Create Job' }}
@@ -127,29 +127,29 @@
       </form>
     </section>
 
-    <div *ngIf="isLoadingMetrics" class="bg-ad-surface-container-low p-4 ad-rounded-xl">Dang tai metrics...</div>
+    <div *ngIf="isLoadingMetrics" class="bg-ad-surface-container-low p-4 rounded-xl">Dang tai metrics...</div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4" *ngIf="metrics as data">
-      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl">
+      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 rounded-xl">
         <p class="text-sm text-ad-on-surface-variant">Live postings</p>
         <p class="text-2xl font-bold mt-1">{{ data.livePostings }}</p>
         <p class="text-xs mt-1 text-ad-on-surface-variant">+{{ data.livePostingsGrowthPct }}%</p>
       </article>
-      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl">
+      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 rounded-xl">
         <p class="text-sm text-ad-on-surface-variant">Pending review</p>
         <p class="text-2xl font-bold mt-1">{{ data.pendingReview }}</p>
       </article>
-      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl">
+      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 rounded-xl">
         <p class="text-sm text-ad-on-surface-variant">Applicants</p>
         <p class="text-2xl font-bold mt-1">{{ data.totalApplicants }}</p>
       </article>
-      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl sm:col-span-2">
+      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 rounded-xl sm:col-span-2">
         <p class="text-sm text-ad-on-surface-variant">Avg time to hire</p>
         <p class="text-2xl font-bold mt-1">{{ data.avgTimeToHireDays }} days</p>
       </article>
     </div>
 
-    <section class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl">
+    <section class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 rounded-xl">
       <form [formGroup]="bulkActionForm" (ngSubmit)="submitBulkAction()" class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div class="text-sm text-ad-on-surface-variant">
           Selected jobs: <span class="font-semibold text-ad-on-surface">{{ selectedJobsCount }}</span>
@@ -159,7 +159,7 @@
           <select
             id="bulkAction"
             formControlName="action"
-            class="px-3 py-2 border border-ad-outline-variant/30 ad-rounded-lg bg-ad-surface-container-low"
+            class="px-3 py-2 border border-ad-outline-variant/30 rounded-lg bg-ad-surface-container-low"
           >
             <option value="activate">activate</option>
             <option value="suspend">suspend</option>
@@ -167,7 +167,7 @@
           </select>
           <button
             type="submit"
-            class="px-3 py-2 ad-rounded-lg bg-ad-primary text-ad-on-primary text-sm disabled:opacity-40"
+            class="px-3 py-2 rounded-lg bg-ad-primary text-ad-on-primary text-sm disabled:opacity-40"
             [disabled]="selectedJobsCount === 0"
           >
             Apply
@@ -176,7 +176,7 @@
       </form>
     </section>
 
-    <section class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 ad-rounded-xl overflow-hidden">
+    <section class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 rounded-xl overflow-hidden">
       <div *ngIf="isLoadingList" class="p-4">Dang tai danh sach jobs...</div>
       <div *ngIf="!isLoadingList && jobs.length === 0" class="p-4 text-ad-on-surface-variant">Khong co du lieu jobs.</div>
 
@@ -225,7 +225,7 @@
                 <div class="inline-flex items-center gap-2">
                     <select
                       #statusSelect
-                      class="px-2 py-1 border border-ad-outline-variant/30 ad-rounded-lg"
+                      class="px-2 py-1 border border-ad-outline-variant/30 rounded-lg"
                       aria-label="Job status"
                       title="Job status"
                       [value]="job.status"
@@ -237,7 +237,7 @@
                   </select>
                   <button
                     type="button"
-                    class="px-2 py-1 ad-rounded-lg bg-ad-primary text-ad-on-primary text-xs disabled:opacity-40"
+                    class="px-2 py-1 rounded-lg bg-ad-primary text-ad-on-primary text-xs disabled:opacity-40"
                     [disabled]="updatingStatusJobId === job.id"
                     (click)="updateStatus(job, statusSelect.value)"
                   >
@@ -255,7 +255,7 @@
         <div class="space-x-2">
           <button
             type="button"
-            class="px-3 py-1.5 ad-rounded-lg border border-ad-outline-variant/30 disabled:opacity-40"
+            class="px-3 py-1.5 rounded-lg border border-ad-outline-variant/30 disabled:opacity-40"
             [disabled]="currentPage <= 1"
             (click)="goPrevPage()"
           >
@@ -263,7 +263,7 @@
           </button>
           <button
             type="button"
-            class="px-3 py-1.5 ad-rounded-lg border border-ad-outline-variant/30 disabled:opacity-40"
+            class="px-3 py-1.5 rounded-lg border border-ad-outline-variant/30 disabled:opacity-40"
             [disabled]="currentPage >= totalPages"
             (click)="goNextPage()"
           >

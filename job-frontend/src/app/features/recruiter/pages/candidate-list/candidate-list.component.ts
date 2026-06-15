@@ -13,10 +13,12 @@ import { RecruiterJobsService } from '../../services/recruiter-jobs.service';
 import { RecruiterResumeService } from '../../services/recruiter-resume.service';
 import { take } from 'rxjs';
 
+import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
+
 @Component({
   selector: 'app-candidate-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   templateUrl: './candidate-list.component.html',
   styleUrl: './candidate-list.component.css'
 })

@@ -1,5 +1,6 @@
 package com.nlu.recruitment.api.dto;
 
+import com.nlu.recruitment.domain.vo.EmploymentType; // Import thêm dòng này
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -11,7 +12,7 @@ public class JobResponse {
     private final String description;
     private final String address;
     private final String salary;
-    private final String time;
-    private final int applies;
-    private final int headcount;
+    private final EmploymentType time; // Đổi từ String -> EmploymentType
+    private final Integer applies;     // Đổi từ int -> Integer
+    private final Integer headcount;   // Đổi từ int -> Integer
 }

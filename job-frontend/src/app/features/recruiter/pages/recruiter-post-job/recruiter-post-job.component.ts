@@ -12,12 +12,17 @@ import { QuillModule } from 'ngx-quill';
 import { CommonModule } from '@angular/common';
 import { NotifyMessageService } from '../../../../core/services/notify-message.service';
 import { RecruiterJobsService } from '../../services/recruiter-jobs.service';
+import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
+
 @Component({
   selector: 'app-post-job',
-  imports: [FormsModule
-    , QuillModule
-    , ReactiveFormsModule
-    , CommonModule],
+  imports: [
+    FormsModule,
+    QuillModule,
+    ReactiveFormsModule,
+    CommonModule,
+    TranslatePipe
+  ],
   templateUrl: './recruiter-post-job.component.html',
   styleUrl: './recruiter-post-job.component.css'
 })

@@ -1,418 +1,263 @@
-<main class="bg-re-surface font-body text-re-on-surface antialiased overflow-hidden">
-  <!-- Glowing Background blobs for Atmospheric Precision -->
+<div class="p-8 space-y-8">
+  <!-- Main Content Container (Level 2: Cards/Focus) -->
   <div
-    class="fixed top-[-10%] right-[-5%] w-[500px] h-[500px] bg-re-primary/5 re-rounded-full blur-[120px] pointer-events-none"
-  ></div>
-  <div
-    class="fixed bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-re-tertiary/5 re-rounded-full blur-[100px] pointer-events-none"
-  ></div>
-  <div class="flex h-screen w-full relative z-10">
-    <!-- NavigationDrawer Implementation -->
-    <aside
-      class="hidden md:flex flex-col py-8 fixed left-0 top-0 h-full w-72 bg-white dark:bg-slate-900 shadow-xl shadow-blue-900/5 z-50 border-none"
-    >
-      <div class="px-8 mb-10">
-        <span class="font-manrope font-extrabold text-2xl text-blue-700"
-          >Recruiter Portal</span
-        >
-      </div>
-      <!-- Profile Header Section -->
-      <div class="px-8 mb-8 flex items-start gap-4">
-        <img title="img"
-          class="w-12 h-12 re-rounded-xl object-cover bg-re-surface-container shadow-sm"
-          data-alt="Professional headshot of a senior recruiter in a minimalist office setting with soft natural window lighting"
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhpMhlkR3Jx8rgNlojy5hzwuif-RVZSsydmdM3py1jNXH7Lt1zSCJWQclx01ID5zKgdr5UcmWfGC8dAEjblPSgaT63TnUIi1uaOZyiQ3t5QBPtOrYVvRSQeS2LJa2Zw1CxXk37dholzNVldp8gmOU2Rhw-e_DIWchn_weDoyDoK8z7F5cwBfoc5HObDTju1kktVHgYXPOwUF-m9GuB7RJLEy83CBG-CBZ2CCuEki7F7FBqAZSTrBUAMcJqlhyk3VCCV-8vDfFfe1s"
-        />
-        <div class="flex flex-col">
-          <span class="font-headline font-bold text-re-on-surface"
-            >Alex Sterling</span
-          >
-          <span class="text-xs text-slate-500 font-medium"
-            >Senior Recruiter</span
-          >
-          <span
-            class="text-[10px] text-blue-600 font-bold tracking-wider uppercase mt-1"
-            >Talent Acquisition</span
-          >
-        </div>
-      </div>
-      <!-- Nav Links -->
-      <nav class="flex-1 space-y-1">
-        <!-- Active Item: Overview -->
-        <a
-          class="bg-gradient-to-r from-blue-600 to-purple-500 text-white re-rounded-full mx-4 py-3 px-6 shadow-lg shadow-blue-500/20 flex items-center gap-3 transition-all hover:translate-x-1 duration-200"
-          href="#"
-          routerLink="/recruiter/dashboard"
-        >
-          <span class="material-symbols-outlined text-[20px]">dashboard</span>
-          <span class="font-inter text-sm font-medium">Overview</span>
-        </a>
-        <a
-          class="text-slate-600 dark:text-slate-400 mx-4 py-3 px-6 re-rounded-full flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/5 transition-all hover:translate-x-1 duration-200 group"
-          href="#"
-          routerLink="/recruiter/jobs"
-        >
-          <span
-            class="material-symbols-outlined text-[20px] group-hover:text-blue-600"
-            >work</span
-          >
-          <span class="font-inter text-sm font-medium">Jobs</span>
-        </a>
-        <a
-          class="text-slate-600 dark:text-slate-400 mx-4 py-3 px-6 re-rounded-full flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/5 transition-all hover:translate-x-1 duration-200 group"
-          href="#"
-          routerLink="/recruiter/candidates"
-        >
-          <span
-            class="material-symbols-outlined text-[20px] group-hover:text-blue-600"
-            >group</span
-          >
-          <span class="font-inter text-sm font-medium">Candidates</span>
-        </a>
-        <a
-          class="text-slate-600 dark:text-slate-400 mx-4 py-3 px-6 re-rounded-full flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/5 transition-all hover:translate-x-1 duration-200 group"
-          href="#"
-          routerLink="/recruiter/company-address"
-        >
-          <span
-            class="material-symbols-outlined text-[20px] group-hover:text-blue-600"
-            >location_on</span
-          >
-          <span class="font-inter text-sm font-medium">Company Address</span>
-        </a>
-      </nav>
-      <!-- Bottom Action -->
-      <div class="mt-auto px-4">
-        <a
-          class="text-slate-400 py-3 px-6 re-rounded-full flex items-center gap-3 hover:bg-re-error-container/10 hover:text-re-error transition-all duration-200 group"
-          (click)="onLogout()"
-        >
-          <span class="material-symbols-outlined text-[20px]">logout</span>
-          <span class="font-inter text-sm font-medium">Log out</span>
-        </a>
-      </div>
-    </aside>
-    <!-- Main Content Canvas -->
-    <div role="main" class="flex-1 md:ml-72 flex flex-col min-h-screen">
-      <!-- TopAppBar -->
-      <div role="banner"
-        class="w-full sticky top-0 z-40 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl shadow-sm shadow-blue-500/5 flex items-center justify-between px-8 h-20"
-      >
-        <div class="flex items-center gap-4">
-          <button
-            class="md:hidden p-2 re-rounded-full hover:bg-slate-100 transition-colors"
-          >
-            <span class="material-symbols-outlined">menu</span>
-          </button>
-          <h1
-            class="font-manrope font-bold text-blue-600 dark:text-blue-400 text-xl tracking-tight"
-          >
-            Overview
-          </h1>
-        </div>
-        <div class="flex items-center gap-6">
-          <div
-            class="hidden lg:flex items-center bg-re-surface-container-low px-4 py-2 re-rounded-full gap-2"
-          >
-            <span class="material-symbols-outlined text-slate-400 text-[20px]"
-              >search</span
-            >
-            <input
-              class="bg-transparent border-none focus:ring-0 text-sm w-48 font-inter"
-              placeholder="Search candidates..."
-              type="text"
-            />
-          </div>
-          <button
-            class="relative p-2 re-rounded-full hover:bg-slate-100 transition-colors"
-          >
-            <span class="material-symbols-outlined text-slate-600"
-              >notifications</span
-            >
-            <span
-              class="absolute top-2 right-2 w-2 h-2 bg-re-error re-rounded-full"
-            ></span>
-          </button>
-          <div class="flex items-center gap-3 pl-4 border-l border-slate-100">
-            <div class="flex flex-col items-end hidden sm:flex">
-              <span class="text-sm font-bold font-headline"
-                >Recruiter Portal</span
-              >
-              <span class="text-[10px] text-slate-400 font-medium"
-                >Alex S.</span
-              >
-            </div>
-            <img title="img"
-              class="w-10 h-10 re-rounded-full object-cover shadow-sm ring-2 ring-white"
-              data-alt="Close up of a professional woman with a friendly smile, studio portrait"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdgMKZjozMyLQXEdaOOZFO9ngiQ84mWo62VyWBEZbzU_HaT6rJgSxp9-i-vihqdAOETtlNBArYUjkiu5-vWr7SK0KxgLL9coWgKdMI9CKsDngLqcKOQkqoIHfSimj1gmQLxKDrfMPg5T_JmcpFrkv9V0ih3O6FaIyu1Rzp2RYkw41SKN2me7XoiShfS7edI0Xx_EAnayJ3NPwTI19RAG14ZBlKiDxAuicwVWBXOrmh6uKkBA99XZpAveH2ClvFMfAeBqfdW6PMw08"
-            />
-          </div>
-        </div>
-      </div>
-      <!-- Scrollable Content Area -->
-      <div class="flex-1 p-8 overflow-y-auto space-y-8">
-        <!-- Main Content Container (Level 2: Cards/Focus) -->
+    class="bg-re-surface-container-lowest rounded-[1.5rem] p-8 shadow-sm shadow-blue-900/5 min-h-[calc(100vh-12rem)]"
+  >
+    <!-- Bento Grid Dashboard Sections -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <!-- Welcome Hero Section -->
+      <div class="lg:col-span-8 space-y-8">
         <div
-          class="bg-re-surface-container-lowest re-rounded-[1.5rem] p-8 shadow-sm shadow-blue-900/5 min-h-[calc(100vh-12rem)]"
+          class="relative overflow-hidden rounded-[1.5rem] p-10 bg-gradient-to-br from-blue-600 to-re-tertiary text-white h-[280px] flex flex-col justify-end"
         >
-          <!-- Bento Grid Dashboard Sections -->
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <!-- Welcome Hero Section -->
-            <div class="lg:col-span-8 space-y-8">
-              <div
-                class="relative overflow-hidden re-rounded-[1.5rem] p-10 bg-gradient-to-br from-blue-600 to-re-tertiary text-white h-[280px] flex flex-col justify-end"
-              >
-                <div
-                  class="absolute top-[-20%] right-[-10%] w-[400px] h-[400px] bg-white/10 re-rounded-full blur-[80px]"
-                ></div>
-                <h2
-                  class="text-4xl font-manrope font-extrabold mb-2 relative z-10"
-                >
-                  Good morning, Alex.
-                </h2>
-                <p
-                  class="text-blue-100 font-inter text-lg max-w-md relative z-10 leading-relaxed"
-                >
-                  You have 12 new candidate applications to review across 4
-                  active job postings.
-                </p>
-                <div class="mt-6 flex gap-4 relative z-10">
-                  <button
-                    class="bg-white text-blue-600 px-6 py-2.5 re-rounded-full font-bold text-sm shadow-xl shadow-blue-900/20 active:scale-95 transition-transform"
+          <div
+            class="absolute top-[-20%] right-[-10%] w-[400px] h-[400px] bg-white/10 rounded-full blur-[80px]"
+          ></div>
+          <h2
+            class="text-4xl font-manrope font-extrabold mb-2 relative z-10"
+          >
+            Good morning, Alex.
+          </h2>
+          <p
+            class="text-blue-100 font-inter text-lg max-w-md relative z-10 leading-relaxed"
+          >
+            You have 12 new candidate applications to review across 4
+            active job postings.
+          </p>
+          <div class="mt-6 flex gap-4 relative z-10">
+            <button
+              class="bg-white text-blue-600 px-6 py-2.5 rounded-full font-bold text-sm shadow-xl shadow-blue-900/20 active:scale-95 transition-transform"
+            >
+              Post New Job
+            </button>
+            <button
+              class="bg-white/20 backdrop-blur-md text-white px-6 py-2.5 rounded-full font-bold text-sm hover:bg-white/30 active:scale-95 transition-transform"
+            >
+              View Reports
+            </button>
+          </div>
+        </div>
+        <!-- Dashboard Stats Row -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <div
+            class="bg-re-surface-container-low p-6 rounded-[1.5rem] transition-all hover:shadow-md"
+          >
+            <span
+              class="material-symbols-outlined text-blue-600 mb-4 p-3 bg-white rounded-2xl shadow-sm"
+              >group</span
+            >
+            <div
+              class="text-3xl font-manrope font-extrabold text-re-on-surface"
+            >
+              1,284
+            </div>
+            <div
+              class="text-xs text-slate-500 font-bold uppercase tracking-wider mt-1"
+            >
+              Total Candidates
+            </div>
+          </div>
+          <div
+            class="bg-re-surface-container-low p-6 rounded-[1.5rem] transition-all hover:shadow-md"
+          >
+            <span
+              class="material-symbols-outlined text-re-tertiary-container mb-4 p-3 bg-white rounded-2xl shadow-sm"
+              >schedule</span
+            >
+            <div
+              class="text-3xl font-manrope font-extrabold text-re-on-surface"
+            >
+              42
+            </div>
+            <div
+              class="text-xs text-slate-500 font-bold uppercase tracking-wider mt-1"
+            >
+              Interviews Set
+            </div>
+          </div>
+          <div
+            class="bg-re-surface-container-low p-6 rounded-[1.5rem] transition-all hover:shadow-md"
+          >
+            <span
+              class="material-symbols-outlined text-re-secondary mb-4 p-3 bg-white rounded-2xl shadow-sm"
+              >verified</span
+            >
+            <div
+              class="text-3xl font-manrope font-extrabold text-re-on-surface"
+            >
+              18
+            </div>
+            <div
+              class="text-xs text-slate-500 font-bold uppercase tracking-wider mt-1"
+            >
+              Recent Hires
+            </div>
+          </div>
+        </div>
+        <!-- Recruiter Pipeline Pills -->
+        <div class="space-y-4 pt-4">
+          <h3 class="font-headline font-bold text-lg text-re-on-surface">
+            Hiring Pipeline Focus
+          </h3>
+          <div class="space-y-4">
+            <div class="flex items-center justify-between group">
+              <div class="flex-1">
+                <div class="flex justify-between mb-2">
+                  <span class="text-sm font-semibold"
+                    >Senior UX Designer</span
                   >
-                    Post New Job
-                  </button>
-                  <button
-                    class="bg-white/20 backdrop-blur-md text-white px-6 py-2.5 re-rounded-full font-bold text-sm hover:bg-white/30 active:scale-95 transition-transform"
+                  <span class="text-sm font-bold text-blue-600"
+                    >85% Filled</span
                   >
-                    View Reports
-                  </button>
                 </div>
-              </div>
-              <!-- Dashboard Stats Row -->
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 <div
-                  class="bg-re-surface-container-low p-6 re-rounded-[1.5rem] transition-all hover:shadow-md"
+                  class="h-3 w-full bg-slate-100 rounded-full overflow-hidden"
                 >
-                  <span
-                    class="material-symbols-outlined text-blue-600 mb-4 p-3 bg-white re-rounded-2xl shadow-sm"
-                    >group</span
-                  >
                   <div
-                    class="text-3xl font-manrope font-extrabold text-re-on-surface"
-                  >
-                    1,284
-                  </div>
-                  <div
-                    class="text-xs text-slate-500 font-bold uppercase tracking-wider mt-1"
-                  >
-                    Total Candidates
-                  </div>
-                </div>
-                <div
-                  class="bg-re-surface-container-low p-6 re-rounded-[1.5rem] transition-all hover:shadow-md"
-                >
-                  <span
-                    class="material-symbols-outlined text-re-tertiary-container mb-4 p-3 bg-white re-rounded-2xl shadow-sm"
-                    >schedule</span
-                  >
-                  <div
-                    class="text-3xl font-manrope font-extrabold text-re-on-surface"
-                  >
-                    42
-                  </div>
-                  <div
-                    class="text-xs text-slate-500 font-bold uppercase tracking-wider mt-1"
-                  >
-                    Interviews Set
-                  </div>
-                </div>
-                <div
-                  class="bg-re-surface-container-low p-6 re-rounded-[1.5rem] transition-all hover:shadow-md"
-                >
-                  <span
-                    class="material-symbols-outlined text-re-secondary mb-4 p-3 bg-white re-rounded-2xl shadow-sm"
-                    >verified</span
-                  >
-                  <div
-                    class="text-3xl font-manrope font-extrabold text-re-on-surface"
-                  >
-                    18
-                  </div>
-                  <div
-                    class="text-xs text-slate-500 font-bold uppercase tracking-wider mt-1"
-                  >
-                    Recent Hires
-                  </div>
-                </div>
-              </div>
-              <!-- Recruiter Pipeline Pills -->
-              <div class="space-y-4 pt-4">
-                <h3 class="font-headline font-bold text-lg text-re-on-surface">
-                  Hiring Pipeline Focus
-                </h3>
-                <div class="space-y-4">
-                  <div class="flex items-center justify-between group">
-                    <div class="flex-1">
-                      <div class="flex justify-between mb-2">
-                        <span class="text-sm font-semibold"
-                          >Senior UX Designer</span
-                        >
-                        <span class="text-sm font-bold text-blue-600"
-                          >85% Filled</span
-                        >
-                      </div>
-                      <div
-                        class="h-3 w-full bg-slate-100 re-rounded-full overflow-hidden"
-                      >
-                        <div
-                          class="h-full bg-gradient-to-r from-blue-600 to-purple-500 re-rounded-full"
-                          style="width: 85%"
-                        ></div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="flex items-center justify-between group">
-                    <div class="flex-1">
-                      <div class="flex justify-between mb-2">
-                        <span class="text-sm font-semibold"
-                          >Technical Product Manager</span
-                        >
-                        <span class="text-sm font-bold text-blue-600"
-                          >42% Filled</span
-                        >
-                      </div>
-                      <div
-                        class="h-3 w-full bg-slate-100 re-rounded-full overflow-hidden"
-                      >
-                        <div
-                          class="h-full bg-gradient-to-r from-blue-600 to-purple-500 re-rounded-full"
-                          style="width: 42%"
-                        ></div>
-                      </div>
-                    </div>
-                  </div>
+                    class="h-full bg-gradient-to-r from-blue-600 to-purple-500 rounded-full"
+                    style="width: 85%"
+                  ></div>
                 </div>
               </div>
             </div>
-            <!-- Side Column: Recent Activity & Calendar -->
-            <div class="lg:col-span-4 space-y-8">
-              <div class="bg-re-surface p-6 re-rounded-[1.5rem]">
-                <h3 class="font-headline font-bold text-re-on-surface mb-6">
-                  Upcoming Interviews
-                </h3>
-                <div class="space-y-6">
-                  <div
-                    class="flex gap-4 items-center p-3 re-rounded-2xl hover:bg-white transition-all cursor-pointer"
+            <div class="flex items-center justify-between group">
+              <div class="flex-1">
+                <div class="flex justify-between mb-2">
+                  <span class="text-sm font-semibold"
+                    >Technical Product Manager</span
                   >
-                    <img title="img"
-                      class="w-12 h-12 re-rounded-xl object-cover"
-                      data-alt="Portrait of a diverse young professional with glasses, modern business casual"
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYYaAttVAQXIDL2q7oMHw77SY3mQHTRh8540NEmfPctTHDoSTtJBOymifKrjduXYSen00SPI3RNWAqgIx7cWXHwl387nsM6CbuzU0_hwV4EjyH5zhWXwNua1jd2GjEPeSDDAcoIE2wvj8awcjsUmSyayOKM9rvQyJhRU0jmUnmQMaKHtyLc70AgYkvG1QUoD32Puyu_iLdRKsggiD3p0gskQkx1iUJcnpUVE5AX62kVeasUGscKqOz1L9UVkh2QEt2eYQ0ATgsKSE"
-                    />
-                    <div>
-                      <div class="text-sm font-bold">Sarah Jenkins</div>
-                      <div class="text-[11px] text-slate-500">
-                        10:30 AM • Zoom Meeting
-                      </div>
-                    </div>
-                    <button
-                      class="ml-auto p-2 text-blue-600 hover:bg-blue-50 re-rounded-full"
-                    >
-                      <span class="material-symbols-outlined text-sm"
-                        >videocam</span
-                      >
-                    </button>
-                  </div>
-                  <div
-                    class="flex gap-4 items-center p-3 re-rounded-2xl hover:bg-white transition-all cursor-pointer"
-                  >
-                    <img title="img"
-                      class="w-12 h-12 re-rounded-xl object-cover"
-                      data-alt="Close-up of an elegant professional man in a tech office environment, soft bokeh"
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6e_zRq8QfhD2NL4xe6YMXe3rBVQ--kLSPXb-SxDPXJsn-3zNs2YWc67IWRFVdfmT36Qmpxfcr7xKSWCgi_hVdoGG8gSOM_0zv-exQMjrmtuEaasH9aVS7_meJMiNPgR-IEMDg7uCxlzipl3fykTkHJuSSvrd8NZwZGBJyuEbLuaAeBlilUASWVjEhdj1brv7JZgeCgLckFAbzvFKevW4HJGqNJlpTcPrOIVXk6MTAROagOsCGRjQe_nvGN6DVVLhDyJvqngzAHtQ"
-                    />
-                    <div>
-                      <div class="text-sm font-bold">Marcus Thorne</div>
-                      <div class="text-[11px] text-slate-500">
-                        2:00 PM • In-Person
-                      </div>
-                    </div>
-                    <button
-                      class="ml-auto p-2 text-slate-400 hover:bg-slate-50 re-rounded-full"
-                    >
-                      <span class="material-symbols-outlined text-sm"
-                        >more_vert</span
-                      >
-                    </button>
-                  </div>
-                  <div
-                    class="flex gap-4 items-center p-3 re-rounded-2xl hover:bg-white transition-all cursor-pointer"
-                  >
-                    <img title="img"
-                      class="w-12 h-12 re-rounded-xl object-cover"
-                      data-alt="Young woman smiling in a creative studio setting, vibrant daylight"
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrru-1iekV-sJter9gEmkLOI794K-6RwT5Hk6BIcWXPWins6vaHI_9mx4NwWThN7Il5KIFI8QV4J7tRXF3j-thXLnGwcPWjkgQDz9lSB6HnCiL7L7Aph0CXlU25edQVF_fCU0_tJxORN4EZOFjlyUbojDvywq-CdxsNptkTfA0Ys4FeXI-QFi7c0jhBXcv0rmjn4dXckwOHdHEKuvnhOVvCsrnWVADxlZ1DOpSChQvmW4k_6z7KPgMcPhMy0yQ19w3dlLRi01RYgM"
-                    />
-                    <div>
-                      <div class="text-sm font-bold">Lila Chen</div>
-                      <div class="text-[11px] text-slate-500">
-                        4:45 PM • Phone Call
-                      </div>
-                    </div>
-                    <button
-                      class="ml-auto p-2 text-slate-400 hover:bg-slate-50 re-rounded-full"
-                    >
-                      <span class="material-symbols-outlined text-sm"
-                        >call</span
-                      >
-                    </button>
-                  </div>
-                </div>
-                <button
-                  class="w-full mt-6 py-3 bg-slate-100 text-slate-600 re-rounded-2xl text-xs font-bold uppercase tracking-wider hover:bg-slate-200 transition-colors"
-                >
-                  View All Schedule
-                </button>
-              </div>
-              <!-- Quick Action Card -->
-              <div
-                class="bg-gradient-to-br from-re-tertiary-container/10 to-blue-600/10 p-6 re-rounded-[1.5rem] relative overflow-hidden"
-              >
-                <div class="absolute top-[-10px] right-[-10px] opacity-10">
-                  <span
-                    class="material-symbols-outlined text-8xl"
-                    style="font-variation-settings: &quot;FILL&quot; 1"
-                    >auto_awesome</span
+                  <span class="text-sm font-bold text-blue-600"
+                    >42% Filled</span
                   >
                 </div>
-                <h3 class="font-headline font-bold text-re-on-surface mb-2">
-                  Talent Match AI
-                </h3>
-                <p class="text-xs text-slate-600 leading-relaxed mb-4">
-                  We found 5 new candidates that match your Senior Developer
-                  requirements.
-                </p>
-                <button
-                  class="text-sm font-bold text-blue-700 flex items-center gap-2 hover:translate-x-1 transition-transform"
+                <div
+                  class="h-3 w-full bg-slate-100 rounded-full overflow-hidden"
                 >
-                  Review Matches
-                  <span class="material-symbols-outlined text-sm"
-                    >arrow_forward</span
-                  >
-                </button>
+                  <div
+                    class="h-full bg-gradient-to-r from-blue-600 to-purple-500 rounded-full"
+                    style="width: 42%"
+                  ></div>
+                </div>
               </div>
             </div>
           </div>
+        </div>
+      </div>
+      <!-- Side Column: Recent Activity & Calendar -->
+      <div class="lg:col-span-4 space-y-8">
+        <div class="bg-re-surface p-6 rounded-[1.5rem]">
+          <h3 class="font-headline font-bold text-re-on-surface mb-6">
+            Upcoming Interviews
+          </h3>
+          <div class="space-y-6">
+            <div
+              class="flex gap-4 items-center p-3 rounded-2xl hover:bg-white transition-all cursor-pointer"
+            >
+              <img title="img"
+                class="w-12 h-12 rounded-xl object-cover"
+                data-alt="Portrait of a diverse young professional with glasses, modern business casual"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYYaAttVAQXIDL2q7oMHw77SY3mQHTRh8540NEmfPctTHDoSTtJBOymifKrjduXYSen00SPI3RNWAqgIx7cWXHwl387nsM6CbuzU0_hwV4EjyH5zhWXwNua1jd2GjEPeSDDAcoIE2wvj8awcjsUmSyayOKM9rvQyJhRU0jmUnmQMaKHtyLc70AgYkvG1QUoD32Puyu_iLdRKsggiD3p0gskQkx1iUJcnpUVE5AX62kVeasUGscKqOz1L9UVkh2QEt2eYQ0ATgsKSE"
+              />
+              <div>
+                <div class="text-sm font-bold">Sarah Jenkins</div>
+                <div class="text-[11px] text-slate-500">
+                  10:30 AM • Zoom Meeting
+                </div>
+              </div>
+              <button
+                class="ml-auto p-2 text-blue-600 hover:bg-blue-50 rounded-full"
+              >
+                <span class="material-symbols-outlined text-sm"
+                  >videocam</span
+                >
+              </button>
+            </div>
+            <div
+              class="flex gap-4 items-center p-3 rounded-2xl hover:bg-white transition-all cursor-pointer"
+            >
+              <img title="img"
+                class="w-12 h-12 rounded-xl object-cover"
+                data-alt="Close-up of an elegant professional man in a tech office environment, soft bokeh"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6e_zRq8QfhD2NL4xe6YMXe3rBVQ--kLSPXb-SxDPXJsn-3zNs2YWc67IWRFVdfmT36Qmpxfcr7xKSWCgi_hVdoGG8gSOM_0zv-exQMjrmtuEaasH9aVS7_meJMiNPgR-IEMDg7uCxlzipl3fykTkHJuSSvrd8NZwZGBJyuEbLuaAeBlilUASWVjEhdj1brv7JZgeCgLckFAbzvFKevW4HJGqNJlpTcPrOIVXk6MTAROagOsCGRjQe_nvGN6DVVLhDyJvqngzAHtQ"
+              />
+              <div>
+                <div class="text-sm font-bold">Marcus Thorne</div>
+                <div class="text-[11px] text-slate-500">
+                  2:00 PM • In-Person
+                </div>
+              </div>
+              <button
+                class="ml-auto p-2 text-slate-400 hover:bg-slate-50 rounded-full"
+              >
+                <span class="material-symbols-outlined text-sm"
+                  >more_vert</span
+                >
+              </button>
+            </div>
+            <div
+              class="flex gap-4 items-center p-3 rounded-2xl hover:bg-white transition-all cursor-pointer"
+            >
+              <img title="img"
+                class="w-12 h-12 rounded-xl object-cover"
+                data-alt="Young woman smiling in a creative studio setting, vibrant daylight"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrru-1iekV-sJter9gEmkLOI794K-6RwT5Hk6BIcWXPWins6vaHI_9mx4NwWThN7Il5KIFI8QV4J7tRXF3j-thXLnGwcPWjkgQDz9lSB6HnCiL7L7Aph0CXlU25edQVF_fCU0_tJxORN4EZOFjlyUbojDvywq-CdxsNptkTfA0Ys4FeXI-QFi7c0jhBXcv0rmjn4dXckwOHdHEKuvnhOVvCsrnWVADxlZ1DOpSChQvmW4k_6z7KPgMcPhMy0yQ19w3dlLRi01RYgM"
+              />
+              <div>
+                <div class="text-sm font-bold">Lila Chen</div>
+                <div class="text-[11px] text-slate-500">
+                  4:45 PM • Phone Call
+                </div>
+              </div>
+              <button
+                class="ml-auto p-2 text-slate-400 hover:bg-slate-50 rounded-full"
+              >
+                <span class="material-symbols-outlined text-sm"
+                  >call</span
+                >
+              </button>
+            </div>
+          </div>
+          <button
+            class="w-full mt-6 py-3 bg-slate-100 text-slate-600 rounded-2xl text-xs font-bold uppercase tracking-wider hover:bg-slate-200 transition-colors"
+          >
+            View All Schedule
+          </button>
+        </div>
+        <!-- Quick Action Card -->
+        <div
+          class="bg-gradient-to-br from-re-tertiary-container/10 to-blue-600/10 p-6 rounded-[1.5rem] relative overflow-hidden"
+        >
+          <div class="absolute top-[-10px] right-[-10px] opacity-10">
+            <span
+              class="material-symbols-outlined text-8xl"
+              style="font-variation-settings: &quot;FILL&quot; 1"
+              >auto_awesome</span
+            >
+          </div>
+          <h3 class="font-headline font-bold text-re-on-surface mb-2">
+            Talent Match AI
+          </h3>
+          <p class="text-xs text-slate-600 leading-relaxed mb-4">
+            We found 5 new candidates that match your Senior Developer
+            requirements.
+          </p>
+          <button
+            class="text-sm font-bold text-blue-700 flex items-center gap-2 hover:translate-x-1 transition-transform"
+          >
+            Review Matches
+            <span class="material-symbols-outlined text-sm"
+              >arrow_forward</span
+            >
+          </button>
         </div>
       </div>
     </div>
   </div>
-  <!-- Floating Action Button: Contextual for Overview -->
-  <button
-    class="fixed bottom-8 right-8 w-16 h-16 bg-re-primary text-white re-rounded-full shadow-2xl shadow-blue-500/40 flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50"
-  >
-    <span class="material-symbols-outlined text-3xl">add</span>
-  </button>
-</main>
+</div>
+
+<!-- Floating Action Button: Contextual for Overview -->
+<button
+  class="fixed bottom-8 right-8 w-16 h-16 bg-re-primary text-white rounded-full shadow-2xl shadow-blue-500/40 flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50"
+>
+  <span class="material-symbols-outlined text-3xl">add</span>
+</button>

@@ -5,18 +5,18 @@
       <p class="text-ad-on-surface-variant mt-1">Du lieu tu admin/billing APIs</p>
     </header>
 
-    <div *ngIf="isLoadingSummary" class="bg-ad-surface-container-low p-4 ad-rounded-xl">Dang tai summary...</div>
+    <div *ngIf="isLoadingSummary" class="bg-ad-surface-container-low p-4 rounded-xl">Dang tai summary...</div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4" *ngIf="summary as data">
-      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl">
+      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 rounded-xl">
         <p class="text-sm text-ad-on-surface-variant">MRR</p>
         <p class="text-2xl font-bold mt-1">{{ data.monthlyRecurringRevenue | number }}</p>
       </article>
-      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl">
+      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 rounded-xl">
         <p class="text-sm text-ad-on-surface-variant">MRR Growth</p>
         <p class="text-2xl font-bold mt-1">{{ data.mrrGrowthPct }}%</p>
       </article>
-      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl">
+      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 rounded-xl">
         <p class="text-sm text-ad-on-surface-variant">Active subscriptions</p>
         <p class="text-2xl font-bold mt-1">{{ data.activeSubscriptions }}</p>
       </article>
@@ -24,18 +24,18 @@
 
     <section class="space-y-3">
       <h2 class="text-lg font-semibold">Tiers</h2>
-      <div *ngIf="isLoadingTiers" class="bg-ad-surface-container-low p-4 ad-rounded-xl">Dang tai tiers...</div>
-      <div *ngIf="!isLoadingTiers && tiers.length === 0" class="bg-ad-surface-container-low p-4 ad-rounded-xl text-ad-on-surface-variant">
+      <div *ngIf="isLoadingTiers" class="bg-ad-surface-container-low p-4 rounded-xl">Dang tai tiers...</div>
+      <div *ngIf="!isLoadingTiers && tiers.length === 0" class="bg-ad-surface-container-low p-4 rounded-xl text-ad-on-surface-variant">
         Khong co du lieu tiers.
       </div>
       <div *ngIf="!isLoadingTiers && tiers.length > 0" class="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <article
           *ngFor="let tier of tiers; trackBy: trackByTier"
-          class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-5 ad-rounded-xl"
+          class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-5 rounded-xl"
         >
           <div class="flex items-center justify-between">
             <h3 class="font-semibold text-lg">{{ tier.name }}</h3>
-            <span class="text-xs px-2 py-1 ad-rounded-full bg-ad-primary-fixed text-ad-on-primary-fixed">{{ tier.badge }}</span>
+            <span class="text-xs px-2 py-1 rounded-full bg-ad-primary-fixed text-ad-on-primary-fixed">{{ tier.badge }}</span>
           </div>
           <p class="text-ad-on-surface-variant mt-2">{{ tier.priceMonthly | number }} {{ tier.currency }}/month</p>
           <p class="text-sm mt-1">Usage: {{ tier.usagePct }}%</p>
@@ -53,7 +53,7 @@
                 [value]="tier.priceMonthly"
                 title="Tier monthly price"
                 placeholder="Monthly price"
-                class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2 text-sm"
+                class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 rounded-xl px-3 py-2 text-sm"
               />
             </div>
             <div>
@@ -65,12 +65,12 @@
                 [value]="tier.features.join(', ')"
                 title="Tier features"
                 placeholder="feature 1, feature 2"
-                class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2 text-sm"
+                class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 rounded-xl px-3 py-2 text-sm"
               />
             </div>
             <button
               type="button"
-              class="w-full px-3 py-2 ad-rounded-lg bg-ad-primary text-ad-on-primary text-sm disabled:opacity-40"
+              class="w-full px-3 py-2 rounded-lg bg-ad-primary text-ad-on-primary text-sm disabled:opacity-40"
               [disabled]="updatingTierId === tier.id"
               (click)="saveTier(tier, priceInput.value, featuresInput.value)"
             >
@@ -81,7 +81,7 @@
       </div>
     </section>
 
-    <section class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 ad-rounded-xl overflow-hidden">
+    <section class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 rounded-xl overflow-hidden">
       <div class="px-4 py-3 border-b border-ad-outline-variant/10 flex items-center justify-between">
         <h2 class="text-lg font-semibold">Transactions</h2>
         <div class="flex items-center gap-3">
@@ -90,7 +90,7 @@
             id="transaction-status"
             [value]="selectedTransactionStatus"
             (change)="onTransactionsStatusChange($event)"
-            class="px-3 py-1.5 text-sm border border-ad-outline-variant/30 ad-rounded-lg bg-ad-surface-container-low"
+            class="px-3 py-1.5 text-sm border border-ad-outline-variant/30 rounded-lg bg-ad-surface-container-low"
           >
             <option value="">all</option>
             <option value="paid">paid</option>

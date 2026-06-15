@@ -1,20 +1,264 @@
-2026-06-06 08:18:19.287 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  com.nlu.JobPortalWebApplication -
-                    Starting JobPortalWebApplication using Java 17.0.12 with PID 12280 (D:\web-project\job-backend\target\classes started by DELL in D:\web-project\job-backend)
-2026-06-06 08:18:19.292 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  com.nlu.JobPortalWebApplication -
+2026-06-15 14:47:04.541 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  com.nlu.JobPortalWebApplication -
+                    Starting JobPortalWebApplication using Java 17.0.12 with PID 24248 (D:\web-project\job-backend\target\classes started by DELL in D:\web-project\job-backend)
+2026-06-15 14:47:04.546 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  com.nlu.JobPortalWebApplication -
                     The following 1 profile is active: "prod"
-2026-06-06 08:18:24.791 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  org.hibernate.orm.deprecation -
+2026-06-15 14:47:09.374 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  org.hibernate.orm.deprecation -
                     HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-06-06 08:18:31.390 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.a.a.i.ResumeParsingServiceImpl -
+2026-06-15 14:47:15.130 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  o.a.c.c.C.[Tomcat].[localhost].[/] -
+                    Cannot deserialize session attribute [SPRING_SECURITY_CONTEXT] for session [FDDE0E5D7E905F777040D6A4ADE5671A]
+2026-06-15 14:47:16.790 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.a.a.i.ResumeParsingServiceImpl -
                     AI resume parser agent initialized with model: deepseek-chat
-2026-06-06 08:18:32.511 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration -
+2026-06-15 14:47:17.080 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration -
                     spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-06-06 08:18:32.555 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer -
+2026-06-15 14:47:17.126 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer -
                     Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used for username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider.
-2026-06-06 08:18:33.438 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  o.s.b.a.t.ThymeleafAutoConfiguration$DefaultTemplateResolverConfiguration -
+2026-06-15 14:47:17.938 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  o.s.b.a.t.ThymeleafAutoConfiguration$DefaultTemplateResolverConfiguration -
                     Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
-2026-06-06 08:18:39.391 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  com.nlu.JobPortalWebApplication -
-                    Started JobPortalWebApplication in 21.071 seconds (process running for 22.57)
-2026-06-06 08:18:40.012 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.r.i.cache.CategoryCacheService -
+2026-06-15 14:47:23.568 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  com.nlu.JobPortalWebApplication -
+                    Started JobPortalWebApplication in 19.846 seconds (process running for 21.043)
+2026-06-15 14:47:24.269 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.r.i.cache.CategoryCacheService -
                     Preloaded cache: home:init
-2026-06-06 08:18:40.366 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.r.i.cache.CategoryCacheService -
+2026-06-15 14:47:24.277 [http-nio-8080-exec-1] [traceId=4eafb8ae-fbdb-408e-89f3-aa6456dfa8e0] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ► [OPTIONS  /api/sse/connect] from 0:0:0:0:0:0:0:1 | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36
+2026-06-15 14:47:24.310 [http-nio-8080-exec-1] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ◄ [OPTIONS /api/sse/connect] completed in 34ms with status 200
+2026-06-15 14:47:24.314 [http-nio-8080-exec-2] [traceId=64e897f0-459e-44a7-a196-6efec7b61e9b] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ► [GET  /api/sse/connect] from 0:0:0:0:0:0:0:1 | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36
+2026-06-15 14:47:24.718 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.r.i.cache.CategoryCacheService -
+                    Preloaded cache: home:category
+2026-06-15 14:47:25.568 [http-nio-8080-exec-2] [traceId=64e897f0-459e-44a7-a196-6efec7b61e9b] [userId=] [jobId=] [cvId=] INFO  c.n.i.i.filter.JwtFilter -
+                    ROLE_USER
+2026-06-15 14:47:25.592 [http-nio-8080-exec-2] [traceId=64e897f0-459e-44a7-a196-6efec7b61e9b] [userId=] [jobId=] [cvId=] INFO  c.n.s.a.impl.SseEmitterServiceImpl -
+                    SSE emitter created for userId=8
+2026-06-15 14:47:30.604 [http-nio-8080-exec-4] [traceId=b4e76747-fb8a-42b2-b12f-03d25d128fe0] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ► [GET  /api/jobs/address-count] from 0:0:0:0:0:0:0:1 | User-Agent: node
+2026-06-15 14:47:30.604 [http-nio-8080-exec-3] [traceId=f590d499-56f3-4ab5-879c-91e09a5841d6] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ► [GET  /api/home/init] from 0:0:0:0:0:0:0:1 | User-Agent: node
+2026-06-15 14:47:31.452 [http-nio-8080-exec-4] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ◄ [GET /api/jobs/address-count] completed in 850ms with status 200
+2026-06-15 14:47:31.515 [http-nio-8080-exec-3] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ◄ [GET /api/home/init] completed in 913ms with status 200
+2026-06-15 14:47:31.794 [http-nio-8080-exec-5] [traceId=b26b8383-ca8a-4b76-82a7-44d6a4a26325] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ► [GET  /api/auth/refreshToken] from 0:0:0:0:0:0:0:1 | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36
+2026-06-15 14:47:32.524 [http-nio-8080-exec-5] [traceId=b26b8383-ca8a-4b76-82a7-44d6a4a26325] [userId=] [jobId=] [cvId=] WARN  c.n.i.a.impl.RefreshTokenServiceImpl -
+                    Refresh token validation failed — token expired or malformed
+2026-06-15 14:47:32.524 [http-nio-8080-exec-5] [traceId=b26b8383-ca8a-4b76-82a7-44d6a4a26325] [userId=] [jobId=] [cvId=] WARN  c.n.i.a.impl.AuthServiceImpl -
+                    Refresh token expired — session invalidated
+2026-06-15 14:47:32.525 [http-nio-8080-exec-5] [traceId=b26b8383-ca8a-4b76-82a7-44d6a4a26325] [userId=] [jobId=] [cvId=] WARN  c.n.s.d.e.GlobalExceptionHandler -
+                    Business exception — key: auth.session.expired, status: 404
+2026-06-15 14:47:32.525 [http-nio-8080-exec-5] [traceId=b26b8383-ca8a-4b76-82a7-44d6a4a26325] [userId=] [jobId=] [cvId=] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver -
+                    Resolved [com.nlu.shared.domain.exception.ResourceNotFoundException: auth.session.expired]
+2026-06-15 14:47:32.525 [http-nio-8080-exec-5] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  c.n.s.i.filter.RequestLoggingFilter -
+                    ◄ [GET /api/auth/refreshToken] completed in 731ms with status 404
+2026-06-15 14:47:33.139 [http-nio-8080-exec-6] [traceId=6de1458d-a745-47ff-a680-9ca922bdc238] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ► [GET  /api/auth/google/url] from 0:0:0:0:0:0:0:1 | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36
+2026-06-15 14:47:33.927 [http-nio-8080-exec-6] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ◄ [GET /api/auth/google/url] completed in 788ms with status 200
+2026-06-15 14:47:34.226 [http-nio-8080-exec-9] [traceId=c2006cbd-4015-4a73-a289-4a8d4f076c76] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ► [GET  /oauth2/authorization/google] from 0:0:0:0:0:0:0:1 | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36
+2026-06-15 14:47:34.262 [http-nio-8080-exec-9] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ◄ [GET /oauth2/authorization/google] completed in 36ms with status 302
+2026-06-15 14:47:39.347 [http-nio-8080-exec-10] [traceId=0093d981-7535-490f-9ad2-523d1420a44b] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ► [GET  /login/oauth2/code/google] from 0:0:0:0:0:0:0:1 | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36
+2026-06-15 14:47:40.321 [http-nio-8080-exec-10] [traceId=0093d981-7535-490f-9ad2-523d1420a44b] [userId=] [jobId=] [cvId=] WARN  o.a.c.util.SessionIdGeneratorBase -
+                    Creation of SecureRandom instance for session ID generation using [SHA1PRNG] took [298] milliseconds.
+2026-06-15 14:47:40.762 [http-nio-8080-exec-10] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ◄ [GET /login/oauth2/code/google] completed in 1415ms with status 200
+2026-06-15 14:47:41.470 [http-nio-8080-exec-7] [traceId=f0644b1f-a26a-429f-af9f-572a93ef51b2] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ► [GET  /api/auth/refreshToken] from 0:0:0:0:0:0:0:1 | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36
+2026-06-15 14:47:42.201 [http-nio-8080-exec-7] [traceId=f0644b1f-a26a-429f-af9f-572a93ef51b2] [userId=] [jobId=] [cvId=] WARN  c.n.i.a.impl.RefreshTokenServiceImpl -
+                    Refresh token validation failed — token expired or malformed
+2026-06-15 14:47:42.201 [http-nio-8080-exec-7] [traceId=f0644b1f-a26a-429f-af9f-572a93ef51b2] [userId=] [jobId=] [cvId=] WARN  c.n.i.a.impl.AuthServiceImpl -
+                    Refresh token expired — session invalidated
+2026-06-15 14:47:42.201 [http-nio-8080-exec-7] [traceId=f0644b1f-a26a-429f-af9f-572a93ef51b2] [userId=] [jobId=] [cvId=] WARN  c.n.s.d.e.GlobalExceptionHandler -
+                    Business exception — key: auth.session.expired, status: 404
+2026-06-15 14:47:42.203 [http-nio-8080-exec-7] [traceId=f0644b1f-a26a-429f-af9f-572a93ef51b2] [userId=] [jobId=] [cvId=] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver -
+                    Resolved [com.nlu.shared.domain.exception.ResourceNotFoundException: auth.session.expired]
+2026-06-15 14:47:42.204 [http-nio-8080-exec-7] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  c.n.s.i.filter.RequestLoggingFilter -
+                    ◄ [GET /api/auth/refreshToken] completed in 734ms with status 404
+2026-06-15 14:47:42.604 [http-nio-8080-exec-8] [traceId=494f6735-ef1f-4e43-b25b-031dc078043d] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ► [OPTIONS  /api/sse/connect] from 0:0:0:0:0:0:0:1 | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36
+2026-06-15 14:47:42.606 [http-nio-8080-exec-8] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ◄ [OPTIONS /api/sse/connect] completed in 2ms with status 200
+2026-06-15 14:47:42.610 [http-nio-8080-exec-1] [traceId=1509672f-325c-40ca-a9ab-9449f987e0ad] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ► [GET  /api/sse/connect] from 0:0:0:0:0:0:0:1 | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36
+2026-06-15 14:47:43.322 [http-nio-8080-exec-2] [traceId=0898b570-2776-4d02-9002-e561355bb00b] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ► [OPTIONS  /api/home/init] from 0:0:0:0:0:0:0:1 | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36
+2026-06-15 14:47:43.324 [http-nio-8080-exec-4] [traceId=fd1d2c40-8e84-4ef3-a196-f1d190484029] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ► [OPTIONS  /api/jobs/address-count] from 0:0:0:0:0:0:0:1 | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36
+2026-06-15 14:47:43.324 [http-nio-8080-exec-2] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ◄ [OPTIONS /api/home/init] completed in 3ms with status 200
+2026-06-15 14:47:43.325 [http-nio-8080-exec-4] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ◄ [OPTIONS /api/jobs/address-count] completed in 3ms with status 200
+2026-06-15 14:47:43.327 [http-nio-8080-exec-3] [traceId=af338358-df89-4d0f-8da3-4335c48b2103] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ► [GET  /api/home/init] from 0:0:0:0:0:0:0:1 | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36
+2026-06-15 14:47:43.328 [http-nio-8080-exec-5] [traceId=4af6678d-8457-4415-8deb-f60ff9f8e7d9] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ► [GET  /api/jobs/address-count] from 0:0:0:0:0:0:0:1 | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36
+2026-06-15 14:47:43.359 [http-nio-8080-exec-1] [traceId=1509672f-325c-40ca-a9ab-9449f987e0ad] [userId=] [jobId=] [cvId=] INFO  c.n.i.i.filter.JwtFilter -
+                    ROLE_USER
+2026-06-15 14:47:43.362 [http-nio-8080-exec-1] [traceId=1509672f-325c-40ca-a9ab-9449f987e0ad] [userId=] [jobId=] [cvId=] INFO  c.n.s.a.impl.SseEmitterServiceImpl -
+                    Closed existing SSE emitter for userId=8
+2026-06-15 14:47:43.362 [http-nio-8080-exec-1] [traceId=1509672f-325c-40ca-a9ab-9449f987e0ad] [userId=] [jobId=] [cvId=] INFO  c.n.s.a.impl.SseEmitterServiceImpl -
+                    SSE emitter created for userId=8
+2026-06-15 14:47:44.108 [http-nio-8080-exec-5] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ◄ [GET /api/jobs/address-count] completed in 780ms with status 200
+2026-06-15 14:47:44.220 [http-nio-8080-exec-3] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ◄ [GET /api/home/init] completed in 893ms with status 200
+2026-06-15 14:48:06.624 [http-nio-8080-exec-9] [traceId=303af2f2-280a-43f4-bff1-ea88f2b87218] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ► [OPTIONS  /api/jobs/newest] from 0:0:0:0:0:0:0:1 | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36
+2026-06-15 14:48:06.629 [http-nio-8080-exec-9] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ◄ [OPTIONS /api/jobs/newest] completed in 5ms with status 200
+2026-06-15 14:48:06.634 [http-nio-8080-exec-10] [traceId=3cbdd824-a024-4edc-93ad-0bc5104ae60f] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ► [GET  /api/jobs/newest] from 0:0:0:0:0:0:0:1 | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36
+2026-06-15 14:48:07.675 [http-nio-8080-exec-10] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ◄ [GET /api/jobs/newest] completed in 1041ms with status 200
+2026-06-15 14:48:09.756 [http-nio-8080-exec-7] [traceId=7892cbb8-5121-4980-8724-62d131e2f153] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ► [OPTIONS  /api/users] from 0:0:0:0:0:0:0:1 | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36
+2026-06-15 14:48:09.758 [http-nio-8080-exec-7] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ◄ [OPTIONS /api/users] completed in 2ms with status 200
+2026-06-15 14:48:09.761 [http-nio-8080-exec-8] [traceId=94a2182e-4f4e-4877-a93c-5dfbc33e3413] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ► [GET  /api/users] from 0:0:0:0:0:0:0:1 | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36
+2026-06-15 14:48:10.616 [http-nio-8080-exec-8] [traceId=94a2182e-4f4e-4877-a93c-5dfbc33e3413] [userId=] [jobId=] [cvId=] INFO  c.n.i.i.filter.JwtFilter -
+                    ROLE_USER
+2026-06-15 14:48:10.674 [http-nio-8080-exec-8] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ◄ [GET /api/users] completed in 913ms with status 200
+2026-06-15 14:48:13.541 [http-nio-8080-exec-2] [traceId=cc4301a9-e936-401f-8a52-2eb2d0b49dda] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ► [GET  /api/users] from 0:0:0:0:0:0:0:1 | User-Agent: node
+2026-06-15 14:48:14.245 [http-nio-8080-exec-2] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  c.n.s.i.filter.RequestLoggingFilter -
+                    ◄ [GET /api/users] completed in 704ms with status 401
+2026-06-15 14:48:14.251 [http-nio-8080-exec-4] [traceId=ab7bc637-6101-4708-86e4-4a1213b8d26d] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ► [GET  /api/auth/refreshToken] from 0:0:0:0:0:0:0:1 | User-Agent: node
+2026-06-15 14:48:14.964 [http-nio-8080-exec-4] [traceId=ab7bc637-6101-4708-86e4-4a1213b8d26d] [userId=] [jobId=] [cvId=] WARN  c.n.s.d.e.GlobalExceptionHandler -
+                    Business exception — key: auth.cookie.expired, status: 400
+2026-06-15 14:48:14.965 [http-nio-8080-exec-4] [traceId=ab7bc637-6101-4708-86e4-4a1213b8d26d] [userId=] [jobId=] [cvId=] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver -
+                    Resolved [com.nlu.shared.domain.exception.BadRequestException: auth.cookie.expired]
+2026-06-15 14:48:14.966 [http-nio-8080-exec-4] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  c.n.s.i.filter.RequestLoggingFilter -
+                    ◄ [GET /api/auth/refreshToken] completed in 715ms with status 400
+2026-06-15 14:48:15.154 [http-nio-8080-exec-1] [traceId=794eccec-4477-4cbb-aa6f-92b6e2ec718f] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ► [GET  /api/auth/refreshToken] from 0:0:0:0:0:0:0:1 | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36
+2026-06-15 14:48:15.847 [http-nio-8080-exec-1] [traceId=794eccec-4477-4cbb-aa6f-92b6e2ec718f] [userId=] [jobId=] [cvId=] WARN  c.n.i.a.impl.RefreshTokenServiceImpl -
+                    Refresh token validation failed — token expired or malformed
+2026-06-15 14:48:15.848 [http-nio-8080-exec-1] [traceId=794eccec-4477-4cbb-aa6f-92b6e2ec718f] [userId=] [jobId=] [cvId=] WARN  c.n.i.a.impl.AuthServiceImpl -
+                    Refresh token expired — session invalidated
+2026-06-15 14:48:15.848 [http-nio-8080-exec-1] [traceId=794eccec-4477-4cbb-aa6f-92b6e2ec718f] [userId=] [jobId=] [cvId=] WARN  c.n.s.d.e.GlobalExceptionHandler -
+                    Business exception — key: auth.session.expired, status: 404
+2026-06-15 14:48:15.848 [http-nio-8080-exec-1] [traceId=794eccec-4477-4cbb-aa6f-92b6e2ec718f] [userId=] [jobId=] [cvId=] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver -
+                    Resolved [com.nlu.shared.domain.exception.ResourceNotFoundException: auth.session.expired]
+2026-06-15 14:48:15.849 [http-nio-8080-exec-1] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  c.n.s.i.filter.RequestLoggingFilter -
+                    ◄ [GET /api/auth/refreshToken] completed in 695ms with status 404
+2026-06-15 14:48:15.928 [http-nio-8080-exec-6] [traceId=1c95183c-1335-434a-963f-6c20cd90dce1] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ► [GET  /api/users] from 0:0:0:0:0:0:0:1 | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36
+2026-06-15 14:48:16.673 [http-nio-8080-exec-6] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  c.n.s.i.filter.RequestLoggingFilter -
+                    ◄ [GET /api/users] completed in 745ms with status 401
+2026-06-15 14:48:16.675 [http-nio-8080-exec-5] [traceId=b6a18f60-7f12-4e11-b99d-a79a33093f59] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ► [GET  /api/auth/refreshToken] from 0:0:0:0:0:0:0:1 | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36
+2026-06-15 14:48:17.406 [http-nio-8080-exec-5] [traceId=b6a18f60-7f12-4e11-b99d-a79a33093f59] [userId=] [jobId=] [cvId=] WARN  c.n.i.a.impl.RefreshTokenServiceImpl -
+                    Refresh token validation failed — token expired or malformed
+2026-06-15 14:48:17.406 [http-nio-8080-exec-5] [traceId=b6a18f60-7f12-4e11-b99d-a79a33093f59] [userId=] [jobId=] [cvId=] WARN  c.n.i.a.impl.AuthServiceImpl -
+                    Refresh token expired — session invalidated
+2026-06-15 14:48:17.407 [http-nio-8080-exec-5] [traceId=b6a18f60-7f12-4e11-b99d-a79a33093f59] [userId=] [jobId=] [cvId=] WARN  c.n.s.d.e.GlobalExceptionHandler -
+                    Business exception — key: auth.session.expired, status: 404
+2026-06-15 14:48:17.407 [http-nio-8080-exec-5] [traceId=b6a18f60-7f12-4e11-b99d-a79a33093f59] [userId=] [jobId=] [cvId=] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver -
+                    Resolved [com.nlu.shared.domain.exception.ResourceNotFoundException: auth.session.expired]
+2026-06-15 14:48:17.408 [http-nio-8080-exec-5] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  c.n.s.i.filter.RequestLoggingFilter -
+                    ◄ [GET /api/auth/refreshToken] completed in 733ms with status 404
+2026-06-15 14:48:19.992 [http-nio-8080-exec-3] [traceId=6fc57f8a-f58d-47e8-970d-ba4babb30d9a] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ► [GET  /api/home/init] from 0:0:0:0:0:0:0:1 | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36
+2026-06-15 14:48:19.992 [http-nio-8080-exec-9] [traceId=aacb369d-52af-4764-ba2f-415f086261b4] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ► [GET  /api/jobs/address-count] from 0:0:0:0:0:0:0:1 | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36
+2026-06-15 14:48:20.838 [http-nio-8080-exec-3] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ◄ [GET /api/home/init] completed in 846ms with status 200
+2026-06-15 14:48:20.856 [http-nio-8080-exec-9] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.s.i.filter.RequestLoggingFilter -
+                    ◄ [GET /api/jobs/address-count] completed in 864ms with status 200
+2026-06-15 14:48:53.569 [scheduling-1] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.s.a.impl.SseEmitterServiceImpl -
+                    Heartbeat cleanup: removed 1 dead connections, 0 active
+2026-06-15 14:48:53.572 [http-nio-8080-exec-10] [traceId=N/A] [userId=] [jobId=] [cvId=] ERROR c.n.s.d.e.GlobalExceptionHandler -
+                    Unhandled exception [traceId=null]: 
+java.io.IOException: Heartbeat failed
+	at com.nlu.shared.application.impl.SseEmitterServiceImpl.heartbeat(SseEmitterServiceImpl.java:144)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at io.micrometer.observation.Observation.observe(Observation.java:499) [3 skipped]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539) [2 skipped]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:305)
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:842)
+2026-06-15 14:48:53.576 [http-nio-8080-exec-10] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver -
+                    Failure in @ExceptionHandler com.nlu.shared.domain.exception.GlobalExceptionHandler#handleGeneralException(Exception)
+org.springframework.http.converter.HttpMessageNotWritableException: No converter for [class com.nlu.shared.domain.model.ApiResponse] with preset Content-Type 'text/event-stream'
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:564) [14 skipped]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) [1 skipped]
+	at java.base/java.lang.Thread.run(Thread.java:842) [147 skipped]
+2026-06-15 14:48:53.577 [http-nio-8080-exec-10] [traceId=N/A] [userId=] [jobId=] [cvId=] ERROR o.a.c.c.C.[.[.[.[dispatcherServlet] -
+                    Servlet.service() for servlet [dispatcherServlet] threw exception
+java.io.IOException: Heartbeat failed
+	at com.nlu.shared.application.impl.SseEmitterServiceImpl.heartbeat(SseEmitterServiceImpl.java:144)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at io.micrometer.observation.Observation.observe(Observation.java:499) [3 skipped]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539) [2 skipped]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:305)
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:842)
+2026-06-15 14:48:53.578 [http-nio-8080-exec-10] [traceId=N/A] [userId=] [jobId=] [cvId=] ERROR o.a.c.c.C.[.[.[.[dispatcherServlet] -
+                    Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception
+java.io.IOException: Heartbeat failed
+	at com.nlu.shared.application.impl.SseEmitterServiceImpl.heartbeat(SseEmitterServiceImpl.java:144)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at io.micrometer.observation.Observation.observe(Observation.java:499) [3 skipped]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539) [2 skipped]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:305)
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:842)
+2026-06-15 14:51:52.295 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  com.nlu.JobPortalWebApplication -
+                    Starting JobPortalWebApplication using Java 17.0.12 with PID 24248 (D:\web-project\job-backend\target\classes started by DELL in D:\web-project\job-backend)
+2026-06-15 14:51:52.295 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  com.nlu.JobPortalWebApplication -
+                    The following 1 profile is active: "prod"
+2026-06-15 14:51:54.489 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  org.hibernate.orm.deprecation -
+                    HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-06-15 14:51:59.667 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  o.a.c.c.C.[Tomcat].[localhost].[/] -
+                    Cannot deserialize session attribute [SPRING_SECURITY_CONTEXT] for session [8B7588F95D785AA426211B7EE7651AD5]
+2026-06-15 14:52:00.641 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.a.a.i.ResumeParsingServiceImpl -
+                    AI resume parser agent initialized with model: deepseek-chat
+2026-06-15 14:52:01.176 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration -
+                    spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-06-15 14:52:01.253 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer -
+                    Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used for username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider.
+2026-06-15 14:52:02.238 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  o.s.b.a.t.ThymeleafAutoConfiguration$DefaultTemplateResolverConfiguration -
+                    Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
+2026-06-15 14:52:07.357 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  com.nlu.JobPortalWebApplication -
+                    Started JobPortalWebApplication in 15.129 seconds (process running for 304.833)
+2026-06-15 14:52:07.774 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.r.i.cache.CategoryCacheService -
+                    Preloaded cache: home:init
+2026-06-15 14:52:08.053 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.r.i.cache.CategoryCacheService -
+                    Preloaded cache: home:category
+2026-06-15 14:52:09.241 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  com.nlu.JobPortalWebApplication -
+                    Starting JobPortalWebApplication using Java 17.0.12 with PID 24248 (D:\web-project\job-backend\target\classes started by DELL in D:\web-project\job-backend)
+2026-06-15 14:52:09.241 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  com.nlu.JobPortalWebApplication -
+                    The following 1 profile is active: "prod"
+2026-06-15 14:52:10.911 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  org.hibernate.orm.deprecation -
+                    HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-06-15 14:52:16.376 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.a.a.i.ResumeParsingServiceImpl -
+                    AI resume parser agent initialized with model: deepseek-chat
+2026-06-15 14:52:16.542 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration -
+                    spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-06-15 14:52:16.565 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer -
+                    Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used for username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider.
+2026-06-15 14:52:16.960 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] WARN  o.s.b.a.t.ThymeleafAutoConfiguration$DefaultTemplateResolverConfiguration -
+                    Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
+2026-06-15 14:52:21.877 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  com.nlu.JobPortalWebApplication -
+                    Started JobPortalWebApplication in 12.676 seconds (process running for 319.359)
+2026-06-15 14:52:22.205 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.r.i.cache.CategoryCacheService -
+                    Preloaded cache: home:init
+2026-06-15 14:52:22.540 [restartedMain] [traceId=N/A] [userId=] [jobId=] [cvId=] INFO  c.n.r.i.cache.CategoryCacheService -
                     Preloaded cache: home:category

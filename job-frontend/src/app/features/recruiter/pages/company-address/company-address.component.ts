@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
 
 interface CompanyAddress {
   id: number;
@@ -12,7 +13,7 @@ interface CompanyAddress {
 
 @Component({
   selector: 'app-company-address',
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   templateUrl: './company-address.component.html',
   styleUrl: './company-address.component.css',
 })

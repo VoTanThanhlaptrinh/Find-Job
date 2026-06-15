@@ -9,11 +9,11 @@
         <input
           type="text"
           placeholder="Tim employer..."
-          class="w-full md:w-80 bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl px-3 py-2"
+          class="w-full md:w-80 bg-ad-surface-container-low border border-ad-outline-variant/20 rounded-xl px-3 py-2"
           (input)="onSearch($event)"
         />
         <select
-          class="px-3 py-2 bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl"
+          class="px-3 py-2 bg-ad-surface-container-low border border-ad-outline-variant/20 rounded-xl"
           [value]="selectedKycStatus"
           (change)="onKycStatusChange($event)"
           title="KYC status"
@@ -25,7 +25,7 @@
           <option value="rejected">rejected</option>
         </select>
         <select
-          class="px-3 py-2 bg-ad-surface-container-low border border-ad-outline-variant/20 ad-rounded-xl"
+          class="px-3 py-2 bg-ad-surface-container-low border border-ad-outline-variant/20 rounded-xl"
           [value]="selectedAccountStatus"
           (change)="onAccountStatusChange($event)"
           title="Account status"
@@ -37,7 +37,7 @@
         </select>
         <button
           type="button"
-          class="px-4 py-2 bg-ad-primary text-ad-on-primary ad-rounded-xl text-sm font-medium disabled:opacity-60"
+          class="px-4 py-2 bg-ad-primary text-ad-on-primary rounded-xl text-sm font-medium disabled:opacity-60"
           [disabled]="isExporting"
           (click)="exportEmployers()"
         >
@@ -46,30 +46,30 @@
       </div>
     </header>
 
-    <div *ngIf="isLoadingMetrics" class="bg-ad-surface-container-low p-4 ad-rounded-xl">Dang tai metrics...</div>
+    <div *ngIf="isLoadingMetrics" class="bg-ad-surface-container-low p-4 rounded-xl">Dang tai metrics...</div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4" *ngIf="metrics as data">
-      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl">
+      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 rounded-xl">
         <p class="text-sm text-ad-on-surface-variant">Tong employers</p>
         <p class="text-2xl font-bold mt-1">{{ data.totalEmployers }}</p>
         <p class="text-xs text-ad-on-surface-variant mt-1">+{{ data.totalEmployersGrowthPct }}%</p>
       </article>
-      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl">
+      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 rounded-xl">
         <p class="text-sm text-ad-on-surface-variant">KYC verified</p>
         <p class="text-2xl font-bold mt-1">{{ data.kycVerified }}</p>
         <p class="text-xs text-ad-on-surface-variant mt-1">{{ data.kycVerifiedPct }}%</p>
       </article>
-      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl">
+      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 rounded-xl">
         <p class="text-sm text-ad-on-surface-variant">Pending KYC</p>
         <p class="text-2xl font-bold mt-1">{{ data.pendingKyc }}</p>
       </article>
-      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 ad-rounded-xl">
+      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 rounded-xl">
         <p class="text-sm text-ad-on-surface-variant">Suspended</p>
         <p class="text-2xl font-bold mt-1">{{ data.suspended }}</p>
       </article>
     </div>
 
-    <section class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 ad-rounded-xl overflow-hidden">
+    <section class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 rounded-xl overflow-hidden">
       <div *ngIf="isLoadingList" class="p-4">Dang tai danh sach employers...</div>
 
       <div *ngIf="!isLoadingList && employers.length === 0" class="p-4 text-ad-on-surface-variant">
@@ -107,14 +107,14 @@
               <td class="px-4 py-3 text-right space-x-2">
                 <button
                   type="button"
-                  class="px-2 py-1 ad-rounded-lg text-xs bg-amber-100 text-amber-700"
+                  class="px-2 py-1 rounded-lg text-xs bg-amber-100 text-amber-700"
                   (click)="changeStatus(employer, 'suspend')"
                 >
                   Suspend
                 </button>
                 <button
                   type="button"
-                  class="px-2 py-1 ad-rounded-lg text-xs bg-emerald-100 text-emerald-700"
+                  class="px-2 py-1 rounded-lg text-xs bg-emerald-100 text-emerald-700"
                   (click)="changeStatus(employer, 'restore')"
                 >
                   Restore
@@ -130,7 +130,7 @@
         <div class="space-x-2">
           <button
             type="button"
-            class="px-3 py-1.5 ad-rounded-lg border border-ad-outline-variant/30 disabled:opacity-40"
+            class="px-3 py-1.5 rounded-lg border border-ad-outline-variant/30 disabled:opacity-40"
             [disabled]="currentPage <= 1"
             (click)="goPrevPage()"
           >
@@ -138,7 +138,7 @@
           </button>
           <button
             type="button"
-            class="px-3 py-1.5 ad-rounded-lg border border-ad-outline-variant/30 disabled:opacity-40"
+            class="px-3 py-1.5 rounded-lg border border-ad-outline-variant/30 disabled:opacity-40"
             [disabled]="currentPage >= totalPages"
             (click)="goNextPage()"
           >
@@ -150,7 +150,7 @@
 
     <section
       *ngIf="selectedEmployer as detail"
-      class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-5 ad-rounded-xl"
+      class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-5 rounded-xl"
     >
       <h2 class="text-lg font-semibold mb-2">Chi tiet employer</h2>
       <p><span class="text-ad-on-surface-variant">Ten:</span> {{ detail.name }}</p>

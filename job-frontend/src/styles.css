@@ -1,5 +1,133 @@
 @import "tailwindcss";
 
+@theme {
+  /* --- Admin Colors --- */
+  --color-ad-error-container: #fb5151;
+  --color-ad-on-background: #282b51;
+  --color-ad-surface-dim: #cfd1ff;
+  --color-ad-surface-container-lowest: #ffffff;
+  --color-ad-on-surface: #282b51;
+  --color-ad-surface-container-highest: #d9daff;
+  --color-ad-primary-container: #7b9cff;
+  --color-ad-on-error: #ffefee;
+  --color-ad-tertiary: #8e3a8a;
+  --color-ad-outline: #71749e;
+  --color-ad-inverse-on-surface: #9799c6;
+  --color-ad-surface: #f8f5ff;
+  --color-ad-on-tertiary-container: #661466;
+  --color-ad-on-secondary-container: #323aa2;
+  --color-ad-secondary-dim: #3b43aa;
+  --color-ad-on-primary-fixed: #000000;
+  --color-ad-on-primary-container: #001e5a;
+  --color-ad-secondary: #4850b7;
+  --color-ad-on-primary: #f1f2ff;
+  --color-ad-on-secondary: #f3f1ff;
+  --color-ad-tertiary-container: #fe9cf4;
+  --color-ad-surface-container-low: #f1efff;
+  --color-ad-on-surface-variant: #555881;
+  --color-ad-inverse-surface: #06092f;
+  --color-ad-surface-variant: #d9daff;
+  --color-ad-on-error-container: #570008;
+  --color-ad-background: #f8f5ff;
+  --color-ad-error: #b31b25;
+  --color-ad-secondary-container: #cbceff;
+  --color-ad-tertiary-fixed: #fe9cf4;
+  --color-ad-on-tertiary-fixed: #480049;
+  --color-ad-on-secondary-fixed: #1c248e;
+  --color-ad-surface-bright: #f8f5ff;
+  --color-ad-on-primary-fixed-variant: #00266e;
+  --color-ad-primary: #0050d4;
+  --color-ad-surface-container-high: #e0e0ff;
+  --color-ad-tertiary-fixed-dim: #ef8fe5;
+  --color-ad-surface-tint: #0050d4;
+  --color-ad-primary-dim: #0046bb;
+  --color-ad-inverse-primary: #618bff;
+  --color-ad-on-secondary-fixed-variant: #3c45ab;
+  --color-ad-on-tertiary: #ffeef8;
+  --color-ad-secondary-fixed-dim: #bbbfff;
+  --color-ad-outline-variant: #a7aad7;
+  --color-ad-on-tertiary-fixed-variant: #711f6f;
+  --color-ad-error-dim: #9f0519;
+  --color-ad-tertiary-dim: #802d7d;
+  --color-ad-primary-fixed-dim: #658eff;
+  --color-ad-surface-container: #e7e6ff;
+  --color-ad-secondary-fixed: #cbceff;
+  --color-ad-primary-fixed: #7b9cff;
+
+  /* --- Recruiter Colors --- */
+  --color-re-on-background: #191c1e;
+  --color-re-surface: #f7f9fb;
+  --color-re-surface-container-low: #f2f4f6;
+  --color-re-on-secondary-fixed-variant: #004c6e;
+  --color-re-secondary-fixed-dim: #89ceff;
+  --color-re-primary-fixed: #dbe1ff;
+  --color-re-on-surface-variant: #434655;
+  --color-re-on-primary-container: #eeefff;
+  --color-re-surface-container-highest: #e0e3e5;
+  --color-re-on-error: #ffffff;
+  --color-re-surface-tint: #0053db;
+  --color-re-primary-fixed-dim: #b4c5ff;
+  --color-re-error: #ba1a1a;
+  --color-re-on-secondary-fixed: #001e2f;
+  --color-re-surface-container: #eceef0;
+  --color-re-tertiary-container: #943fe2;
+  --color-re-secondary-fixed: #c9e6ff;
+  --color-re-tertiary-fixed: #f0dbff;
+  --color-re-on-secondary: #ffffff;
+  --color-re-secondary-container: #39b8fd;
+  --color-re-tertiary-fixed-dim: #ddb7ff;
+  --color-re-error-container: #ffdad6;
+  --color-re-on-tertiary-fixed: #2c0051;
+  --color-re-inverse-surface: #2d3133;
+  --color-re-on-primary: #ffffff;
+  --color-re-background: #f7f9fb;
+  --color-re-on-surface: #191c1e;
+  --color-re-tertiary: #7a1bc8;
+  --color-re-surface-variant: #e0e3e5;
+  --color-re-on-secondary-container: #004666;
+  --color-re-on-primary-fixed-variant: #003ea8;
+  --color-re-primary-container: #2563eb;
+  --color-re-surface-container-high: #e6e8ea;
+  --color-re-surface-container-lowest: #ffffff;
+  --color-re-on-tertiary: #ffffff;
+  --color-re-inverse-primary: #b4c5ff;
+  --color-re-on-primary-fixed: #00174b;
+  --color-re-secondary: #006591;
+  --color-re-inverse-on-surface: #eff1f3;
+  --color-re-outline: #737686;
+  --color-re-on-tertiary-fixed-variant: #6900b3;
+  --color-re-on-error-container: #93000a;
+  --color-re-outline-variant: #c3c6d7;
+  --color-re-surface-bright: #f7f9fb;
+  --color-re-on-tertiary-container: #faecff;
+  --color-re-primary: #004ac6;
+  --color-re-surface-dim: #d8dadc;
+
+  /* --- Border Radius --- */
+  /* Admin */
+  --radius-ad: 0.125rem;
+  --radius-ad-lg: 0.25rem;
+  --radius-ad-xl: 0.5rem;
+  --radius-ad-full: 0.75rem;
+  /* Recruiter */
+  --radius-re: 0.25rem;
+  --radius-re-lg: 0.5rem;
+  --radius-re-xl: 0.75rem;
+  --radius-re-full: 9999px;
+
+  /* --- Font Families --- */
+  --font-headline: 'Manrope', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-label: 'Inter', sans-serif;
+  --font-manrope: 'Manrope', sans-serif;
+  --font-inter: 'Inter', sans-serif;
+  --font-sans: 'Inter', sans-serif;
+
+  /* --- Box Shadows --- */
+  --shadow-ad-ambient: 0 8px 32px 0 rgba(0, 80, 212, 0.05);
+  --shadow-ad-glass: 0 4px 24px 0 rgba(0, 80, 212, 0.08);
+}
+
 .material-symbols-outlined {
   font-variation-settings:
     "FILL" 0,

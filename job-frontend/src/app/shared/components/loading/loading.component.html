@@ -1,4 +1,94 @@
-<div class="flex items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-5 text-slate-600">
-  <span class="loading-spinner h-5 w-5 rounded-full border-2 border-slate-300 border-t-slate-700"></span>
-  <span class="text-sm font-medium">{{ message }}</span>
-</div>
+<main
+  class="bg-background text-on-surface font-body min-h-screen flex flex-col selection:bg-primary-fixed selection:text-on-primary-fixed">
+  <!-- Background Pattern -->
+  <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+    <div class="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]"></div>
+    <div class="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] bg-secondary/5 rounded-full blur-[120px]"></div>
+    <div class="absolute inset-0 opacity-[0.03]" style="
+          background-image: url(&quot;https://www.transparenttextures.com/patterns/cubes.png&quot;);
+        "></div>
+  </div>
+  <div class="grow flex items-center justify-center p-6 z-10">
+    <!-- Auth Container -->
+    <div class="w-full max-w-md">
+      <!-- Glass Card -->
+      <div
+        class="bg-surface-container-lowest/80 blur-backdrop rounded-xl p-10 shadow-xl border border-outline-variant flex flex-col items-center text-center">
+        <!-- Brand Lockup -->
+        <div class="mb-10 flex flex-col items-center gap-2">
+          <span class="text-primary font-headline font-extrabold text-2xl tracking-tighter">RecruiterPortal</span>
+          <div class="h-0.5 w-8 bg-primary-container rounded-full"></div>
+        </div>
+        <!-- Progress Indicator Group -->
+        <div class="relative w-24 h-24 mb-8">
+          <!-- Background Circle -->
+          <svg class="absolute inset-0 w-full h-full transform -rotate-90">
+            <circle class="stroke-surface-container-high" cx="48" cy="48" fill="transparent" r="42" stroke-width="6">
+            </circle>
+            <circle class="stroke-primary-container loader-spin" cx="48" cy="48" fill="transparent" r="42"
+              stroke-dasharray="263" stroke-dashoffset="180" stroke-linecap="round" stroke-width="6"></circle>
+          </svg>
+          <!-- Center Icon -->
+          <div class="absolute inset-0 flex items-center justify-center">
+            <span class="material-symbols-outlined text-primary text-3xl pulse-soft"
+              data-icon="fingerprint">fingerprint</span>
+          </div>
+        </div>
+        <!-- Content Area -->
+        <div class="space-y-3 mb-10">
+          <h1 class="text-on-surface font-headline font-bold text-2xl tracking-tight">
+            Verifying your identity
+          </h1>
+          <p class="text-on-surface-variant font-body text-sm leading-relaxed max-w-[280px] mx-auto">
+            Please wait while we securely authenticate your account and
+            prepare your workspace.
+          </p>
+        </div>
+        <!-- Status Checklist (Simulated Verification) -->
+        <div
+          class="w-full space-y-3 text-left bg-surface-container-low/50 rounded-lg p-5 border border-outline-variant/30">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-secondary text-lg" data-icon="check_circle"
+              style="font-variation-settings: &quot;FILL&quot; 1">check_circle</span>
+            <span class="text-xs font-label font-medium text-on-surface-variant">Connecting to secure servers</span>
+          </div>
+          <div class="flex items-center gap-3" id="step-2">
+            <span class="material-symbols-outlined text-primary text-lg animate-pulse" data-icon="sync">sync</span>
+            <span class="text-xs font-label font-medium text-on-surface">Validating security tokens</span>
+          </div>
+          <div class="flex items-center gap-3 opacity-40" id="step-3">
+            <span class="material-symbols-outlined text-slate-400 text-lg" data-icon="pending">pending</span>
+            <span class="text-xs font-label font-medium text-on-surface-variant">Syncing recruitment profile</span>
+          </div>
+        </div>
+        <!-- Security Badge -->
+        <div class="mt-8 flex items-center gap-2 px-3 py-1.5 bg-green-50 rounded-full border border-green-100">
+          <span class="material-symbols-outlined text-green-600 text-[14px]" data-icon="verified_user"
+            style="font-variation-settings: &quot;FILL&quot; 1">verified_user</span>
+          <span class="text-[10px] font-label font-bold uppercase tracking-wider text-green-700">AES-256
+            Encrypted</span>
+        </div>
+      </div>
+      <!-- Helpful Tip -->
+      <p class="mt-6 text-center text-on-surface-variant font-body text-[11px] uppercase tracking-[0.15em] pulse-soft">
+        Atmospheric Precision in Every Connection
+      </p>
+    </div>
+  </div>
+  <!-- Global Footer (from JSON) -->
+  <div class="fixed bottom-0 w-full z-50 flex justify-center items-center gap-6 py-6 bg-transparent">
+    <div class="flex flex-col md:flex-row items-center gap-4 md:gap-8">
+      <span class="font-['Inter'] text-xs uppercase tracking-widest text-slate-400 dark:text-slate-500">© 2024
+        RecruiterPortal. Atmospheric Precision.</span>
+      <div class="flex gap-4">
+        <a class="font-['Inter'] text-xs uppercase tracking-widest text-slate-400 hover:text-blue-500 transition-colors opacity-100 hover:opacity-70"
+          href="#">Privacy Policy</a>
+        <a class="font-['Inter'] text-xs uppercase tracking-widest text-slate-400 hover:text-blue-500 transition-colors opacity-100 hover:opacity-70"
+          href="#">Terms of Service</a>
+        <a class="font-['Inter'] text-xs uppercase tracking-widest text-slate-400 hover:text-blue-500 transition-colors opacity-100 hover:opacity-70"
+          href="#">Help Center</a>
+      </div>
+    </div>
+  </div>
+
+</main>

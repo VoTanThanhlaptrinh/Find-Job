@@ -21,21 +21,21 @@
           <a
             class="font-headline font-semibold tracking-tight text-re-primary border-b-2 border-re-primary"
             href="#"
-            >Tuyển dụng</a
+            >{{ 'recruiterRegister.nav.recruitment' | t }}</a
           >
           <a
             class="font-headline font-semibold tracking-tight text-re-outline hover:text-re-on-surface transition-all duration-300"
             href="#"
-            >Tính năng</a
+            >{{ 'recruiterRegister.nav.features' | t }}</a
           >
           <a
             class="font-headline font-semibold tracking-tight text-re-outline hover:text-re-on-surface transition-all duration-300"
             href="#"
-            >Bảng giá</a
+            >{{ 'recruiterRegister.nav.pricing' | t }}</a
           >
         </div>
         <a
-          class="text-re-primary font-headline font-semibold hover:bg-re-surface-container-low px-6 py-2 re-rounded-full transition-transform active:scale-95"
+          class="text-re-primary font-headline font-semibold hover:bg-re-surface-container-low px-6 py-2 rounded-full transition-transform active:scale-95"
           href="#"
           >Login</a
         >
@@ -55,7 +55,7 @@
         ></div>
         <div class="relative z-10 text-center md:text-left">
           <div
-            class="inline-flex items-center justify-center w-20 h-20 re-rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 mb-8 mx-auto md:mx-0"
+            class="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 mb-8 mx-auto md:mx-0"
           >
             <span class="font-headline text-4xl font-extrabold tracking-tighter"
               >RP</span
@@ -64,40 +64,39 @@
           <h1
             class="font-headline text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 leading-tight"
           >
-            Tạo tài khoản<br />doanh nghiệp
+            {{ 'recruiterRegister.title' | t }}
           </h1>
           <p
             class="text-re-primary-fixed font-light text-lg max-w-sm mx-auto md:mx-0 leading-relaxed opacity-90"
           >
-            Bắt đầu hành trình tìm kiếm nhân tài với công nghệ AI tiên tiến và
-            trải nghiệm tuyển dụng tinh tế nhất.
+            {{ 'recruiterRegister.subtitle' | t }}
           </p>
           <div class="mt-12 hidden md:block">
             <div class="flex items-center gap-4 mb-6">
               <div
-                class="w-12 h-12 re-rounded-full bg-white/10 flex items-center justify-center"
+                class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center"
               >
                 <span class="material-symbols-outlined text-white">bolt</span>
               </div>
               <div>
-                <p class="font-semibold text-white">Kết nối nhanh chóng</p>
+                <p class="font-semibold text-white">{{ 'recruiterRegister.featuresList.fastConnectTitle' | t }}</p>
                 <p class="text-sm text-re-primary-fixed/80">
-                  Tiếp cận 1M+ ứng viên tiềm năng
+                  {{ 'recruiterRegister.featuresList.fastConnectDesc' | t }}
                 </p>
               </div>
             </div>
             <div class="flex items-center gap-4">
               <div
-                class="w-12 h-12 re-rounded-full bg-white/10 flex items-center justify-center"
+                class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center"
               >
                 <span class="material-symbols-outlined text-white"
                   >analytics</span
                 >
               </div>
               <div>
-                <p class="font-semibold text-white">Phân tích chuyên sâu</p>
+                <p class="font-semibold text-white">{{ 'recruiterRegister.featuresList.deepAnalysisTitle' | t }}</p>
                 <p class="text-sm text-re-primary-fixed/80">
-                  Dữ liệu thị trường thời gian thực
+                  {{ 'recruiterRegister.featuresList.deepAnalysisDesc' | t }}
                 </p>
               </div>
             </div>
@@ -105,20 +104,19 @@
         </div>
         <div class="absolute bottom-12 left-12 right-12 hidden lg:block">
           <div
-            class="p-6 re-rounded-2xl bg-white/5 backdrop-blur-md border border-white/10"
+            class="p-6 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10"
           >
             <p class="text-sm italic opacity-80">
-              "Aura đã thay đổi hoàn toàn cách chúng tôi tiếp cận nhân sự chất
-              lượng cao. Một giao diện tuyệt vời."
+              {{ 'recruiterRegister.testimonial' | t }}
             </p>
             <div class="mt-4 flex items-center gap-3">
               <img title="img"
-                class="w-8 h-8 re-rounded-full object-cover"
+                class="w-8 h-8 rounded-full object-cover"
                 data-alt="Professional portrait of a male tech executive in a light blue shirt with soft studio lighting"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdY6Oi9b5hwNw1wGf7ssd2Q6uEpwwtIexlGnK4u1cOz2Y8nhKgHJfeieL8UOVyFd9nHOxoi_9h-F7MbY6HE010dpIq1W1oMVKV1GrtUTPGfWc-Rk3IYCB_L3cdBJkjGZEa9HrLwhJ-PhhknwQgHJhSAhYotcIE0xAzpNBr-fOzjjDKH9UEwORAJ8hCNO0hY0SrpTzTWi8JSuRtPt-v8H1y1AKeo--Ta-XdA-0pRJrwXpD7coryiqHxzudM7P_8vlpF3-O2Esx5bAk"
               />
               <span class="text-xs font-semibold"
-                >Giám đốc Nhân sự, TechCorp</span
+                >{{ 'recruiterRegister.testimonialAuthor' | t }}</span
               >
             </div>
           </div>
@@ -131,21 +129,21 @@
         <div class="w-full max-w-md">
           <div class="mb-10 text-center md:text-left">
             <h2 class="font-headline text-3xl font-bold text-re-on-surface mb-2">
-              Đăng ký ngay
+              {{ 'recruiterRegister.form.registerNow' | t }}
             </h2>
             <p class="text-re-on-surface-variant font-body">
-              Xây dựng đội ngũ trong mơ của bạn ngay hôm nay.
+              {{ 'recruiterRegister.form.registerSubtitle' | t }}
             </p>
           </div>
           <form class="space-y-6">
             <div class="space-y-1">
               <label
                 class="text-xs font-semibold uppercase tracking-wider text-re-outline px-1"
-                >Họ và tên</label
+                >{{ 'recruiterRegister.form.fullName' | t }}</label
               >
               <input
-                class="w-full px-4 py-4 re-rounded-xl bg-re-surface-container-lowest border-none shadow-sm focus:ring-2 focus:ring-re-primary/20 focus:bg-white transition-all duration-300 placeholder:text-re-outline-variant text-re-on-surface"
-                placeholder="Nguyễn Văn A"
+                class="w-full px-4 py-4 rounded-xl bg-re-surface-container-lowest border-none shadow-sm focus:ring-2 focus:ring-re-primary/20 focus:bg-white transition-all duration-300"
+                [placeholder]="'recruiterRegister.form.fullNamePlaceholder' | t"
                 type="text"
               />
               <div class="h-[2px] w-full bg-re-outline-variant opacity-20"></div>
@@ -154,11 +152,11 @@
               <div class="space-y-1">
                 <label
                   class="text-xs font-semibold uppercase tracking-wider text-re-outline px-1"
-                  >Tên công ty</label
+                  >{{ 'recruiterRegister.form.companyName' | t }}</label
                 >
                 <input
-                  class="w-full px-4 py-4 re-rounded-xl bg-re-surface-container-lowest border-none shadow-sm focus:ring-2 focus:ring-re-primary/20 transition-all placeholder:text-re-outline-variant"
-                  placeholder="Công ty Aura"
+                  class="w-full px-4 py-4 rounded-xl bg-re-surface-container-lowest border-none shadow-sm focus:ring-2 focus:ring-re-primary/20 transition-all"
+                  [placeholder]="'recruiterRegister.form.companyNamePlaceholder' | t"
                   type="text"
                 />
                 <div class="h-[2px] w-full bg-re-outline-variant opacity-20"></div>
@@ -166,10 +164,10 @@
               <div class="space-y-1">
                 <label
                   class="text-xs font-semibold uppercase tracking-wider text-re-outline px-1"
-                  >Số điện thoại</label
+                  >{{ 'recruiterRegister.form.phone' | t }}</label
                 >
                 <input
-                  class="w-full px-4 py-4 re-rounded-xl bg-re-surface-container-lowest border-none shadow-sm focus:ring-2 focus:ring-re-primary/20 transition-all placeholder:text-re-outline-variant"
+                  class="w-full px-4 py-4 rounded-xl bg-re-surface-container-lowest border-none shadow-sm focus:ring-2 focus:ring-re-primary/20 transition-all placeholder:text-re-outline-variant"
                   placeholder="0901 234 567"
                   type="tel"
                 />
@@ -179,10 +177,10 @@
             <div class="space-y-1">
               <label
                 class="text-xs font-semibold uppercase tracking-wider text-re-outline px-1"
-                >Email công việc</label
+                >{{ 'recruiterRegister.form.email' | t }}</label
               >
               <input
-                class="w-full px-4 py-4 re-rounded-xl bg-re-surface-container-lowest border-none shadow-sm focus:ring-2 focus:ring-re-primary/20 transition-all placeholder:text-re-outline-variant"
+                class="w-full px-4 py-4 rounded-xl bg-re-surface-container-lowest border-none shadow-sm focus:ring-2 focus:ring-re-primary/20 transition-all placeholder:text-re-outline-variant"
                 placeholder="name@company.com"
                 type="email"
               />
@@ -191,11 +189,11 @@
             <div class="space-y-1 relative">
               <label
                 class="text-xs font-semibold uppercase tracking-wider text-re-outline px-1"
-                >Mật khẩu</label
+                >{{ 'recruiterRegister.form.password' | t }}</label
               >
               <div class="relative">
                 <input
-                  class="w-full px-4 py-4 re-rounded-xl bg-re-surface-container-lowest border-none shadow-sm focus:ring-2 focus:ring-re-primary/20 transition-all placeholder:text-re-outline-variant"
+                  class="w-full px-4 py-4 rounded-xl bg-re-surface-container-lowest border-none shadow-sm focus:ring-2 focus:ring-re-primary/20 transition-all placeholder:text-re-outline-variant"
                   placeholder="••••••••"
                   type="password"
                 />
@@ -210,7 +208,7 @@
             </div>
             <div class="flex items-start gap-3 py-2">
               <input
-                class="mt-1 w-5 h-5 re-rounded border-re-outline-variant text-re-primary focus:ring-re-primary"
+                class="mt-1 w-5 h-5 rounded border-re-outline-variant text-re-primary focus:ring-re-primary"
                 id="terms"
                 type="checkbox"
               />
@@ -218,31 +216,31 @@
                 class="text-sm text-re-on-surface-variant leading-relaxed"
                 for="terms"
               >
-                Tôi đồng ý với
+                {{ 'recruiterRegister.form.termsPrefix' | t }}
                 <a class="text-re-primary font-medium hover:underline" href="#"
-                  >Điều khoản dịch vụ</a
+                  >{{ 'recruiterRegister.form.termsOfService' | t }}</a
                 >
-                và
+                {{ 'recruiterRegister.form.termsAnd' | t }}
                 <a class="text-re-primary font-medium hover:underline" href="#"
-                  >Chính sách bảo mật</a
+                  >{{ 'recruiterRegister.form.privacyPolicy' | t }}</a
                 >
-                của Aura.
+                {{ 'recruiterRegister.form.termsSuffix' | t }}
               </label>
             </div>
             <button
-              class="w-full py-5 bg-gradient-to-r from-re-primary to-re-primary-container text-white font-headline font-bold text-sm tracking-widest re-rounded-full shadow-lg shadow-re-primary/20 hover:shadow-re-primary/40 active:scale-[0.98] transition-all duration-300"
+              class="w-full py-5 bg-gradient-to-r from-re-primary to-re-primary-container text-white font-headline font-bold text-sm tracking-widest rounded-full shadow-lg shadow-re-primary/20 hover:shadow-re-primary/40 active:scale-[0.98] transition-all duration-300"
               type="submit"
             >
-              ĐĂNG KÝ DOANH NGHIỆP
+              {{ 'recruiterRegister.form.submit' | t }}
             </button>
           </form>
           <div class="mt-12 text-center">
             <p class="text-re-on-surface-variant text-sm">
-              Đã có tài khoản doanh nghiệp?
+              {{ 'recruiterRegister.form.hasAccount' | t }}
               <a
                 class="text-re-primary font-bold ml-1 hover:underline underline-offset-4"
                 href="#"
-                >Đăng nhập ngay</a
+                >{{ 'recruiterRegister.form.loginNow' | t }}</a
               >
             </p>
           </div>
@@ -283,3 +281,4 @@
       </div>
     </div>
   </main>
+
