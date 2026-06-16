@@ -43,7 +43,8 @@ public record JobDto(
         String moreDetail,
 
         @Min(value = 1, message = "{validation.job.headcount.min}")
-        Integer headcount
+        Integer headcount,
+        boolean enableAiAnalysis
 ) {
     @AssertTrue(message = "{validation.job.deadline.future}")
     public boolean isDeadlineValid() {
@@ -88,5 +89,9 @@ public record JobDto(
 
     public Integer getHeadcount() {
         return headcount;
+    }
+
+    public boolean isEnableAiAnalysis() {
+        return enableAiAnalysis;
     }
 }

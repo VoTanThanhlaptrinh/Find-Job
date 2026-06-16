@@ -24,4 +24,6 @@ public interface ResumeService {
     ResumeUrlDTO getResumeViewUrlForHirer(long id);
 
     ResumeUrlDTO getResumeDownloadUrlForHirer(long id);
+
+    void analyzeResume(long id, User user);
 }

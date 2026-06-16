@@ -75,4 +75,15 @@ public class UserResumeController {
         resumeService.deleteResume(id, currentUser);
         return ResponseEntity.ok().body(new ApiResponse<>(MessageUtils.getMessage("message.success"), null, HttpStatus.OK.value()));
     }
+
+    @PostMapping("/{id}/analyze")
+    public ResponseEntity<ApiResponse<String>> analyzeResume(
+            @PathVariable long id,
+            @CurrentUser User currentUser) {
+        resumeService.analyzeResume(id, currentUser);
+        return ResponseEntity.ok()
+                .body(new ApiResponse<>(
+                        MessageUtils.getMessage("resume.analyze.started"),
+                        null, HttpStatus.OK.value()));
+    }
 }

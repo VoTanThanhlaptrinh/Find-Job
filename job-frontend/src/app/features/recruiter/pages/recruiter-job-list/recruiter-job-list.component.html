@@ -36,6 +36,7 @@
         *ngFor="let job of jobs; trackBy: trackByJob"
         [job]="job"
         (delete)="deleteJob($event)"
+        (analyze)="analyzeJob($event)"
       ></app-hirer-job-card>
     </div>
 

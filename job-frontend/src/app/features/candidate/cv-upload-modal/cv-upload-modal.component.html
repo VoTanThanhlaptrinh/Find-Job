@@ -100,6 +100,26 @@
         </div>
       </div>
       }
+
+      <!-- AI Analysis Toggle -->
+      <div class="flex items-center justify-between p-4 bg-gradient-to-r from-indigo-50/50 to-blue-50/50 rounded-xl border border-indigo-100/50">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 bg-indigo-100 rounded-lg flex items-center justify-center">
+            <span class="material-symbols-outlined text-indigo-600 text-lg">psychology</span>
+          </div>
+          <div>
+            <p class="text-sm font-semibold text-slate-800">{{ 'cvUploadModal.aiAnalysis' | t }}</p>
+            <p class="text-xs text-slate-500">{{ 'cvUploadModal.aiAnalysisDesc' | t }}</p>
+          </div>
+        </div>
+        <button type="button" role="switch" [attr.aria-checked]="enableAiAnalysis"
+          class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
+          [ngClass]="enableAiAnalysis ? 'bg-indigo-600' : 'bg-slate-200'"
+          (click)="enableAiAnalysis = !enableAiAnalysis">
+          <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform shadow-sm"
+            [ngClass]="enableAiAnalysis ? 'translate-x-6' : 'translate-x-1'"></span>
+        </button>
+      </div>
     </div>
 
     <!-- Modal Footer -->

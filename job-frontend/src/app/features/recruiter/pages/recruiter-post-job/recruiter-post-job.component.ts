@@ -43,7 +43,8 @@ export class PostJobComponent {
     companyName: new FormControl('', [Validators.required]),
     companyDescription: new FormControl(''),
     compayWebsite: new FormControl(''),
-    image: new FormControl<File | null>(null, Validators.required)
+    image: new FormControl<File | null>(null, Validators.required),
+    enableAiAnalysis: new FormControl(false)
   });
 
   constructor(
@@ -67,7 +68,8 @@ export class PostJobComponent {
         this.postJobFG.reset({
           jobType: 'Full Time',
           deadlineCV: null,
-          image: null
+          image: null,
+          enableAiAnalysis: false
         });
         return;
       }
@@ -88,8 +90,10 @@ export class PostJobComponent {
             formData.append(key, val, val.name);
           } else if (val instanceof Date) {
             formData.append(key, val.toISOString().split('T')[0]);
+          } else if (typeof val === 'boolean') {
+            formData.append(key, String(val));
           } else {
-            formData.append(key, val);
+            formData.append(key, String(val));
           }
       }
     });

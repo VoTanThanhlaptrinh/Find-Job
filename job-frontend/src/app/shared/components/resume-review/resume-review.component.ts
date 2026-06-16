@@ -4,11 +4,12 @@ import { ResumeContext, ResumeService } from '../../../core/services/resume.serv
 import { ResumeReviewInput } from '../../models/jobs/resume-review-input.model';
 import { NotifyMessageService } from '../../../core/services/notify-message.service';
 import { I18nService } from '../../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-resume-review',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   templateUrl: './resume-review.component.html',
   styleUrl: './resume-review.component.css'
 })
@@ -27,6 +28,20 @@ export class ResumeReviewComponent {
   isDeleting = false;
   isLoadingView = false;
   isLoadingDownload = false;
+
+  readonly isAnalyzing = computed(() => {
+    const file = this.resumeService.uploadingFile$();
+    return file !== null && file.id === this.resume.id && file.status === 'analyzing';
+  });
+
+  readonly isFailed = computed(() => {
+    const file = this.resumeService.uploadingFile$();
+    return file !== null && file.id === this.resume.id && file.status === 'failed';
+  });
+
+  onAnalyzeResume(): void {
+    this.resumeService.analyzeResume(this.resume.id);
+  }
 
   readonly officialLabel = computed(() => this.i18n.translate('cvList.officialTag'));
   readonly downloadLabel = computed(() => this.i18n.translate('cvList.download'));

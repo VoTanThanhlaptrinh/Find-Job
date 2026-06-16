@@ -125,6 +125,34 @@
           </div>
         </div>
       </section>
+
+      <!-- Section 3: AI Analysis -->
+      <section class="bg-re-surface-container-lowest rounded-xl p-8 shadow-xl shadow-blue-900/5 border border-white/50">
+        <div class="flex items-center gap-3 mb-8">
+          <div class="w-1.5 h-6 bg-indigo-500 rounded-full"></div>
+          <h2 class="text-xl font-headline font-extrabold text-re-on-surface tracking-tight">
+            {{ 'recruiterPostJob.aiAnalysis' | t }}
+          </h2>
+        </div>
+        <div class="flex items-center justify-between p-5 bg-gradient-to-r from-indigo-50/50 to-blue-50/50 rounded-xl border border-indigo-100/50">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
+              <span class="material-symbols-outlined text-indigo-600 text-2xl">psychology</span>
+            </div>
+            <div>
+              <p class="text-base font-bold text-slate-800">{{ 'recruiterPostJob.aiAnalysisToggle' | t }}</p>
+              <p class="text-sm text-slate-500 mt-0.5">{{ 'recruiterPostJob.aiAnalysisDesc' | t }}</p>
+            </div>
+          </div>
+          <button type="button" role="switch" [attr.aria-checked]="postJobFG.get('enableAiAnalysis')?.value"
+            class="relative inline-flex h-7 w-12 items-center rounded-full transition-colors"
+            [ngClass]="postJobFG.get('enableAiAnalysis')?.value ? 'bg-indigo-600' : 'bg-slate-200'"
+            (click)="postJobFG.get('enableAiAnalysis')?.setValue(!postJobFG.get('enableAiAnalysis')?.value)">
+            <span class="inline-block h-5 w-5 transform rounded-full bg-white transition-transform shadow-sm"
+              [ngClass]="postJobFG.get('enableAiAnalysis')?.value ? 'translate-x-6' : 'translate-x-1'"></span>
+          </button>
+        </div>
+      </section>
     </div>
 
   </div>

@@ -30,6 +30,18 @@
         >
           {{ formatStatus(job.status) }}
         </span>
+        <!-- AI Badge -->
+        @if (job.isAnalyzed) {
+          <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200 flex items-center gap-1 shrink-0">
+            <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+            {{ 'job.badge.analyzed' | t }}
+          </span>
+        } @else {
+          <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200 flex items-center gap-1 shrink-0">
+            <span class="material-symbols-outlined text-[14px]">psychology</span>
+            {{ 'job.badge.notAnalyzed' | t }}
+          </span>
+        }
       </div>
 
       <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5 mt-2 text-sm text-slate-500">
@@ -86,6 +98,13 @@
     >
       {{ 'recruiterJobList.viewCandidates' | t }}
     </a>
+    @if (!job.isAnalyzed) {
+      <button type="button"
+        class="px-4 py-1.5 text-xs font-semibold bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-full transition-colors duration-200"
+        (click)="onAnalyze($event, job.id)">
+        {{ 'job.analyzeNow' | t }}
+      </button>
+    }
     <button
       type="button"
       class="px-4 py-1.5 text-xs font-semibold bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-full transition-colors duration-200 cursor-pointer"

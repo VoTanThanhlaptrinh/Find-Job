@@ -302,7 +302,10 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       benefits: 'Quyền lợi',
       benefitsPlaceholder: '- Lương thưởng tháng 13...\n- Bảo hiểm cao cấp...',
       preview: 'Xem trước',
-      saveJob: 'Lưu công việc'
+      saveJob: 'Lưu công việc',
+      aiAnalysis: 'Phân tích AI',
+      aiAnalysisToggle: 'Phân tích JD bằng AI',
+      aiAnalysisDesc: 'Bật để AI phân tích JD cho gợi ý semantic search'
     },
     companyAddress: {
       title: 'Quản lý địa chỉ công ty',
@@ -468,6 +471,13 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       successMessage: 'Thay đổi mật khẩu thành công.',
       matchError: 'Xác nhận mật khẩu phải trùng với mật khẩu mới.'
     },
+    job: {
+      badge: {
+        analyzed: 'Đã phân tích',
+        notAnalyzed: 'Chưa phân tích'
+      },
+      analyzeNow: 'Phân tích ngay'
+    },
     cvUploadModal: {
       title: 'Tải CV mới',
       subtitle: 'Hỗ trợ định dạng PDF, DOC, DOCX (Tối đa 5MB)',
@@ -481,7 +491,9 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       removeFile: 'Xóa tệp',
       selectFileHint: 'Vui lòng chọn file CV trước khi gửi.',
       unsupportedFormat: 'Chỉ hỗ trợ định dạng .pdf, .doc, .docx.',
-      fileTooLarge: 'Kích thước file vượt quá giới hạn 5MB.'
+      fileTooLarge: 'Kích thước file vượt quá giới hạn 5MB.',
+      aiAnalysis: 'Phân tích bằng AI',
+      aiAnalysisDesc: 'Tự động phân tích CV để gợi ý việc phù hợp'
     },
     cvList: {
       title: 'Danh sách CV của bạn',
@@ -502,7 +514,15 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       download: 'Tải xuống',
       view: 'Xem CV',
       delete: 'Xóa',
-      deleting: 'Đang xóa...'
+      deleting: 'Đang xóa...',
+      badge: {
+        analyzed: 'Đã phân tích',
+        notAnalyzed: 'Chưa phân tích',
+        failed: 'Thất bại'
+      },
+      analyzing: 'Đang phân tích...',
+      analyzeNow: 'Phân tích ngay',
+      retry: 'Thử lại'
     },
     profile: {
       title: 'Hồ sơ cá nhân',
@@ -823,7 +843,10 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       benefits: 'Benefits',
       benefitsPlaceholder: '- 13th month salary...\n- Premium insurance...',
       preview: 'Preview',
-      saveJob: 'Save Job'
+      saveJob: 'Save Job',
+      aiAnalysis: 'AI Analysis',
+      aiAnalysisToggle: 'Analyze JD with AI',
+      aiAnalysisDesc: 'Enable AI to analyze your JD for semantic job matching'
     },
     companyAddress: {
       title: 'Manage Company Addresses',
@@ -989,6 +1012,13 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       successMessage: 'Password changed successfully.',
       matchError: 'Confirm password must match the new password.'
     },
+    job: {
+      badge: {
+        analyzed: 'Analyzed',
+        notAnalyzed: 'Not Analyzed'
+      },
+      analyzeNow: 'Analyze Now'
+    },
     cvUploadModal: {
       title: 'Upload New CV',
       subtitle: 'Supports PDF, DOC, DOCX (Max 5MB)',
@@ -1002,7 +1032,9 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       removeFile: 'Remove file',
       selectFileHint: 'Please select a CV file before submitting.',
       unsupportedFormat: 'Only .pdf, .doc, .docx formats are supported.',
-      fileTooLarge: 'File size exceeds the 5MB limit.'
+      fileTooLarge: 'File size exceeds the 5MB limit.',
+      aiAnalysis: 'AI Analysis',
+      aiAnalysisDesc: 'Auto-analyze CV for job matching'
     },
     cvList: {
       title: 'Your CV List',
@@ -1023,7 +1055,15 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       download: 'Download',
       view: 'View CV',
       delete: 'Delete',
-      deleting: 'Deleting...'
+      deleting: 'Deleting...',
+      badge: {
+        analyzed: 'Analyzed',
+        notAnalyzed: 'Not Analyzed',
+        failed: 'Failed'
+      },
+      analyzing: 'Analyzing...',
+      analyzeNow: 'Analyze Now',
+      retry: 'Retry'
     },
     profile: {
       title: 'Personal Profile',

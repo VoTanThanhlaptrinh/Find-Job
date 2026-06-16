@@ -9,6 +9,7 @@ import com.nlu.applicationProcess.api.dto.req.ResumeUrlDTO;
 import com.nlu.shared.api.message.dto.CloudUploadMessage;
 import com.nlu.applicationProcess.api.dto.req.ResumeView;
 import com.nlu.shared.application.CloudStorageService;
+import com.nlu.shared.domain.exception.BadRequestException;
 import com.nlu.shared.domain.exception.ForbiddenException;
 import com.nlu.shared.domain.exception.ResourceNotFoundException;
 import com.nlu.shared.domain.exception.UnauthorizedException;
@@ -101,6 +102,8 @@ public class ResumeServiceImpl implements ResumeService {
             log.warn("Empty file uploaded during resume creation for user: {}", user.getId());
             throw new RuntimeException(MessageUtils.getMessage("message.error"));
         }
+        cv.setRawText(rawText);
+
         // upload to cloud
         try {
             cloudStorageService.uploadFile(data, key, resumeUploadDTO.getFile().getOriginalFilename());
@@ -128,11 +131,46 @@ public class ResumeServiceImpl implements ResumeService {
         }
 
         // analyze and vectorize resume
-        producer.processAI(new ResumeParsingMessage(rawText, user.getId(), cv.getId()));
-        log.info("Resume created — cv: {}, dispatched cloud upload and AI processing for user: {}",
-                cv.getId(), user.getId());
+        if (resumeUploadDTO.enableAiAnalysis()) {
+            producer.processAI(new ResumeParsingMessage(rawText, user.getId(), cv.getId()));
+            log.info("Resume created — cv: {}, dispatched cloud upload and AI processing for user: {}",
+                    cv.getId(), user.getId());
+        } else {
+            log.info("Resume created — cv: {}, skipped AI processing (user opted out) for user: {}",
+                    cv.getId(), user.getId());
+        }
 
-        return new ResumeView(cv.getId(), cv.getFileName(), cv.getCreateDate());
+        return new ResumeView(cv.getId(), cv.getFileName(), cv.getCreateDate(), cv.isAnalyzed());
+    }
+
+    @Override
+    @Transactional
+    public void analyzeResume(long id, User user) {
+        if (user == null) {
+            throw new UnauthorizedException(MessageUtils.getMessage("message.unauthorized"));
+        }
+        Resume cv = findResumeAndAssertOwner(id, user, "resume.access.forbidden");
+
+        if (cv.isAnalyzed()) {
+            throw new BadRequestException(MessageUtils.getMessage("resume.already_analyzed"));
+        }
+
+        String rawText = cv.getRawText();
+        if (rawText == null || rawText.isBlank()) {
+            throw new BadRequestException(MessageUtils.getMessage("resume.text.empty"));
+        }
+
+        // Send SSE "analyzing" event
+        sseEmitterService.sendEvent(user.getId(), "resume-process",
+                SseMessagePayload.builder()
+                        .id(cv.getId())
+                        .status("analyzing")
+                        .message("AI is analyzing your resume...")
+                        .build());
+
+        // Dispatch to RabbitMQ (async)
+        producer.processAI(new ResumeParsingMessage(rawText, user.getId(), cv.getId()));
+        log.info("Deferred AI analysis triggered for CV: {} by user: {}", id, user.getId());
     }
 
     @Override

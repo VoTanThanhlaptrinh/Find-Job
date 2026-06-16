@@ -39,6 +39,20 @@ public class Resume extends StatusEntity {
 	private String fileName;
 	private String title;
 
+	@Column(columnDefinition = "text")
+	private String rawText;
+
+	@Column(nullable = false)
+	private boolean isAnalyzed = false;
+
+	public void setRawText(String rawText) {
+		this.rawText = rawText;
+	}
+
+	public void markAnalyzed() {
+		this.isAnalyzed = true;
+	}
+
 	@Setter
 	@CreatedDate
 	private LocalDateTime createDate;

@@ -43,6 +43,7 @@ export interface HirerJobViewModel {
   applies: number;
   headcount: number;
   status: string;
+  isAnalyzed: boolean;
 }
 
 export type HirerJobPostView = HirerJobViewModel;

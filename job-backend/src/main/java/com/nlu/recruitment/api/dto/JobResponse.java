@@ -15,4 +15,5 @@ public class JobResponse {
     private final EmploymentType time; // Đổi từ String -> EmploymentType
     private final Integer applies;     // Đổi từ int -> Integer
     private final Integer headcount;   // Đổi từ int -> Integer
+    private final boolean isAnalyzed;
 }

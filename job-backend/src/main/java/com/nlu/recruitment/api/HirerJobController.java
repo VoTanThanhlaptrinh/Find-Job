@@ -67,4 +67,15 @@ public class HirerJobController {
         Long data = jobQueryService.countHirerJobPost(currentUser.getEmail());
         return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("message.success"), data, HttpStatus.OK.value()));
     }
+
+    @PostMapping("/{id}/analyze")
+    public ResponseEntity<ApiResponse<String>> analyzeJob(
+            @PathVariable Long id,
+            @CurrentUser User currentUser) {
+        jobService.analyzeJob(id, currentUser);
+        return ResponseEntity.ok()
+                .body(new ApiResponse<>(
+                        MessageUtils.getMessage("job.analyze.started"),
+                        null, HttpStatus.OK.value()));
+    }
 }

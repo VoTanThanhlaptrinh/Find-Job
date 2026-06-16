@@ -51,6 +51,11 @@ export class ResumeService {
         effect(() => {
             const event = this.sseProcessEvent();
             console.log('Received SSE Event:', event);
+            if (event && event.status === 'analyzed') {
+                this.resumes.update(list =>
+                    list.map(r => r.id === event.id ? { ...r, isAnalyzed: true } : r)
+                );
+            }
         });
 
         // Auto-dismiss khi terminal state
@@ -111,11 +116,12 @@ export class ResumeService {
         return this.http.delete(`${this.url}/user/resumes/${encodedResumeId}`).pipe(take(1));
     }
 
-    postResume(file: File) {
+    postResume(file: File, enableAiAnalysis: boolean = false) {
         this.localFileData.set({ name: file.name, status: 'uploading', id: ++this.counter });
 
         const formData = new FormData();
         formData.append('file', file);
+        formData.append('enableAiAnalysis', String(enableAiAnalysis));
 
         this.http.post<ApiResponse<ResumePreview>>(`${this.url}/user/resumes`, formData).subscribe({
             next: (response) => {
@@ -126,6 +132,7 @@ export class ResumeService {
                     id: resumeId,
                     fileName: file.name,
                     createDate: new Date().toISOString(),
+                    isAnalyzed: false
                 }]);
 
                 // SSE đã kết nối sẵn từ lúc login, không cần connect ở đây nữa
@@ -137,6 +144,20 @@ export class ResumeService {
                 setTimeout(() => {
                     this.localFileData.set({});
                 }, 3000);
+            }
+        });
+    }
+
+    analyzeResume(resumeId: number): void {
+        this.localFileData.set({ name: '', status: 'analyzing', id: resumeId });
+
+        this.http.post<ApiResponse<string>>(`${this.url}/user/resumes/${resumeId}/analyze`, {}).pipe(take(1)).subscribe({
+            next: () => {
+                // SSE sẽ cập nhật trạng thái real-time
+            },
+            error: (error) => {
+                this.localFileData.update(prev => ({ ...prev, status: 'error' }));
+                this.notificationService.error(error.error?.message || 'Lỗi khi phân tích CV');
             }
         });
     }

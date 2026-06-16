@@ -9,6 +9,8 @@ import com.nlu.applicationProcess.application.VectorizationClient;
 import com.nlu.shared.application.CloudStorageService;
 import com.nlu.shared.application.SseEmitterService;
 import com.nlu.shared.domain.model.SseMessagePayload;
+import com.nlu.applicationProcess.domain.repository.ResumeRepository;
+import com.nlu.recruitment.domain.repository.JobRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -28,6 +30,8 @@ public class MessageConsumer {
     private final ResumeParsingService resumeParsingService;
     private final VectorizationClient vectorizationClient;
     private final SseEmitterService sseEmitterService;
+    private final ResumeRepository resumeRepository;
+    private final JobRepository jobRepository;
 
     @RabbitListener(queues = "mailQueue")
     public void receiveMail(@Payload MailMessage message) {
@@ -46,6 +50,13 @@ public class MessageConsumer {
             var res = resumeParsingService.processResume(message.rawText());
             log.info(res.toString());
             vectorizationClient.vectorizeCv(new ResumeRequest(message.userId(), message.cvId(), res));
+
+            // Cập nhật trạng thái isAnalyzed trên Resume
+            resumeRepository.findById(message.cvId()).ifPresent(cv -> {
+                cv.markAnalyzed();
+                resumeRepository.save(cv);
+            });
+
             sseEmitterService.sendEvent(message.userId(), "resume-process",
                     SseMessagePayload.builder()
                             .id(message.cvId())
@@ -67,8 +78,34 @@ public class MessageConsumer {
     public void processApiService(@Payload ApiMessage message) {
         try {
             vectorizationClient.vectorizeJd(message.getVectorizeJdRequest());
+
+            // Cập nhật trạng thái isAnalyzed trên Job
+            Long jobId = message.getVectorizeJdRequest().getJobId();
+            jobRepository.findById(jobId).ifPresent(job -> {
+                job.markAnalyzed();
+                jobRepository.save(job);
+            });
+
+            // SSE event thông báo hoàn tất
+            Long userId = message.getVectorizeJdRequest().getUserId();
+            sseEmitterService.sendEvent(userId, "job-process",
+                SseMessagePayload.builder()
+                    .id(jobId)
+                    .status("analyzed")
+                    .message("Job analysis complete")
+                    .build());
+
         } catch (Exception e) {
-            throw new RuntimeException();
+            log.error("Failed to vectorize JD for job: {}", message.getVectorizeJdRequest().getJobId(), e);
+            // SSE event thông báo thất bại
+            Long userId = message.getVectorizeJdRequest().getUserId();
+            Long jobId = message.getVectorizeJdRequest().getJobId();
+            sseEmitterService.sendEvent(userId, "job-process",
+                SseMessagePayload.builder()
+                    .id(jobId)
+                    .status("failed")
+                    .message("Job analysis failed")
+                    .build());
         }
     }
 }

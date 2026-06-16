@@ -18,4 +18,6 @@ public interface JobService {
 
     void deleteJob(Long id, User user);
     List<JobCardView> matchJobs(long cvId);
+
+    void analyzeJob(Long id, User user);
 }

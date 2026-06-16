@@ -17,6 +17,7 @@ export class HirerJobCardComponent {
   @Input() image = 'assets/web_css/img/post.png';
 
   @Output() delete = new EventEmitter<number>();
+  @Output() analyze = new EventEmitter<number>();
 
   get appliesRate(): number {
     if (!this.job?.headcount || this.job.headcount <= 0) {
@@ -72,6 +73,12 @@ export class HirerJobCardComponent {
     event.preventDefault();
     event.stopPropagation();
     this.delete.emit(id);
+  }
+
+  onAnalyze(event: Event, id: number): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.analyze.emit(id);
   }
 }
 

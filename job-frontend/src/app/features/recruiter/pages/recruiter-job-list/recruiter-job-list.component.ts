@@ -144,6 +144,10 @@ export class RecruiterJobListComponent {
     this.recruiterJobsService.deletePostedJob(normalizedId);
   }
 
+  analyzeJob(jobId: number): void {
+    this.recruiterJobsService.analyzeJob(jobId);
+  }
+
   trackByJob(_: number, job: RecruiterJobViewModel): string | number {
     return job.id;
   }

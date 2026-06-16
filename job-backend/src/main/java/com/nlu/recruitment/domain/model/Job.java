@@ -57,7 +57,6 @@ public class Job extends StatusEntity {
 	@Column(nullable = false)
 	private LocalDateTime createDate;
 	@LastModifiedDate
-	@Column(nullable = true, updatable = true)
 	private LocalDateTime modifiedDate;
 	@OneToMany(mappedBy = "job", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
 	@JsonIgnore
@@ -70,6 +69,14 @@ public class Job extends StatusEntity {
 	@Setter
 	private String logo;
 	private Integer headcount;
+
+	@Column(nullable = false)
+	private boolean isAnalyzed = false;
+
+	public void markAnalyzed() {
+		this.isAnalyzed = true;
+	}
+
 	public void addApplication(JobApplication jobApplication) {
 		if(applies == null) {
 			applies = new LinkedList<>();

@@ -51,7 +51,8 @@ public class JobViewMapper {
                 job.getSalary(),
                 job.getTime().name(),
                 job.getApplies(),
-                job.getHeadcount()
+                job.getHeadcount(),
+                job.isAnalyzed()
         );
     }
 
