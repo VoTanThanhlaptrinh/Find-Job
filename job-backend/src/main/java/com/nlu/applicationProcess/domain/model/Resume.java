@@ -40,6 +40,17 @@ public class Resume extends StatusEntity {
 	private String title;
 
 	@Setter
+    @Column(columnDefinition = "text")
+	private String rawText;
+
+	@Column(nullable = false, columnDefinition = "boolean default false")
+	private boolean isAnalyzed = false;
+
+    public void markAnalyzed() {
+		this.isAnalyzed = true;
+	}
+
+	@Setter
 	@CreatedDate
 	private LocalDateTime createDate;
 	@LastModifiedDate

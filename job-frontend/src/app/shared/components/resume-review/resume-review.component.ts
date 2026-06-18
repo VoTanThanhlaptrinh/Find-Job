@@ -4,11 +4,12 @@ import { ResumeContext, ResumeService } from '../../../core/services/resume.serv
 import { ResumeReviewInput } from '../../models/jobs/resume-review-input.model';
 import { NotifyMessageService } from '../../../core/services/notify-message.service';
 import { I18nService } from '../../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-resume-review',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   templateUrl: './resume-review.component.html',
   styleUrl: './resume-review.component.css'
 })
@@ -28,29 +29,37 @@ export class ResumeReviewComponent {
   isLoadingView = false;
   isLoadingDownload = false;
 
+  readonly isUploading = computed(() => {
+    const file = this.resumeService.uploadingFile$();
+    return file !== null && file.id === this.resume.id && file.status === 'uploading';
+  });
+
+  readonly isUploaded = computed(() => {
+    const file = this.resumeService.uploadingFile$();
+    return file !== null && file.id === this.resume.id && file.status === 'uploaded';
+  });
+
+  readonly isAnalyzing = computed(() => {
+    const file = this.resumeService.uploadingFile$();
+    return file !== null && file.id === this.resume.id && file.status === 'analyzing';
+  });
+
+  readonly isFailed = computed(() => {
+    const file = this.resumeService.uploadingFile$();
+    return file !== null && file.id === this.resume.id && (file.status === 'failed' || file.status === 'error');
+  });
+
+  onAnalyzeResume(): void {
+    this.resumeService.analyzeResume(this.resume.id);
+  }
+
   readonly officialLabel = computed(() => this.i18n.translate('cvList.officialTag'));
   readonly downloadLabel = computed(() => this.i18n.translate('cvList.download'));
   readonly deleteLabel = computed(() => this.i18n.translate('cvList.delete'));
   readonly deletingLabel = computed(() => this.i18n.translate('cvList.deleting'));
   readonly viewLabel = computed(() => this.i18n.translate('cvList.view'));
 
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent): void {
-    if (!this.isMenuOpen) {
-      return;
-    }
-
-    const clickedElement = event.target as Node | null;
-    const isClickInside = !!clickedElement && this.elementRef.nativeElement.contains(clickedElement);
-
-    if (!isClickInside) {
-      this.closeMenu();
-    }
-  }
-
-  toggleMenu(): void {
-    this.isMenuOpen = !this.isMenuOpen;
-  }
+  // Menu is controlled via direct click bindings in the template
 
   closeMenu(): void {
     this.isMenuOpen = false;

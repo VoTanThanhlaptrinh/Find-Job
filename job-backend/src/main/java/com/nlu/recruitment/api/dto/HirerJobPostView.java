@@ -8,6 +8,7 @@ public record HirerJobPostView(
         String salary,
         String time,
         int applies,
-        int headcount
+        int headcount,
+        boolean isAnalyzed
 ) {
 }

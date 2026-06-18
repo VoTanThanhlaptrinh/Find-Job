@@ -1,215 +1,187 @@
-  <main
-    class="bg-re-background text-re-on-surface min-h-screen pb-32 overflow-x-hidden"
-  >
-    <!-- TopAppBar -->
-    <div role="banner"
-      class="fixed top-0 w-full z-50 flex items-center px-6 h-16 bg-white/70 backdrop-blur-xl shadow-sm shadow-blue-500/5"
-    >
-      <div class="flex items-center gap-4 w-full max-w-5xl mx-auto">
-        <button
-          class="flex items-center justify-center p-2 re-rounded-full hover:bg-slate-100/50 transition-colors active:scale-95 duration-200 text-blue-600"
-        >
-          <span class="material-symbols-outlined">arrow_back</span>
-        </button>
-        <h1
-          class="font-manrope font-bold text-xl tracking-tight text-re-on-surface"
-        >
-          Tạo tin tuyển dụng
-        </h1>
-      </div>
+<main class="bg-re-background text-re-on-surface min-h-screen pb-32 overflow-x-hidden relative pt-10 px-6">
+  <div class="max-w-5xl mx-auto relative">
+    <!-- Background Atmospheric Blobs -->
+    <div class="absolute -top-24 -left-24 w-96 h-96 bg-re-primary-fixed opacity-30 blur-[120px] -z-10 rounded-full">
     </div>
-    <div role="main" class="pt-24 px-6 max-w-5xl mx-auto relative">
-      <!-- Background Atmospheric Blobs -->
-      <div
-        class="absolute -top-24 -left-24 w-96 h-96 bg-re-primary-fixed opacity-30 blur-[120px] -z-10 re-rounded-full"
-      ></div>
-      <div
-        class="absolute top-1/2 -right-24 w-80 h-80 bg-re-tertiary-fixed opacity-20 blur-[100px] -z-10 re-rounded-full"
-      ></div>
-      <div class="space-y-8">
-        <!-- Section 1: Thông tin cơ bản -->
-        <section
-          class="bg-re-surface-container-lowest re-rounded-xl p-8 shadow-xl shadow-blue-900/5 border border-white/50"
-        >
-          <div class="flex items-center gap-3 mb-8">
-            <div class="w-1.5 h-6 bg-re-primary re-rounded-full"></div>
-            <h2
-              class="text-xl font-headline font-extrabold text-re-on-surface tracking-tight"
-            >
-              Thông tin cơ bản
-            </h2>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div class="lg:col-span-2">
-              <label
-                class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1"
-                >Tên công việc</label
-              >
-              <input
-                class="w-full bg-re-surface-container-low/50 border-none re-rounded-xl px-4 py-3.5 focus:ring-2 focus:ring-re-primary/20 placeholder:text-slate-400 text-re-on-surface transition-all"
-                placeholder="Ví dụ: Senior Product Designer"
-                type="text"
-              />
-            </div>
-            <div>
-              <label
-                class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1"
-                >Loại hình</label
-              >
-              <select title="select"
-                class="w-full bg-re-surface-container-low/50 border-none re-rounded-xl px-4 py-3.5 focus:ring-2 focus:ring-re-primary/20 text-re-on-surface transition-all appearance-none"
-              >
-                <option value="Full_time">Toàn thời gian</option>
-                <option value="Part_time">Bán thời gian</option>
-                <option value="Hybrid">Hybrid</option>
-                <option value="Remote">Remote</option>
-              </select>
-            </div>
-            <div>
-              <label
-                class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1"
-                >Mức lương</label
-              >
-              <input
-                class="w-full bg-re-surface-container-low/50 border-none re-rounded-xl px-4 py-3.5 focus:ring-2 focus:ring-re-primary/20 placeholder:text-slate-400 text-re-on-surface transition-all"
-                placeholder="Thỏa thuận hoặc 20M - 30M"
-                type="text"
-              />
-            </div>
-            <div>
-              <label
-                class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1"
-                >Số lượng</label
-              >
-              <input
-                class="w-full bg-re-surface-container-low/50 border-none re-rounded-xl px-4 py-3.5 focus:ring-2 focus:ring-re-primary/20 placeholder:text-slate-400 text-re-on-surface transition-all"
-                placeholder="01"
-                type="number"
-              />
-            </div>
-            <div>
-              <label
-                class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1"
-                >Hạn nộp</label
-              >
-              <input title="input"
-                class="w-full bg-re-surface-container-low/50 border-none re-rounded-xl px-4 py-3.5 focus:ring-2 focus:ring-re-primary/20 text-re-on-surface transition-all"
-                type="date"
-              />
-            </div>
-            <div class="lg:col-span-3">
-              <label
-                class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1"
-                >Địa điểm</label
-              >
-              <div class="relative">
-                <span
-                  class="material-symbols-outlined absolute left-4 top-3.5 text-slate-400"
-                  >location_on</span
-                >
-                <input
-                  class="w-full bg-re-surface-container-low/50 border-none re-rounded-xl pl-12 pr-4 py-3.5 focus:ring-2 focus:ring-re-primary/20 placeholder:text-slate-400 text-re-on-surface transition-all"
-                  placeholder="Địa chỉ văn phòng làm việc..."
-                  type="text"
-                />
-              </div>
-            </div>
-          </div>
-        </section>
-        <!-- Section 2: Chi tiết hồ sơ -->
-        <section
-          class="bg-re-surface-container-lowest re-rounded-xl p-8 shadow-xl shadow-blue-900/5 border border-white/50"
-        >
-          <div class="flex items-center gap-3 mb-8">
-            <div class="w-1.5 h-6 bg-re-tertiary re-rounded-full"></div>
-            <h2
-              class="text-xl font-headline font-extrabold text-re-on-surface tracking-tight"
-            >
-              Chi tiết hồ sơ
-            </h2>
-          </div>
-          <div class="space-y-8">
-            <div>
-              <label
-                class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1"
-                >Mô tả công việc</label
-              >
-              <textarea
-                class="w-full bg-re-surface-container-low/50 border-none re-rounded-xl px-4 py-4 focus:ring-2 focus:ring-re-primary/20 placeholder:text-slate-400 text-re-on-surface transition-all resize-none"
-                placeholder="Mô tả các trách nhiệm chính của vị trí này..."
-                rows="4"
-              ></textarea>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div>
-                <label
-                  class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1"
-                  >Yêu cầu</label
-                >
-                <textarea
-                  class="w-full bg-re-surface-container-low/50 border-none re-rounded-xl px-4 py-4 focus:ring-2 focus:ring-re-primary/20 placeholder:text-slate-400 text-re-on-surface transition-all resize-none"
-                  placeholder="- Kinh nghiệm 2 năm...
-- Sử dụng thành thạo Figma..."
-                  rows="5"
-                ></textarea>
-              </div>
-              <div>
-                <label
-                  class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1"
-                  >Quyền lợi</label
-                >
-                <textarea
-                  class="w-full bg-re-surface-container-low/50 border-none re-rounded-xl px-4 py-4 focus:ring-2 focus:ring-re-primary/20 placeholder:text-slate-400 text-re-on-surface transition-all resize-none"
-                  placeholder="- Lương thưởng tháng 13...
-- Bảo hiểm cao cấp..."
-                  rows="5"
-                ></textarea>
-              </div>
-            </div>
-          </div>
-        </section>
-      </div>
-      <!-- Visual Side Card (Editorial Element) -->
-      <div class="hidden lg:block fixed top-24 right-8 w-64">
-        <div
-          class="bg-white/40 backdrop-blur-md re-rounded-xl p-6 border border-white/60 shadow-lg shadow-blue-900/5"
-        >
-          <img title="img"
-            class="w-full h-32 object-cover re-rounded-lg mb-4 opacity-80"
-            data-alt="professional workspace with high-end designer equipment and soft natural light coming through a window"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdTL8Wcl7vD7RtixGy_wAsBTmAnZkrj7X5SCUfwgPvBu9sZjypOpVDgL88DgWDdFWbK6b4AhUXc3Ux1Th5U4O_Os6uP4ar01QiwQd4aTMg2ohw1Toaax2lLSf-N_CeMLCwyDVTyVfCHLRnIgu65GINplo8x9U2Mfp9UZI5qL6Id0h1UpJxy4JjW3XGQC_5JWtz3HPCKMnaEjtgfpguNtDK6FyYkphwAi3TIedXPA3nZqHEV9T07prhz7ulZIt__0p2cpgE2hmhWhI"
-          />
-          <h3 class="text-sm font-headline font-bold text-re-on-surface mb-2">
-            Mẹo tuyển dụng
-          </h3>
-          <p class="text-xs text-re-on-surface-variant leading-relaxed">
-            Sử dụng các từ khóa chuyên môn giúp tin tuyển dụng của bạn dễ dàng
-            tiếp cận đúng ứng cử viên tiềm năng hơn.
-          </p>
+    <div class="absolute top-1/2 -right-24 w-80 h-80 bg-re-tertiary-fixed opacity-20 blur-[100px] -z-10 rounded-full">
+    </div>
+    <form [formGroup]="postJobFG" class="space-y-8">
+      <!-- Section 1: Basic Information -->
+      <section class="bg-re-surface-container-lowest rounded-xl p-8 shadow-xl shadow-blue-900/5 border border-white/50">
+        <div class="flex items-center gap-3 mb-8">
+          <div class="w-1.5 h-6 bg-re-primary rounded-full"></div>
+          <h2 class="text-xl font-headline font-extrabold text-re-on-surface tracking-tight">
+            {{ 'recruiterPostJob.basicInfo' | t }}
+          </h2>
         </div>
-      </div>
-    </div>
-    <!-- Floating Action Bar -->
-    <div class="fixed bottom-10 left-1/2 -translate-x-1/2 z-50">
-      <div
-        class="flex items-center gap-4 bg-white/80 backdrop-blur-2xl px-6 py-4 re-rounded-full shadow-[0_-10px_40px_rgba(0,74,198,0.12)] border border-white/50 min-w-[320px] justify-between"
-      >
-        <button
-          class="flex items-center gap-2 text-slate-500 font-label font-medium px-4 py-2 re-rounded-full hover:bg-slate-100/50 transition-all active:scale-95"
-        >
-          <span class="material-symbols-outlined text-[20px]">visibility</span>
-          <span>Xem trước</span>
-        </button>
-        <button
-          class="flex items-center gap-2 bg-re-primary-container text-white font-label font-bold px-8 py-3 re-rounded-full shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 transition-all active:scale-95 duration-200"
-        >
-          <span class="material-symbols-outlined text-[20px]">save</span>
-          <span>Lưu công việc</span>
-        </button>
-      </div>
-    </div>
-    <!-- Background Decoration -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="lg:col-span-2">
+            <label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">
+              {{ 'recruiterPostJob.jobTitle' | t }}
+            </label>
+            <input formControlName="jobName"
+              class="w-full bg-re-surface-container-low/50 border-none rounded-xl px-4 py-3.5 focus:ring-2 focus:ring-re-primary/20 text-re-on-surface transition-all"
+              [placeholder]="'recruiterPostJob.jobTitlePlaceholder' | t" type="text" />
+          </div>
+          <div>
+            <label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">
+              {{ 'recruiterPostJob.jobType' | t }}
+            </label>
+            <select title="select" formControlName="jobType"
+              class="w-full bg-re-surface-container-low/50 border-none rounded-xl px-4 py-3.5 focus:ring-2 focus:ring-re-primary/20 text-re-on-surface transition-all appearance-none">
+              <option value="FULL_TIME">{{ 'recruiterPostJob.jobTypeOptions.fullTime' | t }}</option>
+              <option value="PART_TIME">{{ 'recruiterPostJob.jobTypeOptions.partTime' | t }}</option>
+              <option value="HYBRID">{{ 'recruiterPostJob.jobTypeOptions.hybrid' | t }}</option>
+              <option value="REMOTE">{{ 'recruiterPostJob.jobTypeOptions.remote' | t }}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">
+              {{ 'recruiterPostJob.salary' | t }}
+            </label>
+            <input formControlName="salary"
+              class="w-full bg-re-surface-container-low/50 border-none rounded-xl px-4 py-3.5 focus:ring-2 focus:ring-re-primary/20 text-re-on-surface transition-all"
+              [placeholder]="'recruiterPostJob.salaryPlaceholder' | t" type="text" />
+          </div>
+          <div>
+            <label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">
+              {{ 'recruiterPostJob.headcount' | t }}
+            </label>
+            <input formControlName="headCount"
+              class="w-full bg-re-surface-container-low/50 border-none rounded-xl px-4 py-3.5 focus:ring-2 focus:ring-re-primary/20 text-re-on-surface transition-all"
+              [placeholder]="'recruiterPostJob.headcountPlaceholder' | t" type="number" />
+          </div>
+          <div>
+            <label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">
+              {{ 'recruiterPostJob.expiredDate' | t }}
+            </label>
+            <input title="input" formControlName="deadlineCV"
+              class="w-full bg-re-surface-container-low/50 border-none rounded-xl px-4 py-3.5 focus:ring-2 focus:ring-re-primary/20 text-re-on-surface transition-all"
+              type="date" />
+          </div>
+          <div class="lg:col-span-3">
+            <label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">
+              {{ 'recruiterPostJob.address' | t }}
+            </label>
+            <div class="relative">
+              <span
+                class="material-symbols-outlined absolute left-4 top-3.5 text-slate-400 pointer-events-none">location_on</span>
+              <select title="address" formControlName="location"
+                class="w-full bg-re-surface-container-low/50 border-none rounded-xl pl-12 pr-10 py-3.5 focus:ring-2 focus:ring-re-primary/20 text-re-on-surface transition-all appearance-none cursor-pointer"
+                [class.ring-2]="postJobFG.get('location')?.invalid && postJobFG.get('location')?.touched"
+                [class.ring-red-500]="postJobFG.get('location')?.invalid && postJobFG.get('location')?.touched">
+                <option value="" disabled selected>{{ 'recruiterPostJob.addressPlaceholder' | t }}</option>
+                @for (addr of companyAddresses; track addr.id) {
+                <option [value]="addr.id">{{ addr.city }} - {{ addr.street }}</option>
+                }
+              </select>
+              <span
+                class="material-symbols-outlined absolute right-4 top-3.5 text-slate-400 pointer-events-none">expand_more</span>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Section 2: Portfolio Details -->
+      <section class="bg-re-surface-container-lowest rounded-xl p-8 shadow-xl shadow-blue-900/5 border border-white/50">
+        <div class="flex items-center gap-3 mb-8">
+          <div class="w-1.5 h-6 bg-re-tertiary rounded-full"></div>
+          <h2 class="text-xl font-headline font-extrabold text-re-on-surface tracking-tight">
+            {{ 'recruiterPostJob.profileDetails' | t }}
+          </h2>
+        </div>
+        <div class="space-y-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">
+                {{ 'recruiterPostJob.description' | t }}
+              </label>
+              <textarea formControlName="jobDescription"
+                class="w-full bg-re-surface-container-low/50 border-none rounded-xl px-4 py-4 focus:ring-2 focus:ring-re-primary/20 text-re-on-surface transition-all resize-none"
+                [placeholder]="'recruiterPostJob.descriptionPlaceholder' | t" rows="4"></textarea>
+            </div>
+            <div>
+              <label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">
+                Kỹ năng chuyên môn
+              </label>
+              <textarea formControlName="jobSkill"
+                class="w-full bg-re-surface-container-low/50 border-none rounded-xl px-4 py-4 focus:ring-2 focus:ring-re-primary/20 text-re-on-surface transition-all resize-none"
+                placeholder="Ví dụ: Java, Spring Boot, React..." rows="4"></textarea>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">
+                {{ 'recruiterPostJob.requirements' | t }}
+              </label>
+              <textarea formControlName="jobRequirement"
+                class="w-full bg-re-surface-container-low/50 border-none rounded-xl px-4 py-4 focus:ring-2 focus:ring-re-primary/20 text-re-on-surface transition-all resize-none"
+                [placeholder]="'recruiterPostJob.requirementsPlaceholder' | t" rows="5"></textarea>
+            </div>
+            <div>
+              <label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">
+                {{ 'recruiterPostJob.benefits' | t }}
+              </label>
+              <textarea formControlName="moreDetail"
+                class="w-full bg-re-surface-container-low/50 border-none rounded-xl px-4 py-4 focus:ring-2 focus:ring-re-primary/20 text-re-on-surface transition-all resize-none"
+                [placeholder]="'recruiterPostJob.benefitsPlaceholder' | t" rows="5"></textarea>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: AI Analysis -->
+      <section class="bg-re-surface-container-lowest rounded-xl p-8 shadow-xl shadow-blue-900/5 border border-white/50">
+        <div class="flex items-center gap-3 mb-8">
+          <div class="w-1.5 h-6 bg-indigo-500 rounded-full"></div>
+          <h2 class="text-xl font-headline font-extrabold text-re-on-surface tracking-tight">
+            {{ 'recruiterPostJob.aiAnalysis' | t }}
+          </h2>
+        </div>
+        <div
+          class="flex items-center justify-between p-5 bg-gradient-to-r from-indigo-50/50 to-blue-50/50 rounded-xl border border-indigo-100/50">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
+              <span class="material-symbols-outlined text-indigo-600 text-2xl">psychology</span>
+            </div>
+            <div>
+              <p class="text-base font-bold text-slate-800">{{ 'recruiterPostJob.aiAnalysisToggle' | t }}</p>
+              <p class="text-sm text-slate-500 mt-0.5">{{ 'recruiterPostJob.aiAnalysisDesc' | t }}</p>
+            </div>
+          </div>
+          <button type="button" role="switch" [attr.aria-checked]="postJobFG.get('enableAiAnalysis')?.value"
+            class="relative inline-flex h-7 w-12 items-center rounded-full transition-colors"
+            [ngClass]="postJobFG.get('enableAiAnalysis')?.value ? 'bg-indigo-600' : 'bg-slate-200'"
+            (click)="postJobFG.get('enableAiAnalysis')?.setValue(!postJobFG.get('enableAiAnalysis')?.value)">
+            <span class="inline-block h-5 w-5 transform rounded-full bg-white transition-transform shadow-sm"
+              [ngClass]="postJobFG.get('enableAiAnalysis')?.value ? 'translate-x-6' : 'translate-x-1'"></span>
+          </button>
+        </div>
+      </section>
+    </form>
+
+  </div>
+  <!-- Floating Action Bar -->
+  <div class="fixed bottom-10 left-1/2 -translate-x-1/2 z-50">
     <div
-      class="fixed bottom-0 right-0 w-full h-1 bg-gradient-to-r from-re-primary to-re-tertiary opacity-20"
-    ></div>
-  </main>
+      class="flex items-center gap-4 bg-white/80 backdrop-blur-2xl px-6 py-2 rounded-2xl shadow-[0_-10px_40px_rgba(0,74,198,0.12)] border border-white/50 min-w-[320px] justify-between">
+      <div class="rounded-xl overflow-hidden hover:bg-slate-100/50 transition-colors">
+        <button
+          class="flex items-center justify-center gap-2 text-slate-500 text-sm font-label font-medium px-4 py-2 active:scale-95 w-full h-full">
+          <span class="material-symbols-outlined text-[18px]">visibility</span>
+          <span>{{ 'recruiterPostJob.preview' | t }}</span>
+        </button>
+      </div>
+      <div
+        class="rounded-lg overflow-hidden shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 transition-shadow bg-re-primary-container">
+        <button type="submit" [disabled]="isSubmitting"
+          (click)="onSubmit()"
+          class="flex items-center justify-center gap-2 text-white text-sm font-label font-bold px-6 py-2 transition-all active:scale-95 duration-200 w-full h-full disabled:opacity-50">
+          <span class="material-symbols-outlined text-[18px]">save</span>
+          <span>{{ isSubmitting ? 'Đang lưu...' : ('recruiterPostJob.saveJob' | t) }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- Background Decoration -->
+  <div class="fixed bottom-0 right-0 w-full h-1 bg-gradient-to-r from-re-primary to-re-tertiary opacity-20"></div>
+</main>

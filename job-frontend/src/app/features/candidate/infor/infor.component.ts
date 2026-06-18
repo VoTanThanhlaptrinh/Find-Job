@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 
 interface InforMenuItem {
@@ -18,6 +18,7 @@ interface InforMenuItem {
   styleUrl: './infor.component.css'
 })
 export class InforComponent {
+  private router = inject(Router);
   isOpen = true;
   readonly userAvatar = 'assets/images/avatar.jpg';
   readonly userName = 'Candidate Name';
@@ -36,5 +37,14 @@ export class InforComponent {
 
   onMenuItemClick(): void {
     // Mobile optimization: close sidebar on click if it's an overlay (implementation depends on design)
+  }
+
+  isActive(route: string, exact: boolean = false): boolean {
+    return this.router.isActive(route, {
+      paths: exact ? 'exact' : 'subset',
+      queryParams: 'ignored',
+      fragment: 'ignored',
+      matrixParams: 'ignored'
+    });
   }
 }

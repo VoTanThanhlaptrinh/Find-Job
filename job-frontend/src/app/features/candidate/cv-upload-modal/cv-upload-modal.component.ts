@@ -16,10 +16,11 @@ export class CvUploadModalComponent implements OnChanges {
   @ViewChild('cvUploadInput') cvUploadInput?: ElementRef<HTMLInputElement>;
   @Input() isOpen = false;
   @Output() closeRequested = new EventEmitter<void>();
-  @Output() submitRequested = new EventEmitter<File>();
+  @Output() submitRequested = new EventEmitter<{ file: File; enableAiAnalysis: boolean }>();
 
   selectedFile: File | null = null;
   errorMessage = '';
+  enableAiAnalysis = false;
   readonly maxFileSize = 5 * 1024 * 1024;
   readonly acceptedExtensions = '.pdf,.doc,.docx';
 
@@ -49,7 +50,7 @@ export class CvUploadModalComponent implements OnChanges {
       return;
     }
 
-    this.submitRequested.emit(this.selectedFile);
+    this.submitRequested.emit({ file: this.selectedFile, enableAiAnalysis: this.enableAiAnalysis });
   }
 
   onClose(event?: MouseEvent): void {
@@ -141,6 +142,7 @@ export class CvUploadModalComponent implements OnChanges {
   private resetSelection(): void {
     this.selectedFile = null;
     this.errorMessage = '';
+    this.enableAiAnalysis = false;
 
     if (this.cvUploadInput) {
       this.cvUploadInput.nativeElement.value = '';

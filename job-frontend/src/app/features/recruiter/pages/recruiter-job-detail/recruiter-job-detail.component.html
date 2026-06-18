@@ -2,66 +2,66 @@
   <section class="max-w-5xl mx-auto space-y-6">
     <header class="flex flex-wrap items-center justify-between gap-3">
       <div>
-        <h1 class="text-2xl md:text-3xl font-bold">Chi tiet tin tuyen dung</h1>
-        <p class="text-re-on-surface-variant">Ma tin: {{ jobId() || 'N/A' }}</p>
+        <h1 class="text-2xl md:text-3xl font-bold">{{ 'recruiterJobDetail.title' | t }}</h1>
+        <p class="text-re-on-surface-variant">{{ 'recruiterJobDetail.jobId' | t }}: {{ jobId() || ('recruiterCommon.fallback.notAvailable' | t) }}</p>
       </div>
       <a
-        class="px-4 py-2 re-rounded-full bg-re-surface-container-low border border-re-outline-variant/20"
+        class="px-4 py-2 rounded-full bg-re-surface-container-low border border-re-outline-variant/20"
         routerLink="/recruiter/jobs"
       >
-        Quay lai danh sach
+        {{ 'recruiterJobDetail.backToList' | t }}
       </a>
     </header>
 
-    <div *ngIf="isLoading()" class="bg-re-surface-container-low p-5 re-rounded-xl">
-      Dang tai chi tiet tin...
+    <div *ngIf="isLoading()" class="bg-re-surface-container-low p-5 rounded-xl">
+      {{ 'recruiterJobDetail.loading' | t }}
     </div>
 
-    <div *ngIf="loadError()" class="bg-re-error-fixed text-re-on-error-fixed p-4 re-rounded-xl">
+    <div *ngIf="loadError()" class="bg-re-error-fixed text-re-on-error-fixed p-4 rounded-xl">
       {{ loadError() }}
     </div>
 
     <article
       *ngIf="!isLoading() && !loadError()"
-      class="bg-re-surface-container-lowest border border-re-outline-variant/20 p-6 re-rounded-2xl space-y-6"
+      class="bg-re-surface-container-lowest border border-re-outline-variant/20 p-6 rounded-2xl space-y-6"
     >
       <div>
-        <h2 class="text-xl md:text-2xl font-semibold">{{ jobDetail().title || 'Dang cap nhat tieu de' }}</h2>
-        <p class="text-re-on-surface-variant mt-1">{{ jobDetail().address || 'Dang cap nhat dia diem' }}</p>
+        <h2 class="text-xl md:text-2xl font-semibold">{{ jobDetail().title || ('recruiterJobDetail.fallbackTitle' | t) }}</h2>
+        <p class="text-re-on-surface-variant mt-1">{{ jobDetail().address || ('recruiterJobDetail.fallbackAddress' | t) }}</p>
       </div>
 
       <dl class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-        <div class="bg-re-surface-container p-4 re-rounded-xl">
-          <dt class="text-re-on-surface-variant">Luong</dt>
+        <div class="bg-re-surface-container p-4 rounded-xl">
+          <dt class="text-re-on-surface-variant">{{ 'recruiterJobDetail.salary' | t }}</dt>
           <dd class="font-semibold mt-1">{{ formatMoney(jobDetail().salary) }}</dd>
         </div>
-        <div class="bg-re-surface-container p-4 re-rounded-xl">
-          <dt class="text-re-on-surface-variant">Hinh thuc</dt>
-          <dd class="font-semibold mt-1">{{ jobDetail().time || 'Dang cap nhat' }}</dd>
+        <div class="bg-re-surface-container p-4 rounded-xl">
+          <dt class="text-re-on-surface-variant">{{ 'recruiterJobDetail.time' | t }}</dt>
+          <dd class="font-semibold mt-1">{{ jobDetail().time || ('recruiterCommon.fallback.notAvailable' | t) }}</dd>
         </div>
-        <div class="bg-re-surface-container p-4 re-rounded-xl">
-          <dt class="text-re-on-surface-variant">Chi tieu</dt>
+        <div class="bg-re-surface-container p-4 rounded-xl">
+          <dt class="text-re-on-surface-variant">{{ 'recruiterJobDetail.headcount' | t }}</dt>
           <dd class="font-semibold mt-1">{{ jobDetail().headcount || 0 }}</dd>
         </div>
-        <div class="bg-re-surface-container p-4 re-rounded-xl md:col-span-2">
-          <dt class="text-re-on-surface-variant">Ky nang</dt>
-          <dd class="font-semibold mt-1">{{ jobDetail().skill || 'Dang cap nhat' }}</dd>
+        <div class="bg-re-surface-container p-4 rounded-xl md:col-span-2">
+          <dt class="text-re-on-surface-variant">{{ 'recruiterJobDetail.skills' | t }}</dt>
+          <dd class="font-semibold mt-1">{{ jobDetail().skill || ('recruiterCommon.fallback.notAvailable' | t) }}</dd>
         </div>
-        <div class="bg-re-surface-container p-4 re-rounded-xl">
-          <dt class="text-re-on-surface-variant">Han nop</dt>
-          <dd class="font-semibold mt-1">{{ jobDetail().expiredDate || 'Dang cap nhat' }}</dd>
+        <div class="bg-re-surface-container p-4 rounded-xl">
+          <dt class="text-re-on-surface-variant">{{ 'recruiterJobDetail.deadline' | t }}</dt>
+          <dd class="font-semibold mt-1">{{ jobDetail().expiredDate || ('recruiterCommon.fallback.notAvailable' | t) }}</dd>
         </div>
       </dl>
 
       <div class="space-y-3">
-        <h3 class="font-semibold text-lg">Mo ta cong viec</h3>
-        <p class="whitespace-pre-line text-re-on-surface-variant">{{ jobDetail().description || 'Chua co mo ta.' }}</p>
+        <h3 class="font-semibold text-lg">{{ 'recruiterJobDetail.description' | t }}</h3>
+        <p class="whitespace-pre-line text-re-on-surface-variant">{{ jobDetail().description || ('recruiterJobDetail.fallbackDescription' | t) }}</p>
       </div>
 
       <div class="space-y-3">
-        <h3 class="font-semibold text-lg">Yeu cau</h3>
-        <p class="whitespace-pre-line text-re-on-surface-variant">{{ jobDetail().requireDetails || 'Chua co yeu cau.' }}</p>
+        <h3 class="font-semibold text-lg">{{ 'recruiterJobDetail.requirements' | t }}</h3>
+        <p class="whitespace-pre-line text-re-on-surface-variant">{{ jobDetail().requireDetails || ('recruiterJobDetail.fallbackRequirements' | t) }}</p>
       </div>
     </article>
   </section>
-</main>
+</main>

@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { computed, Injectable, signal } from '@angular/core';
 import { take } from 'rxjs';
 import { NotifyMessageService } from '../../../core/services/notify-message.service';
@@ -71,13 +71,20 @@ export class RecruiterAccountService {
         this.candidatesTotal.set(response.data?.page?.totalElements ?? 0);
         this.candidatesTotalPages.set(response.data?.page?.totalPages ?? 0);
         this.isLoadingCandidates.set(false);
+        if (content.length === 0) {
+          this.notify.info(this.i18nService.translate('candidateList.empty'));
+        }
       },
-      error: () => {
+      error: (err: HttpErrorResponse) => {
         this.candidates.set([]);
         this.candidatesTotal.set(0);
         this.candidatesTotalPages.set(0);
         this.isLoadingCandidates.set(false);
-        this.notify.error(this.i18nService.translate('recruiterCommon.errors.loadCandidatesFailed'));
+        if (err.status === 404) {
+          this.notify.info(this.i18nService.translate('candidateList.empty'));
+        } else {
+          this.notify.error(this.i18nService.translate('recruiterCommon.errors.loadCandidatesFailed'));
+        }
       }
     });
   }

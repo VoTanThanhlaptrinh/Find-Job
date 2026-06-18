@@ -36,14 +36,12 @@ public record JobDto(
         @NotNull(message = "{validation.job.deadline.required}")
         LocalDate deadlineCV,
 
-        @Positive(message = "{validation.job.hirer.required}")
-        long hirerId,
-
         @Size(min = 0, max = 5000, message = "{validation.job.maxLength}")
         String moreDetail,
 
         @Min(value = 1, message = "{validation.job.headcount.min}")
-        Integer headcount
+        Integer headcount,
+        boolean enableAiAnalysis
 ) {
     @AssertTrue(message = "{validation.job.deadline.future}")
     public boolean isDeadlineValid() {
@@ -78,15 +76,15 @@ public record JobDto(
         return deadlineCV;
     }
 
-    public long getHirerId() {
-        return hirerId;
-    }
-
     public String getMoreDetail() {
         return moreDetail;
     }
 
     public Integer getHeadcount() {
         return headcount;
+    }
+
+    public boolean isEnableAiAnalysis() {
+        return enableAiAnalysis;
     }
 }

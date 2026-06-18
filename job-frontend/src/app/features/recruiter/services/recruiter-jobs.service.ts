@@ -1,11 +1,13 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { computed, Injectable, signal } from '@angular/core';
+import { computed, Injectable, signal, effect, inject } from '@angular/core';
 import { Observable, take } from 'rxjs';
 import { NotifyMessageService } from '../../../core/services/notify-message.service';
 import { UtilitiesService } from '../../../core/services/utilities.service';
 import { I18nService } from '../../../core/i18n/i18n.service';
 import { ApiResponse } from '../../../shared/models/api-response.model';
 import { PagedPayload, HirerJobPostView } from '../../../shared/models/jobs/job-api-response.model';
+import { SseService } from '../../../core/services/sse.service';
+import { SseMessagePayload } from '../../../shared/models/sse/sse.model';
 
 export type RecruiterJobUpsertPayload = FormData;
 
@@ -16,6 +18,9 @@ export type RecruiterJobViewModel = HirerJobPostView;
 })
 export class RecruiterJobsService {
   private readonly url: string;
+  private readonly sseService = inject(SseService);
+  private readonly SSE_JOB_EVENT = 'job-process';
+  readonly jobProcessEvent = this.sseService.fromEvent<SseMessagePayload>(this.SSE_JOB_EVENT);
 
   private readonly postedJobs = signal<RecruiterJobViewModel[]>([]);
   private readonly postedJobsTotalCount = signal<number>(0);
@@ -44,6 +49,20 @@ export class RecruiterJobsService {
     private readonly i18nService: I18nService
   ) {
     this.url = this.utilities.getURLDev();
+
+    effect(() => {
+      const event = this.jobProcessEvent();
+      if (!event) return;
+
+      if (event.status === 'analyzed') {
+        this.postedJobs.update(jobs =>
+          jobs.map(j => j.id === event.id ? { ...j, isAnalyzed: true } : j)
+        );
+        this.notify.success('Phân tích tin tuyển dụng thành công.');
+      } else if (event.status === 'failed') {
+        this.notify.error('Phân tích tin tuyển dụng thất bại.');
+      }
+    });
   }
 
   loadPostedJobs(pageIndex: number, pageSize: number): void {
@@ -178,6 +197,21 @@ export class RecruiterJobsService {
       },
       complete: () => {
         this.isSubmittingJob.set(false);
+      }
+    });
+  }
+
+  analyzeJob(jobId: number): void {
+    this.http.post<ApiResponse<string | null>>(
+      `${this.url}/hirer/jobs/${jobId}/analyze`,
+      {},
+      { withCredentials: true }
+    ).pipe(take(1)).subscribe({
+      next: () => {
+        // SSE sẽ cập nhật real-time
+      },
+      error: (error: { error?: { message?: string } }) => {
+        this.notify.error(error?.error?.message || 'Phân tích thất bại');
       }
     });
   }

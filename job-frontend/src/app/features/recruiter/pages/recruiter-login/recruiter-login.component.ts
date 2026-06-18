@@ -27,6 +27,12 @@ export class RecruiterLoginComponent {
     remember: [false],
   });
 
+  showPassword = false;
+
+  togglePassword(): void {
+    this.showPassword = !this.showPassword;
+  }
+
   constructor() {
     const existingToken = this.tokenService.getToken();
 

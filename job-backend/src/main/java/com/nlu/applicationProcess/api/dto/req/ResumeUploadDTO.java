@@ -6,7 +6,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 public record ResumeUploadDTO(
         @NotNull(message = "{validation.resume.file.required}")
-        MultipartFile file
+        MultipartFile file,
+        boolean enableAiAnalysis
 ) {
     @AssertTrue(message = "{validation.resume.type.invalid}")
     public boolean isValidType() {

@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { hirerChildGuard } from '../../core/guards/hirer-guard.guard';
+import { RecruiterLayoutComponent } from './components/recruiter-layout/recruiter-layout.component';
 import { CandidateListComponent } from './pages/candidate-list/candidate-list.component';
 import { CompanyAddressComponent } from './pages/company-address/company-address.component';
 import { RecruiterDashboardComponent } from './pages/recruiter-dashboard/recruiter-dashboard.component';
@@ -15,23 +16,25 @@ export const recruiterRoutes: Routes = [
   { path: 'login', component: RecruiterLoginComponent },
   { path: 'register', component: RecruiterRegisterComponent },
 
+  // Legacy redirect support
   { path: 'dashboard/overview', redirectTo: 'dashboard', pathMatch: 'full' },
   { path: 'dashboard/jobs', redirectTo: 'jobs', pathMatch: 'full' },
   { path: 'dashboard/jobs/post-job', redirectTo: 'jobs/post-job', pathMatch: 'full' },
   { path: 'dashboard/jobs/detail/:id', redirectTo: 'jobs/detail/:id', pathMatch: 'full' },
-  { path: 'dashboard/candidates', redirectTo: 'candidates', pathMatch: 'full' },
+  { path: 'dashboard/candidates', redirectTo: 'jobs', pathMatch: 'full' },
   { path: 'dashboard/company-address', redirectTo: 'company-address', pathMatch: 'full' },
 
   {
     path: '',
+    component: RecruiterLayoutComponent,
     canActivateChild: [hirerChildGuard],
     children: [
-      { path: 'dashboard', component: RecruiterDashboardComponent },
-      { path: 'jobs', component: RecruiterJobListComponent },
-      { path: 'jobs/detail/:id', component: RecruiterJobDetailComponent },
-      { path: 'jobs/post-job', component: PostJobComponent },
-      { path: 'candidates', component: CandidateListComponent },
-      { path: 'company-address', component: CompanyAddressComponent },
+      { path: 'dashboard', component: RecruiterDashboardComponent, data: { title: 'Overview' } },
+      { path: 'jobs', component: RecruiterJobListComponent, data: { title: 'Jobs' } },
+      { path: 'jobs/detail/:id', component: RecruiterJobDetailComponent, data: { title: 'Job Detail' } },
+      { path: 'jobs/:jobId/candidates', component: CandidateListComponent, data: { title: 'Candidates' } },
+      { path: 'jobs/post-job', component: PostJobComponent, data: { title: 'Post Job' } },
+      { path: 'company-address', component: CompanyAddressComponent, data: { title: 'Company Address' } },
     ],
   },
 

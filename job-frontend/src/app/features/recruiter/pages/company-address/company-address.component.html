@@ -1,69 +1,75 @@
 <main class="bg-re-surface text-re-on-surface min-h-screen p-6 md:p-10" (click)="closeMenu()">
-  <section class="max-w-5xl mx-auto space-y-6" (click)="$event.stopPropagation()">
+  <section class="max-w-3xl mx-auto space-y-6" (click)="$event.stopPropagation()">
     <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-2xl md:text-3xl font-bold">Quan ly dia chi cong ty</h1>
-        <p class="text-re-on-surface-variant mt-1">Danh sach dang dung mock data cho den khi co API contract</p>
+        <h1 class="text-2xl md:text-3xl font-bold">{{ 'companyAddress.title' | t }}</h1>
+        <p class="text-re-on-surface-variant mt-1">{{ 'companyAddress.subtitle' | t }}</p>
       </div>
-      <button
-        type="button"
-        class="inline-flex items-center gap-2 bg-re-primary text-re-on-primary px-4 py-2 re-rounded-full font-semibold"
-        (click)="addAddress()"
-      >
-        <span class="material-symbols-outlined">add</span>
-        Them dia chi
-      </button>
+      <div class="rounded-full overflow-hidden bg-re-primary">
+        <button type="button"
+          class="inline-flex items-center justify-center w-full h-full gap-2 text-re-on-primary px-4 py-2 font-semibold"
+          (click)="openAddModal()">
+          <span class="material-symbols-outlined">add</span>
+          {{ 'companyAddress.addAddress' | t }}
+        </button>
+      </div>
     </header>
 
-    <div *ngIf="addresses.length === 0" class="bg-re-surface-container-low p-5 re-rounded-xl text-re-on-surface-variant">
-      Chua co dia chi nao.
+    <div *ngIf="isLoading" class="w-full">
+      <app-skeleton-address-card [count]="2"></app-skeleton-address-card>
     </div>
 
-    <ul *ngIf="addresses.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <li
-        *ngFor="let address of addresses; trackBy: trackByAddressId"
-        class="bg-re-surface-container-lowest border border-re-outline-variant/20 p-5 re-rounded-2xl relative"
-      >
+    <div *ngIf="!isLoading && addresses.length === 0" class="bg-re-surface-container-low p-5 rounded-xl text-re-on-surface-variant">
+      {{ 'companyAddress.empty' | t }}
+    </div>
+
+    <ul *ngIf="!isLoading && addresses.length > 0" class="flex flex-col gap-4">
+      <li *ngFor="let address of addresses; trackBy: trackByAddressId"
+        class="bg-re-surface-container-lowest border border-re-outline-variant/20 px-4 py-3 rounded-2xl relative">
         <div class="flex justify-between gap-3">
           <div>
             <div class="flex items-center gap-2">
               <h2 class="font-semibold text-lg">{{ address.locationName }}</h2>
-              <span *ngIf="address.isDefault" class="text-xs px-2 py-0.5 re-rounded-full bg-emerald-100 text-emerald-700">
-                Mac dinh
+              <span *ngIf="address.isDefault" class="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">
+                {{ 'companyAddress.default' | t }}
               </span>
             </div>
             <p class="text-sm text-re-on-surface-variant mt-1">{{ address.fullAddress }}</p>
           </div>
 
           <div class="relative">
-            <button
-              type="button"
-              class="w-9 h-9 re-rounded-full bg-re-surface-container flex items-center justify-center"
-              (click)="toggleMenu(address.id); $event.stopPropagation()"
-            >
-              <span class="material-symbols-outlined">more_vert</span>
-            </button>
-
-            <div
-              *ngIf="openMenuId === address.id"
-              class="absolute right-0 mt-2 min-w-32 bg-re-surface-container-lowest border border-re-outline-variant/20 shadow-md re-rounded-xl p-1 z-10"
-            >
-              <button
-                type="button"
-                class="w-full text-left px-3 py-2 text-sm text-re-error hover:bg-re-error-fixed hover:text-re-on-error-fixed re-rounded-lg"
-                (click)="deleteAddress(address); $event.stopPropagation()"
-              >
-                Xoa
+            <div class="w-9 h-9 rounded-full overflow-hidden bg-re-surface-container">
+              <button type="button" class="w-full h-full flex items-center justify-center"
+                (click)="toggleMenu(address.id); $event.stopPropagation()">
+                <span class="material-symbols-outlined">more_vert</span>
               </button>
+            </div>
+
+            <div *ngIf="openMenuId === address.id"
+              class="absolute right-0 mt-2 min-w-32 bg-re-surface-container-lowest border border-re-outline-variant/20 shadow-md rounded-xl p-1 z-10">
+              <div class="rounded-lg overflow-hidden hover:bg-slate-100">
+                <button type="button"
+                  class="w-full h-full text-left px-3 py-2 text-sm text-slate-700 hover:text-slate-900"
+                  (click)="openEditModal(address); $event.stopPropagation()">
+                  Cập nhật
+                </button>
+              </div>
+              <div class="rounded-lg overflow-hidden hover:bg-re-error-fixed">
+                <button type="button"
+                  class="w-full h-full text-left px-3 py-2 text-sm text-re-error hover:text-re-on-error-fixed"
+                  (click)="deleteAddress(address); $event.stopPropagation()">
+                  {{ 'companyAddress.delete' | t }}
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="mt-4 pt-4 border-t border-re-outline-variant/20 text-sm text-re-on-surface-variant space-y-1">
-          <p>Nguoi lien he: <span class="text-re-on-surface font-medium">{{ address.contactName }}</span></p>
-          <p>Dien thoai: <span class="text-re-on-surface font-medium">{{ address.phone }}</span></p>
-        </div>
+
       </li>
     </ul>
   </section>
+
+  <app-add-address-modal [isOpen]="isAddModalOpen" [isEditMode]="isEditMode" [addressToEdit]="currentEditingAddress"
+    (close)="closeAddModal()" (save)="onSaveAddress($event)"></app-add-address-modal>
 </main>

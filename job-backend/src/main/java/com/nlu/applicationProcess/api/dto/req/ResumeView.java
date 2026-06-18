@@ -5,7 +5,8 @@ import java.time.LocalDateTime;
 public record ResumeView(
         long id,
         String fileName,
-        LocalDateTime createDate
+        LocalDateTime createDate,
+        boolean isAnalyzed
 ) {
     public long getId() {
         return id;
@@ -17,5 +18,9 @@ public record ResumeView(
 
     public LocalDateTime getCreateDate() {
         return createDate;
+    }
+
+    public boolean isAnalyzed() {
+        return isAnalyzed;
     }
 }

@@ -76,16 +76,16 @@ public class MasterDataSeeder implements CommandLineRunner {
 
     // Tập trung vào các thành phố lớn tại Việt Nam
     private static final List<AddressSeed> ADDRESS_SEEDS = List.of(
-            new AddressSeed("Hà Nội", "Cầu Giấy", "Duy Tân"),
-            new AddressSeed("Hà Nội", "Nam Từ Liêm", "Phạm Hùng"),
-            new AddressSeed("Hà Nội", "Đống Đa", "Tôn Đức Thắng"),
-            new AddressSeed("Hồ Chí Minh", "Quận 1", "Nguyễn Huệ"),
-            new AddressSeed("Hồ Chí Minh", "Bình Thạnh", "Điện Biên Phủ"),
-            new AddressSeed("Hồ Chí Minh", "Thủ Đức", "Xa lộ Hà Nội"),
-            new AddressSeed("Đà Nẵng", "Hải Châu", "Bạch Đằng"),
-            new AddressSeed("Đà Nẵng", "Thanh Khê", "Nguyễn Tất Thành"),
-            new AddressSeed("Hải Phòng", "Ngô Quyền", "Lê Hồng Phong"),
-            new AddressSeed("Cần Thơ", "Ninh Kiều", "30 Tháng 4")
+            new AddressSeed("Trụ sở Hà Nội", "Hà Nội", "Duy Tân"),
+            new AddressSeed("Văn phòng Nam Từ Liêm", "Hà Nội", "Phạm Hùng"),
+            new AddressSeed("Chi nhánh Đống Đa", "Hà Nội", "Tôn Đức Thắng"),
+            new AddressSeed("Trụ sở chính HCM", "Hồ Chí Minh", "Nguyễn Huệ"),
+            new AddressSeed("Văn phòng Bình Thạnh", "Hồ Chí Minh", "Điện Biên Phủ"),
+            new AddressSeed("Chi nhánh Thủ Đức", "Hồ Chí Minh", "Xa lộ Hà Nội"),
+            new AddressSeed("Văn phòng Đà Nẵng", "Đà Nẵng", "Bạch Đằng"),
+            new AddressSeed("Chi nhánh Thanh Khê", "Đà Nẵng", "Nguyễn Tất Thành"),
+            new AddressSeed("Văn phòng Hải Phòng", "Hải Phòng", "Lê Hồng Phong"),
+            new AddressSeed("Chi nhánh Cần Thơ", "Cần Thơ", "30 Tháng 4")
     );
 
     private final RecruitmentRepository recruitmentRepository;
@@ -215,8 +215,10 @@ public class MasterDataSeeder implements CommandLineRunner {
                 LocalDateTime createdAt = LocalDateTime.now().minusDays(20L + addressIndex);
 
                 Address address = new Address();
+                address.setLocationName(template.locationName());
                 address.setCity(template.city());
                 address.setStreet(template.street());
+                address.setIsDefault(j == 0);
                 address.setCreateDate(createdAt);
                 address.setUpdateDate(createdAt.plusDays(1));
 
@@ -262,11 +264,7 @@ public class MasterDataSeeder implements CommandLineRunner {
         return email;
     }
 
-    private record AddressSeed(String city, String street) {
-        private AddressSeed(String city, String ignoredDistrict, String street) {
-            this(city, street);
-        }
-    }
+    private record AddressSeed(String locationName, String city, String street) {}
     public List<JobJsonDto> convertJsonFileToList(String filePath) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
@@ -345,7 +343,7 @@ public class MasterDataSeeder implements CommandLineRunner {
     /**
      * Vectorize danh sách các Job đã lưu
      */
-    private final ExecutorService executor = Executors.newFixedThreadPool(5);
+    private final ExecutorService executor = Executors.newFixedThreadPool(2);
 
     private void vectorizeJobs(List<Job> jobs) {
         log.info("Bắt đầu vectorize {} công việc...", jobs.size());

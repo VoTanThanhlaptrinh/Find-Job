@@ -40,6 +40,15 @@ public class UserResumeController {
         return ResponseEntity.ok().body(new ApiResponse<>(MessageUtils.getMessage("message.success"),resumes, HttpStatus.OK.value()));
     }
 
+    @GetMapping("/analyzed")
+    public ResponseEntity<ApiResponse<List<ResumeView>>> getAnalyzedResumes(@CurrentUser User currentUser) {
+        if(currentUser == null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(MessageUtils.getMessage("message.unauthorized"), null, HttpStatus.BAD_REQUEST.value()));
+        }
+        List<ResumeView> resumes = resumeService.getAnalyzedResumesOfUser(currentUser);
+        return ResponseEntity.ok().body(new ApiResponse<>(MessageUtils.getMessage("message.success"), resumes, HttpStatus.OK.value()));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<ResumeDetailDTO>> getResumeDetail(@PathVariable long id, @CurrentUser User currentUser) {
         ResumeDetailDTO res = resumeService.getResumeDetail(id, currentUser);
@@ -74,5 +83,16 @@ public class UserResumeController {
     public ResponseEntity<ApiResponse<String>> deleteResume(@PathVariable("id") long id, @CurrentUser User currentUser) {
         resumeService.deleteResume(id, currentUser);
         return ResponseEntity.ok().body(new ApiResponse<>(MessageUtils.getMessage("message.success"), null, HttpStatus.OK.value()));
+    }
+
+    @PostMapping("/{id}/analyze")
+    public ResponseEntity<ApiResponse<String>> analyzeResume(
+            @PathVariable long id,
+            @CurrentUser User currentUser) {
+        resumeService.analyzeResume(id, currentUser);
+        return ResponseEntity.ok()
+                .body(new ApiResponse<>(
+                        MessageUtils.getMessage("resume.analyze.started"),
+                        null, HttpStatus.OK.value()));
     }
 }

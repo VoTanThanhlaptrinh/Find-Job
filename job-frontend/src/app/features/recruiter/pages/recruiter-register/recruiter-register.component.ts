@@ -1,12 +1,13 @@
 import { Component, effect, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { RecruiterAuthService } from '../../services/recruiter-auth.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-recruiter-register',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './recruiter-register.component.html',
   styleUrl: './recruiter-register.component.css',
 })
@@ -24,6 +25,17 @@ export class RecruiterRegisterComponent {
     confirmPassword: ['', [Validators.required]],
     agreeTerms: [false, [Validators.requiredTrue]],
   });
+
+  showPassword = false;
+  showConfirmPassword = false;
+
+  togglePassword(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  toggleConfirmPassword(): void {
+    this.showConfirmPassword = !this.showConfirmPassword;
+  }
 
   constructor() {
     effect(() => {

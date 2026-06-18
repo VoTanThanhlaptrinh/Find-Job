@@ -1,6 +1,8 @@
 package com.nlu.shared.infrastructure.message;
 
 import com.nlu.applicationProcess.api.dto.client.ResumeParsingMessage;
+import com.nlu.recruitment.api.dto.VectorizeJdRequest;
+import com.nlu.shared.api.message.dto.ApiMessage;
 import com.nlu.shared.api.message.dto.CloudUploadMessage;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
@@ -19,6 +21,9 @@ public class MessageProducer {
 	}
 	public void processAI(ResumeParsingMessage message) {
 		rabbitTemplate.convertAndSend("parsingExchange", "parsingRoutingKey", message);
+	}
+	public void processJdVectorize(VectorizeJdRequest request) {
+		rabbitTemplate.convertAndSend("apiExchange", "apiRoutingKey", ApiMessage.vectorizeJd(request));
 	}
 }
 

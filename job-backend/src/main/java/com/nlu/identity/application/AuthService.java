@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public interface AuthService {
     String registerUser(RegistrationForm registrationForm);
 
-    String registerHirer(RegistrationForm registrationForm);
+    String registerHirer(com.nlu.identity.api.dto.HirerRegistrationForm registrationForm);
 
     void sendLinkActivate(String email);
 

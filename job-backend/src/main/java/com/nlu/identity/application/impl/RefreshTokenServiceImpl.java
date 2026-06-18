@@ -45,14 +45,12 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 			String familyId = jwtService.extractFamily(token);
 			boolean valid = familyId != null && jwtFamilyService.getFamilyJti(familyId).equals(jti);
 			if (!valid) {
-				// WARN: possible token reuse or tampering — the JTI no longer
-				// matches the latest one stored for this family. This could
-				// indicate a stolen refresh token being replayed.
 				log.warn("Refresh token JTI mismatch — possible token reuse detected");
 			}
 			return valid;
 		} catch (Exception e) {
 			log.warn("Refresh token validation failed — token expired or malformed");
+			e.printStackTrace();
 			return false;
 		}
 	}

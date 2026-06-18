@@ -1,29 +1,104 @@
-<article class="hirer-card">
-  <header class="hirer-card-head">
-    <div>
-      <a class="job-title-link" [routerLink]="[detailRoute, job.id]">
-        <h3>{{ job.title }}</h3>
+<div
+  class="flex w-full lg:w-[70vw] bg-white border border-slate-200 rounded-xl px-4 py-3 hover:border-blue-600 hover:shadow-xl hover:shadow-blue-900/5 transition-all duration-300 group overflow-hidden shadow-md flex-col gap-4">
+  <div class="flex items-start gap-4">
+    <!-- Left Logo Image -->
+    <div
+      class="w-20 h-20 rounded-xl bg-slate-50 shrink-0 flex items-center justify-center overflow-hidden border border-slate-100 group-hover:border-blue-100 transition-colors duration-300">
+      <img title="img" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+        [src]="image" [alt]="job.title" />
+    </div>
+
+    <!-- Main Content Details -->
+    <div class="grow min-w-0">
+      <div class="flex items-start justify-between gap-2">
+        <a [routerLink]="[detailRoute, job.id]" class="block no-underline min-w-0 grow">
+          <h3
+            class="text-lg md:text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors duration-300 leading-snug truncate">
+            {{ job.title }}
+          </h3>
+        </a>
+        <!-- AI Badge -->
+        @if (job.isAnalyzed) {
+        <span
+          class="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200 flex items-center gap-1 shrink-0">
+          <span class="material-symbols-outlined text-[14px]"
+            style="font-variation-settings: 'FILL' 1;">check_circle</span>
+          {{ 'job.badge.analyzed' | t }}
+        </span>
+        } @else {
+        <span
+          class="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200 flex items-center gap-1 shrink-0">
+          <span class="material-symbols-outlined text-[14px]">psychology</span>
+          {{ 'job.badge.notAnalyzed' | t }}
+        </span>
+        }
+      </div>
+
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5 mt-2 text-sm text-slate-500">
+        <div class="flex items-center gap-1">
+          <span class="material-symbols-outlined text-[18px]">location_on</span>
+          <span class="truncate max-w-[200px]">{{ job.address || ('recruiterCommon.fallback.notAvailable' | t) }}</span>
+        </div>
+
+        <span class="text-slate-300">&bull;</span>
+
+        <div class="flex items-center gap-1 font-bold text-slate-700">
+          <span>{{ formatMoney(job.salary) }}</span>
+        </div>
+
+        <span class="text-slate-300">&bull;</span>
+
+        <div class="flex items-center gap-1">
+          <span class="material-symbols-outlined text-[18px]">schedule</span>
+          <span>{{ job.time || ('recruiterCommon.fallback.notAvailable' | t) }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress Bar (Recruiter Specific) -->
+  <div class="border-t border-slate-100 pt-3 mt-1">
+    <div class="flex justify-between items-center text-xs text-slate-600 font-medium mb-1.5">
+      <span class="flex items-center gap-1.5">
+        <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+        {{ 'recruiterJobList.applies' | t }}
+      </span>
+      <span>{{ job.applies }}/{{ job.headcount }} ({{ appliesRate }}%)</span>
+    </div>
+    <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+      <div class="h-full bg-gradient-to-r from-blue-500 to-emerald-500 rounded-full transition-all duration-500"
+        [style.width.%]="appliesRate"></div>
+    </div>
+  </div>
+
+  <!-- Actions (Recruiter Specific) -->
+  <div class="flex flex-wrap items-center justify-end gap-2 pt-2 border-t border-slate-100">
+    <div class="inline-block rounded-full overflow-hidden bg-blue-50 hover:bg-blue-100 transition-colors duration-200">
+      <a class="block px-4 py-1.5 text-xs font-semibold text-blue-600" [routerLink]="[detailRoute, job.id]">
+        {{ 'recruiterJobList.details' | t }}
       </a>
-      <p class="job-address">{{ job.address }}</p>
     </div>
-    <div class="salary-badge">{{ job.salary }}</div>
-  </header>
-
-  <!-- <p class="job-description">{{ shortDescription }}</p> -->
-
-  <div class="meta-row">
-    <span class="meta-pill">{{ job.time }}</span>
-    <span class="meta-pill">{{ 'recruiterJobList.headcount' | t }}: {{ job.headcount }}</span>
-    <span class="meta-pill">{{ 'recruiterJobList.applies' | t }}: {{ job.applies }}</span>
+    <div
+      class="inline-block rounded-full overflow-hidden bg-emerald-50 hover:bg-emerald-100 transition-colors duration-200">
+      <a class="block px-4 py-1.5 text-xs font-semibold text-emerald-600"
+        [routerLink]="['/recruiter/jobs', job.id, 'candidates']">
+        {{ 'recruiterJobList.viewCandidates' | t }}
+      </a>
+    </div>
+    @if (!job.isAnalyzed) {
+    <div
+      class="inline-block rounded-full overflow-hidden bg-indigo-50 hover:bg-indigo-100 transition-colors duration-200">
+      <button type="button" class="block w-full h-full px-4 py-1.5 text-xs font-semibold text-indigo-600"
+        (click)="onAnalyze($event, job.id)">
+        {{ 'job.analyzeNow' | t }}
+      </button>
+    </div>
+    }
+    <div class="inline-block rounded-full overflow-hidden bg-rose-50 hover:bg-rose-100 transition-colors duration-200">
+      <button type="button" class="block w-full h-full px-4 py-1.5 text-xs font-semibold text-rose-600 cursor-pointer"
+        (click)="onDelete($event, job.id)">
+        {{ 'recruiterJobList.delete' | t }}
+      </button>
+    </div>
   </div>
-
-  <div class="progress-wrap" [attr.aria-label]="'applies-progress'">
-    <div class="progress-head">
-      <span>{{ 'recruiterJobList.applies' | t }}</span>
-      <span>{{ job.applies }}/{{ job.headcount }}</span>
-    </div>
-    <div class="progress-track">
-      <span class="progress-fill" [style.width.%]="appliesRate"></span>
-    </div>
-  </div>
-</article>
+</div>

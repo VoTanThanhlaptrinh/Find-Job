@@ -44,7 +44,8 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       showing: "Hiển thị",
       of: "trên",
       previous: "Trước",
-      next: "Sau"
+      next: "Sau",
+      page: "Trang"
     },
     searchForm: {
       jobPlaceholder: 'Công việc bạn đang tìm là gì?',
@@ -231,6 +232,7 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       applies: 'Ứng viên',
       viewCandidates: 'Xem ứng viên',
       delete: 'Xóa',
+      details: 'Chi tiết',
       empty: 'Chưa có bài đăng nào',
       prevPage: 'Trang trước',
       nextPage: 'Trang sau',
@@ -251,6 +253,8 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       resumeTitle: 'CV của ứng viên',
       loadingResumes: 'Đang tải CV...',
       emptyResumes: 'Ứng viên chưa có CV.',
+      viewResume: 'Xem CV',
+      resumesOf: 'CV của',
       table: {
         name: 'Họ tên',
         role: 'Vị trí ứng tuyển',
@@ -270,6 +274,112 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       notifications: {
         candidateEmailMissing: 'Ứng viên chưa có email để tải CV.',
       },
+    },
+    recruiterPostJob: {
+      title: 'Tạo tin tuyển dụng',
+      basicInfo: 'Thông tin cơ bản',
+      jobTitle: 'Tên công việc',
+      jobTitlePlaceholder: 'Ví dụ: Senior Product Designer',
+      jobType: 'Loại hình',
+      jobTypeOptions: {
+        fullTime: 'Toàn thời gian',
+        partTime: 'Bán thời gian',
+        hybrid: 'Hybrid',
+        remote: 'Remote'
+      },
+      salary: 'Mức lương',
+      salaryPlaceholder: 'Thỏa thuận hoặc 20M - 30M',
+      headcount: 'Số lượng',
+      headcountPlaceholder: '01',
+      expiredDate: 'Hạn nộp',
+      address: 'Địa điểm',
+      addressPlaceholder: 'Địa chỉ văn phòng làm việc...',
+      profileDetails: 'Chi tiết hồ sơ',
+      description: 'Mô tả công việc',
+      descriptionPlaceholder: 'Mô tả các trách nhiệm chính của vị trí này...',
+      requirements: 'Yêu cầu',
+      requirementsPlaceholder: '- Kinh nghiệm 2 năm...\n- Sử dụng thành thạo Figma...',
+      benefits: 'Quyền lợi',
+      benefitsPlaceholder: '- Lương thưởng tháng 13...\n- Bảo hiểm cao cấp...',
+      preview: 'Xem trước',
+      saveJob: 'Lưu công việc',
+      aiAnalysis: 'Phân tích AI',
+      aiAnalysisToggle: 'Phân tích JD bằng AI',
+      aiAnalysisDesc: 'Bật để AI phân tích JD cho gợi ý semantic search'
+    },
+    companyAddress: {
+      title: 'Quản lý địa chỉ công ty',
+      subtitle: 'Danh sách đang dùng mock data cho đến khi có API contract',
+      addAddress: 'Thêm địa chỉ',
+      empty: 'Chưa có địa chỉ nào.',
+      default: 'Mặc định',
+      delete: 'Xóa',
+      contactName: 'Người liên hệ',
+      phone: 'Điện thoại',
+      modal: {
+        title: 'Thêm địa chỉ mới',
+        locationName: 'Tên văn phòng/chi nhánh',
+        locationNamePlaceholder: 'VD: Văn phòng chính TP.HCM',
+        fullAddress: 'Địa chỉ đầy đủ',
+        fullAddressPlaceholder: 'Nhập địa chỉ đầy đủ...',
+        isDefault: 'Đặt làm địa chỉ mặc định',
+        cancel: 'Hủy bỏ',
+        save: 'Lưu địa chỉ',
+        requiredError: 'Trường này không được bỏ trống.'
+      }
+    },
+    recruiterRegister: {
+      nav: {
+        recruitment: 'Tuyển dụng',
+        features: 'Tính năng',
+        pricing: 'Bảng giá'
+      },
+      title: 'Tạo tài khoản doanh nghiệp',
+      subtitle: 'Bắt đầu hành trình tìm kiếm nhân tài với công nghệ AI tiên tiến và trải nghiệm tuyển dụng tinh tế nhất.',
+      featuresList: {
+        fastConnectTitle: 'Kết nối nhanh chóng',
+        fastConnectDesc: 'Tiếp cận 1M+ ứng viên tiềm năng',
+        deepAnalysisTitle: 'Phân tích chuyên sâu',
+        deepAnalysisDesc: 'Dữ liệu thị trường thời gian thực'
+      },
+      testimonial: '"Aura đã thay đổi hoàn toàn cách chúng tôi tiếp cận nhân sự chất lượng cao. Một giao diện tuyệt vời."',
+      testimonialAuthor: 'Giám đốc Nhân sự, TechCorp',
+      form: {
+        registerNow: 'Đăng ký ngay',
+        registerSubtitle: 'Xây dựng đội ngũ trong mơ của bạn ngay hôm nay.',
+        fullName: 'Họ và tên',
+        fullNamePlaceholder: 'Nguyễn Văn A',
+        companyName: 'Tên công ty',
+        companyNamePlaceholder: 'Công ty Aura',
+        phone: 'Số điện thoại',
+        email: 'Email công việc',
+        password: 'Mật khẩu',
+        termsPrefix: 'Tôi đồng ý với',
+        termsOfService: 'Điều khoản dịch vụ',
+        termsAnd: 'và',
+        privacyPolicy: 'Chính sách bảo mật',
+        termsSuffix: 'của Aura.',
+        submit: 'ĐĂNG KÝ DOANH NGHIỆP',
+        hasAccount: 'Đã có tài khoản doanh nghiệp?',
+        loginNow: 'Đăng nhập ngay'
+      }
+    },
+    recruiterJobDetail: {
+      title: 'Chi tiết tin tuyển dụng',
+      jobId: 'Mã tin',
+      backToList: 'Quay lại danh sách',
+      loading: 'Đang tải chi tiết tin...',
+      fallbackTitle: 'Đang cập nhật tiêu đề',
+      fallbackAddress: 'Đang cập nhật địa điểm',
+      salary: 'Lương',
+      time: 'Hình thức',
+      headcount: 'Chỉ tiêu',
+      skills: 'Kỹ năng',
+      deadline: 'Hạn nộp',
+      description: 'Mô tả công việc',
+      requirements: 'Yêu cầu',
+      fallbackDescription: 'Chưa có mô tả.',
+      fallbackRequirements: 'Chưa có yêu cầu.'
     },
     recruiterCommon: {
       errors: {
@@ -372,6 +482,13 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       successMessage: 'Thay đổi mật khẩu thành công.',
       matchError: 'Xác nhận mật khẩu phải trùng với mật khẩu mới.'
     },
+    job: {
+      badge: {
+        analyzed: 'Đã phân tích',
+        notAnalyzed: 'Chưa phân tích'
+      },
+      analyzeNow: 'Phân tích ngay'
+    },
     cvUploadModal: {
       title: 'Tải CV mới',
       subtitle: 'Hỗ trợ định dạng PDF, DOC, DOCX (Tối đa 5MB)',
@@ -385,7 +502,9 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       removeFile: 'Xóa tệp',
       selectFileHint: 'Vui lòng chọn file CV trước khi gửi.',
       unsupportedFormat: 'Chỉ hỗ trợ định dạng .pdf, .doc, .docx.',
-      fileTooLarge: 'Kích thước file vượt quá giới hạn 5MB.'
+      fileTooLarge: 'Kích thước file vượt quá giới hạn 5MB.',
+      aiAnalysis: 'Phân tích bằng AI',
+      aiAnalysisDesc: 'Tự động phân tích CV để gợi ý việc phù hợp'
     },
     cvList: {
       title: 'Danh sách CV của bạn',
@@ -406,7 +525,15 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       download: 'Tải xuống',
       view: 'Xem CV',
       delete: 'Xóa',
-      deleting: 'Đang xóa...'
+      deleting: 'Đang xóa...',
+      badge: {
+        analyzed: 'Đã phân tích',
+        notAnalyzed: 'Chưa phân tích',
+        failed: 'Thất bại'
+      },
+      analyzing: 'Đang phân tích...',
+      analyzeNow: 'Phân tích ngay',
+      retry: 'Thử lại'
     },
     profile: {
       title: 'Hồ sơ cá nhân',
@@ -469,7 +596,8 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       showing: "Showing",
       of: "of",
       previous: "Previous",
-      next: "Next"
+      next: "Next",
+      page: "Page"
     },
     searchForm: {
       jobPlaceholder: 'What job are you looking for?',
@@ -656,6 +784,7 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       applies: 'Applicants',
       viewCandidates: 'View candidates',
       delete: 'Delete',
+      details: 'Details',
       empty: 'No posted jobs yet',
       prevPage: 'Previous page',
       nextPage: 'Next page',
@@ -676,6 +805,8 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       resumeTitle: 'Candidate resumes',
       loadingResumes: 'Loading resumes...',
       emptyResumes: 'This candidate has no resumes yet.',
+      viewResume: 'View CV',
+      resumesOf: 'Resumes of',
       table: {
         name: 'Name',
         role: 'Applied role',
@@ -695,6 +826,112 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       notifications: {
         candidateEmailMissing: 'Candidate email is missing, unable to load resumes.',
       },
+    },
+    recruiterPostJob: {
+      title: 'Create Job Post',
+      basicInfo: 'Basic Information',
+      jobTitle: 'Job Title',
+      jobTitlePlaceholder: 'e.g. Senior Product Designer',
+      jobType: 'Job Type',
+      jobTypeOptions: {
+        fullTime: 'Full Time',
+        partTime: 'Part Time',
+        hybrid: 'Hybrid',
+        remote: 'Remote'
+      },
+      salary: 'Salary',
+      salaryPlaceholder: 'Negotiable or 20M - 30M',
+      headcount: 'Headcount',
+      headcountPlaceholder: '01',
+      expiredDate: 'Deadline',
+      address: 'Location',
+      addressPlaceholder: 'Office address...',
+      profileDetails: 'Job Details',
+      description: 'Job Description',
+      descriptionPlaceholder: 'Describe the main responsibilities of this position...',
+      requirements: 'Requirements',
+      requirementsPlaceholder: '- 2 years of experience...\n- Proficient in Figma...',
+      benefits: 'Benefits',
+      benefitsPlaceholder: '- 13th month salary...\n- Premium insurance...',
+      preview: 'Preview',
+      saveJob: 'Save Job',
+      aiAnalysis: 'AI Analysis',
+      aiAnalysisToggle: 'Analyze JD with AI',
+      aiAnalysisDesc: 'Enable AI to analyze your JD for semantic job matching'
+    },
+    companyAddress: {
+      title: 'Company addresses',
+      subtitle: 'This list uses mock data until the API contract is ready',
+      addAddress: 'Add address',
+      empty: 'No addresses found.',
+      default: 'Default',
+      delete: 'Delete',
+      contactName: 'Contact person',
+      phone: 'Phone',
+      modal: {
+        title: 'Add new address',
+        locationName: 'Office/Branch name',
+        locationNamePlaceholder: 'e.g., HQ Ho Chi Minh City',
+        fullAddress: 'Full address',
+        fullAddressPlaceholder: 'Enter the full address...',
+        isDefault: 'Set as default address',
+        cancel: 'Cancel',
+        save: 'Save address',
+        requiredError: 'This field is required.'
+      }
+    },
+    recruiterRegister: {
+      nav: {
+        recruitment: 'Recruitment',
+        features: 'Features',
+        pricing: 'Pricing'
+      },
+      title: 'Create Employer Account',
+      subtitle: 'Begin your talent search journey with advanced AI technology and the most refined recruitment experience.',
+      featuresList: {
+        fastConnectTitle: 'Fast Connection',
+        fastConnectDesc: 'Access 1M+ potential candidates',
+        deepAnalysisTitle: 'Deep Analysis',
+        deepAnalysisDesc: 'Real-time market data'
+      },
+      testimonial: '"Aura has completely changed how we approach high-quality talent. An amazing interface."',
+      testimonialAuthor: 'HR Director, TechCorp',
+      form: {
+        registerNow: 'Register Now',
+        registerSubtitle: 'Build your dream team today.',
+        fullName: 'Full Name',
+        fullNamePlaceholder: 'John Doe',
+        companyName: 'Company Name',
+        companyNamePlaceholder: 'Aura Corp',
+        phone: 'Phone Number',
+        email: 'Work Email',
+        password: 'Password',
+        termsPrefix: 'I agree to the',
+        termsOfService: 'Terms of Service',
+        termsAnd: 'and',
+        privacyPolicy: 'Privacy Policy',
+        termsSuffix: 'of Aura.',
+        submit: 'REGISTER EMPLOYER',
+        hasAccount: 'Already have an employer account?',
+        loginNow: 'Log in now'
+      }
+    },
+    recruiterJobDetail: {
+      title: 'Job Detail',
+      jobId: 'Job ID',
+      backToList: 'Back to List',
+      loading: 'Loading job details...',
+      fallbackTitle: 'Updating title',
+      fallbackAddress: 'Updating location',
+      salary: 'Salary',
+      time: 'Job Type',
+      headcount: 'Headcount',
+      skills: 'Skills',
+      deadline: 'Deadline',
+      description: 'Job Description',
+      requirements: 'Requirements',
+      fallbackDescription: 'No description available.',
+      fallbackRequirements: 'No requirements available.'
     },
     recruiterCommon: {
       errors: {
@@ -797,6 +1034,13 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       successMessage: 'Password changed successfully.',
       matchError: 'Confirm password must match the new password.'
     },
+    job: {
+      badge: {
+        analyzed: 'Analyzed',
+        notAnalyzed: 'Not Analyzed'
+      },
+      analyzeNow: 'Analyze Now'
+    },
     cvUploadModal: {
       title: 'Upload New CV',
       subtitle: 'Supports PDF, DOC, DOCX (Max 5MB)',
@@ -810,7 +1054,9 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       removeFile: 'Remove file',
       selectFileHint: 'Please select a CV file before submitting.',
       unsupportedFormat: 'Only .pdf, .doc, .docx formats are supported.',
-      fileTooLarge: 'File size exceeds the 5MB limit.'
+      fileTooLarge: 'File size exceeds the 5MB limit.',
+      aiAnalysis: 'AI Analysis',
+      aiAnalysisDesc: 'Auto-analyze CV for job matching'
     },
     cvList: {
       title: 'Your CV List',
@@ -831,7 +1077,15 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       download: 'Download',
       view: 'View CV',
       delete: 'Delete',
-      deleting: 'Deleting...'
+      deleting: 'Deleting...',
+      badge: {
+        analyzed: 'Analyzed',
+        notAnalyzed: 'Not Analyzed',
+        failed: 'Failed'
+      },
+      analyzing: 'Analyzing...',
+      analyzeNow: 'Analyze Now',
+      retry: 'Retry'
     },
     profile: {
       title: 'Personal Profile',

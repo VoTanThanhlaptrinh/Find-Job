@@ -166,7 +166,8 @@ public class JobQuery {
                         job.salary,
                         job.time,
                         apply.id.count().intValue(),
-                        job.headcount
+                        job.headcount,
+                        job.isAnalyzed
                 ))
                 .from(job)
                 .join(job.recruitment, hirer)
@@ -180,7 +181,7 @@ public class JobQuery {
                         user.status.eq(ACTIVE_STATUS),
                         addressIsActiveOrMissing(address)
                 )
-                .groupBy(job.id, job.title, job.description, address.city, job.salary, job.time, job.createDate, job.headcount)
+                .groupBy(job.id, job.title, job.description, address.city, job.salary, job.time, job.createDate, job.headcount, job.isAnalyzed)
                 .orderBy(job.createDate.desc());
 
         JPAQuery<Long> countQuery = queryFactory
