@@ -39,17 +39,14 @@ public class Resume extends StatusEntity {
 	private String fileName;
 	private String title;
 
-	@Column(columnDefinition = "text")
+	@Setter
+    @Column(columnDefinition = "text")
 	private String rawText;
 
-	@Column(nullable = false)
+	@Column(nullable = false, columnDefinition = "boolean default false")
 	private boolean isAnalyzed = false;
 
-	public void setRawText(String rawText) {
-		this.rawText = rawText;
-	}
-
-	public void markAnalyzed() {
+    public void markAnalyzed() {
 		this.isAnalyzed = true;
 	}
 

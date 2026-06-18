@@ -11,6 +11,8 @@ import java.util.List;
 public interface ResumeService {
     List<ResumeView> getListResumeOfUser(User user);
 
+    List<ResumeView> getAnalyzedResumesOfUser(User user);
+
     ResumeDetailDTO getResumeDetail(long id, User user);
 
     ResumeView createResume(ResumeUploadDTO resumeUploadDTO, User user);

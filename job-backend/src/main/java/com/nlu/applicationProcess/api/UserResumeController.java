@@ -40,6 +40,15 @@ public class UserResumeController {
         return ResponseEntity.ok().body(new ApiResponse<>(MessageUtils.getMessage("message.success"),resumes, HttpStatus.OK.value()));
     }
 
+    @GetMapping("/analyzed")
+    public ResponseEntity<ApiResponse<List<ResumeView>>> getAnalyzedResumes(@CurrentUser User currentUser) {
+        if(currentUser == null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(MessageUtils.getMessage("message.unauthorized"), null, HttpStatus.BAD_REQUEST.value()));
+        }
+        List<ResumeView> resumes = resumeService.getAnalyzedResumesOfUser(currentUser);
+        return ResponseEntity.ok().body(new ApiResponse<>(MessageUtils.getMessage("message.success"), resumes, HttpStatus.OK.value()));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<ResumeDetailDTO>> getResumeDetail(@PathVariable long id, @CurrentUser User currentUser) {
         ResumeDetailDTO res = resumeService.getResumeDetail(id, currentUser);

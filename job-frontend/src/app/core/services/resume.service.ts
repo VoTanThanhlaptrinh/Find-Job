@@ -19,27 +19,38 @@ export type ResumeContext = 'user' | 'hirer';
 export class ResumeService {
     private url: string;
     private resumes = signal<ResumeReviewInput[]>([]);
+    private analyzedResumes = signal<ResumeReviewInput[]>([]);
     private isLoadingResumes = signal<boolean>(false);
     private readonly SSE_EVENT_NAME = 'resume-process';
-    readonly localFileData = signal<Partial<FileMessage>>({});
+    readonly localFileData = signal<Partial<FileMessage> & { pendingResume?: ResumeReviewInput, isManualAnalyze?: boolean }>({});
     private counter = -10;
     private sseService = inject(SseService);
     readonly resumes$ = computed(() => this.resumes());
+    readonly analyzedResumes$ = computed(() => this.analyzedResumes());
     readonly isLoadingResumes$ = computed(() => this.isLoadingResumes());
 
     private readonly sseProcessEvent = this.sseService.fromEvent<SseMessagePayload<Partial<FileMessage>>>(this.SSE_EVENT_NAME);
 
-    readonly uploadingFile$ = computed<FileMessage | null>(() => {
+    readonly uploadingFile$ = computed<(FileMessage & { isManualAnalyze?: boolean }) | null>(() => {
         const local = this.localFileData();
         const sseEvent = this.sseProcessEvent();
 
-        if (!local.name && !sseEvent) return null;
+        if (local.id === undefined && !sseEvent) return null;
+
+        if (local.status === 'uploading' || local.status === 'uploaded' || local.status === 'error') {
+            return { 
+                id: local.id ?? 0, 
+                status: local.status, 
+                name: local.name || 'Unknown', 
+                isManualAnalyze: local.isManualAnalyze 
+            };
+        }
 
         const status = sseEvent?.status ?? local.status ?? 'pending';
         const id = sseEvent?.id ?? local.id ?? 0;
-        const name = local.name ?? 'Unknown';
+        const name = local.name || 'Unknown';
 
-        return { id, status, name };
+        return { id, status, name, isManualAnalyze: local.isManualAnalyze };
     });
 
     constructor(
@@ -50,7 +61,6 @@ export class ResumeService {
         this.url = this.utilities.getURLDev();
         effect(() => {
             const event = this.sseProcessEvent();
-            console.log('Received SSE Event:', event);
             if (event && event.status === 'analyzed') {
                 this.resumes.update(list =>
                     list.map(r => r.id === event.id ? { ...r, isAnalyzed: true } : r)
@@ -61,11 +71,18 @@ export class ResumeService {
         // Auto-dismiss khi terminal state
         effect(() => {
             const file = this.uploadingFile$();
-            if (file?.status === 'analyzed' || file?.status === 'failed') {
+            if (file?.status === 'analyzed' || file?.status === 'failed' || file?.status === 'uploaded' || file?.status === 'error') {
+                const timeoutMs = (file.status === 'failed' || file.status === 'error') ? 2000 : (file.status === 'uploaded' ? 1000 : 5000);
                 setTimeout(() => {
+                    if (file.status === 'analyzed') {
+                         this.resumes.update(list => list.map(r => r.id === file.id ? { ...r, isAnalyzed: true } : r));
+                    }
+                    if (file.status === 'error' || file.status === 'failed') {
+                         this.resumes.update(list => list.filter(r => r.id !== file.id));
+                    }
                     this.localFileData.set({});
                     this.sseService.clearEvent(this.SSE_EVENT_NAME);
-                }, 5000);
+                }, timeoutMs);
             }
         });
     }
@@ -79,6 +96,20 @@ export class ResumeService {
             },
             error: () => {
                 this.resumes.set([]);
+                this.isLoadingResumes.set(false);
+            }
+        });
+    }
+
+    getAnalyzedResumes() {
+        this.isLoadingResumes.set(true);
+        this.http.get<ApiResponse<ResumeReviewInput[]>>(`${this.url}/user/resumes/analyzed`).pipe(take(1)).subscribe({
+            next: (response) => {
+                this.analyzedResumes.set(response.data);
+                this.isLoadingResumes.set(false);
+            },
+            error: () => {
+                this.analyzedResumes.set([]);
                 this.isLoadingResumes.set(false);
             }
         });
@@ -117,7 +148,19 @@ export class ResumeService {
     }
 
     postResume(file: File, enableAiAnalysis: boolean = false) {
-        this.localFileData.set({ name: file.name, status: 'uploading', id: ++this.counter });
+        this.sseService.clearEvent(this.SSE_EVENT_NAME);
+        
+        const tempId = --this.counter;
+        const newResume: ResumeReviewInput = {
+            id: tempId,
+            fileName: file.name,
+            createDate: new Date().toISOString(),
+            isAnalyzed: false,
+            isNewlyUploaded: true
+        };
+        
+        this.resumes.update(resumes => [newResume, ...resumes]);
+        this.localFileData.set({ name: file.name, status: 'uploading', id: tempId, isManualAnalyze: false });
 
         const formData = new FormData();
         formData.append('file', file);
@@ -126,30 +169,26 @@ export class ResumeService {
         this.http.post<ApiResponse<ResumePreview>>(`${this.url}/user/resumes`, formData).subscribe({
             next: (response) => {
                 const resumeId = response.data.id;
+                
+                this.resumes.update(list => list.map(r => r.id === tempId ? { ...r, id: resumeId } : r));
 
-                this.localFileData.update(prev => ({ ...prev, id: resumeId }));
-                this.resumes.update(resumes => [...resumes, {
-                    id: resumeId,
-                    fileName: file.name,
-                    createDate: new Date().toISOString(),
-                    isAnalyzed: false
-                }]);
-
-                // SSE đã kết nối sẵn từ lúc login, không cần connect ở đây nữa
+                this.localFileData.update(prev => ({ 
+                    ...prev, 
+                    id: resumeId, 
+                    status: enableAiAnalysis ? 'analyzing' : 'uploaded'
+                }));
             },
             error: (error) => {
                 this.localFileData.update(prev => ({ ...prev, status: 'error' }));
                 this.notificationService.error(error.error?.message || 'Lỗi khi tải CV');
-
-                setTimeout(() => {
-                    this.localFileData.set({});
-                }, 3000);
             }
         });
     }
 
     analyzeResume(resumeId: number): void {
-        this.localFileData.set({ name: '', status: 'analyzing', id: resumeId });
+        const resume = this.resumes().find(r => r.id === resumeId);
+        const name = resume ? resume.fileName : 'Unknown';
+        this.localFileData.set({ name, status: 'analyzing', id: resumeId, isManualAnalyze: true });
 
         this.http.post<ApiResponse<string>>(`${this.url}/user/resumes/${resumeId}/analyze`, {}).pipe(take(1)).subscribe({
             next: () => {

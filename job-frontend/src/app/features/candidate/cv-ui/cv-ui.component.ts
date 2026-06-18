@@ -22,7 +22,7 @@ export class CvUiComponent implements OnInit {
   resumes: ResumeReviewInput[] = [];
   isLoading = false;
   isUploadModalOpen = false;
-  uploadingFile: FileMessage | null = null;
+  uploadingFile: (FileMessage & { isManualAnalyze?: boolean }) | null = null;
   readonly skeleton = true;
   readonly skeletonRows = [1, 2, 3];
 
@@ -30,7 +30,6 @@ export class CvUiComponent implements OnInit {
     effect(() => {
       this.resumes = this.resumeService.resumes$();
       this.uploadingFile = this.resumeService.uploadingFile$();
-      console.log('Resumes:', this.uploadingFile);
       this.isLoading = this.resumeService.isLoadingResumes$();
     });
   }

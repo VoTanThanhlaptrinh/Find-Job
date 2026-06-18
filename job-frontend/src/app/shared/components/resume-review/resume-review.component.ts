@@ -29,6 +29,16 @@ export class ResumeReviewComponent {
   isLoadingView = false;
   isLoadingDownload = false;
 
+  readonly isUploading = computed(() => {
+    const file = this.resumeService.uploadingFile$();
+    return file !== null && file.id === this.resume.id && file.status === 'uploading';
+  });
+
+  readonly isUploaded = computed(() => {
+    const file = this.resumeService.uploadingFile$();
+    return file !== null && file.id === this.resume.id && file.status === 'uploaded';
+  });
+
   readonly isAnalyzing = computed(() => {
     const file = this.resumeService.uploadingFile$();
     return file !== null && file.id === this.resume.id && file.status === 'analyzing';
@@ -36,7 +46,7 @@ export class ResumeReviewComponent {
 
   readonly isFailed = computed(() => {
     const file = this.resumeService.uploadingFile$();
-    return file !== null && file.id === this.resume.id && file.status === 'failed';
+    return file !== null && file.id === this.resume.id && (file.status === 'failed' || file.status === 'error');
   });
 
   onAnalyzeResume(): void {
@@ -49,23 +59,7 @@ export class ResumeReviewComponent {
   readonly deletingLabel = computed(() => this.i18n.translate('cvList.deleting'));
   readonly viewLabel = computed(() => this.i18n.translate('cvList.view'));
 
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent): void {
-    if (!this.isMenuOpen) {
-      return;
-    }
-
-    const clickedElement = event.target as Node | null;
-    const isClickInside = !!clickedElement && this.elementRef.nativeElement.contains(clickedElement);
-
-    if (!isClickInside) {
-      this.closeMenu();
-    }
-  }
-
-  toggleMenu(): void {
-    this.isMenuOpen = !this.isMenuOpen;
-  }
+  // Menu is controlled via direct click bindings in the template
 
   closeMenu(): void {
     this.isMenuOpen = false;

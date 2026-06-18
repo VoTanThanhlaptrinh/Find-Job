@@ -35,17 +35,16 @@
         --color-re-outline-variant: #c3c6d7;
       }
 
-      /* Base styles for the static loading screen */
+      /* Base styles for the simple loading screen */
       .app-loading-screen {
         position: fixed;
         inset: 0;
         z-index: 9999;
-        background-color: var(--color-re-background);
-        color: var(--color-re-on-surface);
-        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        background-color: var(--color-re-background, #f7f9fb);
         display: flex;
         flex-direction: column;
-        min-height: 100vh;
+        align-items: center;
+        justify-content: center;
         opacity: 1;
         transition: opacity 0.4s ease-out;
       }
@@ -55,317 +54,37 @@
         pointer-events: none;
       }
 
-      /* Background Pattern */
-      .app-loading-bg {
-        position: absolute;
-        inset: 0;
-        z-index: 0;
-        overflow: hidden;
-        pointer-events: none;
+      /* Simple spinner */
+      .simple-spinner {
+        width: 3rem;
+        height: 3rem;
+        border: 4px solid var(--color-re-surface-container-high, #e6e8ea);
+        border-top-color: var(--color-re-primary, #004ac6);
+        border-radius: 50%;
+        animation: simple-spin 1s linear infinite;
+        margin-bottom: 1rem;
       }
 
-      .app-loading-blob {
-        position: absolute;
-        border-radius: 9999px;
-        filter: blur(120px);
-        opacity: 0.05;
-      }
-
-      .app-loading-blob-1 {
-        top: -10%;
-        left: -10%;
-        width: 40%;
-        height: 40%;
-        background-color: var(--color-re-primary);
-      }
-
-      .app-loading-blob-2 {
-        bottom: -10%;
-        right: -10%;
-        width: 40%;
-        height: 40%;
-        background-color: var(--color-re-secondary);
-      }
-
-      .app-loading-texture {
-        position: absolute;
-        inset: 0;
-        opacity: 0.03;
-        background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
-      }
-
-      /* Center Layout */
-      .app-loading-content {
-        flex-grow: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 1.5rem;
-        z-index: 10;
-      }
-
-      .app-loading-container {
-        width: 100%;
-        max-width: 28rem;
-      }
-
-      /* Glass Card */
-      .app-loading-card {
-        background-color: rgba(255, 255, 255, 0.8);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        border-radius: 0.75rem;
-        padding: 2.5rem;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-        border: 1px solid var(--color-re-outline-variant);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-      }
-
-      /* Brand Lockup */
-      .app-loading-brand {
-        margin-bottom: 2.5rem;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.5rem;
-      }
-
-      .app-loading-logo-text {
-        color: var(--color-re-primary);
-        font-family: 'Manrope', 'Inter', sans-serif;
-        font-weight: 800;
-        font-size: 1.5rem;
-        letter-spacing: -0.05em;
-      }
-
-      .app-loading-divider {
-        height: 2px;
-        width: 2rem;
-        background-color: var(--color-re-primary-container);
-        border-radius: 9999px;
-      }
-
-      /* Progress circular spinner */
-      .app-loading-progress-wrapper {
-        position: relative;
-        width: 6rem;
-        height: 6rem;
-        margin-bottom: 2rem;
-      }
-
-      .app-loading-progress-svg {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        transform: rotate(-90deg);
-      }
-
-      .app-loading-circle-bg {
-        stroke: var(--color-re-surface-container-high);
-      }
-
-      .app-loading-circle-fill {
-        stroke: var(--color-re-primary-container);
-        animation: app-loading-spin 2s linear infinite;
-        transform-origin: center;
-      }
-
-      .app-loading-center-icon {
-        position: absolute;
-        inset: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .app-loading-fingerprint {
-        color: var(--color-re-primary);
-        font-size: 1.875rem !important;
-        animation: app-loading-pulse-soft 3s ease-in-out infinite;
-      }
-
-      /* Content Area */
-      .app-loading-text-area {
-        margin-bottom: 2.5rem;
-      }
-
-      .app-loading-title {
-        color: var(--color-re-on-surface);
-        font-family: 'Manrope', 'Inter', sans-serif;
-        font-weight: 700;
-        font-size: 1.5rem;
-        letter-spacing: -0.025em;
-        margin: 0 0 0.75rem 0;
-      }
-
-      .app-loading-desc {
-        color: var(--color-re-on-surface-variant);
+      .simple-loading-text {
+        color: var(--color-re-on-surface-variant, #434655);
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
         font-size: 0.875rem;
-        line-height: 1.625;
-        max-width: 280px;
-        margin: 0 auto;
-      }
-
-      /* Status Checklist */
-      .app-loading-checklist {
-        width: 100%;
-        box-sizing: border-box;
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-        text-align: left;
-        background-color: rgba(242, 244, 246, 0.5);
-        border-radius: 0.5rem;
-        padding: 1.25rem;
-        border: 1px solid rgba(195, 198, 215, 0.3);
-      }
-
-      .app-loading-step {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-      }
-
-      .app-loading-step-pending {
-        opacity: 0.4;
-      }
-
-      .app-loading-step-icon-success {
-        color: var(--color-re-secondary);
-        font-size: 1.125rem !important;
-        font-variation-settings: "FILL" 1;
-      }
-
-      .app-loading-step-icon-active {
-        color: var(--color-re-primary);
-        font-size: 1.125rem !important;
-        animation: app-loading-spin 2s linear infinite;
-      }
-
-      .app-loading-step-icon-pending {
-        color: #94a3b8;
-        font-size: 1.125rem !important;
-      }
-
-      .app-loading-step-text {
-        font-size: 0.75rem;
         font-weight: 500;
-        color: var(--color-re-on-surface-variant);
+        animation: simple-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
       }
 
-      .app-loading-step-text-active {
-        font-size: 0.75rem;
-        font-weight: 500;
-        color: var(--color-re-on-surface);
-      }
-
-      /* Security Badge */
-      .app-loading-badge {
-        margin-top: 2rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.375rem 0.75rem;
-        background-color: #f0fdf4;
-        border-radius: 9999px;
-        border: 1px solid #dcfce7;
-      }
-
-      .app-loading-badge-icon {
-        color: #16a34a;
-        font-size: 14px !important;
-        font-variation-settings: "FILL" 1;
-      }
-
-      .app-loading-badge-text {
-        font-size: 10px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: #15803d;
-      }
-
-      /* Helpful Tip */
-      .app-loading-tip {
-        margin-top: 1.5rem;
-        text-align: center;
-        color: var(--color-re-on-surface-variant);
-        font-size: 11px;
-        text-transform: uppercase;
-        letter-spacing: 0.15em;
-        animation: app-loading-pulse-soft 3s ease-in-out infinite;
-      }
-
-      /* Global Footer */
-      .app-loading-footer {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 1.5rem 0;
-        z-index: 50;
-      }
-
-      .app-loading-footer-content {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
-      }
-
-      .app-loading-copyright {
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 0.1rem;
-        color: #94a3b8;
-        text-align: center;
-      }
-
-      .app-loading-links {
-        display: flex;
-        gap: 1rem;
-      }
-
-      .app-loading-links a {
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 0.1rem;
-        color: #94a3b8;
-        text-decoration: none;
-        transition: color 0.15s ease;
-      }
-
-      .app-loading-links a:hover {
-        color: #3b82f6;
-      }
-
-      @media (min-width: 768px) {
-        .app-loading-footer-content {
-          flex-direction: row;
-          gap: 2rem;
-        }
-      }
-
-      /* Keyframes */
-      @keyframes app-loading-spin {
-        from {
-          transform: rotate(0deg);
-        }
+      @keyframes simple-spin {
         to {
           transform: rotate(360deg);
         }
       }
 
-      @keyframes app-loading-pulse-soft {
+      @keyframes simple-pulse {
         0%, 100% {
           opacity: 1;
         }
         50% {
-          opacity: 0.7;
+          opacity: 0.5;
         }
       }
     </style>
@@ -374,80 +93,8 @@
   <body>
     <!-- App Loading Screen Overlay -->
     <div id="app-loading-screen" class="app-loading-screen">
-      <!-- Background Pattern -->
-      <div class="app-loading-bg">
-        <div class="app-loading-blob app-loading-blob-1"></div>
-        <div class="app-loading-blob app-loading-blob-2"></div>
-        <div class="app-loading-texture"></div>
-      </div>
-      
-      <div class="app-loading-content">
-        <!-- Auth Container -->
-        <div class="app-loading-container">
-          <!-- Glass Card -->
-          <div class="app-loading-card">
-            <!-- Brand Lockup -->
-            <div class="app-loading-brand">
-              <span class="app-loading-logo-text">JobPortal</span>
-              <div class="app-loading-divider"></div>
-            </div>
-            <!-- Progress Indicator Group -->
-            <div class="app-loading-progress-wrapper">
-              <!-- Background Circle -->
-              <svg class="app-loading-progress-svg">
-                <circle class="app-loading-circle-bg" cx="48" cy="48" fill="transparent" r="42" stroke-width="6"></circle>
-                <circle class="app-loading-circle-fill" cx="48" cy="48" fill="transparent" r="42" stroke-dasharray="263" stroke-dashoffset="180" stroke-linecap="round" stroke-width="6"></circle>
-              </svg>
-              <!-- Center Icon -->
-              <div class="app-loading-center-icon">
-                <span class="material-symbols-outlined app-loading-fingerprint">fingerprint</span>
-              </div>
-            </div>
-            <!-- Content Area -->
-            <div class="app-loading-text-area">
-              <h1 class="app-loading-title">Verifying your identity</h1>
-              <p class="app-loading-desc">
-                Please wait while we securely authenticate your account and prepare your workspace.
-              </p>
-            </div>
-            <!-- Status Checklist -->
-            <div class="app-loading-checklist">
-              <div class="app-loading-step">
-                <span class="material-symbols-outlined app-loading-step-icon-success">check_circle</span>
-                <span class="app-loading-step-text">Connecting to secure servers</span>
-              </div>
-              <div class="app-loading-step">
-                <span class="material-symbols-outlined app-loading-step-icon-active">sync</span>
-                <span class="app-loading-step-text-active">Validating security tokens</span>
-              </div>
-              <div class="app-loading-step app-loading-step-pending">
-                <span class="material-symbols-outlined app-loading-step-icon-pending">pending</span>
-                <span class="app-loading-step-text">Syncing profile data</span>
-              </div>
-            </div>
-            <!-- Security Badge -->
-            <div class="app-loading-badge">
-              <span class="material-symbols-outlined app-loading-badge-icon">verified_user</span>
-              <span class="app-loading-badge-text">AES-256 Encrypted</span>
-            </div>
-          </div>
-          <!-- Helpful Tip -->
-          <p class="app-loading-tip">
-            Atmospheric Precision in Every Connection
-          </p>
-        </div>
-      </div>
-      <!-- Global Footer -->
-      <div class="app-loading-footer">
-        <div class="app-loading-footer-content">
-          <span class="app-loading-copyright">© 2026 JobPortal. Atmospheric Precision.</span>
-          <div class="app-loading-links">
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
-            <a href="#">Help Center</a>
-          </div>
-        </div>
-      </div>
+      <div class="simple-spinner"></div>
+      <div class="simple-loading-text">Đang tải dữ liệu...</div>
     </div>
 
     <app-root></app-root>

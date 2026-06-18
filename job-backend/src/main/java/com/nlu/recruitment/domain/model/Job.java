@@ -70,7 +70,7 @@ public class Job extends StatusEntity {
 	private String logo;
 	private Integer headcount;
 
-	@Column(nullable = false)
+	@Column(nullable = false, columnDefinition = "boolean default false")
 	private boolean isAnalyzed = false;
 
 	public void markAnalyzed() {

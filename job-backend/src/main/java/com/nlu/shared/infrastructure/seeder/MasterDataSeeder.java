@@ -345,7 +345,7 @@ public class MasterDataSeeder implements CommandLineRunner {
     /**
      * Vectorize danh sách các Job đã lưu
      */
-    private final ExecutorService executor = Executors.newFixedThreadPool(5);
+    private final ExecutorService executor = Executors.newFixedThreadPool(2);
 
     private void vectorizeJobs(List<Job> jobs) {
         log.info("Bắt đầu vectorize {} công việc...", jobs.size());

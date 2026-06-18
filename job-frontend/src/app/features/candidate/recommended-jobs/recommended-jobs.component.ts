@@ -23,11 +23,12 @@ export class RecommendedJobsComponent implements OnInit {
 
   readonly skeletonRows = [1, 2, 3];
 
-  readonly resumes = this.resumeService.resumes$;
+  readonly resumes = this.resumeService.analyzedResumes$;
   readonly isResumeLoading = this.resumeService.isLoadingResumes$;
   readonly suggestedJobs = this.jobService.recommendedJobs$;
   readonly isJobLoading = this.jobService.isLoadingRecommendedJobs$;
   readonly selectedResumeId = signal<number | null>(null);
+  readonly isDropdownOpen = signal(false);
 
   readonly selectedResume = computed(() => {
     const resumeId = this.selectedResumeId();
@@ -47,11 +48,21 @@ export class RecommendedJobsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.resumeService.getUserResumes();
+    this.resumeService.getAnalyzedResumes();
   }
 
   onResumeChange(resumeId: number | null): void {
     if (resumeId === null) return;
     this.selectedResumeId.set(resumeId);
+  }
+
+  toggleDropdown(): void {
+    if (this.isResumeLoading() || this.resumes().length === 0) return;
+    this.isDropdownOpen.update(v => !v);
+  }
+
+  selectResume(resumeId: number): void {
+    this.onResumeChange(resumeId);
+    this.isDropdownOpen.set(false);
   }
 }

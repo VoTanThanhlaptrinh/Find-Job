@@ -20,4 +20,13 @@ public class ResumeQueryDSL {
         QResume resume = QResume.resume;
         return queryFactory.select(Projections.constructor(ResumeView.class, resume.id, resume.fileName, resume.createDate, resume.isAnalyzed)).from(resume).where(resume.user.email.value.eq(email)).orderBy(resume.createDate.desc()).fetch();
     }
+
+    public List<ResumeView> getAnalyzedResumesOfUser(String email) {
+        QResume resume = QResume.resume;
+        return queryFactory.select(Projections.constructor(ResumeView.class, resume.id, resume.fileName, resume.createDate, resume.isAnalyzed))
+                .from(resume)
+                .where(resume.user.email.value.eq(email).and(resume.isAnalyzed.isTrue()))
+                .orderBy(resume.createDate.desc())
+                .fetch();
+    }
 }
