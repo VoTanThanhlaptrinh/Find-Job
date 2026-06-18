@@ -1,5 +1,5 @@
 <main class="bg-re-surface text-re-on-surface min-h-screen p-6 md:p-10">
-  <section class="max-w-6xl mx-auto space-y-6">
+  <section class="w-full lg:w-[70vw] mx-auto space-y-6">
     <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <h1 class="text-2xl md:text-3xl font-bold">{{ 'recruiterJobList.title' | t }}</h1>
@@ -17,8 +17,8 @@
       </div>
     </header>
 
-    <div *ngIf="isLoading" class="bg-re-surface-container-low p-5 rounded-xl text-re-on-surface-variant">
-      {{ 'recruiterJobList.loading' | t }}
+    <div *ngIf="isLoading" class="flex flex-col items-center gap-6">
+      <app-skeleton-job-card [count]="3"></app-skeleton-job-card>
     </div>
 
     <div *ngIf="!isLoading && jobs.length === 0"
@@ -26,7 +26,7 @@
       {{ 'recruiterJobList.empty' | t }}
     </div>
 
-    <div *ngIf="!isLoading && jobs.length > 0" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div *ngIf="!isLoading && jobs.length > 0" class="flex flex-col items-center gap-6">
       <app-hirer-job-card *ngFor="let job of jobs; trackBy: trackByJob" [job]="job" (delete)="deleteJob($event)"
         (analyze)="analyzeJob($event)"></app-hirer-job-card>
     </div>

@@ -163,11 +163,7 @@ public class JobApplicationServiceImpl implements JobApplicationService {
 
     @Override
     public Page<CandidateDTO> getCandidatesAppliedToJob(int pageIndex, int pageSize, long jobId) {
-        Page<CandidateDTO> page = jobApplicationRepository.getCandidatesAppliedToJob(jobId, PageRequest.of(pageIndex, pageSize));
-        if (page.isEmpty()) {
-            throw new ResourceNotFoundException(MessageUtils.getMessage("message.not_found"));
-        }
-        return page;
+        return jobApplicationRepository.getCandidatesAppliedToJob(jobId, PageRequest.of(pageIndex, pageSize));
     }
 
     @Override

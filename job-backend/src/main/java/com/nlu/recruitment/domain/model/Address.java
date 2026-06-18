@@ -33,10 +33,12 @@ public class Address extends StatusEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false)
+    private String locationName;
+    @Column(nullable = false)
     private String city;
     @Column(nullable = false)
     private String street;
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "boolean default false")
     private Boolean isDefault;
     @Setter
     @CreatedDate
@@ -47,6 +49,13 @@ public class Address extends StatusEntity {
     @LastModifiedDate
     @Column()
     private LocalDateTime updateDate;
+
+    public void setLocationName(String locationName) {
+        if (locationName == null || locationName.trim().isEmpty()) {
+            throw new BadRequestException("Tên vị trí không được bỏ trống");
+        }
+        this.locationName = locationName;
+    }
 
     public void setCity(String city) {
         if (city == null || city.trim().isEmpty()) {

@@ -5,7 +5,7 @@
     </div>
     <div class="absolute top-1/2 -right-24 w-80 h-80 bg-re-tertiary-fixed opacity-20 blur-[100px] -z-10 rounded-full">
     </div>
-    <div class="space-y-8">
+    <form [formGroup]="postJobFG" class="space-y-8">
       <!-- Section 1: Basic Information -->
       <section class="bg-re-surface-container-lowest rounded-xl p-8 shadow-xl shadow-blue-900/5 border border-white/50">
         <div class="flex items-center gap-3 mb-8">
@@ -19,7 +19,7 @@
             <label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">
               {{ 'recruiterPostJob.jobTitle' | t }}
             </label>
-            <input
+            <input formControlName="jobName"
               class="w-full bg-re-surface-container-low/50 border-none rounded-xl px-4 py-3.5 focus:ring-2 focus:ring-re-primary/20 text-re-on-surface transition-all"
               [placeholder]="'recruiterPostJob.jobTitlePlaceholder' | t" type="text" />
           </div>
@@ -27,19 +27,19 @@
             <label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">
               {{ 'recruiterPostJob.jobType' | t }}
             </label>
-            <select title="select"
+            <select title="select" formControlName="jobType"
               class="w-full bg-re-surface-container-low/50 border-none rounded-xl px-4 py-3.5 focus:ring-2 focus:ring-re-primary/20 text-re-on-surface transition-all appearance-none">
-              <option value="Full_time">{{ 'recruiterPostJob.jobTypeOptions.fullTime' | t }}</option>
-              <option value="Part_time">{{ 'recruiterPostJob.jobTypeOptions.partTime' | t }}</option>
-              <option value="Hybrid">{{ 'recruiterPostJob.jobTypeOptions.hybrid' | t }}</option>
-              <option value="Remote">{{ 'recruiterPostJob.jobTypeOptions.remote' | t }}</option>
+              <option value="FULL_TIME">{{ 'recruiterPostJob.jobTypeOptions.fullTime' | t }}</option>
+              <option value="PART_TIME">{{ 'recruiterPostJob.jobTypeOptions.partTime' | t }}</option>
+              <option value="HYBRID">{{ 'recruiterPostJob.jobTypeOptions.hybrid' | t }}</option>
+              <option value="REMOTE">{{ 'recruiterPostJob.jobTypeOptions.remote' | t }}</option>
             </select>
           </div>
           <div>
             <label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">
               {{ 'recruiterPostJob.salary' | t }}
             </label>
-            <input
+            <input formControlName="salary"
               class="w-full bg-re-surface-container-low/50 border-none rounded-xl px-4 py-3.5 focus:ring-2 focus:ring-re-primary/20 text-re-on-surface transition-all"
               [placeholder]="'recruiterPostJob.salaryPlaceholder' | t" type="text" />
           </div>
@@ -47,7 +47,7 @@
             <label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">
               {{ 'recruiterPostJob.headcount' | t }}
             </label>
-            <input
+            <input formControlName="headCount"
               class="w-full bg-re-surface-container-low/50 border-none rounded-xl px-4 py-3.5 focus:ring-2 focus:ring-re-primary/20 text-re-on-surface transition-all"
               [placeholder]="'recruiterPostJob.headcountPlaceholder' | t" type="number" />
           </div>
@@ -55,7 +55,7 @@
             <label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">
               {{ 'recruiterPostJob.expiredDate' | t }}
             </label>
-            <input title="input"
+            <input title="input" formControlName="deadlineCV"
               class="w-full bg-re-surface-container-low/50 border-none rounded-xl px-4 py-3.5 focus:ring-2 focus:ring-re-primary/20 text-re-on-surface transition-all"
               type="date" />
           </div>
@@ -66,11 +66,13 @@
             <div class="relative">
               <span
                 class="material-symbols-outlined absolute left-4 top-3.5 text-slate-400 pointer-events-none">location_on</span>
-              <select title="address"
-                class="w-full bg-re-surface-container-low/50 border-none rounded-xl pl-12 pr-10 py-3.5 focus:ring-2 focus:ring-re-primary/20 text-re-on-surface transition-all appearance-none cursor-pointer">
+              <select title="address" formControlName="location"
+                class="w-full bg-re-surface-container-low/50 border-none rounded-xl pl-12 pr-10 py-3.5 focus:ring-2 focus:ring-re-primary/20 text-re-on-surface transition-all appearance-none cursor-pointer"
+                [class.ring-2]="postJobFG.get('location')?.invalid && postJobFG.get('location')?.touched"
+                [class.ring-red-500]="postJobFG.get('location')?.invalid && postJobFG.get('location')?.touched">
                 <option value="" disabled selected>{{ 'recruiterPostJob.addressPlaceholder' | t }}</option>
                 @for (addr of companyAddresses; track addr.id) {
-                <option [value]="addr.fullAddress">{{ addr.locationName }} - {{ addr.fullAddress }}</option>
+                <option [value]="addr.id">{{ addr.city }} - {{ addr.street }}</option>
                 }
               </select>
               <span
@@ -88,20 +90,30 @@
           </h2>
         </div>
         <div class="space-y-8">
-          <div>
-            <label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">
-              {{ 'recruiterPostJob.description' | t }}
-            </label>
-            <textarea
-              class="w-full bg-re-surface-container-low/50 border-none rounded-xl px-4 py-4 focus:ring-2 focus:ring-re-primary/20 text-re-on-surface transition-all resize-none"
-              [placeholder]="'recruiterPostJob.descriptionPlaceholder' | t" rows="4"></textarea>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">
+                {{ 'recruiterPostJob.description' | t }}
+              </label>
+              <textarea formControlName="jobDescription"
+                class="w-full bg-re-surface-container-low/50 border-none rounded-xl px-4 py-4 focus:ring-2 focus:ring-re-primary/20 text-re-on-surface transition-all resize-none"
+                [placeholder]="'recruiterPostJob.descriptionPlaceholder' | t" rows="4"></textarea>
+            </div>
+            <div>
+              <label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">
+                Kỹ năng chuyên môn
+              </label>
+              <textarea formControlName="jobSkill"
+                class="w-full bg-re-surface-container-low/50 border-none rounded-xl px-4 py-4 focus:ring-2 focus:ring-re-primary/20 text-re-on-surface transition-all resize-none"
+                placeholder="Ví dụ: Java, Spring Boot, React..." rows="4"></textarea>
+            </div>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
               <label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">
                 {{ 'recruiterPostJob.requirements' | t }}
               </label>
-              <textarea
+              <textarea formControlName="jobRequirement"
                 class="w-full bg-re-surface-container-low/50 border-none rounded-xl px-4 py-4 focus:ring-2 focus:ring-re-primary/20 text-re-on-surface transition-all resize-none"
                 [placeholder]="'recruiterPostJob.requirementsPlaceholder' | t" rows="5"></textarea>
             </div>
@@ -109,7 +121,7 @@
               <label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">
                 {{ 'recruiterPostJob.benefits' | t }}
               </label>
-              <textarea
+              <textarea formControlName="moreDetail"
                 class="w-full bg-re-surface-container-low/50 border-none rounded-xl px-4 py-4 focus:ring-2 focus:ring-re-primary/20 text-re-on-surface transition-all resize-none"
                 [placeholder]="'recruiterPostJob.benefitsPlaceholder' | t" rows="5"></textarea>
             </div>
@@ -145,7 +157,7 @@
           </button>
         </div>
       </section>
-    </div>
+    </form>
 
   </div>
   <!-- Floating Action Bar -->
@@ -161,10 +173,11 @@
       </div>
       <div
         class="rounded-lg overflow-hidden shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 transition-shadow bg-re-primary-container">
-        <button
-          class="flex items-center justify-center gap-2 text-white text-sm font-label font-bold px-6 py-2 transition-all active:scale-95 duration-200 w-full h-full">
+        <button type="submit" [disabled]="isSubmitting"
+          (click)="onSubmit()"
+          class="flex items-center justify-center gap-2 text-white text-sm font-label font-bold px-6 py-2 transition-all active:scale-95 duration-200 w-full h-full disabled:opacity-50">
           <span class="material-symbols-outlined text-[18px]">save</span>
-          <span>{{ 'recruiterPostJob.saveJob' | t }}</span>
+          <span>{{ isSubmitting ? 'Đang lưu...' : ('recruiterPostJob.saveJob' | t) }}</span>
         </button>
       </div>
     </div>

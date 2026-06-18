@@ -1,6 +1,6 @@
 import { Component, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   CandidateStatus,
@@ -11,6 +11,8 @@ import { NotifyMessageService } from '../../../../core/services/notify-message.s
 import { I18nService } from '../../../../core/i18n/i18n.service';
 import { RecruiterJobsService } from '../../services/recruiter-jobs.service';
 import { RecruiterResumeService } from '../../services/recruiter-resume.service';
+import { JobService } from '../../../jobs/services/job.service';
+import { JobDetailViewModel } from '../../../../shared/models/jobs/job-api-response.model';
 import { take } from 'rxjs';
 
 import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
@@ -18,14 +20,14 @@ import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
 @Component({
   selector: 'app-candidate-list',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
+  imports: [CommonModule, TranslatePipe, RouterModule],
   templateUrl: './candidate-list.component.html',
   styleUrl: './candidate-list.component.css'
 })
 export class CandidateListComponent {
   private readonly route = inject(ActivatedRoute);
-  private readonly queryParamMap = toSignal(this.route.queryParamMap, {
-    initialValue: this.route.snapshot.queryParamMap
+  private readonly paramMap = toSignal(this.route.paramMap, {
+    initialValue: this.route.snapshot.paramMap
   });
 
   private readonly pageIndex = signal(0);
@@ -33,30 +35,31 @@ export class CandidateListComponent {
   readonly selectedJobId = signal<number | null>(null);
   readonly selectedCandidateEmail = signal<string>('');
 
+  readonly jobDetail = signal<JobDetailViewModel | null>(null);
+
   constructor(
     private readonly recruiterAccountService: RecruiterAccountService,
-    private readonly recruiterJobsService: RecruiterJobsService,
     private readonly recruiterResumeService: RecruiterResumeService,
+    private readonly jobService: JobService,
     private readonly notify: NotifyMessageService,
     private readonly i18nService: I18nService
   ) {
-    this.recruiterJobsService.loadPostedJobs(0, 20);
-
     effect(() => {
-      const queryParams = this.queryParamMap();
-      const queryJobId = Number(queryParams.get('jobId'));
-      if (Number.isFinite(queryJobId) && queryJobId > 0) {
-        this.selectedJobId.set(queryJobId);
+      const params = this.paramMap();
+      const jobIdStr = params.get('jobId');
+      if (jobIdStr) {
+        const jobId = Number(jobIdStr);
+        if (Number.isFinite(jobId) && jobId > 0) {
+          this.selectedJobId.set(jobId);
+          this.jobService.getDetailJob(jobIdStr);
+        }
       }
     });
 
     effect(() => {
-      const jobs = this.recruiterJobsService.postedJobs$();
-      if (!this.selectedJobId() && jobs.length > 0) {
-        const firstJobId = Number(jobs[0].id);
-        if (Number.isFinite(firstJobId) && firstJobId > 0) {
-          this.selectedJobId.set(firstJobId);
-        }
+      const detail = this.jobService.jobDetail$();
+      if (detail && Number(detail.id) === this.selectedJobId()) {
+        this.jobDetail.set(detail);
       }
     });
 
@@ -77,9 +80,7 @@ export class CandidateListComponent {
     return this.recruiterAccountService.candidates$();
   }
 
-  get jobs() {
-    return this.recruiterJobsService.postedJobs$();
-  }
+
 
   get resumes() {
     return this.recruiterResumeService.candidateResumes$();
@@ -125,18 +126,7 @@ export class CandidateListComponent {
     return `${candidate.name}-${candidate.role}-${index}`;
   }
 
-  onSelectJob(event: Event): void {
-    const selected = Number((event.target as HTMLSelectElement).value);
-    if (!Number.isFinite(selected) || selected <= 0) {
-      this.selectedJobId.set(null);
-      return;
-    }
 
-    this.pageIndex.set(0);
-    this.selectedJobId.set(selected);
-    this.selectedCandidateEmail.set('');
-    this.recruiterResumeService.clearCandidateResumes();
-  }
 
   viewCandidateResumes(candidate: RecruiterCandidateViewModel): void {
     if (!candidate.email) {

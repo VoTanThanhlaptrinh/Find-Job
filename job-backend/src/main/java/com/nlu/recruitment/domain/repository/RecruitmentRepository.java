@@ -8,7 +8,7 @@ import com.nlu.recruitment.domain.model.Recruitment;
 import java.util.Optional;
 
 public interface RecruitmentRepository extends CrudRepository<Recruitment, Long> {
-    Optional<Recruitment> findHirerByUserIs(User user);
+    Optional<Recruitment> findRecruitmentByUser(User user);
 
 }
 

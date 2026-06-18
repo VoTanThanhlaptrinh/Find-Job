@@ -36,9 +36,6 @@ public record JobDto(
         @NotNull(message = "{validation.job.deadline.required}")
         LocalDate deadlineCV,
 
-        @Positive(message = "{validation.job.hirer.required}")
-        long hirerId,
-
         @Size(min = 0, max = 5000, message = "{validation.job.maxLength}")
         String moreDetail,
 
@@ -77,10 +74,6 @@ public record JobDto(
 
     public LocalDate getDeadlineCV() {
         return deadlineCV;
-    }
-
-    public long getHirerId() {
-        return hirerId;
     }
 
     public String getMoreDetail() {

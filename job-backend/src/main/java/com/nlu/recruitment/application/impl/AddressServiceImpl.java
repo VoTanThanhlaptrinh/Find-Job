@@ -35,6 +35,7 @@ public class AddressServiceImpl implements AddressService {
         handleDefaultAddress(recruitment.getAddresses(), dto.getIsDefault(), null);
 
         Address address = new Address();
+        address.setLocationName(dto.getLocationName());
         address.setCity(dto.getCity());
         address.setStreet(dto.getStreet());
         address.setIsDefault(dto.getIsDefault());
@@ -61,6 +62,7 @@ public class AddressServiceImpl implements AddressService {
 
         handleDefaultAddress(recruitment.getAddresses(), dto.getIsDefault(), id);
 
+        address.setLocationName(dto.getLocationName());
         address.setCity(dto.getCity());
         address.setStreet(dto.getStreet());
         address.setIsDefault(dto.getIsDefault());
@@ -96,7 +98,7 @@ public class AddressServiceImpl implements AddressService {
     }
 
     private Recruitment getRecruitmentByUser(User user) {
-        return recruitmentRepository.findHirerByUserIs(user)
+        return recruitmentRepository.findRecruitmentByUser(user)
                 .orElseThrow(() -> new ForbiddenException("message.forbidden"));
     }
 
@@ -114,6 +116,7 @@ public class AddressServiceImpl implements AddressService {
     private AddressResponseDto toDto(Address address) {
         return new AddressResponseDto(
                 address.getId(),
+                address.getLocationName(),
                 address.getCity(),
                 address.getStreet(),
                 address.getIsDefault()

@@ -5,6 +5,8 @@ import { filter } from 'rxjs/operators';
 import { RecruiterAuthService } from '../../services/recruiter-auth.service';
 import { TokenService } from '../../../../core/services/token.service';
 import { AuthService } from '../../../../core/services/auth.service';
+import { I18nService } from '../../../../core/i18n/i18n.service';
+import { AppLanguage } from '../../../../core/i18n/translations';
 
 export interface NavItem {
   label: string;
@@ -25,6 +27,7 @@ export class RecruiterLayoutComponent implements OnInit {
   private readonly recruiterAuth = inject(RecruiterAuthService);
   private readonly tokenService = inject(TokenService);
   private readonly authService = inject(AuthService);
+  private readonly i18nService = inject(I18nService);
 
   readonly hasLoadedRoles = signal<boolean>(false);
   readonly hirerRoles = signal<string[]>([]);
@@ -34,7 +37,6 @@ export class RecruiterLayoutComponent implements OnInit {
   readonly navItems: NavItem[] = [
     { label: 'Overview', icon: 'dashboard', route: '/recruiter/dashboard' },
     { label: 'Jobs', icon: 'work', route: '/recruiter/jobs' },
-    { label: 'Candidates', icon: 'group', route: '/recruiter/candidates' },
     { label: 'Company Address', icon: 'location_on', route: '/recruiter/company-address' }
   ];
   readonly username = signal<string>('Recruiter');
@@ -124,5 +126,13 @@ export class RecruiterLayoutComponent implements OnInit {
     this.tokenService.clearToken();
     this.authService.logout();
     this.router.navigate(['/recruiter/login']);
+  }
+
+  get currentLanguage(): AppLanguage {
+    return this.i18nService.currentLanguage;
+  }
+
+  switchLanguage(language: AppLanguage): void {
+    this.i18nService.setLanguage(language);
   }
 }

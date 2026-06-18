@@ -71,6 +71,9 @@ export class RecruiterAccountService {
         this.candidatesTotal.set(response.data?.page?.totalElements ?? 0);
         this.candidatesTotalPages.set(response.data?.page?.totalPages ?? 0);
         this.isLoadingCandidates.set(false);
+        if (content.length === 0) {
+          this.notify.info(this.i18nService.translate('candidateList.empty'));
+        }
       },
       error: (err: HttpErrorResponse) => {
         this.candidates.set([]);

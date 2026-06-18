@@ -2,7 +2,9 @@
   <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg mx-4 overflow-hidden transform transition-all">
     <!-- Header -->
     <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-      <h3 class="text-xl font-bold text-slate-800">{{ 'companyAddress.modal.title' | t }}</h3>
+      <h3 class="text-xl font-bold text-slate-800">
+        {{ isEditMode ? 'Cập nhật địa chỉ' : ('companyAddress.modal.title' | t) }}
+      </h3>
       <div class="rounded-full overflow-hidden hover:bg-slate-100 shrink-0">
         <button type="button" class="w-full h-full p-2 flex items-center justify-center text-slate-500" (click)="onClose()">
           <span class="material-symbols-outlined text-xl">close</span>
@@ -13,6 +15,26 @@
     <!-- Body -->
     <div class="p-6">
       <form [formGroup]="addressForm" (ngSubmit)="onSave()" class="space-y-4">
+        <!-- Location Name -->
+        <div class="space-y-1.5">
+          <label for="locationName" class="block text-sm font-semibold text-slate-700">
+            Tên vị trí <span class="text-red-500">*</span>
+          </label>
+          <input
+            id="locationName"
+            type="text"
+            formControlName="locationName"
+            placeholder="VD: Trụ sở chính, Chi nhánh 1"
+            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+            [class.border-red-300]="addressForm.get('locationName')?.invalid && addressForm.get('locationName')?.touched"
+            [class.focus:ring-red-500/20]="addressForm.get('locationName')?.invalid && addressForm.get('locationName')?.touched"
+            [class.focus:border-red-500]="addressForm.get('locationName')?.invalid && addressForm.get('locationName')?.touched"
+          />
+          <p *ngIf="addressForm.get('locationName')?.invalid && addressForm.get('locationName')?.touched" class="text-xs text-red-500 mt-1">
+            Tên vị trí không được bỏ trống
+          </p>
+        </div>
+
         <!-- City -->
         <div class="space-y-1.5">
           <label for="city" class="block text-sm font-semibold text-slate-700">
@@ -77,7 +99,7 @@
       </div>
       <div class="rounded-full overflow-hidden bg-blue-600 hover:bg-blue-700 transition-colors shadow-md shadow-blue-500/20">
         <button type="button" class="w-full h-full px-5 py-2 text-sm font-semibold text-white" (click)="onSave()">
-          {{ 'companyAddress.modal.save' | t }}
+          {{ isEditMode ? 'Cập nhật' : ('companyAddress.modal.save' | t) }}
         </button>
       </div>
     </div>

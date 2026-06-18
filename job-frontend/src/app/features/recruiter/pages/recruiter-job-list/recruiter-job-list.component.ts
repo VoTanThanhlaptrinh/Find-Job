@@ -6,11 +6,12 @@ import { NotifyMessageService } from '../../../../core/services/notify-message.s
 import { I18nService } from '../../../../core/i18n/i18n.service';
 import { HirerJobCardComponent } from '../../components/hirer-job-card/hirer-job-card.component';
 import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
+import { SkeletonJobCardComponent } from '../../components/skeleton-job-card/skeleton-job-card.component';
 
 @Component({
   selector: 'app-recruiter-job-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, HirerJobCardComponent, TranslatePipe],
+  imports: [CommonModule, RouterLink, HirerJobCardComponent, TranslatePipe, SkeletonJobCardComponent],
   templateUrl: './recruiter-job-list.component.html',
   styleUrl: './recruiter-job-list.component.css',
 })

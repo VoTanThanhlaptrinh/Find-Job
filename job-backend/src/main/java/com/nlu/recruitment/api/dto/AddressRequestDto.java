@@ -6,6 +6,9 @@ import lombok.Data;
 
 @Data
 public class AddressRequestDto {
+    @NotBlank(message = "Tên vị trí không được bỏ trống")
+    private String locationName;
+
     @NotBlank(message = "validation.address.city.required")
     private String city;
 

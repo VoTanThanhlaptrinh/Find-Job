@@ -174,3 +174,23 @@ body {
   );
   animation: flow 3s infinite linear;
 }
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+.animate-shimmer {
+  background: #e2e8f0;
+  background-image: linear-gradient(to right, #e2e8f0 0%, #f1f5f9 20%, #e2e8f0 40%, #e2e8f0 100%);
+  background-repeat: no-repeat;
+  background-size: 200% 100%;
+  animation: shimmer 1.5s linear infinite;
+}
+.dark .animate-shimmer {
+  background: #334155;
+  background-image: linear-gradient(to right, #334155 0%, #475569 20%, #334155 40%, #334155 100%);
+}

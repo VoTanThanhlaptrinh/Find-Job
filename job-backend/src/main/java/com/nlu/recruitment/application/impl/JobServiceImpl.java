@@ -74,7 +74,7 @@ public class JobServiceImpl implements JobService {
 
             log.info("Creating job post — title: {}, hirer user: {}", jobDTO.getJobName(), user.getId());
 
-            Recruitment recruitment = recruitmentRepository.findHirerByUserIs(user)
+            Recruitment recruitment = recruitmentRepository.findRecruitmentByUser(user)
                     .orElseThrow(() -> new ForbiddenException("message.forbidden"));
 
             Address address = addressRepository.findById(jobDTO.getAddressId())
@@ -127,7 +127,7 @@ public class JobServiceImpl implements JobService {
             Job job = jobRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("job.not_found"));
 
-            Recruitment recruitment = recruitmentRepository.findHirerByUserIs(user)
+            Recruitment recruitment = recruitmentRepository.findRecruitmentByUser(user)
                     .orElseThrow(() -> new ForbiddenException("message.forbidden"));
 
             if (job.getRecruitment() == null || job.getRecruitment().getId() != recruitment.getId()) {
@@ -166,7 +166,7 @@ public class JobServiceImpl implements JobService {
             Job job = jobRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("job.not_found"));
 
-            Recruitment recruitment = recruitmentRepository.findHirerByUserIs(user)
+            Recruitment recruitment = recruitmentRepository.findRecruitmentByUser(user)
                     .orElseThrow(() -> new ForbiddenException("message.forbidden"));
 
             if (job.getRecruitment() == null || job.getRecruitment().getId() != recruitment.getId()) {
@@ -221,7 +221,7 @@ public class JobServiceImpl implements JobService {
             Job job = jobRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("job.not_found"));
 
-            Recruitment recruitment = recruitmentRepository.findHirerByUserIs(user)
+            Recruitment recruitment = recruitmentRepository.findRecruitmentByUser(user)
                 .orElseThrow(() -> new ForbiddenException("message.forbidden"));
 
             if (!job.isOwnedBy(recruitment)) {

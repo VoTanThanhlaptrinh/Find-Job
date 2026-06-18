@@ -21,7 +21,7 @@ export const recruiterRoutes: Routes = [
   { path: 'dashboard/jobs', redirectTo: 'jobs', pathMatch: 'full' },
   { path: 'dashboard/jobs/post-job', redirectTo: 'jobs/post-job', pathMatch: 'full' },
   { path: 'dashboard/jobs/detail/:id', redirectTo: 'jobs/detail/:id', pathMatch: 'full' },
-  { path: 'dashboard/candidates', redirectTo: 'candidates', pathMatch: 'full' },
+  { path: 'dashboard/candidates', redirectTo: 'jobs', pathMatch: 'full' },
   { path: 'dashboard/company-address', redirectTo: 'company-address', pathMatch: 'full' },
 
   {
@@ -32,8 +32,8 @@ export const recruiterRoutes: Routes = [
       { path: 'dashboard', component: RecruiterDashboardComponent, data: { title: 'Overview' } },
       { path: 'jobs', component: RecruiterJobListComponent, data: { title: 'Jobs' } },
       { path: 'jobs/detail/:id', component: RecruiterJobDetailComponent, data: { title: 'Job Detail' } },
+      { path: 'jobs/:jobId/candidates', component: CandidateListComponent, data: { title: 'Candidates' } },
       { path: 'jobs/post-job', component: PostJobComponent, data: { title: 'Post Job' } },
-      { path: 'candidates', component: CandidateListComponent, data: { title: 'Candidates' } },
       { path: 'company-address', component: CompanyAddressComponent, data: { title: 'Company Address' } },
     ],
   },

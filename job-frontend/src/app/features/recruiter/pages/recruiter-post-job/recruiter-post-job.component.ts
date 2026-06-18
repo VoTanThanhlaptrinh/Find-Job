@@ -1,4 +1,4 @@
-import { Component, effect } from '@angular/core';
+import { Component, effect, OnInit } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -7,12 +7,13 @@ import {
   ReactiveFormsModule, ValidationErrors,
   Validators
 } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { QuillModule } from 'ngx-quill';
 import { CommonModule } from '@angular/common';
 import { NotifyMessageService } from '../../../../core/services/notify-message.service';
 import { RecruiterJobsService } from '../../services/recruiter-jobs.service';
 import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
+import { RecruiterAddressService } from '../../services/recruiter-address.service';
+import { CompanyAddress } from '../company-address/company-address.component';
 
 @Component({
   selector: 'app-post-job',
@@ -27,56 +28,29 @@ import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
   styleUrl: './recruiter-post-job.component.css'
 })
 
-export class PostJobComponent {
+export class PostJobComponent implements OnInit {
   messageType: boolean | undefined = undefined;
   message = '';
   postJobFG = new FormGroup({
     jobName: new FormControl('', [Validators.required]),
     location: new FormControl('', [Validators.required]),
-    jobType: new FormControl('Full Time', [Validators.required]),
+    jobType: new FormControl('FULL_TIME', [Validators.required]),
     salary: new FormControl('', [Validators.required, Validators.min(2000000)]),
     headCount: new FormControl('', [Validators.required, Validators.min(1)]),
     jobDescription: new FormControl('', [Validators.required]),
     jobRequirement: new FormControl('', [Validators.required]),
     jobSkill: new FormControl('', [Validators.required]),
+    moreDetail: new FormControl(''),
     deadlineCV: new FormControl<Date|null>(null, [Validators.required, minDatePlusOne]),
-    companyName: new FormControl('', [Validators.required]),
-    companyDescription: new FormControl(''),
-    compayWebsite: new FormControl(''),
-    image: new FormControl<File | null>(null, Validators.required),
     enableAiAnalysis: new FormControl(false)
   });
 
-  companyAddresses: any[] = [
-    {
-      id: 1,
-      locationName: 'Tru so chinh TP.HCM',
-      contactName: 'Nguyen Van An',
-      phone: '0909 111 222',
-      fullAddress: 'Toa nha Bitexco, 2 Hai Trieu, Quan 1, TP.HCM',
-      isDefault: true
-    },
-    {
-      id: 2,
-      locationName: 'Van phong Ha Noi',
-      contactName: 'Tran Thi Mai',
-      phone: '0912 345 678',
-      fullAddress: '54 Lieu Giai, Ba Dinh, Ha Noi',
-      isDefault: false
-    },
-    {
-      id: 3,
-      locationName: 'Van phong Da Nang',
-      contactName: 'Le Quoc Viet',
-      phone: '0935 888 999',
-      fullAddress: 'Duong 2/9, Hai Chau, Da Nang',
-      isDefault: false
-    }
-  ];
+  companyAddresses: CompanyAddress[] = [];
 
   constructor(
     private readonly recruiterJobsService: RecruiterJobsService,
-    private readonly notify: NotifyMessageService
+    private readonly notify: NotifyMessageService,
+    private readonly addressService: RecruiterAddressService
   ) {
     effect(() => {
       const actionTick = this.recruiterJobsService.actionTick$();
@@ -93,15 +67,33 @@ export class PostJobComponent {
       if (isSuccess) {
         this.notify.showMessage(message, '', 'success');
         this.postJobFG.reset({
-          jobType: 'Full Time',
+          jobType: 'FULL_TIME',
           deadlineCV: null,
-          image: null,
           enableAiAnalysis: false
         });
         return;
       }
 
       this.notify.showMessage(message, '', 'error');
+    });
+  }
+
+  ngOnInit(): void {
+    this.addressService.getAddresses().subscribe({
+      next: (response) => {
+        if (response.status === 200) {
+          this.companyAddresses = response.data;
+          
+          // Set default address if available
+          const defaultAddress = this.companyAddresses.find(a => a.isDefault);
+          if (defaultAddress) {
+            this.postJobFG.get('location')?.setValue(defaultAddress.id.toString());
+          }
+        }
+      },
+      error: (err) => {
+        console.error('Failed to load company addresses', err);
+      }
     });
   }
   onSubmit() {
@@ -113,25 +105,23 @@ export class PostJobComponent {
     const formData = new FormData();
     Object.entries(formValue).forEach(([key, val]) => {
       if (val !== null && val !== undefined) {
+          let formKey = key;
+          if (key === 'location') formKey = 'addressId';
+          if (key === 'headCount') formKey = 'headcount';
           if (val instanceof File) {
-            formData.append(key, val, val.name);
+            formData.append(formKey, val, val.name);
           } else if (val instanceof Date) {
-            formData.append(key, val.toISOString().split('T')[0]);
+            formData.append(formKey, val.toISOString().split('T')[0]);
           } else if (typeof val === 'boolean') {
-            formData.append(key, String(val));
+            formData.append(formKey, String(val));
           } else {
-            formData.append(key, String(val));
+            formData.append(formKey, String(val));
           }
       }
     });
     this.recruiterJobsService.createJob(formData);
   }
-  onFilePicked(event: Event) {
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (file) {
-      this.postJobFG.get('image')?.setValue(file, { emitModelToViewChange: false });
-    }
-  }
+  
   get f() {
     return this.postJobFG.controls;
   }
