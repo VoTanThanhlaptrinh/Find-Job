@@ -77,13 +77,15 @@
                 </span>
               </td>
               <td class="px-4 py-3 text-right">
-                <button
-                  type="button"
-                  class="px-3 py-1.5 rounded-lg bg-re-primary-fixed text-re-on-primary-fixed"
-                  (click)="viewCandidateResumes(candidate)"
-                >
-                  {{ 'candidateList.viewResume' | t }}
-                </button>
+                <div class="inline-block rounded-lg overflow-hidden bg-re-primary-fixed">
+                  <button
+                    type="button"
+                    class="w-full h-full px-3 py-1.5 text-re-on-primary-fixed"
+                    (click)="viewCandidateResumes(candidate)"
+                  >
+                    {{ 'candidateList.viewResume' | t }}
+                  </button>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -95,22 +97,26 @@
           {{ 'pagination.page' | t }} {{ currentPage }} / {{ totalPages }}
         </p>
         <div class="flex gap-2">
-          <button
-            type="button"
-            class="px-3 py-1.5 rounded-lg border border-re-outline-variant/30 disabled:opacity-40"
-            [disabled]="!canGoPrev"
-            (click)="goPrevPage()"
-          >
-            {{ 'pagination.previous' | t }}
-          </button>
-          <button
-            type="button"
-            class="px-3 py-1.5 rounded-lg border border-re-outline-variant/30 disabled:opacity-40"
-            [disabled]="!canGoNext"
-            (click)="goNextPage()"
-          >
-            {{ 'pagination.next' | t }}
-          </button>
+          <div class="rounded-lg overflow-hidden border border-re-outline-variant/30" [class.opacity-40]="!canGoPrev">
+            <button
+              type="button"
+              class="w-full h-full px-3 py-1.5 disabled:cursor-not-allowed"
+              [disabled]="!canGoPrev"
+              (click)="goPrevPage()"
+            >
+              {{ 'pagination.previous' | t }}
+            </button>
+          </div>
+          <div class="rounded-lg overflow-hidden border border-re-outline-variant/30" [class.opacity-40]="!canGoNext">
+            <button
+              type="button"
+              class="w-full h-full px-3 py-1.5 disabled:cursor-not-allowed"
+              [disabled]="!canGoNext"
+              (click)="goNextPage()"
+            >
+              {{ 'pagination.next' | t }}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -141,20 +147,24 @@
             <p class="text-xs text-re-on-surface-variant">{{ resume.createDate | date: 'dd/MM/yyyy HH:mm' }}</p>
           </div>
           <div class="flex gap-2">
-            <button
-              type="button"
-              class="px-3 py-1.5 rounded-lg bg-re-primary-fixed text-re-on-primary-fixed text-sm"
-              (click)="openResumeView(resume.id)"
-            >
-              {{ 'cvList.view' | t }}
-            </button>
-            <button
-              type="button"
-              class="px-3 py-1.5 rounded-lg bg-re-secondary-fixed text-re-on-secondary-fixed text-sm"
-              (click)="downloadResume(resume.id)"
-            >
-              {{ 'cvList.download' | t }}
-            </button>
+            <div class="rounded-lg overflow-hidden bg-re-primary-fixed">
+              <button
+                type="button"
+                class="w-full h-full px-3 py-1.5 text-re-on-primary-fixed text-sm"
+                (click)="openResumeView(resume.id)"
+              >
+                {{ 'cvList.view' | t }}
+              </button>
+            </div>
+            <div class="rounded-lg overflow-hidden bg-re-secondary-fixed">
+              <button
+                type="button"
+                class="w-full h-full px-3 py-1.5 text-re-on-secondary-fixed text-sm"
+                (click)="downloadResume(resume.id)"
+              >
+                {{ 'cvList.download' | t }}
+              </button>
+            </div>
           </div>
         </li>
       </ul>

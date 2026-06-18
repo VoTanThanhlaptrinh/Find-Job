@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
+import { AddAddressModalComponent, AddressFormData } from '../../components/add-address-modal/add-address-modal.component';
 
 interface CompanyAddress {
   id: number;
@@ -13,7 +14,8 @@ interface CompanyAddress {
 
 @Component({
   selector: 'app-company-address',
-  imports: [CommonModule, TranslatePipe],
+  standalone: true,
+  imports: [CommonModule, TranslatePipe, AddAddressModalComponent],
   templateUrl: './company-address.component.html',
   styleUrl: './company-address.component.css',
 })
@@ -46,27 +48,43 @@ export class CompanyAddressComponent {
   ];
 
   openMenuId: number | null = null;
+  isAddModalOpen = false;
 
   toggleMenu(id: number): void {
     this.openMenuId = this.openMenuId === id ? null : id;
   }
 
-  addAddress(): void {
+  openAddModal(): void {
+    this.isAddModalOpen = true;
+    this.closeMenu();
+  }
+
+  closeAddModal(): void {
+    this.isAddModalOpen = false;
+  }
+
+  onSaveAddress(data: AddressFormData): void {
     const nextId = this.addresses.length > 0
       ? Math.max(...this.addresses.map((item) => item.id)) + 1
       : 1;
 
-    this.addresses = [
-      {
-        id: nextId,
-        locationName: `Van phong moi #${nextId}`,
-        contactName: 'Dang cap nhat',
-        phone: 'Dang cap nhat',
-        fullAddress: 'Dang cap nhat dia chi',
-        isDefault: false
-      },
-      ...this.addresses
-    ];
+    // Handle setting default logic
+    if (data.isDefault) {
+      this.addresses = this.addresses.map(addr => ({ ...addr, isDefault: false }));
+    }
+
+    // Usually contact name and phone would be fetched from user profile API. 
+    // Here we use placeholders as per previous mock data style.
+    const newAddress: CompanyAddress = {
+      id: nextId,
+      locationName: data.locationName,
+      fullAddress: data.fullAddress,
+      isDefault: data.isDefault,
+      contactName: 'Đang cập nhật',
+      phone: 'Đang cập nhật'
+    };
+
+    this.addresses = [newAddress, ...this.addresses];
   }
 
   deleteAddress(address: CompanyAddress): void {

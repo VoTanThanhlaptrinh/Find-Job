@@ -5,14 +5,16 @@
         <h1 class="text-2xl md:text-3xl font-bold">{{ 'companyAddress.title' | t }}</h1>
         <p class="text-re-on-surface-variant mt-1">{{ 'companyAddress.subtitle' | t }}</p>
       </div>
-      <button
-        type="button"
-        class="inline-flex items-center gap-2 bg-re-primary text-re-on-primary px-4 py-2 rounded-full font-semibold"
-        (click)="addAddress()"
-      >
-        <span class="material-symbols-outlined">add</span>
-        {{ 'companyAddress.addAddress' | t }}
-      </button>
+      <div class="rounded-full overflow-hidden bg-re-primary">
+        <button
+          type="button"
+          class="inline-flex items-center justify-center w-full h-full gap-2 text-re-on-primary px-4 py-2 font-semibold"
+          (click)="openAddModal()"
+        >
+          <span class="material-symbols-outlined">add</span>
+          {{ 'companyAddress.addAddress' | t }}
+        </button>
+      </div>
     </header>
 
     <div *ngIf="addresses.length === 0" class="bg-re-surface-container-low p-5 rounded-xl text-re-on-surface-variant">
@@ -36,25 +38,29 @@
           </div>
 
           <div class="relative">
-            <button
-              type="button"
-              class="w-9 h-9 rounded-full bg-re-surface-container flex items-center justify-center"
-              (click)="toggleMenu(address.id); $event.stopPropagation()"
-            >
-              <span class="material-symbols-outlined">more_vert</span>
-            </button>
+            <div class="w-9 h-9 rounded-full overflow-hidden bg-re-surface-container">
+              <button
+                type="button"
+                class="w-full h-full flex items-center justify-center"
+                (click)="toggleMenu(address.id); $event.stopPropagation()"
+              >
+                <span class="material-symbols-outlined">more_vert</span>
+              </button>
+            </div>
 
             <div
               *ngIf="openMenuId === address.id"
               class="absolute right-0 mt-2 min-w-32 bg-re-surface-container-lowest border border-re-outline-variant/20 shadow-md rounded-xl p-1 z-10"
             >
-              <button
-                type="button"
-                class="w-full text-left px-3 py-2 text-sm text-re-error hover:bg-re-error-fixed hover:text-re-on-error-fixed rounded-lg"
-                (click)="deleteAddress(address); $event.stopPropagation()"
-              >
-                {{ 'companyAddress.delete' | t }}
-              </button>
+              <div class="rounded-lg overflow-hidden hover:bg-re-error-fixed">
+                <button
+                  type="button"
+                  class="w-full h-full text-left px-3 py-2 text-sm text-re-error hover:text-re-on-error-fixed"
+                  (click)="deleteAddress(address); $event.stopPropagation()"
+                >
+                  {{ 'companyAddress.delete' | t }}
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -66,4 +72,10 @@
       </li>
     </ul>
   </section>
+
+  <app-add-address-modal
+    [isOpen]="isAddModalOpen"
+    (close)="closeAddModal()"
+    (save)="onSaveAddress($event)"
+  ></app-add-address-modal>
 </main>

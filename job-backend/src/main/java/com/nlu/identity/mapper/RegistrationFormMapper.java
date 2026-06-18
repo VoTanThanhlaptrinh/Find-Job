@@ -23,4 +23,21 @@ public class RegistrationFormMapper {
         user.setEnabled(true);
         return user;
     }
+
+    public User toUser(com.nlu.identity.api.dto.HirerRegistrationForm registrationForm, PasswordEncoder passwordEncoder, String role) {
+        User user = new User();
+        user.setPassword(new Password(passwordEncoder.encode(registrationForm.password())));
+        user.setEmail(new EmailAddress(registrationForm.username()));
+        user.setFullName(registrationForm.fullName());
+        user.setAddress("");
+        user.setRole(RoleConstants.normalizeRole(role));
+        if (registrationForm.phone() != null && !registrationForm.phone().trim().isEmpty()) {
+            user.setMobile(new com.nlu.identity.domain.vo.PhoneNumber(registrationForm.phone()));
+        } else {
+            user.setMobile(null);
+        }
+        user.setActive(false);
+        user.setEnabled(true);
+        return user;
+    }
 }

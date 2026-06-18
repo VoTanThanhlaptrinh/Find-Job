@@ -82,8 +82,33 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public String registerHirer(RegistrationForm registrationForm) {
-        return registerByRole(registrationForm, RoleConstants.HIRER);
+    public String registerHirer(com.nlu.identity.api.dto.HirerRegistrationForm registrationForm) {
+        log.info("Registration started for role: {}", RoleConstants.HIRER);
+
+        User user = mapper.toUser(registrationForm, encoder, RoleConstants.HIRER);
+        userRepository.saveAndFlush(user);
+
+        try {
+            MDC.put(MDC_USER_ID, String.valueOf(user.getId()));
+
+            Recruitment recruitment = new Recruitment();
+            recruitment.setUser(user);
+            recruitment.setCompanyName(registrationForm.companyName());
+            recruitment.setDescription("");
+            recruitment.setSocialLink(new SocialLink(""));
+            recruitment.setCreateDate(LocalDateTime.now());
+            recruitment.setModifiedDate(LocalDateTime.now());
+            recruitment.setAddresses(new ArrayList<>());
+            recruitmentRepository.save(recruitment);
+            log.info("Hirer profile created for user: {}", user.getId());
+
+            sendLinkActivate(user.getUsername());
+
+            log.info("Registration completed for user: {} with role: {}", user.getId(), RoleConstants.HIRER);
+        } finally {
+            MDC.remove(MDC_USER_ID);
+        }
+        return user.getUsername();
     }
 
     @Override
@@ -351,11 +376,6 @@ public class AuthServiceImpl implements AuthService {
         try {
             MDC.put(MDC_USER_ID, String.valueOf(user.getId()));
 
-            if (RoleConstants.ROLE_HIRER.equals(RoleConstants.normalizeRole(role))) {
-                createHirer(user);
-                log.info("Hirer profile created for user: {}", user.getId());
-            }
-
             sendLinkActivate(user.getUsername());
 
             log.info("Registration completed for user: {} with role: {}", user.getId(), role);
@@ -363,18 +383,6 @@ public class AuthServiceImpl implements AuthService {
             MDC.remove(MDC_USER_ID);
         }
         return user.getUsername();
-    }
-
-    private void createHirer(User user) {
-        Recruitment recruitment = new Recruitment();
-        recruitment.setUser(user);
-        recruitment.setCompanyName(user.getFullName());
-        recruitment.setDescription("");
-        recruitment.setSocialLink(new SocialLink(""));
-        recruitment.setCreateDate(LocalDateTime.now());
-        recruitment.setModifiedDate(LocalDateTime.now());
-        recruitment.setAddresses(new ArrayList<>());
-        recruitmentRepository.save(recruitment);
     }
 
     private void validateAccountRole(User user, String expectedRole) {

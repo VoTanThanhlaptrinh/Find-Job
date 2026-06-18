@@ -1,18 +1,5 @@
-<main class="bg-re-background text-re-on-surface min-h-screen pb-32 overflow-x-hidden">
-  <!-- TopAppBar -->
-  <div role="banner"
-    class="fixed top-0 w-full z-50 flex items-center px-6 h-16 bg-white/70 backdrop-blur-xl shadow-sm shadow-blue-500/5">
-    <div class="flex items-center gap-4 w-full max-w-5xl mx-auto">
-      <button
-        class="flex items-center justify-center p-2 rounded-full hover:bg-slate-100/50 transition-colors active:scale-95 duration-200 text-blue-600">
-        <span class="material-symbols-outlined">arrow_back</span>
-      </button>
-      <h1 class="font-manrope font-bold text-xl tracking-tight text-re-on-surface">
-        {{ 'recruiterPostJob.title' | t }}
-      </h1>
-    </div>
-  </div>
-  <div role="main" class="pt-24 px-6 max-w-5xl mx-auto relative">
+<main class="bg-re-background text-re-on-surface min-h-screen pb-32 overflow-x-hidden relative pt-10 px-6">
+  <div class="max-w-5xl mx-auto relative">
     <!-- Background Atmospheric Blobs -->
     <div class="absolute -top-24 -left-24 w-96 h-96 bg-re-primary-fixed opacity-30 blur-[120px] -z-10 rounded-full">
     </div>
@@ -37,8 +24,7 @@
               [placeholder]="'recruiterPostJob.jobTitlePlaceholder' | t" type="text" />
           </div>
           <div>
-            <label
-              class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">
+            <label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">
               {{ 'recruiterPostJob.jobType' | t }}
             </label>
             <select title="select"
@@ -78,10 +64,17 @@
               {{ 'recruiterPostJob.address' | t }}
             </label>
             <div class="relative">
-              <span class="material-symbols-outlined absolute left-4 top-3.5 text-slate-400">location_on</span>
-              <input
-                class="w-full bg-re-surface-container-low/50 border-none rounded-xl pl-12 pr-4 py-3.5 focus:ring-2 focus:ring-re-primary/20 text-re-on-surface transition-all"
-                [placeholder]="'recruiterPostJob.addressPlaceholder' | t" type="text" />
+              <span
+                class="material-symbols-outlined absolute left-4 top-3.5 text-slate-400 pointer-events-none">location_on</span>
+              <select title="address"
+                class="w-full bg-re-surface-container-low/50 border-none rounded-xl pl-12 pr-10 py-3.5 focus:ring-2 focus:ring-re-primary/20 text-re-on-surface transition-all appearance-none cursor-pointer">
+                <option value="" disabled selected>{{ 'recruiterPostJob.addressPlaceholder' | t }}</option>
+                @for (addr of companyAddresses; track addr.id) {
+                <option [value]="addr.fullAddress">{{ addr.locationName }} - {{ addr.fullAddress }}</option>
+                }
+              </select>
+              <span
+                class="material-symbols-outlined absolute right-4 top-3.5 text-slate-400 pointer-events-none">expand_more</span>
             </div>
           </div>
         </div>
@@ -105,8 +98,7 @@
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
-              <label
-                class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">
+              <label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">
                 {{ 'recruiterPostJob.requirements' | t }}
               </label>
               <textarea
@@ -114,8 +106,7 @@
                 [placeholder]="'recruiterPostJob.requirementsPlaceholder' | t" rows="5"></textarea>
             </div>
             <div>
-              <label
-                class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">
+              <label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">
                 {{ 'recruiterPostJob.benefits' | t }}
               </label>
               <textarea
@@ -134,7 +125,8 @@
             {{ 'recruiterPostJob.aiAnalysis' | t }}
           </h2>
         </div>
-        <div class="flex items-center justify-between p-5 bg-gradient-to-r from-indigo-50/50 to-blue-50/50 rounded-xl border border-indigo-100/50">
+        <div
+          class="flex items-center justify-between p-5 bg-gradient-to-r from-indigo-50/50 to-blue-50/50 rounded-xl border border-indigo-100/50">
           <div class="flex items-center gap-4">
             <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
               <span class="material-symbols-outlined text-indigo-600 text-2xl">psychology</span>
@@ -159,20 +151,24 @@
   <!-- Floating Action Bar -->
   <div class="fixed bottom-10 left-1/2 -translate-x-1/2 z-50">
     <div
-      class="flex items-center gap-4 bg-white/80 backdrop-blur-2xl px-6 py-4 rounded-full shadow-[0_-10px_40px_rgba(0,74,198,0.12)] border border-white/50 min-w-[320px] justify-between">
-      <button
-        class="flex items-center gap-2 text-slate-500 font-label font-medium px-4 py-2 rounded-full hover:bg-slate-100/50 transition-all active:scale-95">
-        <span class="material-symbols-outlined text-[20px]">visibility</span>
-        <span>{{ 'recruiterPostJob.preview' | t }}</span>
-      </button>
-      <button
-        class="flex items-center gap-2 bg-re-primary-container text-white font-label font-bold px-8 py-3 rounded-full shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 transition-all active:scale-95 duration-200">
-        <span class="material-symbols-outlined text-[20px]">save</span>
-        <span>{{ 'recruiterPostJob.saveJob' | t }}</span>
-      </button>
+      class="flex items-center gap-4 bg-white/80 backdrop-blur-2xl px-6 py-2 rounded-2xl shadow-[0_-10px_40px_rgba(0,74,198,0.12)] border border-white/50 min-w-[320px] justify-between">
+      <div class="rounded-xl overflow-hidden hover:bg-slate-100/50 transition-colors">
+        <button
+          class="flex items-center justify-center gap-2 text-slate-500 text-sm font-label font-medium px-4 py-2 active:scale-95 w-full h-full">
+          <span class="material-symbols-outlined text-[18px]">visibility</span>
+          <span>{{ 'recruiterPostJob.preview' | t }}</span>
+        </button>
+      </div>
+      <div
+        class="rounded-lg overflow-hidden shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 transition-shadow bg-re-primary-container">
+        <button
+          class="flex items-center justify-center gap-2 text-white text-sm font-label font-bold px-6 py-2 transition-all active:scale-95 duration-200 w-full h-full">
+          <span class="material-symbols-outlined text-[18px]">save</span>
+          <span>{{ 'recruiterPostJob.saveJob' | t }}</span>
+        </button>
+      </div>
     </div>
   </div>
   <!-- Background Decoration -->
   <div class="fixed bottom-0 right-0 w-full h-1 bg-gradient-to-r from-re-primary to-re-tertiary opacity-20"></div>
 </main>
-

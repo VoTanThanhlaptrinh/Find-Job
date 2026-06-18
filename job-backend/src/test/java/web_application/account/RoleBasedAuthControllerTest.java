@@ -3,6 +3,7 @@ package web_application.account;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nlu.JobPortalWebApplication;
 import com.nlu.identity.api.dto.LoginDTO;
+import com.nlu.identity.api.dto.HirerRegistrationForm;
 import com.nlu.identity.api.dto.RegistrationForm;
 import com.nlu.identity.application.AuthService;
 import org.junit.jupiter.api.DisplayName;
@@ -71,7 +72,6 @@ class RoleBasedAuthControllerTest {
     void userRegister_UsesUserFlow() throws Exception {
         RegistrationForm dto = new RegistrationForm("User Test", "user@test.com", "password123", "password123");
         when(authService.registerUser(any(RegistrationForm.class))).thenReturn("user@test.com");
-
         mockMvc.perform(post("/api/auth/user/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
@@ -85,8 +85,8 @@ class RoleBasedAuthControllerTest {
     @Test
     @DisplayName("RA04: Hirer register di dung luong /api/auth/hirer/register")
     void hirerRegister_UsesHirerFlow() throws Exception {
-        RegistrationForm dto = new RegistrationForm("Hirer Test", "hirer@test.com", "password123", "password123");
-        when(authService.registerHirer(any(RegistrationForm.class))).thenReturn("hirer@test.com");
+        HirerRegistrationForm dto = new HirerRegistrationForm("Hirer Test", "hirer@test.com", "password123", "password123","", "");
+        when(authService.registerHirer(any(HirerRegistrationForm.class))).thenReturn("hirer@test.com");
 
         mockMvc.perform(post("/api/auth/hirer/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -95,6 +95,6 @@ class RoleBasedAuthControllerTest {
                 .andExpect(jsonPath("$.data").value("hirer@test.com"))
                 .andExpect(jsonPath("$.status").value(200));
 
-        verify(authService).registerHirer(any(RegistrationForm.class));
+        verify(authService).registerHirer(any(HirerRegistrationForm.class));
     }
 }

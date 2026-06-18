@@ -36,6 +36,8 @@ public class Address extends StatusEntity {
     private String city;
     @Column(nullable = false)
     private String street;
+    @Column(nullable = false)
+    private Boolean isDefault;
     @Setter
     @CreatedDate
     @Column(nullable = false)
@@ -58,5 +60,9 @@ public class Address extends StatusEntity {
             throw new BadRequestException(MessageUtils.getMessage("validation.address.street.required"));
         }
         this.street = street;
+    }
+
+    public void setIsDefault(Boolean isDefault) {
+        this.isDefault = isDefault != null ? isDefault : false;
     }
 }

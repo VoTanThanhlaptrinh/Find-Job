@@ -3,7 +3,7 @@ package com.nlu.recruitment.api;
 import java.util.List;
 
 import com.nlu.shared.domain.model.ApiResponse;
-import com.nlu.recruitment.api.dto.AddressJobCount;
+
 import com.nlu.recruitment.api.dto.JobCardView;
 import com.nlu.recruitment.api.dto.JobDetailView;
 import com.nlu.recruitment.api.dto.JobFilterDto;
@@ -45,11 +45,7 @@ public class PublicJobController {
         return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("message.success"), data, HttpStatus.OK.value()));
     }
 
-    @GetMapping("/address-count")
-    public ResponseEntity<ApiResponse<List<AddressJobCount>>> getAddressCount() {
-        List<AddressJobCount> data = categoryCacheService.getCategoryData();
-        return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("message.success"), data, HttpStatus.OK.value()));
-    }
+
 
     @PostMapping("/filter")
     public ResponseEntity<ApiResponse<Page<JobCardView>>> filterWithAddressTimeSalary(@RequestBody JobFilterDto jobFilterDTO) {

@@ -25,16 +25,20 @@
             active job postings.
           </p>
           <div class="mt-6 flex gap-4 relative z-10">
-            <button
-              class="bg-white text-blue-600 px-6 py-2.5 rounded-full font-bold text-sm shadow-xl shadow-blue-900/20 active:scale-95 transition-transform"
-            >
-              Post New Job
-            </button>
-            <button
-              class="bg-white/20 backdrop-blur-md text-white px-6 py-2.5 rounded-full font-bold text-sm hover:bg-white/30 active:scale-95 transition-transform"
-            >
-              View Reports
-            </button>
+            <div class="rounded-full overflow-hidden shadow-xl shadow-blue-900/20 bg-white active:scale-95 transition-transform">
+              <button
+                class="w-full h-full text-blue-600 px-6 py-2.5 font-bold text-sm"
+              >
+                Post New Job
+              </button>
+            </div>
+            <div class="rounded-full overflow-hidden bg-white/20 backdrop-blur-md hover:bg-white/30 active:scale-95 transition-transform">
+              <button
+                class="w-full h-full text-white px-6 py-2.5 font-bold text-sm"
+              >
+                View Reports
+              </button>
+            </div>
           </div>
         </div>
         <!-- Dashboard Stats Row -->
@@ -164,13 +168,15 @@
                   10:30 AM • Zoom Meeting
                 </div>
               </div>
-              <button
-                class="ml-auto p-2 text-blue-600 hover:bg-blue-50 rounded-full"
-              >
-                <span class="material-symbols-outlined text-sm"
-                  >videocam</span
+              <div class="ml-auto rounded-full overflow-hidden hover:bg-blue-50">
+                <button
+                  class="w-full h-full p-2 text-blue-600"
                 >
-              </button>
+                  <span class="material-symbols-outlined text-sm"
+                    >videocam</span
+                  >
+                </button>
+              </div>
             </div>
             <div
               class="flex gap-4 items-center p-3 rounded-2xl hover:bg-white transition-all cursor-pointer"
@@ -186,13 +192,15 @@
                   2:00 PM • In-Person
                 </div>
               </div>
-              <button
-                class="ml-auto p-2 text-slate-400 hover:bg-slate-50 rounded-full"
-              >
-                <span class="material-symbols-outlined text-sm"
-                  >more_vert</span
+              <div class="ml-auto rounded-full overflow-hidden hover:bg-slate-50">
+                <button
+                  class="w-full h-full p-2 text-slate-400"
                 >
-              </button>
+                  <span class="material-symbols-outlined text-sm"
+                    >more_vert</span
+                  >
+                </button>
+              </div>
             </div>
             <div
               class="flex gap-4 items-center p-3 rounded-2xl hover:bg-white transition-all cursor-pointer"
@@ -208,20 +216,24 @@
                   4:45 PM • Phone Call
                 </div>
               </div>
-              <button
-                class="ml-auto p-2 text-slate-400 hover:bg-slate-50 rounded-full"
-              >
-                <span class="material-symbols-outlined text-sm"
-                  >call</span
+              <div class="ml-auto rounded-full overflow-hidden hover:bg-slate-50">
+                <button
+                  class="w-full h-full p-2 text-slate-400"
                 >
-              </button>
+                  <span class="material-symbols-outlined text-sm"
+                    >call</span
+                  >
+                </button>
+              </div>
             </div>
           </div>
-          <button
-            class="w-full mt-6 py-3 bg-slate-100 text-slate-600 rounded-2xl text-xs font-bold uppercase tracking-wider hover:bg-slate-200 transition-colors"
-          >
-            View All Schedule
-          </button>
+          <div class="w-full mt-6 rounded-2xl overflow-hidden bg-slate-100 hover:bg-slate-200 transition-colors">
+            <button
+              class="w-full h-full py-3 text-slate-600 text-xs font-bold uppercase tracking-wider"
+            >
+              View All Schedule
+            </button>
+          </div>
         </div>
         <!-- Quick Action Card -->
         <div
@@ -241,14 +253,16 @@
             We found 5 new candidates that match your Senior Developer
             requirements.
           </p>
-          <button
-            class="text-sm font-bold text-blue-700 flex items-center gap-2 hover:translate-x-1 transition-transform"
-          >
-            Review Matches
-            <span class="material-symbols-outlined text-sm"
-              >arrow_forward</span
+          <div class="inline-block overflow-hidden hover:translate-x-1 transition-transform">
+            <button
+              class="w-full h-full text-sm font-bold text-blue-700 flex items-center gap-2"
             >
-          </button>
+              Review Matches
+              <span class="material-symbols-outlined text-sm"
+                >arrow_forward</span
+              >
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -256,8 +270,10 @@
 </div>
 
 <!-- Floating Action Button: Contextual for Overview -->
-<button
-  class="fixed bottom-8 right-8 w-16 h-16 bg-re-primary text-white rounded-full shadow-2xl shadow-blue-500/40 flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50"
->
-  <span class="material-symbols-outlined text-3xl">add</span>
-</button>
+<div class="fixed bottom-8 right-8 w-16 h-16 rounded-full shadow-2xl shadow-blue-500/40 hover:scale-110 active:scale-95 transition-all z-50 bg-re-primary overflow-hidden">
+  <button
+    class="w-full h-full text-white flex items-center justify-center"
+  >
+    <span class="material-symbols-outlined text-3xl">add</span>
+  </button>
+</div>

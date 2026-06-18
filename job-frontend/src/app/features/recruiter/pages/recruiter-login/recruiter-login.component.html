@@ -1,38 +1,22 @@
-<main
-  class="bg-re-surface font-body text-re-on-surface min-h-screen selection:bg-re-primary-fixed selection:text-re-on-primary-fixed"
->
-  <div role="main" class="min-h-screen flex flex-col md:flex-row overflow-hidden">
-    <section
-      class="hidden md:flex relative w-1/2 bg-mesh overflow-hidden p-16 items-center justify-center"
-    >
+<div role="main"
+  class="bg-re-surface font-body text-re-on-surface min-h-screen selection:bg-re-primary-fixed selection:text-re-on-primary-fixed flex flex-col">
+  <div class="flex-1 flex flex-col md:flex-row">
+    <section class="hidden md:flex relative w-1/2 bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 overflow-hidden p-16 items-center justify-center">
       <div
-        class="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-re-secondary-container opacity-30 rounded-full blur-[120px]"
-      ></div>
+        class="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-re-secondary-container opacity-30 rounded-full blur-[120px]">
+      </div>
       <div
-        class="absolute bottom-[-5%] left-[-5%] w-[400px] h-[400px] bg-re-tertiary-fixed opacity-40 rounded-full blur-[100px]"
-      ></div>
+        class="absolute bottom-[-5%] left-[-5%] w-[400px] h-[400px] bg-re-tertiary-fixed opacity-40 rounded-full blur-[100px]">
+      </div>
       <div class="relative z-10 w-full max-w-lg">
-        <div
-          class="glass-panel rounded-3xl p-10 border border-white/20 shadow-2xl"
-        >
+        <div class="glass-panel rounded-3xl p-10 border border-white/20 shadow-2xl">
           <div class="flex items-center gap-3 mb-8">
-            <div
-              class="w-10 h-10 bg-re-primary rounded-xl flex items-center justify-center text-white"
-            >
-              <span
-                class="material-symbols-outlined"
-                style="font-variation-settings: 'FILL' 1"
-                >rocket_launch</span
-              >
+            <div class="w-10 h-10 bg-re-primary rounded-xl flex items-center justify-center text-white">
+              <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">rocket_launch</span>
             </div>
-            <span
-              class="font-headline font-extrabold text-2xl tracking-tight text-white"
-              >RecruiterPortal</span
-            >
+            <span class="font-headline font-extrabold text-2xl tracking-tight text-white">RecruiterPortal</span>
           </div>
-          <h1
-            class="font-headline text-5xl font-extrabold text-white leading-tight mb-6"
-          >
+          <h1 class="font-headline text-5xl font-extrabold text-white leading-tight mb-6">
             Find the talent that
             <span class="text-re-tertiary-fixed">redefines</span> your team.
           </h1>
@@ -43,43 +27,26 @@
           <div class="grid grid-cols-2 gap-4">
             <div class="bg-white/10 p-4 rounded-2xl border border-white/10">
               <div class="text-white font-bold text-2xl mb-1">98%</div>
-              <div
-                class="text-white/60 text-xs uppercase tracking-widest font-medium"
-              >
+              <div class="text-white/60 text-xs uppercase tracking-widest font-medium">
                 Match Rate
               </div>
             </div>
             <div class="bg-white/10 p-4 rounded-2xl border border-white/10">
               <div class="text-white font-bold text-2xl mb-1">12k+</div>
-              <div
-                class="text-white/60 text-xs uppercase tracking-widest font-medium"
-              >
+              <div class="text-white/60 text-xs uppercase tracking-widest font-medium">
                 Active Leads
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div
-        class="absolute bottom-0 right-0 w-3/4 h-3/4 opacity-20 pointer-events-none"
-      >
-        <img
-          alt=""
-          class="w-full h-full object-contain"
-          data-alt="abstract 3d shapes with fluid glass textures and soft purple and blue gradients glowing against a vibrant background"
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuChoxpB04ddJbyeJ36SRl-zLZQL3g1K2DZgguCVi8xEP-L44bCGyWxW-oyTWxCzU95Jgj3JkuafZomTbdz0tXmyuTCkPqMIRxvyemjFzK4dm3sgI7vgWEL7Iv16J8DYJW4YR39hKuII5AGpXwpKmvV7pKNfb3ff1yu1KTtGXgd3dTfSBvQ0-NPPwkyzjaWNkon3MipdZ7rrk_f6wOsDmPZfhvNZLtJbF4956gHL-uQZ8WZh0rujqfR7KC0ZJqA4NJZRgiH5bCW4DI8"
-        />
-      </div>
+
     </section>
 
     <section
-      class="flex-1 bg-re-surface-container-lowest flex flex-col justify-center items-center px-8 py-12 md:px-24"
-    >
+      class="flex-1 bg-re-surface-container-lowest flex flex-col justify-center items-center px-8 py-12 md:px-24">
       <div class="md:hidden flex items-center gap-2 mb-12">
-        <span
-          class="text-re-primary font-headline font-extrabold text-2xl tracking-tight"
-          >RecruiterPortal</span
-        >
+        <span class="text-re-primary font-headline font-extrabold text-2xl tracking-tight">RecruiterPortal</span>
       </div>
 
       <div class="w-full max-w-md">
@@ -93,158 +60,113 @@
         </div>
 
         @if (formError) {
-          <div
-            class="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
-          >
-            {{ formError }}
-          </div>
+        <div class="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {{ formError }}
+        </div>
         }
 
         <form class="space-y-6" [formGroup]="form" (ngSubmit)="onSubmit()">
           <div class="group">
-            <label
-              class="block text-sm font-medium text-re-on-surface-variant mb-1.5 ml-1"
-              for="email"
-              >Email Address</label
-            >
+            <label class="block text-sm font-medium text-re-on-surface-variant mb-1.5 ml-1" for="email">Email
+              Address</label>
             <div class="relative">
               <input
-                class="w-full bg-re-surface-container-low border-0 border-b-2 border-re-outline-variant focus:ring-0 focus:border-re-primary transition-all px-4 py-4 rounded-t-xl text-re-on-surface"
-                id="email"
-                name="email"
-                formControlName="email"
-                placeholder="name@company.com"
-                type="email"
-              />
+                class="w-full bg-re-surface-container-low border-0 border-b-2 border-re-outline-variant focus:ring-0 focus:border-re-primary transition-all px-4 py-3 rounded-t-xl text-re-on-surface"
+                id="email" name="email" formControlName="email" placeholder="name@company.com" type="email" />
             </div>
           </div>
 
           <div class="group">
             <div class="flex justify-between items-center mb-1.5 ml-1">
-              <label
-                class="block text-sm font-medium text-re-on-surface-variant"
-                for="password"
-                >Password</label
-              >
-              <a
-                class="text-xs font-semibold text-re-primary hover:text-re-primary-container transition-colors"
-                href="#"
-                >Forgot password?</a
-              >
+              <label class="block text-sm font-medium text-re-on-surface-variant" for="password">Password</label>
+              <a class="text-xs font-semibold text-re-primary hover:text-re-primary-container transition-colors"
+                href="#">Forgot password?</a>
             </div>
             <div class="relative">
               <input
-                class="w-full bg-re-surface-container-low border-0 border-b-2 border-re-outline-variant focus:ring-0 focus:border-re-primary transition-all px-4 py-4 rounded-t-xl text-re-on-surface"
-                id="password"
-                name="password"
-                formControlName="password"
-                placeholder="Password"
-                type="password"
-              />
+                class="w-full bg-re-surface-container-low border-0 border-b-2 border-re-outline-variant focus:ring-0 focus:border-re-primary transition-all px-4 py-3 rounded-t-xl text-re-on-surface pr-12"
+                id="password" name="password" formControlName="password" placeholder="Password" [type]="showPassword ? 'text' : 'password'" />
+              <button class="absolute right-4 top-1/2 -translate-y-1/2 text-re-outline-variant hover:text-re-primary transition-colors" type="button" (click)="togglePassword()">
+                <span class="material-symbols-outlined">{{ showPassword ? 'visibility' : 'visibility_off' }}</span>
+              </button>
             </div>
           </div>
 
           <div class="flex items-center px-1">
-            <input
-              class="h-4 w-4 rounded border-re-outline-variant text-re-primary focus:ring-re-primary/20"
-              id="remember-me"
-              name="remember-me"
-              formControlName="remember"
-              type="checkbox"
-            />
-            <label
-              class="ml-2 block text-sm text-re-on-surface-variant"
-              for="remember-me"
-            >
+            <input class="h-4 w-4 rounded border-re-outline-variant text-re-primary focus:ring-re-primary/20"
+              id="remember-me" name="remember-me" formControlName="remember" type="checkbox" />
+            <label class="ml-2 block text-sm text-re-on-surface-variant" for="remember-me">
               Keep me logged in
             </label>
           </div>
 
-          <button
-            class="w-full py-4 bg-gradient-to-r from-re-primary to-re-primary-container text-white font-semibold rounded-full shadow-lg shadow-re-primary/20 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 mt-4 disabled:cursor-not-allowed disabled:opacity-70"
-            [disabled]="isSubmitting"
-            type="submit"
-          >
-            {{ isSubmitting ? 'Signing In...' : 'Sign In' }}
-            <span class="material-symbols-outlined text-lg"
-              >arrow_forward</span
-            >
-          </button>
+          <div class="w-full rounded-full overflow-hidden shadow-lg shadow-re-primary/20 hover:shadow-xl hover:scale-[1.02] transition-all mt-4"
+               [class.opacity-70]="isSubmitting" [class.cursor-not-allowed]="isSubmitting">
+            <button
+              class="w-full h-full py-4 bg-gradient-to-r from-re-primary to-re-primary-container text-white font-semibold active:scale-[0.98] transition-transform flex items-center justify-center gap-2 disabled:cursor-not-allowed"
+              [disabled]="isSubmitting" type="submit">
+              {{ isSubmitting ? 'Signing In...' : 'Sign In' }}
+              <span class="material-symbols-outlined text-lg">arrow_forward</span>
+            </button>
+          </div>
         </form>
 
         <div class="relative my-10">
           <div aria-hidden="true" class="absolute inset-0 flex items-center">
             <div class="w-full border-t border-re-outline-variant/30"></div>
           </div>
-          <div
-            class="relative flex justify-center text-xs uppercase tracking-widest font-bold"
-          >
-            <span class="bg-re-surface-container-lowest px-4 text-re-outline"
-              >or continue with</span
-            >
+          <div class="relative flex justify-center text-xs uppercase tracking-widest font-bold">
+            <span class="bg-re-surface-container-lowest px-4 text-re-outline">or continue with</span>
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-4">
-          <button
-            class="flex items-center justify-center gap-3 py-3 px-4 rounded-xl border border-re-outline-variant/20 bg-re-surface-container-lowest hover:bg-re-surface-container-low transition-colors text-sm font-medium text-re-on-surface"
-            type="button"
-          >
-            <img
-              alt="Google"
-              class="w-5 h-5"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3OTOM7UrnEHr4YLSJLOnWS_H2SjesC13FlfOimWz5r6LnnDcwZ7GuDqhqU6x0mzQBdFEjL61SAAn4dH8duhCh-GqYjLx9whxhElaUVibY4QX3QlqlCokdSEx9swPWdxmNXXkKrzLuZaQ0BfZh1Lb0vb1mu1p_UCAt78Zq0MsdckI0cdSS0CXCKZUFc_0ltvNUHDnY6f1Lx6B2bA7-hYMKHtppVJRFe8cV6ZV_1hEQ82sUlhbMmhfdGPdOeCzysdO8zMWyJqFwLFw"
-            />
-            Google
-          </button>
-          <button
-            class="flex items-center justify-center gap-3 py-3 px-4 rounded-xl border border-re-outline-variant/20 bg-re-surface-container-lowest hover:bg-re-surface-container-low transition-colors text-sm font-medium text-re-on-surface"
-            type="button"
-          >
-            <img
-              alt="LinkedIn"
-              class="w-5 h-5"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCqJMocEpBo3Z4Hgvwl7TxegdPVNY86Dx-PIDTshxUsrRd93AOoZTPiNxAccWQQfuOR17g5CJiJs1BlvYuu16RZnE0tkn9ErwpZubi0V9sNceCrmK1GfcdLrppWBpaYt5pQIgdMNaevCkT1Hgomc1nUm2CryWSjSTd5b1XYicg0L_sygqAs94F-dRzWA3Rn0NzteoMN9-kCzf9L2WFmuPET8Ui17aDb6pdABrydOQ-vLSaWF1GP2UXK1ZZw28Q6EtJrWSgz-tcekEE"
-            />
-            LinkedIn
-          </button>
+          <div class="rounded-xl overflow-hidden border border-re-outline-variant/20 bg-re-surface-container-lowest hover:bg-re-surface-container-low transition-colors">
+            <button
+              class="flex items-center justify-center gap-3 py-3 px-4 w-full h-full text-sm font-medium text-re-on-surface"
+              type="button">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+              </svg>
+              Google
+            </button>
+          </div>
+          <div class="rounded-xl overflow-hidden border border-re-outline-variant/20 bg-re-surface-container-lowest hover:bg-re-surface-container-low transition-colors">
+            <button
+              class="flex items-center justify-center gap-3 py-3 px-4 w-full h-full text-sm font-medium text-re-on-surface"
+              type="button">
+              <svg class="w-5 h-5 text-[#1877F2]" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+              Facebook
+            </button>
+          </div>
         </div>
 
         <p class="mt-12 text-center text-sm text-re-on-surface-variant">
-          Don't have an account?
-          <a class="font-bold text-re-primary hover:underline" routerLink="/recruiter/register"
-            >Request Access</a
-          >
+          Chưa có tài khoản doanh nghiệp?
+          <a class="font-bold text-re-primary hover:underline" routerLink="/recruiter/register">Đăng ký ngay</a>
         </p>
       </div>
     </section>
   </div>
 
   <div role="contentinfo"
-    class="fixed bottom-0 w-full z-50 bg-transparent flex justify-center items-center gap-6 py-6 pointer-events-none"
-  >
+    class="w-full z-50 bg-transparent flex justify-center items-center gap-6 py-6 pointer-events-none">
     <div class="flex items-center gap-6 pointer-events-auto">
-      <span
-        class="font-body text-xs uppercase tracking-widest text-slate-400 dark:text-slate-500"
-        >Copyright 2024 RecruiterPortal. Atmospheric Precision.</span
-      >
+      <span class="font-body text-xs uppercase tracking-widest text-slate-400 dark:text-slate-500">Copyright 2024
+        RecruiterPortal. Atmospheric Precision.</span>
       <div class="hidden sm:flex gap-6">
-        <a
-          class="font-body text-xs uppercase tracking-widest text-slate-400 hover:text-blue-500 transition-colors"
-          href="#"
-          >Privacy Policy</a
-        >
-        <a
-          class="font-body text-xs uppercase tracking-widest text-slate-400 hover:text-blue-500 transition-colors"
-          href="#"
-          >Terms of Service</a
-        >
-        <a
-          class="font-body text-xs uppercase tracking-widest text-slate-400 hover:text-blue-500 transition-colors"
-          href="#"
-          >Help Center</a
-        >
+        <a class="font-body text-xs uppercase tracking-widest text-slate-400 hover:text-blue-500 transition-colors"
+          href="#">Privacy Policy</a>
+        <a class="font-body text-xs uppercase tracking-widest text-slate-400 hover:text-blue-500 transition-colors"
+          href="#">Terms of Service</a>
+        <a class="font-body text-xs uppercase tracking-widest text-slate-400 hover:text-blue-500 transition-colors"
+          href="#">Help Center</a>
       </div>
     </div>
   </div>
-</main>
+</div>

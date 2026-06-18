@@ -16,7 +16,7 @@ import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
 })
 export class RecruiterJobListComponent {
   private readonly pageIndex = signal(0);
-  private readonly pageSize = signal(10);
+  private readonly pageSize = signal(5);
   readonly pageSizeOptions = [5, 10, 20, 50];
 
   constructor(

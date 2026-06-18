@@ -6,6 +6,12 @@ import { RecruiterAuthService } from '../../services/recruiter-auth.service';
 import { TokenService } from '../../../../core/services/token.service';
 import { AuthService } from '../../../../core/services/auth.service';
 
+export interface NavItem {
+  label: string;
+  icon: string;
+  route: string;
+}
+
 @Component({
   selector: 'app-recruiter-layout',
   standalone: true,
@@ -24,6 +30,13 @@ export class RecruiterLayoutComponent implements OnInit {
   readonly hirerRoles = signal<string[]>([]);
   readonly isMobileSidebarOpen = signal<boolean>(false);
   readonly pageTitle = signal<string>('Overview');
+  
+  readonly navItems: NavItem[] = [
+    { label: 'Overview', icon: 'dashboard', route: '/recruiter/dashboard' },
+    { label: 'Jobs', icon: 'work', route: '/recruiter/jobs' },
+    { label: 'Candidates', icon: 'group', route: '/recruiter/candidates' },
+    { label: 'Company Address', icon: 'location_on', route: '/recruiter/company-address' }
+  ];
   readonly username = signal<string>('Recruiter');
   readonly avatarLetter = signal<string>('R');
 

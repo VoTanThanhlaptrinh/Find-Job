@@ -315,7 +315,18 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       default: 'Mặc định',
       delete: 'Xóa',
       contactName: 'Người liên hệ',
-      phone: 'Điện thoại'
+      phone: 'Điện thoại',
+      modal: {
+        title: 'Thêm địa chỉ mới',
+        locationName: 'Tên văn phòng/chi nhánh',
+        locationNamePlaceholder: 'VD: Văn phòng chính TP.HCM',
+        fullAddress: 'Địa chỉ đầy đủ',
+        fullAddressPlaceholder: 'Nhập địa chỉ đầy đủ...',
+        isDefault: 'Đặt làm địa chỉ mặc định',
+        cancel: 'Hủy bỏ',
+        save: 'Lưu địa chỉ',
+        requiredError: 'Trường này không được bỏ trống.'
+      }
     },
     recruiterRegister: {
       nav: {
@@ -849,14 +860,25 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       aiAnalysisDesc: 'Enable AI to analyze your JD for semantic job matching'
     },
     companyAddress: {
-      title: 'Manage Company Addresses',
-      subtitle: 'List using mock data until API contract is available',
-      addAddress: 'Add Address',
+      title: 'Company addresses',
+      subtitle: 'This list uses mock data until the API contract is ready',
+      addAddress: 'Add address',
       empty: 'No addresses found.',
       default: 'Default',
       delete: 'Delete',
-      contactName: 'Contact Person',
-      phone: 'Phone Number'
+      contactName: 'Contact person',
+      phone: 'Phone',
+      modal: {
+        title: 'Add new address',
+        locationName: 'Office/Branch name',
+        locationNamePlaceholder: 'e.g., HQ Ho Chi Minh City',
+        fullAddress: 'Full address',
+        fullAddressPlaceholder: 'Enter the full address...',
+        isDefault: 'Set as default address',
+        cancel: 'Cancel',
+        save: 'Save address',
+        requiredError: 'This field is required.'
+      }
     },
     recruiterRegister: {
       nav: {

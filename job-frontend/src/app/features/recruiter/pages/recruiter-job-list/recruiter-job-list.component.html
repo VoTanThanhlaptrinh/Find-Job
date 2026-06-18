@@ -8,84 +8,63 @@
         </p>
       </div>
 
-      <a
-        class="inline-flex items-center gap-2 bg-re-primary text-re-on-primary px-4 py-2 rounded-full font-semibold"
-        routerLink="/recruiter/jobs/post-job"
-      >
-        <span class="material-symbols-outlined">add</span>
-        {{ 'recruiterJobList.postJob' | t }}
-      </a>
+      <div class="rounded-full overflow-hidden bg-re-primary">
+        <a class="inline-flex items-center justify-center w-full h-full gap-2 text-re-on-primary! px-4 py-2 font-semibold"
+          routerLink="/recruiter/jobs/post-job">
+          <span class="material-symbols-outlined">add</span>
+          {{ 'recruiterJobList.postJob' | t }}
+        </a>
+      </div>
     </header>
 
-    <div
-      *ngIf="isLoading"
-      class="bg-re-surface-container-low p-5 rounded-xl text-re-on-surface-variant"
-    >
+    <div *ngIf="isLoading" class="bg-re-surface-container-low p-5 rounded-xl text-re-on-surface-variant">
       {{ 'recruiterJobList.loading' | t }}
     </div>
 
-    <div
-      *ngIf="!isLoading && jobs.length === 0"
-      class="bg-re-surface-container-low p-6 rounded-xl text-re-on-surface-variant"
-    >
+    <div *ngIf="!isLoading && jobs.length === 0"
+      class="bg-re-surface-container-low p-6 rounded-xl text-re-on-surface-variant">
       {{ 'recruiterJobList.empty' | t }}
     </div>
 
     <div *ngIf="!isLoading && jobs.length > 0" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <app-hirer-job-card
-        *ngFor="let job of jobs; trackBy: trackByJob"
-        [job]="job"
-        (delete)="deleteJob($event)"
-        (analyze)="analyzeJob($event)"
-      ></app-hirer-job-card>
+      <app-hirer-job-card *ngFor="let job of jobs; trackBy: trackByJob" [job]="job" (delete)="deleteJob($event)"
+        (analyze)="analyzeJob($event)"></app-hirer-job-card>
     </div>
 
-    <footer
-      *ngIf="!isLoading && jobs.length > 0"
-      class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between pt-2"
-    >
+    <footer *ngIf="!isLoading && jobs.length > 0"
+      class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between pt-2">
       <div class="flex items-center gap-2 text-sm">
         <label for="job-page-size">{{ 'pagination.rowsPerPage' | t }}</label>
-        <select
-          id="job-page-size"
+        <select id="job-page-size"
           class="bg-re-surface-container-low border border-re-outline-variant/20 rounded-lg px-2 py-1"
-          [value]="currentPageSize"
-          (change)="onPageSizeChange($event)"
-        >
+          [value]="currentPageSize" (change)="onPageSizeChange($event)">
           <option *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}</option>
         </select>
       </div>
 
       <div class="flex items-center gap-2">
-        <button
-          type="button"
-          class="px-3 py-1.5 rounded-lg border border-re-outline-variant/30 disabled:opacity-40"
-          [disabled]="!canGoPrev"
-          (click)="goPrevPage()"
-        >
-          {{ 'pagination.previous' | t }}
-        </button>
+        <div class="rounded-lg overflow-hidden border border-re-outline-variant/30" [class.opacity-40]="!canGoPrev">
+          <button type="button" class="w-full h-full px-3 py-1.5 disabled:cursor-not-allowed" [disabled]="!canGoPrev"
+            (click)="goPrevPage()">
+            {{ 'pagination.previous' | t }}
+          </button>
+        </div>
 
-        <button
-          type="button"
-          *ngFor="let page of pageButtons"
-          class="px-3 py-1.5 rounded-lg border border-re-outline-variant/30"
-          [class.bg-re-primary]="page === currentPage"
-          [class.text-re-on-primary]="page === currentPage"
-          (click)="goToPage(page)"
-        >
-          {{ page }}
-        </button>
+        <div *ngFor="let page of pageButtons" class="rounded-lg overflow-hidden border border-re-outline-variant/30"
+          [class.bg-re-primary]="page === currentPage">
+          <button type="button" class="w-full h-full px-3 py-1.5" [class.text-re-on-primary]="page === currentPage"
+            (click)="goToPage(page)">
+            {{ page }}
+          </button>
+        </div>
 
-        <button
-          type="button"
-          class="px-3 py-1.5 rounded-lg border border-re-outline-variant/30 disabled:opacity-40"
-          [disabled]="!canGoNext"
-          (click)="goNextPage()"
-        >
-          {{ 'pagination.next' | t }}
-        </button>
+        <div class="rounded-lg overflow-hidden border border-re-outline-variant/30" [class.opacity-40]="!canGoNext">
+          <button type="button" class="w-full h-full px-3 py-1.5 disabled:cursor-not-allowed" [disabled]="!canGoNext"
+            (click)="goNextPage()">
+            {{ 'pagination.next' | t }}
+          </button>
+        </div>
       </div>
     </footer>
   </section>
-</main>
+</main>

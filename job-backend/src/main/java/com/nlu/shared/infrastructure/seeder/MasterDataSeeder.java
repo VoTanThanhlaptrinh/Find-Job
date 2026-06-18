@@ -217,6 +217,7 @@ public class MasterDataSeeder implements CommandLineRunner {
                 Address address = new Address();
                 address.setCity(template.city());
                 address.setStreet(template.street());
+                address.setIsDefault(j == 0);
                 address.setCreateDate(createdAt);
                 address.setUpdateDate(createdAt.plusDays(1));
 

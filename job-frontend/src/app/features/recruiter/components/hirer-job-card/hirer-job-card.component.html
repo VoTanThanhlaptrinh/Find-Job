@@ -85,33 +85,41 @@
 
   <!-- Actions (Recruiter Specific) -->
   <div class="flex flex-wrap items-center justify-end gap-2 pt-2 border-t border-slate-100">
-    <a
-      class="px-4 py-1.5 text-xs font-semibold bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-full transition-colors duration-200"
-      [routerLink]="[detailRoute, job.id]"
-    >
-      {{ 'recruiterJobList.details' | t }}
-    </a>
-    <a
-      class="px-4 py-1.5 text-xs font-semibold bg-emerald-50 text-emerald-600 hover:bg-emerald-100 rounded-full transition-colors duration-200"
-      [routerLink]="['/recruiter/candidates']"
-      [queryParams]="{ jobId: job.id }"
-    >
-      {{ 'recruiterJobList.viewCandidates' | t }}
-    </a>
+    <div class="inline-block rounded-full overflow-hidden bg-blue-50 hover:bg-blue-100 transition-colors duration-200">
+      <a
+        class="block px-4 py-1.5 text-xs font-semibold text-blue-600"
+        [routerLink]="[detailRoute, job.id]"
+      >
+        {{ 'recruiterJobList.details' | t }}
+      </a>
+    </div>
+    <div class="inline-block rounded-full overflow-hidden bg-emerald-50 hover:bg-emerald-100 transition-colors duration-200">
+      <a
+        class="block px-4 py-1.5 text-xs font-semibold text-emerald-600"
+        [routerLink]="['/recruiter/candidates']"
+        [queryParams]="{ jobId: job.id }"
+      >
+        {{ 'recruiterJobList.viewCandidates' | t }}
+      </a>
+    </div>
     @if (!job.isAnalyzed) {
-      <button type="button"
-        class="px-4 py-1.5 text-xs font-semibold bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-full transition-colors duration-200"
-        (click)="onAnalyze($event, job.id)">
-        {{ 'job.analyzeNow' | t }}
-      </button>
+      <div class="inline-block rounded-full overflow-hidden bg-indigo-50 hover:bg-indigo-100 transition-colors duration-200">
+        <button type="button"
+          class="block w-full h-full px-4 py-1.5 text-xs font-semibold text-indigo-600"
+          (click)="onAnalyze($event, job.id)">
+          {{ 'job.analyzeNow' | t }}
+        </button>
+      </div>
     }
-    <button
-      type="button"
-      class="px-4 py-1.5 text-xs font-semibold bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-full transition-colors duration-200 cursor-pointer"
-      (click)="onDelete($event, job.id)"
-    >
-      {{ 'recruiterJobList.delete' | t }}
-    </button>
+    <div class="inline-block rounded-full overflow-hidden bg-rose-50 hover:bg-rose-100 transition-colors duration-200">
+      <button
+        type="button"
+        class="block w-full h-full px-4 py-1.5 text-xs font-semibold text-rose-600 cursor-pointer"
+        (click)="onDelete($event, job.id)"
+      >
+        {{ 'recruiterJobList.delete' | t }}
+      </button>
+    </div>
   </div>
 </div>
 

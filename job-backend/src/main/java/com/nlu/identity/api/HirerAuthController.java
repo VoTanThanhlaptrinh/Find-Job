@@ -31,7 +31,7 @@ public class HirerAuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<String>> register(@RequestBody @Valid RegistrationForm registrationForm) {
+    public ResponseEntity<ApiResponse<String>> register(@RequestBody @Valid com.nlu.identity.api.dto.HirerRegistrationForm registrationForm) {
         String username = authService.registerHirer(registrationForm);
         return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("auth.register.success"), username, HttpStatus.OK.value()));
     }

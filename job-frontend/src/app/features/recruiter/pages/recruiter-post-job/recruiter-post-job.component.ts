@@ -47,6 +47,33 @@ export class PostJobComponent {
     enableAiAnalysis: new FormControl(false)
   });
 
+  companyAddresses: any[] = [
+    {
+      id: 1,
+      locationName: 'Tru so chinh TP.HCM',
+      contactName: 'Nguyen Van An',
+      phone: '0909 111 222',
+      fullAddress: 'Toa nha Bitexco, 2 Hai Trieu, Quan 1, TP.HCM',
+      isDefault: true
+    },
+    {
+      id: 2,
+      locationName: 'Van phong Ha Noi',
+      contactName: 'Tran Thi Mai',
+      phone: '0912 345 678',
+      fullAddress: '54 Lieu Giai, Ba Dinh, Ha Noi',
+      isDefault: false
+    },
+    {
+      id: 3,
+      locationName: 'Van phong Da Nang',
+      contactName: 'Le Quoc Viet',
+      phone: '0935 888 999',
+      fullAddress: 'Duong 2/9, Hai Chau, Da Nang',
+      isDefault: false
+    }
+  ];
+
   constructor(
     private readonly recruiterJobsService: RecruiterJobsService,
     private readonly notify: NotifyMessageService

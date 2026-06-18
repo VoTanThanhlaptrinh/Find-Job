@@ -1,5 +1,6 @@
 package web_application.account;
 
+import com.nlu.identity.api.dto.HirerRegistrationForm;
 import com.nlu.identity.domain.vo.EmailAddress;
 import com.nlu.identity.domain.vo.RoleConstants;
 import com.nlu.recruitment.domain.model.Recruitment;
@@ -90,7 +91,7 @@ class AuthServiceImplRoleFlowTest {
     @Test
     @DisplayName("AS01: Dang ky hirer tao user role HIRER va tao ban ghi Hirer")
     void registerHirer_CreatesHirerFlow() {
-        RegistrationForm form = new RegistrationForm("Recruiter Test", "hirer@test.com", "password123", "password123");
+        HirerRegistrationForm form = new HirerRegistrationForm("Recruiter Test", "hirer@test.com", "password123", "password123", "", "");
         when(environment.getActiveProfiles()).thenReturn(new String[]{"dev"});
         when(encoder.encode("password123")).thenReturn("encoded-password");
         when(userRepository.saveAndFlush(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
