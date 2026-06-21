@@ -53,8 +53,8 @@
       </span>
       @if (isUploading()) {
         <span class="flex items-center gap-1 text-blue-600">
-          <span class="material-symbols-outlined text-base animate-spin">cloud_upload</span>
-          <span class="font-bold">{{ 'cvList.uploading' | t }}</span>
+          <span class="material-symbols-outlined text-base animate-spin">sync</span>
+          <span class="font-bold">{{ 'cvList.uploading' | t }} {{ uploadProgress() }}%</span>
         </span>
       } @else if (isUploaded()) {
         <span class="flex items-center gap-1 text-emerald-600">
@@ -64,12 +64,29 @@
       } @else if (resume.isAnalyzed) {
         <span class="flex items-center gap-1 text-emerald-600">
           <span class="material-symbols-outlined text-base" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-          <span class="font-bold">{{ 'cvList.badge.analyzed' | t }}</span>
+          <span class="font-bold">
+            {{ 'cvList.badge.analyzed' | t }}
+            @if (executionTime() !== null) {
+              ({{ executionTime() }}s)
+            }
+          </span>
         </span>
-      } @else if (isAnalyzing()) {
+      } @else if (isParsing()) {
         <span class="flex items-center gap-1 text-indigo-600">
           <span class="material-symbols-outlined text-base animate-spin">sync</span>
-          <span class="font-bold">{{ 'cvList.analyzing' | t }}</span>
+          <span class="font-bold">
+            AI is parsing your CV... {{ uploadProgress() }}%
+          </span>
+        </span>
+      } @else if (isVectorizing()) {
+        <span class="flex items-center gap-1 text-indigo-600">
+          <span class="material-symbols-outlined text-base animate-spin">sync</span>
+          <span class="font-bold">
+            Vectorizing data... {{ uploadProgress() }}%
+            @if (executionTime() !== null) {
+              <span class="text-[10px] text-indigo-500 font-normal ml-1">(Parsed in {{ executionTime() }}s)</span>
+            }
+          </span>
         </span>
       } @else if (isFailed()) {
         <span class="flex items-center gap-1 text-rose-500">
@@ -161,4 +178,11 @@
       </div>
     }
   </div>
+
+  @if (isUploading() || isUploaded() || isParsing() || isVectorizing()) {
+    <div class="absolute bottom-0 left-0 right-0 h-1 bg-slate-100 rounded-b-[11px] overflow-hidden pointer-events-none opacity-100 transition-opacity duration-500"
+         [class.opacity-0]="isUploaded()">
+      <div class="h-full bg-blue-600 transition-all duration-300 ease-out" [style.width.%]="uploadProgress()"></div>
+    </div>
+  }
 </div>

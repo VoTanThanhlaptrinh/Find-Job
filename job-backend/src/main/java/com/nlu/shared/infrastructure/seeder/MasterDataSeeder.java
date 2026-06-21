@@ -21,6 +21,7 @@ import com.nlu.recruitment.domain.model.Job;
 import com.nlu.identity.domain.model.User;
 import com.nlu.applicationProcess.application.VectorizationClient;
 import com.nlu.shared.application.HtmlParserService;
+import com.nlu.shared.domain.model.EntityStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -148,7 +149,7 @@ public class MasterDataSeeder implements CommandLineRunner {
         admin.setEnabled(true);
         admin.setActive(true);
         admin.setOauth2Enabled(false);
-        admin.setCreateDate(LocalDateTime.now());
+        admin.setRecordStatus(EntityStatus.ACTIVE);
         userRepository.save(admin);
 
         log.info("Seeded admin account: {}", admin.getEmail());
@@ -174,7 +175,7 @@ public class MasterDataSeeder implements CommandLineRunner {
             user.setEnabled(true);
             user.setActive(true);
             user.setOauth2Enabled(false);
-            user.setCreateDate(LocalDateTime.now());
+            user.setRecordStatus(EntityStatus.ACTIVE);
             userRepository.save(user);
 
             // Tạo thông tin Hirer
@@ -184,8 +185,6 @@ public class MasterDataSeeder implements CommandLineRunner {
             recruitment.setDescription(COMPANY_DESC.get(i));
             recruitment.setSocialLink(new SocialLink("https://company.example/" + COMPANY_NAMES.get(i).toLowerCase()));
 
-            recruitment.setCreateDate(LocalDateTime.now());
-            recruitment.setModifiedDate(LocalDateTime.now());
             recruitments.add(recruitmentRepository.save(recruitment));
         }
 
@@ -219,8 +218,6 @@ public class MasterDataSeeder implements CommandLineRunner {
                 address.setCity(template.city());
                 address.setStreet(template.street());
                 address.setIsDefault(j == 0);
-                address.setCreateDate(createdAt);
-                address.setUpdateDate(createdAt.plusDays(1));
 
                 ownedAddresses.add(address);
                 addresses.add(address);
@@ -313,7 +310,7 @@ public class MasterDataSeeder implements CommandLineRunner {
         job.setSalary(generateRandomSalary());
 
         // Set ngày tạo
-        job.setCreateDate(LocalDateTime.now());
+        // (Bỏ qua vì JPA Auditing tự động lo)
 
         // 6. Set Headcount (Số lượng tuyển: 1 - 10)
         job.setHeadcount(1 + random.nextInt(10));

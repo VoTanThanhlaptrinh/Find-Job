@@ -24,6 +24,7 @@ export class LoginComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   googleUrl = '';
   isSubmitting = false;
+  showPassword = false;
 
   readonly loginForm = this.fb.nonNullable.group({
     username: ['', [Validators.required, this.usernameOrEmailValidator]],
@@ -69,6 +70,10 @@ export class LoginComponent implements OnInit {
 
   get passwordControl() {
     return this.loginForm.controls.password;
+  }
+
+  togglePassword() {
+    this.showPassword = !this.showPassword;
   }
 
   private usernameOrEmailValidator(

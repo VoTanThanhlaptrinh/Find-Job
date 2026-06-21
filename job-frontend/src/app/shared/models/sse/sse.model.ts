@@ -3,6 +3,7 @@ export interface SseMessagePayload<T = any> {
     status: string;
     message: string;
     data?: T;
+    executionTime?: number;
 }
 
 export interface FileMessage {

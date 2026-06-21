@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { JobCardComponent } from '../../../shared/components/job-card/job-card.component';
+import { JobMatchCardComponent } from '../../../shared/components/job-match-card/job-match-card.component';
 import { SkeletonCvCardComponent } from '../../../shared/components/skeleton-cv-card/skeleton-cv-card.component';
 import { ResumeService } from '../../../core/services/resume.service';
 import { JobService } from '../../jobs/services/job.service';
@@ -12,7 +12,7 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 @Component({
   selector: 'app-recommended-jobs',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, JobCardComponent, SkeletonCvCardComponent, TranslatePipe],
+  imports: [CommonModule, FormsModule, RouterLink, JobMatchCardComponent, SkeletonCvCardComponent, TranslatePipe],
   templateUrl: './recommended-jobs.component.html',
   styleUrl: './recommended-jobs.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush

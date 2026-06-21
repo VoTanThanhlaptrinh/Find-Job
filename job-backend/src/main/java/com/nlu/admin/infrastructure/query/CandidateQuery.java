@@ -27,7 +27,7 @@ public class CandidateQuery {
         QUser user = QUser.user;
 
         BooleanBuilder where = new BooleanBuilder();
-        where.and(candidate.status.ne(EntityStatus.DELETED.name()));
+        where.and(candidate.recordStatus.ne(EntityStatus.DELETED));
 
         if (StringUtils.hasText(search)) {
             where.and(candidate.fullName.containsIgnoreCase(search)
@@ -40,8 +40,8 @@ public class CandidateQuery {
                         candidate.id,
                         candidate.fullName,
                         candidate.email.value,
-                        candidate.modifiedDate,
-                        candidate.status
+                        candidate.updatedAt,
+                        candidate.recordStatus
                 )
                 .from(candidate)
                 .where(where)
@@ -63,8 +63,8 @@ public class CandidateQuery {
                         .email(tuple.get(candidate.email.value))
                         .profession("Job Seeker") // Mock
                         .resumeStatus(resumeStatus != null ? resumeStatus : "available")
-                        .lastActiveAt(tuple.get(candidate.modifiedDate) != null ? 
-                                tuple.get(candidate.modifiedDate) : LocalDateTime.now())
+                        .lastActiveAt(tuple.get(candidate.updatedAt) != null ? 
+                                tuple.get(candidate.updatedAt) : LocalDateTime.now())
                         .avatarInitials(getInitials(tuple.get(candidate.fullName)))
                         .build())
                 .toList();

@@ -54,8 +54,7 @@ public class AdminJobSeekerServiceImpl implements AdminJobSeekerService {
         Candidate candidate = new Candidate();
         candidate.setFullName(request.getFullName());
         candidate.setEmail(new EmailAddress(request.getEmail()));
-        candidate.setCreateDate(LocalDateTime.now());
-        candidate.setStatus("ACTIVE");
+        candidate.setRecordStatus(com.nlu.shared.domain.model.EntityStatus.ACTIVE);
         candidateRepository.save(candidate);
     }
 

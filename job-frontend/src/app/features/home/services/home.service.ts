@@ -14,17 +14,21 @@ export class HomeService {
   private url: string;
   jobData = signal<JobCardModel[]>([]);
   jobPosts = computed(() => this.jobData());
+  isLoading = signal<boolean>(false);
   constructor(private http: HttpClient, private utilities: UtilitiesService) {
     this.url = utilities.getURLDev();
   }
 
   getData(): void {
+    this.isLoading.set(true);
     this.http.get<ApiResponse<JobCardModel[]>>(`${this.url}/home/init`).pipe(take(1)).subscribe({
       next: (response) => {
         this.jobData.set(response.data);
+        this.isLoading.set(false);
       },
       error: (error) => {
         console.error('Error fetching data:', error);
+        this.isLoading.set(false);
       },
     });
   }

@@ -21,6 +21,9 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-8 post-list blog-post-list">
+              @if (isLoading || !blog) {
+                <app-skeleton-blog-single></app-skeleton-blog-single>
+              } @else {
                 <div class="single-post">
                     <img class="img-fluid" src="assets/web_css/img/blog/p1.jpg" alt="">
                     <a href="#">
@@ -220,6 +223,7 @@
 
 
                 </div>
+              }
             </div>
             <div class="col-lg-4 sidebar">
                 <div class="single-widget search-widget">

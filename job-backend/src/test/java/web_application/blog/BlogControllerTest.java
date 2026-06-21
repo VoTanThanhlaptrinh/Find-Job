@@ -56,8 +56,6 @@ class BlogControllerTest {
             blog.setDescription("Guide");
             blog.setContent("Noi dung blog");
             blog.setAmountLike(10);
-            blog.setCreateDate(LocalDateTime.of(2026, 4, 4, 10, 0));
-
             when(blogService.getBlogById(eq(1L))).thenReturn(blog);
 
             mockMvc.perform(get(BASE_URL + "/1"))

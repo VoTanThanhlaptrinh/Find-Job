@@ -124,8 +124,8 @@ public class UserCrudServiceImpl implements UserCrudService {
                 user.isEnabled(),
                 user.isActive(),
                 user.isOauth2Enabled(),
-                user.getCreateDate(),
-                user.getLastModifiedDate()
+                user.getCreatedAt(),
+                user.getUpdatedAt()
         );
     }
 }

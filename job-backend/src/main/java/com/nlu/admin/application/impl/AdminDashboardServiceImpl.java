@@ -7,6 +7,7 @@ import com.nlu.admin.api.dto.dashboard.DashboardSummaryResponse;
 import com.nlu.admin.api.dto.dashboard.JobDistributionResponse;
 import com.nlu.admin.api.dto.dashboard.PendingJobItem;
 import com.nlu.admin.api.dto.dashboard.RevenueTrendResponse;
+import com.nlu.shared.domain.model.EntityStatus;
 import com.nlu.shared.domain.model.PageResponse;
 import com.nlu.recruitment.domain.model.Job;
 import com.nlu.admin.application.AdminDashboardService;
@@ -33,7 +34,7 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
         return DashboardSummaryResponse.builder()
                 .totalEmployers(recruitmentRepository.count())
                 .totalJobSeekers(candidateRepository.count())
-                .pendingJobs(jobRepository.countByStatus("PENDING"))
+                .pendingJobs(jobRepository.countByRecordStatus(EntityStatus.PENDING))
                 .totalRevenue(142500.0)
                 .growth(DashboardSummaryResponse.Growth.builder()
                         .employersPct(12.0)
@@ -62,16 +63,16 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
 
         return JobDistributionResponse.builder()
                 .total(total)
-                .activePct((double) jobRepository.countByStatus("ACTIVE") * 100 / total)
-                .pendingPct((double) jobRepository.countByStatus("PENDING") * 100 / total)
-                .expiredPct((double) jobRepository.countByStatus("EXPIRED") * 100 / total)
+                .activePct((double) jobRepository.countByRecordStatus(EntityStatus.ACTIVE) * 100 / total)
+                .pendingPct((double) jobRepository.countByRecordStatus(EntityStatus.PENDING) * 100 / total)
+                .expiredPct((double) jobRepository.countByRecordStatus(EntityStatus.DELETED) * 100 / total)
                 .build();
     }
 
     @Override
     public PageResponse<PendingJobItem> getPendingJobs(int page, int pageSize) {
         Pageable pageable = PageRequest.of(page - 1, pageSize);
-        Page<Job> jobs = jobRepository.findByStatus("PENDING", pageable);
+        Page<Job> jobs = jobRepository.findByStatus(com.nlu.shared.domain.model.EntityStatus.PENDING, pageable);
 
         return PageResponse.<PendingJobItem>builder()
                 .items(jobs.getContent().stream()
@@ -80,7 +81,7 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
                                 .title(job.getTitle())
                                 .subtitle("Required: " + job.getSkill())
                                 .company(job.getRecruitment() != null ? job.getRecruitment().getCompanyName() : "Unknown")
-                                .postDate(job.getCreateDate().toLocalDate())
+                                .postDate(job.getCreatedAt().toLocalDate())
                                 .status("pending")
                                 .build())
                         .collect(Collectors.toList()))

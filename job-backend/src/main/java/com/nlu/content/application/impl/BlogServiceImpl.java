@@ -126,7 +126,7 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public Page<Comment> getComments(int pageIndex, int pageSize) {
-        Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by("createDate").descending());
+        Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by("createdAt").descending());
         Page<Comment> comments = commentRepository.findAll(pageable);
         return comments;
     }

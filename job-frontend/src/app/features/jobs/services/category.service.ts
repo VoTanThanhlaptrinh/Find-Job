@@ -145,7 +145,7 @@ export class CategoryService {
       return;
     }
 
-    this.http.get<JobAddressCountApiResponse>(`${this.url}/jobs/address-count`).pipe(take(1)).subscribe({
+    this.http.get<JobAddressCountApiResponse>(`${this.url}/addresses/address-count`).pipe(take(1)).subscribe({
       next: (response) => {
         this.addressData.set(response.data);
       },

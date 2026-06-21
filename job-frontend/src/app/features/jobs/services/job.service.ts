@@ -19,6 +19,7 @@ import {
   JobDetailViewModel,
 } from '../../../shared/models/jobs/job-api-response.model';
 import { JobCardModel } from '../../../shared/models/jobs/job-card.model';
+import { JobMatchView } from '../../../shared/models/jobs/job-match-view.model';
 import { ApiResponse } from '../../../shared/models/api-response.model';
 
 const INITIAL_JOB_DETAIL: JobDetailViewModel = {
@@ -40,10 +41,11 @@ const INITIAL_JOB_DETAIL: JobDetailViewModel = {
 export class JobService {
   private jobDetail = signal<JobDetailViewModel | null>(null);
   private jobDetailError = signal<boolean>(false);
+  private isLoadingJobDetail = signal<boolean>(false);
   private hasApplied = signal<boolean | null>(null);
   private isCheckingApply = signal<boolean>(false);
   private checkApplyErrorStatus = signal<number | null>(null);
-  private recommendedJobs = signal<JobCardModel[]>([]);
+  private recommendedJobs = signal<JobMatchView[]>([]);
   private isLoadingRecommendedJobs = signal<boolean>(false);
   private appliedJobs = signal<JobCardModel[]>([]);
   private isLoadingAppliedJobs = signal<boolean>(false);
@@ -52,6 +54,7 @@ export class JobService {
 
   readonly jobDetail$ = computed(() => this.jobDetail());
   readonly jobDetailError$ = computed(() => this.jobDetailError());
+  readonly isLoadingJobDetail$ = computed(() => this.isLoadingJobDetail());
   readonly hasApplied$ = computed(() => this.hasApplied());
   readonly isCheckingApply$ = computed(() => this.isCheckingApply());
   readonly checkApplyErrorStatus$ = computed(() => this.checkApplyErrorStatus());
@@ -80,7 +83,11 @@ export class JobService {
 
   getDetailJob(id: string): void {
     this.resetJobDetailState();
-    this.http.get<JobDetailApiResponse>(`${this.url}/jobs/${id}`).pipe(take(1)).subscribe({
+    this.isLoadingJobDetail.set(true);
+    this.http.get<JobDetailApiResponse>(`${this.url}/jobs/${id}`).pipe(
+      take(1),
+      finalize(() => this.isLoadingJobDetail.set(false))
+    ).subscribe({
       next: (response) => {
         this.jobDetail.set(response.data);
       },
@@ -115,7 +122,7 @@ export class JobService {
   getSuggestedJobsByResume(resumeId: number): void {
     this.isLoadingRecommendedJobs.set(true);
     this.recommendedJobs.set([]);
-    this.http.get<ApiResponse<JobCardModel[]>>(`${this.url}/jobs/match/${resumeId}`)
+    this.http.get<ApiResponse<JobMatchView[]>>(`${this.url}/jobs/match/${resumeId}`)
       .pipe(take(1))
       .subscribe({
         next: (response) => {

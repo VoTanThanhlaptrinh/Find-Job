@@ -9,6 +9,7 @@ import { JobCardComponent } from '../../../../shared/components/job-card/job-car
 import { SearchFormComponent } from '../../../../shared/components/search-form/search-form.component';
 import { JobCardModel } from '../../../../shared/models/jobs/job-card.model';
 import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
+import { SkeletonJobCardComponent } from '../../../../shared/components/skeleton-job-card/skeleton-job-card.component';
 
 @Component({
   selector: 'app-home',
@@ -17,6 +18,7 @@ import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
     RouterModule,
     SearchFormComponent,
     JobCardComponent,
+    SkeletonJobCardComponent,
     CallToActionComponent,
     DownloadAreaComponent,
     TranslatePipe,
@@ -27,9 +29,11 @@ import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
 })
 export class HomeComponent implements OnInit {
   jobPosts: JobCardModel[] = [];
+  isLoading = false;
   constructor(private homeService: HomeService) {
     effect(() => {
       this.jobPosts = this.homeService.jobPosts();
+      this.isLoading = this.homeService.isLoading();
     })
   }
 

@@ -2,7 +2,7 @@ package com.nlu.applicationProcess.domain.model;
 
 import com.nlu.identity.domain.model.User;
 import com.nlu.shared.domain.exception.BadRequestException;
-import com.nlu.shared.domain.model.StatusEntity;
+import com.nlu.shared.domain.model.BaseEntity;
 import com.nlu.recruitment.domain.model.Address;
 import jakarta.persistence.*;
 
@@ -21,9 +21,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@SQLRestriction("status <> 'DELETED'")
-@EntityListeners(AuditingEntityListener.class)
-public class Resume extends StatusEntity {
+@SQLRestriction("record_status <> 'DELETED'")
+public class Resume extends BaseEntity {
 	@Id
 	@Setter
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,12 +48,6 @@ public class Resume extends StatusEntity {
     public void markAnalyzed() {
 		this.isAnalyzed = true;
 	}
-
-	@Setter
-	@CreatedDate
-	private LocalDateTime createDate;
-	@LastModifiedDate
-	private LocalDateTime lastModifyDate;
 
 	public void setUser(User user) {
 		if (user == null) {

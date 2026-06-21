@@ -10,7 +10,7 @@ import java.util.List;
 
 import com.nlu.identity.domain.model.User;
 import com.nlu.shared.domain.exception.BadRequestException;
-import com.nlu.shared.domain.model.StatusEntity;
+import com.nlu.shared.domain.model.BaseEntity;
 import com.nlu.shared.utils.MessageUtils;
 import jakarta.persistence.*;
 
@@ -25,8 +25,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@SQLRestriction("status <> 'DELETED'")
-public class Blog extends StatusEntity {
+@SQLRestriction("record_status <> 'DELETED'")
+public class Blog extends BaseEntity {
 	@Id
 	@Setter
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,19 +53,10 @@ public class Blog extends StatusEntity {
 	@Column(nullable = true)
 	private List<Comment> likes;
 
-	@Setter
-	@CreatedDate
-	@Column(nullable = false, updatable = false)
-	private LocalDateTime createDate;
-
-	@LastModifiedDate
-	@Column(insertable = false)
-	private LocalDateTime lastModifiedDate;
-
 	public String getTime() {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 				.withZone(ZoneId.systemDefault());
-		return formatter.format(createDate);
+		return getCreatedAt() != null ? formatter.format(getCreatedAt()) : null;
 	}
 
 	public void setAuthor(User user) {

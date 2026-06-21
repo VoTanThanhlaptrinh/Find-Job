@@ -1,10 +1,10 @@
 package com.nlu.recruitment.application.impl;
 
-import com.nlu.recruitment.domain.vo.EmploymentType;
 import com.nlu.recruitment.domain.repository.AddressRepository;
+import com.nlu.recruitment.domain.vo.EmploymentType;
 import com.nlu.recruitment.domain.repository.RecruitmentRepository;
 import com.nlu.recruitment.domain.repository.JobRepository;
-import com.nlu.recruitment.api.dto.JobCardView;
+import com.nlu.recruitment.api.dto.JobMatchView;
 import com.nlu.recruitment.api.dto.JobDto;
 import com.nlu.recruitment.api.dto.JobDetailView;
 import com.nlu.recruitment.api.dto.VectorizeJdRequest;
@@ -32,9 +32,6 @@ import org.slf4j.MDC;
 import org.springframework.boot.actuate.metrics.data.DefaultRepositoryTagsProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-
 import java.util.List;
 
 @Slf4j
@@ -185,7 +182,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public List<JobCardView> matchJobs(long cvId) {
+    public List<JobMatchView> matchJobs(long cvId) {
         List<Tuple> tuples = jobRepository.matchJobs(cvId);
         return tuples.stream().map(t -> {
             String timeStr = t.get("time", String.class);
@@ -198,12 +195,24 @@ public class JobServiceImpl implements JobService {
                     System.err.println("Unrecognized EmploymentType in DB: " + timeStr);
                 }
             }
-            return new JobCardView(
+            
+            Double finalDist = t.get("final_dist", Double.class);
+            Double skillDist = t.get("skill_dist", Double.class);
+            Double expDist = t.get("exp_dist", Double.class);
+            
+            Double totalMatch = finalDist != null ? Math.round((1.0 - finalDist) * 1000.0) / 10.0 : null;
+            Double skillMatch = skillDist != null ? Math.round((1.0 - skillDist) * 1000.0) / 10.0 : null;
+            Double expMatch = expDist != null ? Math.round((1.0 - expDist) * 1000.0) / 10.0 : null;
+
+            return new JobMatchView(
                     t.get("id", Number.class).longValue(),
                     t.get("title", String.class),
                     t.get("address", String.class),
                     t.get("salary", String.class),
-                    employmentType
+                    employmentType,
+                    totalMatch,
+                    skillMatch,
+                    expMatch
             );
         }).toList();
     }

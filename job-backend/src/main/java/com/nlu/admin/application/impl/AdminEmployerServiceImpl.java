@@ -58,10 +58,10 @@ public class AdminEmployerServiceImpl implements AdminEmployerService {
                 .id(String.valueOf(recruitment.getId()))
                 .name(recruitment.getCompanyName())
                 .industry("Technology")
-                .registrationDate(LocalDate.from(recruitment.getCreateDate()))
+                .registrationDate(LocalDate.from(recruitment.getCreatedAt()))
                 .activeJobs(recruitment.getJobsPost() != null ? recruitment.getJobsPost().size() : 0)
                 .kycStatus("verified")
-                .accountStatus(recruitment.getStatus())
+                .accountStatus(recruitment.getRecordStatus() != null ? recruitment.getRecordStatus().name() : null)
                 .contactEmail(recruitment.getUser() != null ? recruitment.getUser().getEmail() : "")
                 .contactPhone(recruitment.getUser() != null ? recruitment.getUser().getMobile() : "")
                 .build();
@@ -72,9 +72,9 @@ public class AdminEmployerServiceImpl implements AdminEmployerService {
         Recruitment recruitment = recruitmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Employer not found"));
         if ("suspend".equalsIgnoreCase(request.getAction())) {
-            recruitment.setStatus("SUSPENDED");
+            recruitment.setRecordStatus(com.nlu.shared.domain.model.EntityStatus.SUSPENDED);
         } else if ("activate".equalsIgnoreCase(request.getAction())) {
-            recruitment.setStatus("ACTIVE");
+            recruitment.setRecordStatus(com.nlu.shared.domain.model.EntityStatus.ACTIVE);
         }
         recruitmentRepository.save(recruitment);
     }
