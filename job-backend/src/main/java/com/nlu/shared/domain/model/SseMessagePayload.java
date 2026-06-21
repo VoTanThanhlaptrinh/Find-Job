@@ -14,4 +14,5 @@ public class SseMessagePayload<T> {
     private String status;
     private String message;
     private T data;
+    private Double executionTime;
 }

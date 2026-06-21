@@ -75,7 +75,10 @@ public interface JobRepository extends JpaRepository<Job, Long> {
                 j.title,
                 a.city as address, 
                 j.salary,
-                j.time
+                j.time,
+                r.final_dist,
+                r.skill_dist,
+                r.exp_dist
             FROM stage_2_rerank r
             JOIN job j ON r.job_id = j.id
             join address a on a.id = j.address_id
