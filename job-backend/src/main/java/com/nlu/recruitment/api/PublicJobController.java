@@ -5,6 +5,7 @@ import java.util.List;
 import com.nlu.shared.domain.model.ApiResponse;
 
 import com.nlu.recruitment.api.dto.JobCardView;
+import com.nlu.recruitment.api.dto.JobMatchView;
 import com.nlu.recruitment.api.dto.JobDetailView;
 import com.nlu.recruitment.api.dto.JobFilterDto;
 import com.nlu.recruitment.infrastructure.cache.CategoryCacheService;
@@ -45,8 +46,6 @@ public class PublicJobController {
         return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("message.success"), data, HttpStatus.OK.value()));
     }
 
-
-
     @PostMapping("/filter")
     public ResponseEntity<ApiResponse<Page<JobCardView>>> filterWithAddressTimeSalary(@RequestBody JobFilterDto jobFilterDTO) {
         Page<JobCardView> data = jobQueryService.findJobsBySalaryAddressAndEmploymentTypes(
@@ -73,8 +72,8 @@ public class PublicJobController {
     }
 
     @GetMapping("/match/{cvId}")
-    public ResponseEntity<ApiResponse<List<JobCardView>>> getMatchedJobs(@PathVariable Long cvId) {
-        List<JobCardView> jobs = jobService.matchJobs(cvId);
+    public ResponseEntity<ApiResponse<List<JobMatchView>>> getMatchedJobs(@PathVariable("cvId") long cvId) {
+        List<JobMatchView> jobs = jobService.matchJobs(cvId);
         return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("message.success"), jobs, HttpStatus.OK.value()));
     }
 }

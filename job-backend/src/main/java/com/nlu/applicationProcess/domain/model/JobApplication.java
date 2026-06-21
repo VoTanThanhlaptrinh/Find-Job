@@ -2,7 +2,7 @@ package com.nlu.applicationProcess.domain.model;
 
 import com.nlu.identity.domain.model.User;
 import com.nlu.shared.domain.exception.BadRequestException;
-import com.nlu.shared.domain.model.StatusEntity;
+import com.nlu.shared.domain.model.BaseEntity;
 import com.nlu.recruitment.domain.model.Job;
 import jakarta.persistence.*;
 
@@ -19,8 +19,8 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @EqualsAndHashCode(callSuper = true)
-@SQLRestriction("status <> 'DELETED'")
-public class JobApplication extends StatusEntity {
+@SQLRestriction("record_status <> 'DELETED'")
+public class JobApplication extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -39,15 +39,6 @@ public class JobApplication extends StatusEntity {
 	@JsonIgnore
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
-
-    @Setter
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime applyDate;
-
-    @LastModifiedDate
-    @Column(insertable = false)
-    private LocalDateTime lastModifyDate;
 
     public void setUser(User user) {
 		if(user == null){

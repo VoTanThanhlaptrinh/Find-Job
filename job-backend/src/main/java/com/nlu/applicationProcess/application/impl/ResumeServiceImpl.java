@@ -67,7 +67,7 @@ public class ResumeServiceImpl implements ResumeService {
     @Override
     public ResumeDetailDTO getResumeDetail(long id, User user) {
         Resume cv = findResumeAndAssertOwner(id, user, "resume.access.forbidden");
-        return new ResumeDetailDTO(cv.getId(), cv.getFileName(), cv.getCreateDate());
+        return new ResumeDetailDTO(cv.getId(), cv.getFileName(), cv.getCreatedAt());
     }
 
     @Override
@@ -144,7 +144,7 @@ public class ResumeServiceImpl implements ResumeService {
             log.info("Resume created — cv: {}, skipped AI processing (user opted out) for user: {}",
                     cv.getId(), user.getId());
         }
-        return new ResumeView(cv.getId(), cv.getFileName(), cv.getCreateDate(), cv.isAnalyzed());
+        return new ResumeView(cv.getId(), cv.getFileName(), cv.getCreatedAt(), cv.isAnalyzed());
     }
 
     @Override

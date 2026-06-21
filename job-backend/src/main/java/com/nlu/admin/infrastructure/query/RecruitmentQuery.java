@@ -30,7 +30,7 @@ public class RecruitmentQuery {
         QJob job = QJob.job;
 
         BooleanBuilder where = new BooleanBuilder();
-        where.and(hirer.status.ne(EntityStatus.DELETED.name()));
+        where.and(hirer.recordStatus.ne(EntityStatus.DELETED));
 
         if (StringUtils.hasText(search)) {
             where.and(hirer.companyName.containsIgnoreCase(search)
@@ -38,22 +38,26 @@ public class RecruitmentQuery {
         }
 
         if (StringUtils.hasText(status)) {
-            where.and(hirer.status.eq(status.toUpperCase()));
+            try {
+                where.and(hirer.recordStatus.eq(EntityStatus.valueOf(status.toUpperCase())));
+            } catch (IllegalArgumentException e) {
+                // Ignore invalid status
+            }
         }
 
         JPAQuery<com.querydsl.core.Tuple> query = queryFactory
                 .select(
                         hirer.id,
                         hirer.companyName,
-                        hirer.createDate,
+                        hirer.createdAt,
                         job.id.count(),
-                        hirer.status
+                        hirer.recordStatus
                 )
                 .from(hirer)
                 .join(hirer.user, user)
                 .leftJoin(hirer.jobsPost, job)
                 .where(where)
-                .groupBy(hirer.id, hirer.companyName, hirer.createDate, hirer.status)
+                .groupBy(hirer.id, hirer.companyName, hirer.createdAt, hirer.recordStatus)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
 
@@ -71,10 +75,10 @@ public class RecruitmentQuery {
                         .id(String.valueOf(tuple.get(hirer.id)))
                         .name(tuple.get(hirer.companyName))
                         .industry("Technology") // Mock
-                        .registrationDate(LocalDate.from(Objects.requireNonNull(tuple.get(hirer.createDate))))
+                        .registrationDate(LocalDate.from(Objects.requireNonNull(tuple.get(hirer.createdAt))))
                         .activeJobs(Objects.requireNonNull(tuple.get(job.id.count())).intValue())
                         .kycStatus(kycStatus != null ? kycStatus : "verified")
-                        .accountStatus(tuple.get(hirer.status))
+                        .accountStatus(tuple.get(hirer.recordStatus) != null ? tuple.get(hirer.recordStatus).name() : null)
                         .avatarInitials(getInitials(tuple.get(hirer.companyName)))
                         .build())
                 .toList();

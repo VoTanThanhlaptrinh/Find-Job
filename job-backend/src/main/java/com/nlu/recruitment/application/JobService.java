@@ -2,6 +2,7 @@ package com.nlu.recruitment.application;
 
 import com.nlu.recruitment.api.dto.JobCardView;
 import com.nlu.recruitment.api.dto.JobDto;
+import com.nlu.recruitment.api.dto.JobMatchView;
 import com.nlu.recruitment.api.dto.JobDetailView;
 import com.nlu.identity.domain.model.User;
 
@@ -17,7 +18,7 @@ public interface JobService {
     void updateJob(Long id, JobDto jobDTO, User user);
 
     void deleteJob(Long id, User user);
-    List<JobCardView> matchJobs(long cvId);
+    List<JobMatchView> matchJobs(long cvId);
 
     void analyzeJob(Long id, User user);
 }

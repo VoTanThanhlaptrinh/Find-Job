@@ -2,7 +2,7 @@ package com.nlu.content.domain.model;
 
 import com.nlu.identity.domain.model.User;
 import com.nlu.shared.domain.exception.BadRequestException;
-import com.nlu.shared.domain.model.StatusEntity;
+import com.nlu.shared.domain.model.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,8 +19,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @lombok.EqualsAndHashCode(callSuper = true)
 @Table(name = "user_like")
-@SQLRestriction("status <> 'DELETED'")
-public class Like extends StatusEntity {
+@SQLRestriction("record_status <> 'DELETED'")
+public class Like extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -30,14 +30,6 @@ public class Like extends StatusEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private Blog blog;
-
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createDate;
-
-    @LastModifiedDate
-    @Column(insertable = false)
-    private LocalDateTime lastModifiedDate;
 
     public void setUser(User user) {
         if(user == null){

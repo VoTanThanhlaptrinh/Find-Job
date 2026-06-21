@@ -7,10 +7,11 @@ import { SafeHtmlPipe } from '../../../../shared/pipes/safe-html.pipe';
 import { AuthService } from '../../../../core/services/auth.service';
 import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
 import { I18nService } from '../../../../core/i18n/i18n.service';
+import { SkeletonJobSingleComponent } from '../../../../shared/components/skeleton-job-single/skeleton-job-single.component';
 
 @Component({
   selector: 'app-job-single',
-  imports: [RouterModule, SafeHtmlPipe, TranslatePipe],
+  imports: [RouterModule, SafeHtmlPipe, TranslatePipe, SkeletonJobSingleComponent],
   standalone: true,
   templateUrl: './job-single.component.html',
   styleUrl: './job-single.component.css',
@@ -34,6 +35,7 @@ export class JobSingleComponent implements OnInit {
   relatedJobs: JobCardModel[] = [];
   hasApplied: boolean | null = null;
   isCheckingApply = false;
+  isLoading = false;
 
   constructor(
     private jobSerivce: JobService,
@@ -59,6 +61,7 @@ export class JobSingleComponent implements OnInit {
       };
       this.hasApplied = this.jobSerivce.hasApplied$();
       this.isCheckingApply = this.jobSerivce.isCheckingApply$();
+      this.isLoading = this.jobSerivce.isLoadingJobDetail$();
     });
 
     effect(() => {

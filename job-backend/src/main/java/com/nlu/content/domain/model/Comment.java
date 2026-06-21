@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 
 import com.nlu.identity.domain.model.User;
 import com.nlu.shared.domain.exception.BadRequestException;
-import com.nlu.shared.domain.model.StatusEntity;
+import com.nlu.shared.domain.model.BaseEntity;
 import jakarta.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -19,8 +19,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@SQLRestriction("status <> 'DELETED'")
-public class Comment extends StatusEntity {
+@SQLRestriction("record_status <> 'DELETED'")
+public class Comment extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
@@ -33,13 +33,6 @@ public class Comment extends StatusEntity {
 	@JoinColumn(name = "blog_id", nullable = false)
 	private Blog blog;
 	private String content;
-	@CreatedDate
-	@Column(nullable = false, updatable = false)
-	private LocalDateTime createDate;
-
-	@LastModifiedDate
-	@Column(insertable = false)
-	private LocalDateTime lastModifiedDate;
 
 	public void setUser(User user) {
 		if(user == null){

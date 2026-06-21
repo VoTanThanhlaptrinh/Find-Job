@@ -31,7 +31,7 @@ export class ResumeService {
 
     private readonly sseProcessEvent = this.sseService.fromEvent<SseMessagePayload<Partial<FileMessage>>>(this.SSE_EVENT_NAME);
 
-    readonly uploadingFile$ = computed<(FileMessage & { isManualAnalyze?: boolean }) | null>(() => {
+    readonly uploadingFile$ = computed<(FileMessage & { isManualAnalyze?: boolean, executionTime?: number }) | null>(() => {
         const local = this.localFileData();
         const sseEvent = this.sseProcessEvent();
 
@@ -42,15 +42,17 @@ export class ResumeService {
                 id: local.id ?? 0, 
                 status: local.status, 
                 name: local.name || 'Unknown', 
-                isManualAnalyze: local.isManualAnalyze 
+                isManualAnalyze: local.isManualAnalyze,
+                executionTime: sseEvent?.executionTime
             };
         }
 
         const status = sseEvent?.status ?? local.status ?? 'pending';
         const id = sseEvent?.id ?? local.id ?? 0;
         const name = local.name || 'Unknown';
+        const executionTime = sseEvent?.executionTime;
 
-        return { id, status, name, isManualAnalyze: local.isManualAnalyze };
+        return { id, status, name, isManualAnalyze: local.isManualAnalyze, executionTime };
     });
 
     constructor(

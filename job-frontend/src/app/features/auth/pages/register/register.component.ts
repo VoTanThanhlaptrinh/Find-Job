@@ -25,6 +25,8 @@ export class RegisterComponent implements OnInit {
   googleUrl = '';
   formErrors: string | null = null;
   isSubmitting = false;
+  showPassword = false;
+  showConfirmPassword = false;
 
   readonly registerForm = this.fb.nonNullable.group(
     {
@@ -81,6 +83,31 @@ export class RegisterComponent implements OnInit {
 
   get confirmPasswordControl() {
     return this.registerForm.controls.confirmPassword;
+  }
+
+  togglePassword() {
+    this.showPassword = !this.showPassword;
+  }
+
+  toggleConfirmPassword() {
+    this.showConfirmPassword = !this.showConfirmPassword;
+  }
+
+  get passwordStrength() {
+    const pwd = this.passwordControl.value || '';
+    if (!pwd) return { level: 'none', percent: 0, label: '', colorClass: 'bg-slate-200' };
+
+    let score = 0;
+    if (pwd.length >= 8) score += 1;
+    if (/[a-z]/.test(pwd)) score += 1;
+    if (/[A-Z]/.test(pwd)) score += 1;
+    if (/\d/.test(pwd)) score += 1;
+    if (/[^\w\s]/.test(pwd)) score += 1;
+
+    if (score <= 2) return { level: 'weak', percent: 25, label: 'Yếu', colorClass: 'bg-red-500' };
+    if (score === 3) return { level: 'medium', percent: 50, label: 'Trung bình', colorClass: 'bg-orange-500' };
+    if (score === 4) return { level: 'strong', percent: 75, label: 'Mạnh', colorClass: 'bg-emerald-500' };
+    return { level: 'very-strong', percent: 100, label: 'Rất mạnh', colorClass: 'bg-blue-500' };
   }
 
   passwordMatchValidator(form: FormGroup): ValidationErrors | null {

@@ -142,7 +142,6 @@ public class JobApplicationServiceImpl implements JobApplicationService {
             // 5. Save Entities (Only executed if upload succeeds)
             var resume = new Resume();
             resume.setUser(context.currentUser());
-            resume.setCreateDate(LocalDateTime.now());
             resume.setKeyCf(key);
             resume.setFileName(originalFilename);
 
@@ -196,7 +195,6 @@ public class JobApplicationServiceImpl implements JobApplicationService {
         jobApplication.setJob(job);
         jobApplication.setResume(resume);
         jobApplication.setUser(user);
-        jobApplication.setApplyDate(LocalDateTime.now());
         jobApplicationRepository.save(jobApplication);
     }
 

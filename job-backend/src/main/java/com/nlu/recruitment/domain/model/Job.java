@@ -9,7 +9,7 @@ import com.nlu.applicationProcess.domain.model.JobApplication;
 import com.nlu.recruitment.domain.vo.EmploymentType;
 import com.nlu.recruitment.domain.vo.ExperienceYears;
 import com.nlu.shared.domain.exception.BadRequestException;
-import com.nlu.shared.domain.model.StatusEntity;
+import com.nlu.shared.domain.model.BaseEntity;
 import com.nlu.shared.utils.MessageUtils;
 import jakarta.persistence.*;
 
@@ -28,8 +28,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 @Table(name = "job")
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@SQLRestriction("status <> 'DELETED'")
-public class Job extends StatusEntity {
+@SQLRestriction("record_status <> 'DELETED'")
+public class Job extends BaseEntity {
 	@Id
 	@Setter
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,12 +52,7 @@ public class Job extends StatusEntity {
 	@JoinColumn(name = "hirer_id")
 	@JsonIgnore
 	private Recruitment recruitment;
-	@Setter
-	@CreatedDate
-	@Column(nullable = false)
-	private LocalDateTime createDate;
-	@LastModifiedDate
-	private LocalDateTime modifiedDate;
+	
 	@OneToMany(mappedBy = "job", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
 	@JsonIgnore
 	private List<JobApplication> applies;

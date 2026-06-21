@@ -63,8 +63,8 @@ public class CategoryCacheService {
     private List<JobCardView> refreshHomeInitCache() {
         List<JobCardView> latest = jobRepository.findJobs(
                 LocalDateTime.now(),
-                EntityStatus.ACTIVE.name(),
-                PageRequest.of(0, 5, Sort.by("createDate").descending())
+                EntityStatus.ACTIVE,
+                PageRequest.of(0, 5, Sort.by("createdAt").descending())
         );
         saveCacheValue(HOME_INIT_KEY, latest);
         return latest;

@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, Input, inject, computed } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, inject, computed, signal, effect, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ResumeContext, ResumeService } from '../../../core/services/resume.service';
 import { ResumeReviewInput } from '../../models/jobs/resume-review-input.model';
@@ -13,7 +13,7 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
   templateUrl: './resume-review.component.html',
   styleUrl: './resume-review.component.css'
 })
-export class ResumeReviewComponent {
+export class ResumeReviewComponent implements OnDestroy {
   private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly resumeService = inject(ResumeService);
   private readonly notifyService = inject(NotifyMessageService);
@@ -28,6 +28,53 @@ export class ResumeReviewComponent {
   isDeleting = false;
   isLoadingView = false;
   isLoadingDownload = false;
+  
+  uploadProgress = signal(0);
+  private progressInterval: ReturnType<typeof setInterval> | null = null;
+
+  constructor() {
+    effect(() => {
+      if (this.isUploading() || this.isParsing() || this.isVectorizing()) {
+        this.startFakeProgress();
+      } else {
+        this.stopFakeProgress();
+        if (this.isUploaded() || this.resume.isAnalyzed) {
+          this.uploadProgress.set(100);
+        }
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.stopFakeProgress();
+  }
+
+  private startFakeProgress(): void {
+    if (this.progressInterval) return;
+    this.uploadProgress.set(0);
+    this.progressInterval = setInterval(() => {
+      this.uploadProgress.update(prev => {
+        if (this.isParsing() && prev >= 70) return 70; // Cap at 70% during parsing
+        if (this.isVectorizing()) {
+           if (prev < 70) return 70; // Jump to 70
+           if (prev >= 90) return 90; // Cap at 90% during vectorizing
+        }
+
+        const increment = prev < 50 ? 10 : prev < 80 ? 5 : 2;
+        if (prev + increment >= 95) {
+          return 95;
+        }
+        return prev + increment;
+      });
+    }, 300);
+  }
+
+  private stopFakeProgress(): void {
+    if (this.progressInterval) {
+      clearInterval(this.progressInterval);
+      this.progressInterval = null;
+    }
+  }
 
   readonly isUploading = computed(() => {
     const file = this.resumeService.uploadingFile$();
@@ -41,12 +88,30 @@ export class ResumeReviewComponent {
 
   readonly isAnalyzing = computed(() => {
     const file = this.resumeService.uploadingFile$();
-    return file !== null && file.id === this.resume.id && file.status === 'analyzing';
+    return file !== null && file.id === this.resume.id && (file.status === 'analyzing' || file.status === 'parsing' || file.status === 'vectorizing');
+  });
+
+  readonly isParsing = computed(() => {
+    const file = this.resumeService.uploadingFile$();
+    return file !== null && file.id === this.resume.id && file.status === 'parsing';
+  });
+
+  readonly isVectorizing = computed(() => {
+    const file = this.resumeService.uploadingFile$();
+    return file !== null && file.id === this.resume.id && file.status === 'vectorizing';
   });
 
   readonly isFailed = computed(() => {
     const file = this.resumeService.uploadingFile$();
     return file !== null && file.id === this.resume.id && (file.status === 'failed' || file.status === 'error');
+  });
+
+  readonly executionTime = computed(() => {
+    const file = this.resumeService.uploadingFile$();
+    if (file !== null && file.id === this.resume.id && file.executionTime !== undefined) {
+      return file.executionTime;
+    }
+    return null;
   });
 
   onAnalyzeResume(): void {

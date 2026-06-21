@@ -92,7 +92,7 @@ public class AddressServiceImpl implements AddressService {
     public List<AddressResponseDto> getAddressesByUser(User user) {
         Recruitment recruitment = getRecruitmentByUser(user);
         return recruitment.getAddresses().stream()
-                .filter(a -> !a.getStatus().equals("DELETED"))
+                .filter(a -> a.getRecordStatus() != com.nlu.shared.domain.model.EntityStatus.DELETED)
                 .map(this::toDto)
                 .collect(Collectors.toList());
     }

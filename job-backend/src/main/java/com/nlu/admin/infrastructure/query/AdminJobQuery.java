@@ -30,7 +30,7 @@ public class AdminJobQuery {
         QJobApplication apply = QJobApplication.jobApplication;
 
         BooleanBuilder where = new BooleanBuilder();
-        where.and(job.status.ne(EntityStatus.DELETED.name()));
+        where.and(job.recordStatus.ne(EntityStatus.DELETED));
 
         if (StringUtils.hasText(search)) {
             where.and(job.title.containsIgnoreCase(search)
@@ -38,7 +38,11 @@ public class AdminJobQuery {
         }
 
         if (StringUtils.hasText(status)) {
-            where.and(job.status.eq(status.toUpperCase()));
+            try {
+                where.and(job.recordStatus.eq(EntityStatus.valueOf(status.toUpperCase())));
+            } catch (IllegalArgumentException e) {
+                // ignore invalid status
+            }
         }
 
         JPAQuery<com.querydsl.core.Tuple> query = queryFactory
@@ -47,7 +51,7 @@ public class AdminJobQuery {
                         job.title,
                         hirer.companyName,
                         address.city,
-                        job.status,
+                        job.recordStatus,
                         job.expiredDate,
                         job.applies.size()
                 )
@@ -76,7 +80,7 @@ public class AdminJobQuery {
                         .category(category != null ? category : "General") // Mock
                         .applications(tuple.get(job.applies.size()))
                         .newApplicationsToday(0) // Mock
-                        .status(tuple.get(job.status))
+                        .status(tuple.get(job.recordStatus) != null ? tuple.get(job.recordStatus).name() : null)
                         .expiryDate(tuple.get(job.expiredDate))
                         .build())
                 .toList();

@@ -1,7 +1,7 @@
 package com.nlu.recruitment.domain.model;
 
 import com.nlu.shared.domain.exception.BadRequestException;
-import com.nlu.shared.domain.model.StatusEntity;
+import com.nlu.shared.domain.model.BaseEntity;
 import com.nlu.shared.utils.MessageUtils;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -26,9 +26,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@SQLRestriction("status <> 'DELETED'")
-@EntityListeners(AuditingEntityListener.class)
-public class Address extends StatusEntity {
+@SQLRestriction("record_status <> 'DELETED'")
+public class Address extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -40,15 +39,6 @@ public class Address extends StatusEntity {
     private String street;
     @Column(nullable = false, columnDefinition = "boolean default false")
     private Boolean isDefault;
-    @Setter
-    @CreatedDate
-    @Column(nullable = false)
-    private LocalDateTime createDate;
-    
-    @Setter
-    @LastModifiedDate
-    @Column()
-    private LocalDateTime updateDate;
 
     public void setLocationName(String locationName) {
         if (locationName == null || locationName.trim().isEmpty()) {

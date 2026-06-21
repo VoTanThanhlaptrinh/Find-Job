@@ -3,10 +3,8 @@ package com.nlu.shared.infrastructure.message;
 import com.nlu.applicationProcess.api.dto.client.ResumeParsingMessage;
 import com.nlu.applicationProcess.api.dto.client.ResumeRequest;
 import com.nlu.shared.api.message.dto.ApiMessage;
-import com.nlu.shared.api.message.dto.CloudUploadMessage;
 import com.nlu.applicationProcess.application.ResumeParsingService;
 import com.nlu.applicationProcess.application.VectorizationClient;
-import com.nlu.shared.application.CloudStorageService;
 import com.nlu.shared.application.SseEmitterService;
 import com.nlu.shared.domain.model.SseMessagePayload;
 import com.nlu.applicationProcess.domain.repository.ResumeRepository;
@@ -41,15 +39,32 @@ public class MessageConsumer {
     @RabbitListener(queues = "parsingQueue")
     public void parsingRawText(@Payload ResumeParsingMessage message) {
         try {
+            long parsingStartTime = System.currentTimeMillis();
             sseEmitterService.sendEvent(message.userId(), "resume-process",
                     SseMessagePayload.builder()
                             .id(message.cvId())
-                            .status("analyzing")
-                            .message("AI is analyzing your resume...")
+                            .status("parsing")
+                            .message("AI is parsing your resume...")
                             .build());
+            
             var res = resumeParsingService.processResume(message.rawText());
             log.info(res.toString());
+            
+            long parsingEndTime = System.currentTimeMillis();
+            double parsingTime = Math.round((parsingEndTime - parsingStartTime) / 100.0) / 10.0;
+            
+            sseEmitterService.sendEvent(message.userId(), "resume-process",
+                    SseMessagePayload.builder()
+                            .id(message.cvId())
+                            .status("vectorizing")
+                            .message("Resume parsing complete, vectorizing data...")
+                            .executionTime(parsingTime)
+                            .build());
+
+            long vectorizeStartTime = System.currentTimeMillis();
             vectorizationClient.vectorizeCv(new ResumeRequest(message.userId(), message.cvId(), res));
+            long vectorizeEndTime = System.currentTimeMillis();
+            double vectorizeTime = Math.round((vectorizeEndTime - vectorizeStartTime) / 100.0) / 10.0;
 
             // Cập nhật trạng thái isAnalyzed trên Resume
             resumeRepository.findById(message.cvId()).ifPresent(cv -> {
@@ -62,6 +77,7 @@ public class MessageConsumer {
                             .id(message.cvId())
                             .status("analyzed")
                             .message("Resume analysis complete")
+                            .executionTime(vectorizeTime)
                             .build());
 
         } catch (Exception e) {

@@ -16,7 +16,7 @@ import com.nlu.identity.domain.vo.EmailAddress;
 import com.nlu.identity.domain.vo.Password;
 import com.nlu.identity.domain.vo.PhoneNumber;
 import com.nlu.shared.domain.exception.BadRequestException;
-import com.nlu.shared.domain.model.StatusEntity;
+import com.nlu.shared.domain.model.BaseEntity;
 import com.nlu.shared.utils.MessageUtils;
 import jakarta.persistence.*;
 import lombok.*;
@@ -33,12 +33,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name= "users",indexes = {
 		@Index(name = "mulitIndex1", columnList = "id, email"),})
-@SQLRestriction("status <> 'DELETED'")
-public class User extends StatusEntity implements UserDetails, Principal {
+@SQLRestriction("record_status <> 'DELETED'")
+public class User extends BaseEntity implements UserDetails, Principal {
 	@Setter
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,14 +59,6 @@ public class User extends StatusEntity implements UserDetails, Principal {
 	private boolean active;
 	@Setter
 	private boolean oauth2Enabled;
-	@Setter
-	@CreatedDate
-	@Column(nullable = false, updatable = false)
-	private LocalDateTime createDate;
-	@Setter
-	@LastModifiedDate
-	@Column(insertable = false)
-	private LocalDateTime lastModifiedDate;
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<JobApplication> applies = new LinkedList<>();

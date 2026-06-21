@@ -7,22 +7,20 @@ import java.util.List;
 import com.nlu.identity.domain.model.User;
 import com.nlu.recruitment.domain.vo.SocialLink;
 import com.nlu.shared.domain.exception.BadRequestException;
-import com.nlu.shared.domain.model.StatusEntity;
+import com.nlu.shared.domain.model.BaseEntity;
 import com.nlu.shared.utils.MessageUtils;
 import jakarta.persistence.*;
 
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 @Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@SQLRestriction("status <> 'DELETED'")
-public class Recruitment extends StatusEntity {
+@SQLRestriction("record_status <> 'DELETED'")
+public class Recruitment extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
@@ -35,14 +33,6 @@ public class Recruitment extends StatusEntity {
 	private String description;
 	@Embedded
 	private SocialLink socialLink;
-	@Setter
-	@CreatedDate
-	@Column(nullable = false)
-	private LocalDateTime createDate;
-	@Setter
-	@LastModifiedDate
-	@Column(updatable = true)
-	private LocalDateTime modifiedDate;
 	@OneToMany(mappedBy = "recruitment", fetch = FetchType.LAZY)
 	private List<Job> jobsPost;
 	@Setter

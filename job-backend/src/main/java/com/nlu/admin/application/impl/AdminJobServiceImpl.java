@@ -7,6 +7,7 @@ import com.nlu.admin.api.dto.job.AdminJobListItem;
 import com.nlu.admin.api.dto.job.AdminJobRequest;
 import com.nlu.admin.api.dto.job.BulkActionRequest;
 import com.nlu.admin.api.dto.job.JobMetricsResponse;
+import com.nlu.shared.domain.model.EntityStatus;
 import com.nlu.shared.domain.model.PageResponse;
 import com.nlu.shared.domain.exception.ResourceNotFoundException;
 import com.nlu.recruitment.domain.model.Job;
@@ -31,9 +32,9 @@ public class AdminJobServiceImpl implements AdminJobService {
     @Override
     public JobMetricsResponse getJobMetrics() {
         return JobMetricsResponse.builder()
-                .livePostings(jobRepository.countByStatus("ACTIVE"))
+                .livePostings(jobRepository.countByRecordStatus(EntityStatus.ACTIVE))
                 .livePostingsGrowthPct(12.0)
-                .pendingReview(jobRepository.countByStatus("PENDING"))
+                .pendingReview(jobRepository.countByRecordStatus(EntityStatus.PENDING))
                 .totalApplicants(jobApplicationRepository.count())
                 .avgTimeToHireDays(18)
                 .build();
@@ -55,8 +56,7 @@ public class AdminJobServiceImpl implements AdminJobService {
         job.setTitle(request.getTitle());
         job.setDescription(request.getDescription());
         job.setExpiredDate(request.getExpiryDate());
-        job.setStatus("PENDING");
-        job.setCreateDate(LocalDateTime.now());
+        job.setRecordStatus(com.nlu.shared.domain.model.EntityStatus.PENDING);
         jobRepository.save(job);
     }
 
@@ -64,7 +64,7 @@ public class AdminJobServiceImpl implements AdminJobService {
     public void updateJobStatus(long id, String status) {
         Job job = jobRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Job not found"));
-        job.setStatus(status.toUpperCase());
+        job.setRecordStatus(com.nlu.shared.domain.model.EntityStatus.valueOf(status.toUpperCase()));
         jobRepository.save(job);
     }
 

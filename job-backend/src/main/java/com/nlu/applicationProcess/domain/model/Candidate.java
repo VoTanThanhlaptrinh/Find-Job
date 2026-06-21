@@ -8,7 +8,7 @@ import com.nlu.identity.domain.model.User;
 import com.nlu.identity.domain.vo.EmailAddress;
 import com.nlu.identity.domain.vo.PhoneNumber;
 import com.nlu.shared.domain.exception.BadRequestException;
-import com.nlu.shared.domain.model.StatusEntity;
+import com.nlu.shared.domain.model.BaseEntity;
 import com.nlu.shared.utils.MessageUtils;
 import jakarta.persistence.*;
 
@@ -21,8 +21,8 @@ import org.hibernate.annotations.SQLRestriction;
 @Entity
 @Getter
 @EqualsAndHashCode(callSuper = true)
-@SQLRestriction("status <> 'DELETED'")
-public class Candidate extends StatusEntity {
+@SQLRestriction("record_status <> 'DELETED'")
+public class Candidate extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
@@ -37,12 +37,9 @@ public class Candidate extends StatusEntity {
 	@Embedded
 	private EmailAddress email;
 	private Type type;
-	@Setter
-	private LocalDateTime createDate;
-	private LocalDateTime modifiedDate;
 	
 	public Candidate(User user, String fullName, LocalDate birth, String address, String phoneNumber, String email,
-			Type type, LocalDateTime createDate, LocalDateTime modifiedDate) {
+			Type type) {
 		super();
 		this.user = user;
 		this.fullName = fullName;
@@ -51,8 +48,6 @@ public class Candidate extends StatusEntity {
 		this.phoneNumber = phoneNumber != null && !phoneNumber.trim().isEmpty() ? new PhoneNumber(phoneNumber) : null;
 		this.email = email != null && !email.trim().isEmpty() ? new EmailAddress(email) : null;
 		this.type = type;
-		this.createDate = createDate;
-		this.modifiedDate = modifiedDate;
 	}
 
 	public Candidate() {

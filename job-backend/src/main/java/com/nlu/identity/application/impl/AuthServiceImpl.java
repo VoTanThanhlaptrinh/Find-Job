@@ -96,8 +96,6 @@ public class AuthServiceImpl implements AuthService {
             recruitment.setCompanyName(registrationForm.companyName());
             recruitment.setDescription("");
             recruitment.setSocialLink(new SocialLink(""));
-            recruitment.setCreateDate(LocalDateTime.now());
-            recruitment.setModifiedDate(LocalDateTime.now());
             recruitment.setAddresses(new ArrayList<>());
             recruitmentRepository.save(recruitment);
             log.info("Hirer profile created for user: {}", user.getId());

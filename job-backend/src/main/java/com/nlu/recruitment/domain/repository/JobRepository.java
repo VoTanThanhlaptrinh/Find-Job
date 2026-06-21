@@ -2,6 +2,7 @@ package com.nlu.recruitment.domain.repository;
 
 import com.nlu.recruitment.api.dto.JobCardView;
 import com.nlu.recruitment.domain.model.Job;
+import com.nlu.shared.domain.model.EntityStatus;
 import jakarta.persistence.Tuple;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,12 +13,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface JobRepository extends JpaRepository<Job, Long> {
-    long countByStatus(String status);
+    long countByRecordStatus(EntityStatus recordStatus);
 
     @Query("""
-        SELECT j FROM Job j WHERE j.status = :status
+        SELECT j FROM Job j WHERE j.recordStatus = :status
     """)
-    Page<Job> findByStatus(String status, Pageable pageable);
+    Page<Job> findByStatus(EntityStatus status, Pageable pageable);
 
     @Query("""
         SELECT new com.nlu.recruitment.api.dto.JobCardView(
@@ -28,10 +29,10 @@ public interface JobRepository extends JpaRepository<Job, Long> {
             j.time
         )
         FROM Job j
-        WHERE j.createDate < :createDateBefore
-        AND j.status = :status
+        WHERE j.createdAt < :createDateBefore
+        AND j.recordStatus = :status
     """)
-    List<JobCardView> findJobs(LocalDateTime createDateBefore, String status, Pageable pageable);
+    List<JobCardView> findJobs(LocalDateTime createDateBefore, EntityStatus status, Pageable pageable);
 
     @Query(value = """
                 WITH cv_info AS (
