@@ -54,6 +54,7 @@ export interface JobFilterPayload {
   address: string[];
   times: string[];
   title: string;
+  categoryIds?: number[];
 }
 
 export type HomeInitApiResponse = ApiResponse<HomeInitViewModel>;

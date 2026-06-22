@@ -18,7 +18,7 @@ public interface JobQueryService {
 
     Page<JobCardView> getListJobByAddress(String address, int page, int amount);
 
-    Page<JobCardView> findJobsBySalaryAddressAndEmploymentTypes(int pageIndex, int pageSize, int min, int max, List<String> cities, List<EmploymentType> times, String title);
+    Page<JobCardView> findJobsBySalaryAddressAndEmploymentTypes(int pageIndex, int pageSize, int min, int max, List<String> cities, List<EmploymentType> times, String title, List<Long> categoryIds);
 
     Page<JobResponse> getHirerJobPost(int pageIndex, int pageSize, String email);
 

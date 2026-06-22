@@ -115,7 +115,7 @@ public class JobQuery {
         return fetchPage(pageable, contentQuery, countQuery);
     }
 
-    public Page<JobCardView> findJobsBySalaryAddressAndEmploymentTypes(int pageIndex, int pageSize, int min, int max, List<String> cities, List<EmploymentType> times, String title) {
+    public Page<JobCardView> findJobsBySalaryAddressAndEmploymentTypes(int pageIndex, int pageSize, int min, int max, List<String> cities, List<EmploymentType> times, String title, List<Long> categoryIds) {
         Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by("createdAt").descending());
 
         BooleanBuilder filterBuilder = new BooleanBuilder();
@@ -129,6 +129,9 @@ public class JobQuery {
         if (title != null) {
             var lower = title.toLowerCase();
             filterBuilder.and(job.title.lower().containsIgnoreCase(lower));
+        }
+        if (categoryIds != null && !categoryIds.isEmpty()) {
+            filterBuilder.and(job.category.id.in(categoryIds));
         }
 
         JPAQuery<JobCardView> contentQuery = queryFactory
