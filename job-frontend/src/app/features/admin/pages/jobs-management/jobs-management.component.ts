@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AdminJobsService } from '../../services/admin-jobs.service';
@@ -30,57 +30,47 @@ export class JobsManagementComponent implements OnInit {
 
   private readonly selectedJobIds = new Set<string>();
 
+  metrics: any = null;
+  jobs: AdminJobItem[] = [];
+  isLoadingMetrics = false;
+  isLoadingList = false;
+  totalItems = 0;
+  currentPage = 1;
+  pageSize = 10;
+  selectedCategory = '';
+  selectedStatus = '';
+  totalPagesCount = 1;
+  updatingStatusJobId: string | null = null;
+  isCreating = false;
+
+  constructor() {
+    effect(() => {
+      this.metrics = this.jobsService.metrics();
+      this.jobs = this.jobsService.jobs();
+      this.isLoadingMetrics = this.jobsService.isLoadingMetrics();
+      this.isLoadingList = this.jobsService.isLoadingList();
+      this.totalItems = this.jobsService.totalItems();
+      
+      const query = this.jobsService.currentQuery();
+      this.currentPage = query.page ?? 1;
+      this.pageSize = query.pageSize ?? 10;
+      this.selectedCategory = query.category ?? '';
+      this.selectedStatus = query.status ?? '';
+
+      this.totalPagesCount = Math.max(Math.ceil(this.totalItems / this.pageSize), 1);
+      
+      this.updatingStatusJobId = this.jobsService.updatingStatusJobId();
+      this.isCreating = this.jobsService.isCreating();
+    });
+  }
+
   ngOnInit(): void {
     this.jobsService.loadMetrics();
     this.jobsService.loadJobs();
   }
 
-  get metrics() {
-    return this.jobsService.metrics();
-  }
-
-  get jobs() {
-    return this.jobsService.jobs();
-  }
-
-  get isLoadingMetrics(): boolean {
-    return this.jobsService.isLoadingMetrics();
-  }
-
-  get isLoadingList(): boolean {
-    return this.jobsService.isLoadingList();
-  }
-
-  get totalItems(): number {
-    return this.jobsService.totalItems();
-  }
-
-  get currentPage(): number {
-    return this.jobsService.currentQuery().page;
-  }
-
-  get pageSize(): number {
-    return this.jobsService.currentQuery().pageSize;
-  }
-
-  get selectedCategory(): string {
-    return this.jobsService.currentQuery().category ?? '';
-  }
-
-  get selectedStatus(): string {
-    return this.jobsService.currentQuery().status ?? '';
-  }
-
   get totalPages(): number {
-    return Math.max(Math.ceil(this.totalItems / this.pageSize), 1);
-  }
-
-  get updatingStatusJobId(): string | null {
-    return this.jobsService.updatingStatusJobId();
-  }
-
-  get isCreating(): boolean {
-    return this.jobsService.isCreating();
+    return this.totalPagesCount;
   }
 
   get selectedJobsCount(): number {

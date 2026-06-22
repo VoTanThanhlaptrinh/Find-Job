@@ -1,4 +1,18 @@
 @import "tailwindcss";
+@import "ngx-toastr/toastr";
+
+/* Override ngx-toastr default wrapper since we use a fully custom Tailwind component inside */
+#toast-container > div.ngx-toastr {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  border: none !important;
+  width: auto !important;
+}
+#toast-container > div.ngx-toastr:hover {
+  box-shadow: none !important;
+}
+
 
 @theme {
   /* --- Admin Colors --- */

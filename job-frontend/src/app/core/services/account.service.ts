@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 import { catchError, finalize, map, Observable, of, startWith, take } from 'rxjs';
 import { UtilitiesService } from './utilities.service';
 
@@ -9,6 +9,8 @@ import { UtilitiesService } from './utilities.service';
 })
 export class AccountService {
   private readonly url: string;
+  private isOauth2 = signal<boolean | null>(null);
+  readonly isOauth2$ = computed(() => this.isOauth2());
 
   constructor(
     private http: HttpClient,
@@ -50,9 +52,12 @@ export class AccountService {
       .pipe(take(1));
   }
 
-  checkOauth2(): Observable<any> {
-    return this.http
+  checkOauth2(): void {
+    this.http
       .get<any>(`${this.url}/account/checkOauth2`)
-      .pipe(take(1), map((res) => res.data), catchError(() => of(false)));
+      .pipe(take(1), map((res) => res.data), catchError(() => of(false)))
+      .subscribe({
+        next: (res) => this.isOauth2.set(res)
+      });
   }
 }

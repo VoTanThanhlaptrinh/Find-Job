@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { take } from 'rxjs';
@@ -12,6 +12,7 @@ import { AdminAuthService } from '../../services/admin-auth.service';
 })
 export class LoginComponent {
   readonly loginForm;
+  isLoggingIn = false;
 
   constructor(
     private readonly fb: FormBuilder,
@@ -21,10 +22,10 @@ export class LoginComponent {
       username: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
-  }
-
-  get isLoggingIn(): boolean {
-    return this.adminAuthService.isLoggingIn();
+    
+    effect(() => {
+      this.isLoggingIn = this.adminAuthService.isLoggingIn();
+    });
   }
 
   isInvalid(controlName: 'username' | 'password'): boolean {

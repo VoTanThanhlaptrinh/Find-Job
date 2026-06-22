@@ -12,7 +12,8 @@ import { provideQuillConfig } from 'ngx-quill';
 import hljs from 'highlight.js';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { JwtModule } from '@auth0/angular-jwt';
-import { provideHotToastConfig } from '@ngxpert/hot-toast';
+import { provideToastr } from 'ngx-toastr';
+import { CustomToastComponent } from './shared/components/custom-toast/custom-toast.component';
 import { AuthService } from './core/services/auth.service';
 
 export function initializeApp(authService: AuthService) {
@@ -29,7 +30,14 @@ export const appConfig: ApplicationConfig = {
     ),
     importProvidersFrom(JwtModule.forRoot({})),
     provideNativeDateAdapter(),
-    provideHotToastConfig(),
+    provideToastr({
+      toastComponent: CustomToastComponent,
+      timeOut: 3000,
+      positionClass: 'toast-top-right',
+      preventDuplicates: true,
+      newestOnTop: true,
+      maxOpened: 4,
+    }),
     provideAppInitializer(() => {
       const authService = inject(AuthService);
       const platformId = inject(PLATFORM_ID);
@@ -62,7 +70,6 @@ export const appConfig: ApplicationConfig = {
           ['clean']                                         // xoá định dạng
         ]
       }
-    }), provideHotToastConfig(),
-
+    })
   ]
 };

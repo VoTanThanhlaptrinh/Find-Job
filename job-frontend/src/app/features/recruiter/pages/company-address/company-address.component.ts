@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, effect } from '@angular/core';
 import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
 import { AddAddressModalComponent, AddressFormData } from '../../components/add-address-modal/add-address-modal.component';
 import { RecruiterAddressService } from '../../services/recruiter-address.service';
@@ -35,27 +35,19 @@ export class CompanyAddressComponent implements OnInit {
   constructor(
     private readonly addressService: RecruiterAddressService,
     private readonly notifyService: NotifyMessageService
-  ) {}
+  ) {
+    effect(() => {
+      this.addresses = this.addressService.addresses$();
+      this.isLoading = this.addressService.isLoading$();
+    });
+  }
 
   ngOnInit(): void {
-    this.loadAddresses();
+    this.addressService.loadAddresses();
   }
 
   loadAddresses(): void {
-    this.isLoading = true;
-    this.addressService.getAddresses().subscribe({
-      next: (response) => {
-        if (response.status === 200) {
-          this.addresses = response.data;
-        }
-        this.isLoading = false;
-      },
-      error: (error) => {
-        this.notifyService.error('Không thể tải danh sách địa chỉ');
-        console.error(error);
-        this.isLoading = false;
-      }
-    });
+    this.addressService.loadAddresses();
   }
 
   toggleMenu(id: number): void {

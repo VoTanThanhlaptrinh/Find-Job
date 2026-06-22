@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
@@ -12,7 +12,25 @@ import { CompanyAddress } from '../pages/company-address/company-address.compone
 export class RecruiterAddressService {
   private readonly apiUrl = `${environment.apiBaseUrl}/addresses`;
 
+  readonly addresses$ = signal<CompanyAddress[]>([]);
+  readonly isLoading$ = signal<boolean>(false);
+
   constructor(private readonly http: HttpClient) {}
+
+  loadAddresses(): void {
+    this.isLoading$.set(true);
+    this.http.get<ApiResponse<CompanyAddress[]>>(this.apiUrl).subscribe({
+      next: (response) => {
+        if (response.status === 200 && response.data) {
+          this.addresses$.set(response.data);
+        }
+        this.isLoading$.set(false);
+      },
+      error: () => {
+        this.isLoading$.set(false);
+      }
+    });
+  }
 
   getAddresses(): Observable<ApiResponse<CompanyAddress[]>> {
     return this.http.get<ApiResponse<CompanyAddress[]>>(this.apiUrl);

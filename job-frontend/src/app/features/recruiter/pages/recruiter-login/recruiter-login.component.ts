@@ -28,12 +28,19 @@ export class RecruiterLoginComponent {
   });
 
   showPassword = false;
+  isSubmitting = false;
+  formError: string | null = null;
 
   togglePassword(): void {
     this.showPassword = !this.showPassword;
   }
 
   constructor() {
+    effect(() => {
+      this.isSubmitting = this.recruiterAuth.isSubmittingAuth$();
+      this.formError = this.recruiterAuth.authError$();
+    });
+
     const existingToken = this.tokenService.getToken();
 
     console.info('[RecruiterLogin] Initializing recruiter login page', {
@@ -78,13 +85,7 @@ export class RecruiterLoginComponent {
     return this.tokenService.hasAnyRole(['HIRER', 'ROLE_HIRER'], token);
   }
 
-  get isSubmitting(): boolean {
-    return this.recruiterAuth.isSubmittingAuth$();
-  }
 
-  get formError(): string | null {
-    return this.recruiterAuth.authError$();
-  }
 
   onSubmit(): void {
     if (this.form.invalid) {

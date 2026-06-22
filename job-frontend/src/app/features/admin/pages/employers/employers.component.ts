@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AdminEmployersService } from '../../services/admin-employers.service';
 import { AdminEmployerItem, AdminEmployerStatusAction } from '../../services/admin-api.models';
@@ -14,53 +14,44 @@ export class EmployersComponent implements OnInit {
   private readonly employersService = inject(AdminEmployersService);
   isExporting = false;
 
+  metrics: any = null;
+  employers: AdminEmployerItem[] = [];
+  selectedEmployer: any = null;
+  isLoadingMetrics = false;
+  isLoadingList = false;
+  currentPage = 1;
+  totalItems = 0;
+  pageSize = 10;
+  selectedKycStatus = '';
+  selectedAccountStatus = '';
+  totalPagesCount = 1;
+
+  constructor() {
+    effect(() => {
+      this.metrics = this.employersService.metrics();
+      this.employers = this.employersService.employers();
+      this.selectedEmployer = this.employersService.selectedEmployer();
+      this.isLoadingMetrics = this.employersService.isLoadingMetrics();
+      this.isLoadingList = this.employersService.isLoadingList();
+      this.totalItems = this.employersService.totalItems();
+      
+      const query = this.employersService.currentQuery();
+      this.currentPage = query.page ?? 1;
+      this.pageSize = query.pageSize ?? 10;
+      this.selectedKycStatus = query.kycStatus ?? '';
+      this.selectedAccountStatus = query.status ?? '';
+      
+      this.totalPagesCount = Math.max(Math.ceil(this.totalItems / this.pageSize), 1);
+    });
+  }
+
   ngOnInit(): void {
     this.employersService.loadMetrics();
     this.employersService.loadEmployers();
   }
 
-  get metrics() {
-    return this.employersService.metrics();
-  }
-
-  get employers() {
-    return this.employersService.employers();
-  }
-
-  get selectedEmployer() {
-    return this.employersService.selectedEmployer();
-  }
-
-  get isLoadingMetrics(): boolean {
-    return this.employersService.isLoadingMetrics();
-  }
-
-  get isLoadingList(): boolean {
-    return this.employersService.isLoadingList();
-  }
-
-  get currentPage(): number {
-    return this.employersService.currentQuery().page;
-  }
-
-  get totalItems(): number {
-    return this.employersService.totalItems();
-  }
-
-  get pageSize(): number {
-    return this.employersService.currentQuery().pageSize;
-  }
-
-  get selectedKycStatus(): string {
-    return this.employersService.currentQuery().kycStatus ?? '';
-  }
-
-  get selectedAccountStatus(): string {
-    return this.employersService.currentQuery().status ?? '';
-  }
-
   get totalPages(): number {
-    return Math.max(Math.ceil(this.totalItems / this.pageSize), 1);
+    return this.totalPagesCount;
   }
 
   onSearch(event: Event): void {

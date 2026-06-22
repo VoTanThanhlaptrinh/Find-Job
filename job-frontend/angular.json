@@ -25,7 +25,6 @@
               "src/assets"
             ],
             "styles": [
-              "@ngxpert/hot-toast/styles.css",
               "src/styles.css",
               "src/assets/web_css/css/bootstrap.css",
               "src/assets/web_css/css/linearicons.css",
@@ -115,7 +114,6 @@
               }
             ],
             "styles": [
-              "@ngxpert/hot-toast/styles.css",
               "src/styles.css"
             ],
             "scripts": []

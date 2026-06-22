@@ -39,9 +39,7 @@ export class ApplyCvComponent implements OnInit {
   isDragging = false;
   readonly maxFileSize = 5 * 1024 * 1024;
   readonly acceptedExtensions = '.pdf,.doc,.docx';
-  get previousCvOptions(): ResumeReviewInput[] {
-    return this.resumeService.resumes$() || [];
-  }
+  previousCvOptions: ResumeReviewInput[] = [];
 
   constructor(private router: Router,
     private route: ActivatedRoute,
@@ -61,11 +59,10 @@ export class ApplyCvComponent implements OnInit {
     this.updateExistingCvValidator('existing');
 
     effect(() => {
-      const resumes = this.resumeService.resumes$();
-      if (resumes && resumes.length > 0) {
-        // If current value is 0 (default/unselected), select the first available resume
+      this.previousCvOptions = this.resumeService.resumes$() || [];
+      if (this.previousCvOptions.length > 0) {
         if (this.applyCvForm.controls.existingCvId.value === 0) {
-          this.applyCvForm.controls.existingCvId.setValue(resumes[0].id);
+          this.applyCvForm.controls.existingCvId.setValue(this.previousCvOptions[0].id);
         }
       }
     });

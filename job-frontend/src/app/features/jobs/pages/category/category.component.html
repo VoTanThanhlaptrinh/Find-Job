@@ -77,7 +77,7 @@
       </div>
       <div class="col-lg-8 post-list">
         <div class="flex flex-col gap-y-2">
-          @if (isLoadingJobs()) {
+          @if (isLoadingJobs) {
           @for (skeleton of [1, 2, 3, 4, 5]; track skeleton) {
           <app-skeleton-job-card></app-skeleton-job-card>
           }

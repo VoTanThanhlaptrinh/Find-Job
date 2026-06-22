@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, effect } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
@@ -21,6 +21,12 @@ export class ChangePassComponent implements OnInit {
   private readonly i18n = inject(I18nService);
 
   requiresVerification = false;
+
+  constructor() {
+    effect(() => {
+      this.requiresVerification = !this.accountService.isOauth2$();
+    });
+  }
   showOldPass = signal(false);
   showNewPass = signal(false);
   showConfirmPass = signal(false);
@@ -32,11 +38,7 @@ export class ChangePassComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.accountService.checkOauth2().subscribe({
-      next: (res) => {
-        this.requiresVerification = !res;
-      }
-    });
+    this.accountService.checkOauth2();
   }
 
   isMatch(): boolean {

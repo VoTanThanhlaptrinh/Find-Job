@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, effect, inject, signal } from '@angular/core';
+import { Component, OnInit, effect, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { JobService } from '../../../jobs/services/job.service';
 import { JobDetailViewModel } from '../../../../shared/models/jobs/job-api-response.model';
@@ -19,10 +19,10 @@ export class RecruiterJobDetailComponent implements OnInit {
   private readonly jobService = inject(JobService);
   private readonly i18nService = inject(I18nService);
 
-  readonly isLoading = signal<boolean>(false);
-  readonly jobId = signal<string>('');
-  readonly loadError = signal<string | null>(null);
-  readonly jobDetail = signal<JobDetailViewModel>({
+  isLoading = false;
+  jobId = '';
+  loadError: string | null = null;
+  jobDetail: JobDetailViewModel = {
     id: '',
     title: '',
     address: '',
@@ -33,7 +33,7 @@ export class RecruiterJobDetailComponent implements OnInit {
     skill: '',
     expiredDate: '',
     headcount: 0
-  });
+  };
 
   constructor() {
     this.jobService.resetJobDetailState();
@@ -43,13 +43,13 @@ export class RecruiterJobDetailComponent implements OnInit {
       const hasError = this.jobService.jobDetailError$();
 
       if (jobDetail) {
-        this.jobDetail.set(jobDetail);
-        this.isLoading.set(false);
+        this.jobDetail = jobDetail;
+        this.isLoading = false;
       }
 
       if (hasError) {
-        this.loadError.set('Cannot load job detail right now.');
-        this.isLoading.set(false);
+        this.loadError = 'Cannot load job detail right now.';
+        this.isLoading = false;
       }
     });
   }
@@ -57,9 +57,9 @@ export class RecruiterJobDetailComponent implements OnInit {
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
       const id = params.get('id') ?? '';
-      this.jobId.set(id);
+      this.jobId = id;
       if (!id) {
-        this.loadError.set('Job id is missing.');
+        this.loadError = 'Job id is missing.';
         return;
       }
 
@@ -78,8 +78,8 @@ export class RecruiterJobDetailComponent implements OnInit {
   }
 
   private loadJobDetail(id: string): void {
-    this.isLoading.set(true);
-    this.loadError.set(null);
+    this.isLoading = true;
+    this.loadError = null;
 
     this.jobService.getDetailJob(id);
   }

@@ -46,6 +46,7 @@ export class PostJobComponent implements OnInit {
   });
 
   companyAddresses: CompanyAddress[] = [];
+  isSubmitting = false;
 
   constructor(
     private readonly recruiterJobsService: RecruiterJobsService,
@@ -53,6 +54,7 @@ export class PostJobComponent implements OnInit {
     private readonly addressService: RecruiterAddressService
   ) {
     effect(() => {
+      this.isSubmitting = this.recruiterJobsService.isSubmittingJob$();
       const actionTick = this.recruiterJobsService.actionTick$();
       const actionType = this.recruiterJobsService.lastActionType$();
       if (actionTick === 0 || actionType !== 'create') {
@@ -126,9 +128,7 @@ export class PostJobComponent implements OnInit {
     return this.postJobFG.controls;
   }
 
-  get isSubmitting(): boolean {
-    return this.recruiterJobsService.isSubmittingJob$();
-  }
+
 }
 export function minDatePlusOne(control: AbstractControl): ValidationErrors | null {
   const value = control.value;

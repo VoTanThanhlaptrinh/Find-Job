@@ -1,9 +1,7 @@
 <section class="banner-area relative" id="home">
   <div class="overlay overlay-bg"></div>
   <div class="container">
-    <div
-      class="row search-page-top d-flex align-items-center justify-content-center"
-    >
+    <div class="row search-page-top d-flex align-items-center justify-content-center">
       <div class="banner-content col-lg-12">
         <h1 class="text-white">
           <span>1500+</span> {{ 'home.hero.jobsPosted' | t }}
@@ -140,29 +138,22 @@
 
         <!-- Nếu có công việc -->
         @if (isLoading) {
-          <div class="flex flex-col gap-y-2 items-center w-full">
-            @for (skeleton of [1, 2, 3, 4, 5]; track skeleton) {
-              <app-skeleton-job-card></app-skeleton-job-card>
-            }
-          </div>
+        <div class="flex flex-col gap-y-2 items-center w-full">
+          @for (skeleton of [1, 2, 3, 4, 5]; track skeleton) {
+          <app-skeleton-job-card></app-skeleton-job-card>
+          }
+        </div>
         } @else if (jobPosts.length > 0) {
-          <div class="flex flex-col gap-y-2 items-center w-full">
-            @for (item of jobPosts; track trackById($index, item)) {
-              <app-job-card
-                [job]="item"
-                image="assets/web_css/img/post.png"
-                detailRoute="/single"
-              />
-            }
-          </div>
+        <div class="flex flex-col gap-y-2 items-center w-full">
+          @for (item of jobPosts; track trackById($index, item)) {
+          <app-job-card [job]="item" image="assets/web_css/img/post.png" detailRoute="/single" />
+          }
+        </div>
         } @else {
-          <div class="alert alert-info text-center">{{ 'home.emptyJobs' | t }}</div>
+        <div class="alert alert-info text-center">{{ 'home.emptyJobs' | t }}</div>
         }
 
-        <a
-          [routerLink]="['/category']"
-          class="text-uppercase loadmore-btn mx-auto d-block mt-4"
-        >
+        <a [routerLink]="['/category']" class="text-uppercase loadmore-btn mx-auto d-block mt-4">
           {{ 'home.loadMoreJobs' | t }}
         </a>
       </div>
@@ -218,10 +209,7 @@
         <div class="single-slidebar">
           <h4>{{ 'home.recentPosts' | t }}</h4>
           <div class="blog-list">
-            <div
-              class="single-blog"
-              style="background: #000 url(assets/web_css/img/blog1.jpg)"
-            >
+            <div class="single-blog" style="background: #000 url(assets/web_css/img/blog1.jpg)">
               <a href="/blogHome/blogSingle/3">
                 <h4>How to Write a Standout Resume</h4>
               </a>
@@ -235,10 +223,7 @@
                 </p>
               </div>
             </div>
-            <div
-              class="single-blog"
-              style="background: #000 url(assets/web_css/img/blog1.jpg)"
-            >
+            <div class="single-blog" style="background: #000 url(assets/web_css/img/blog1.jpg)">
               <a href="/blogHome/blogSingle/1">
                 <h4>5 Essential Job Search Tips</h4>
               </a>
@@ -252,10 +237,7 @@
                 </p>
               </div>
             </div>
-            <div
-              class="single-blog"
-              style="background: #000 url(assets/web_css/img/blog1.jpg)"
-            >
+            <div class="single-blog" style="background: #000 url(assets/web_css/img/blog1.jpg)">
               <a href="/blogHome/blogSingle/2">
                 <h4>Top Career Trends in 2024</h4>
               </a>

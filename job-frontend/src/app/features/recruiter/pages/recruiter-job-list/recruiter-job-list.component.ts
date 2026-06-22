@@ -20,6 +20,11 @@ export class RecruiterJobListComponent {
   private readonly pageSize = signal(5);
   readonly pageSizeOptions = [5, 10, 20, 50];
 
+  jobs: RecruiterJobViewModel[] = [];
+  isLoading = false;
+  totalPostedJobs = 0;
+  totalPagesCount = 1;
+
   constructor(
     private readonly recruiterJobsService: RecruiterJobsService,
     private readonly notify: NotifyMessageService,
@@ -30,6 +35,11 @@ export class RecruiterJobListComponent {
       const currentPageSize = this.pageSize();
       this.recruiterJobsService.loadPostedJobs(currentPageIndex, currentPageSize);
       this.recruiterJobsService.loadPostedJobCount();
+
+      this.jobs = this.recruiterJobsService.postedJobs$();
+      this.isLoading = this.recruiterJobsService.isLoadingPostedJobs$();
+      this.totalPostedJobs = this.recruiterJobsService.postedJobsTotalCount$();
+      this.totalPagesCount = Math.max(this.recruiterJobsService.postedJobsTotalPages$(), 1);
     });
 
     effect(() => {
@@ -53,24 +63,12 @@ export class RecruiterJobListComponent {
     });
   }
 
-  get jobs(): RecruiterJobViewModel[] {
-    return this.recruiterJobsService.postedJobs$();
-  }
-
-  get isLoading(): boolean {
-    return this.recruiterJobsService.isLoadingPostedJobs$();
-  }
-
-  get totalPostedJobs(): number {
-    return this.recruiterJobsService.postedJobsTotalCount$();
-  }
-
   get currentPage(): number {
     return this.pageIndex() + 1;
   }
 
   get totalPages(): number {
-    return Math.max(this.recruiterJobsService.postedJobsTotalPages$(), 1);
+    return this.totalPagesCount;
   }
 
   get currentPageSize(): number {
@@ -96,7 +94,7 @@ export class RecruiterJobListComponent {
   }
 
   get canGoNext(): boolean {
-    return this.pageIndex() + 1 < Math.max(this.recruiterJobsService.postedJobsTotalPages$(), 1);
+    return this.pageIndex() + 1 < this.totalPagesCount;
   }
 
   goPrevPage(): void {

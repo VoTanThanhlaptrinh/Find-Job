@@ -56,6 +56,8 @@ export class CategoryComponent implements OnInit, AfterViewInit {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly scrollToTopThreshold = 24;
   title: string = '';
+  isLoadingJobs = false;
+
   constructor(
     private category: CategoryService,
     private filterService: FilterService,
@@ -65,6 +67,7 @@ export class CategoryComponent implements OnInit, AfterViewInit {
       this.addressCount = this.filterService.addressCount();
       this.jobs = this.filterService.jobs();
       this.categories = this.category.categories();
+      this.isLoadingJobs = this.filterService.isLoadingJobs();
 
       const total = this.filterService.totalJobs();
       this.length = total !== null ? total : 0;
@@ -190,9 +193,7 @@ export class CategoryComponent implements OnInit, AfterViewInit {
   private searchWithFilters(filter: JobFilterPayload): void {
     this.filterService.filterWithAddressTimeSalary(filter);
   }
-  isLoadingJobs() {
-    return this.filterService.isLoadingJobs();
-  }
+
 
   onTitleChange(value: string) {
     this.searchSubject.next(value);
