@@ -85,12 +85,13 @@ class PublicJobControllerTest {
                     2000,
                     List.of("Ho Chi Minh"),
                     List.of(EmploymentType.FULL_TIME),
-                    "Java"
+                    "Java",
+                    List.of(1L)
             );
             when(jobQueryService.findJobsBySalaryAddressAndEmploymentTypes(
                     eq(0), eq(10), eq(1000), eq(2000),
-                    eq(List.of("Ho Chi Minh")), eq(List.of(EmploymentType.FULL_TIME)), eq("Java")
-            )).thenReturn(Page.empty());
+                    eq(List.of("Ho Chi Minh")), eq(List.of(EmploymentType.FULL_TIME)), eq("Java"),
+                    eq(List.of(1L)))).thenReturn(Page.empty());
 
             mockMvc.perform(post(BASE_URL + "/filter")
                             .contentType(MediaType.APPLICATION_JSON)

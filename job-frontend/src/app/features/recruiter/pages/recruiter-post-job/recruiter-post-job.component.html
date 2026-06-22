@@ -35,6 +35,46 @@
               <option value="REMOTE">{{ 'recruiterPostJob.jobTypeOptions.remote' | t }}</option>
             </select>
           </div>
+          <div class="relative">
+            <label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">
+              Danh mục (Category)
+            </label>
+            <div class="relative">
+              <input type="text" 
+                     class="w-full bg-re-surface-container-low/50 border-none rounded-xl px-4 py-3.5 focus:ring-2 focus:ring-re-primary/20 text-re-on-surface transition-all cursor-text"
+                     [class.ring-2]="postJobFG.get('categoryId')?.invalid && postJobFG.get('categoryId')?.touched"
+                     [class.ring-red-500]="postJobFG.get('categoryId')?.invalid && postJobFG.get('categoryId')?.touched"
+                     [placeholder]="selectedCategoryName() || 'Nhập để tìm danh mục...'"
+                     [value]="selectedCategoryName() ? '' : categorySearchTerm()"
+                     (input)="onCategorySearch($event)"
+                     (focus)="isCategoryDropdownOpen.set(true)"
+                     (blur)="closeCategoryDropdown()" />
+                     
+              <span class="material-symbols-outlined absolute right-4 top-3.5 text-slate-400 pointer-events-none transition-transform"
+                    [class.rotate-180]="isCategoryDropdownOpen()">
+                expand_more
+              </span>
+
+              @if (isCategoryDropdownOpen()) {
+              <ul class="absolute z-20 w-full mt-2 bg-white border border-slate-100 rounded-xl shadow-xl shadow-blue-900/10 max-h-60 overflow-y-auto left-0 overflow-x-hidden">
+                @for (cat of filteredCategories(); track cat.id) {
+                <li class="px-4 py-3 hover:bg-slate-50 cursor-pointer text-slate-700 text-sm font-medium border-b border-slate-50 last:border-0 transition-colors flex items-center justify-between"
+                    (mousedown)="selectCategory(cat)">
+                  <span>{{ cat.name }}</span>
+                  @if (postJobFG.get('categoryId')?.value === cat.id) {
+                    <span class="material-symbols-outlined text-re-primary text-sm">check</span>
+                  }
+                </li>
+                }
+                @if (filteredCategories().length === 0) {
+                <li class="px-4 py-3 text-slate-500 text-sm italic text-center">
+                  Không tìm thấy danh mục
+                </li>
+                }
+              </ul>
+              }
+            </div>
+          </div>
           <div>
             <label class="block text-xs font-label font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">
               {{ 'recruiterPostJob.salary' | t }}

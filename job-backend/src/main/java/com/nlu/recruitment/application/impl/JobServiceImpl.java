@@ -4,6 +4,7 @@ import com.nlu.recruitment.domain.repository.AddressRepository;
 import com.nlu.recruitment.domain.vo.EmploymentType;
 import com.nlu.recruitment.domain.repository.RecruitmentRepository;
 import com.nlu.recruitment.domain.repository.JobRepository;
+import com.nlu.recruitment.domain.repository.CategoryRepository;
 import com.nlu.recruitment.api.dto.JobMatchView;
 import com.nlu.recruitment.api.dto.JobDto;
 import com.nlu.recruitment.api.dto.JobDetailView;
@@ -23,6 +24,7 @@ import com.nlu.recruitment.mapper.JobMapper;
 import com.nlu.recruitment.domain.model.Address;
 import com.nlu.recruitment.domain.model.Recruitment;
 import com.nlu.recruitment.domain.model.Job;
+import com.nlu.recruitment.domain.model.Category;
 import com.nlu.identity.domain.model.User;
 import com.nlu.recruitment.application.JobService;
 import jakarta.persistence.Tuple;
@@ -42,6 +44,7 @@ public class JobServiceImpl implements JobService {
     private final JobRepository jobRepository;
     private final RecruitmentRepository recruitmentRepository;
     private final AddressRepository addressRepository;
+    private final CategoryRepository categoryRepository;
     private final DefaultRepositoryTagsProvider repositoryTagsProvider;
     private final JobMapper jobMapper;
     private static final String MDC_USER_ID = "userId";
@@ -83,9 +86,13 @@ public class JobServiceImpl implements JobService {
                 throw new ForbiddenException("job.address.forbidden");
             }
 
+            Category category = categoryRepository.findById(jobDTO.getCategoryId())
+                    .orElseThrow(() -> new ResourceNotFoundException("category.not_found"));
+
             Job job = jobMapper.toJob(jobDTO);
             job.setAddress(address);
             job.setRecruitment(recruitment);
+            job.setCategory(category);
             jobRepository.save(job);
 
             MDC.put(MDC_JOB_ID, String.valueOf(job.getId()));
@@ -141,9 +148,13 @@ public class JobServiceImpl implements JobService {
                 throw new ForbiddenException("job.address.forbidden");
             }
 
+            Category category = categoryRepository.findById(jobDTO.getCategoryId())
+                    .orElseThrow(() -> new ResourceNotFoundException("category.not_found"));
+
             jobMapper.updateJob(jobDTO,job);
             job.setAddress(address);
             job.setRecruitment(recruitment);
+            job.setCategory(category);
             jobRepository.save(job);
 
             log.info("Job post updated — job: {}, title: {}", id, job.getTitle());

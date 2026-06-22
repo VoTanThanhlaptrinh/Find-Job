@@ -136,7 +136,7 @@ public class MasterDataSeeder implements CommandLineRunner {
             log.info("✅ Đã lưu {} công việc vào database.", jobEntities.size());
 
             // Vectorize tất cả các JD đã lưu
-//            vectorizeJobs(jobEntities);
+            vectorizeJobs(jobEntities);
         }
         log.info("✅ Hoàn tất khởi tạo Master Data.");
     }
