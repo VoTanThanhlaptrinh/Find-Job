@@ -22,7 +22,7 @@ const cspHeader = [
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com",
   "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:",
   "img-src 'self' data: blob: https:",
-  "connect-src 'self' http://localhost:8080 https://your-backend-domain.com",
+  "connect-src 'self' http://localhost:8080 https://find-job-ctkj.onrender.com",
   "frame-src 'self' https://accounts.google.com",
   "frame-ancestors 'self'",
   "worker-src 'self' blob:",
