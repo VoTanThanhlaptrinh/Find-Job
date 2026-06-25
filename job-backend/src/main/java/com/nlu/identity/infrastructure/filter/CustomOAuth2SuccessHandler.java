@@ -35,6 +35,8 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
     private final RefreshTokenService refreshTokenService;
     @Value("${app.cookie.secure}")
     private boolean isSecure;
+    @Value("${app.frontend-url}")
+    private String frontendUrl;
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         OAuth2AuthenticationToken authenticationToken = (OAuth2AuthenticationToken) authentication;
@@ -67,7 +69,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         response.setContentType("text/html");
         response.getWriter().write(
                 "<html><head>"
-                        + "<script>window.location.href='http://localhost:4200/login-callback?token=" + token + "';</script>"
+                        + "<script>window.location.href='" + frontendUrl + "/login-callback?token=" + token + "';</script>"
                         + "</head><body>"
                         + "Redirecting..."
                         + "</body></html>"
