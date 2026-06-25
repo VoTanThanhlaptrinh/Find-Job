@@ -1,4 +1,4 @@
-package com.nlu.identity.infrastructure;
+package com.nlu.identity.infrastructure.config;
 
 import java.util.List;
 
@@ -82,7 +82,7 @@ public class SecurityConfig {
 
         config.setAllowedOrigins(List.of("""
                 http://localhost:4200""", """
-                https://findjob-xi.vercel.app"""));
+                https://find-job-frontend.vercel.app"""));
         config.setAllowCredentials(true);
         config.setAllowedMethods(List.of("GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"));
         config.setAllowedHeaders(List.of("Content-Type", "Authorization", "X-Correlation-ID", "Cache-Control",
