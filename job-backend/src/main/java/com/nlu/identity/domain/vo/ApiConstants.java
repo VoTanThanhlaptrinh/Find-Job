@@ -17,7 +17,9 @@ public class ApiConstants {
     // 2. Các API Public nhưng chỉ cho phép method GET
     public static final String[] PUBLIC_GET_ENDPOINTS = {
             "/api/jobs/**",
-            "/api/blogs/**"
+            "/api/blogs/**",
+            "/api/*/categories/**",
+            "/api/addresses/address-count"
     };
 
     // 3. Các API yêu cầu đăng nhập (bất kỳ role nào)

@@ -3,6 +3,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { effect } from '@angular/core';
 import { take } from 'rxjs';
 import { UserService } from '../../../core/services/user.service';
 import { NotifyMessageService } from '../../../core/services/notify-message.service';
@@ -51,25 +52,23 @@ export class ProfileComponent implements OnInit {
     mobile: ''
   };
 
-  ngOnInit(): void {
-    this.getDetails();
-  }
-
-  getDetails(): void {
-    this.userService.getDetails().pipe(take(1)).subscribe({
-      next: (res) => {
-        this.user = res.data;
+  constructor() {
+    effect(() => {
+      const userDetails = this.userService.userDetails();
+      if (userDetails) {
+        this.user = userDetails;
         this.formGroup.patchValue({
           fullName: this.user.fullName,
           address: this.user.address,
           mobile: this.user.mobile,
           dateOfBirth: this.user.dateOfBirth ? new Date(this.user.dateOfBirth) : null
         });
-      },
-      error: () => {
-        this.toastr.showMessage(this.i18n.translate('profile.error'), '', 'error');
       }
     });
+  }
+
+  ngOnInit(): void {
+    this.userService.getDetails();
   }
 
   onSubmit(): void {

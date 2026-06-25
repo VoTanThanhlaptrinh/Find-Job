@@ -29,7 +29,7 @@
     <div role="main" class="p-8 space-y-6">
       <!-- Dropzone Area -->
       <label
-        class="group relative flex flex-col items-center justify-center w-full min-h-[200px] border-2 border-dashed border-slate-200 bg-slate-50/50 rounded-xl cursor-pointer hover:border-blue-400 hover:bg-blue-50/30 transition-all duration-200"
+        class="group relative flex flex-col items-center justify-center w-full min-h-[120px] border-2 border-dashed border-slate-200 bg-slate-50/50 rounded-xl cursor-pointer hover:border-blue-400 hover:bg-blue-50/30 transition-all duration-200"
       >
         <input
           #cvUploadInput
@@ -38,11 +38,11 @@
           type="file"
           (change)="onFileInputChange($event)"
         />
-        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+        <div class="flex flex-col items-center justify-center pt-4 pb-4">
           <div
-            class="w-14 h-14 bg-white border border-slate-200 rounded-2xl flex items-center justify-center text-blue-600 mb-4 shadow-sm group-hover:scale-105 transition-transform duration-200"
+            class="w-10 h-10 bg-white border border-slate-200 rounded-2xl flex items-center justify-center text-blue-600 mb-2 shadow-sm group-hover:scale-105 transition-transform duration-200"
           >
-            <span class="material-symbols-outlined text-3xl">cloud_upload</span>
+            <span class="material-symbols-outlined text-2xl">cloud_upload</span>
           </div>
           <p class="mb-1 text-sm font-semibold text-slate-700">{{ 'cvUploadModal.dropzoneText' | t }}</p>
           <p class="text-xs text-slate-500">{{ 'cvUploadModal.dropzoneSubtext' | t }}</p>

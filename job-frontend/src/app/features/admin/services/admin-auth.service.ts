@@ -46,7 +46,7 @@ export class AdminAuthService {
 login(payload: AdminLoginPayload): Observable<void> {
   this._isLoggingIn.set(true);
   return this.http
-    .post<ApiResponse<AdminLoginData>>(`${this.url}/auth/admin/login`, payload, {
+    .post<ApiResponse<string>>(`${this.url}/auth/admin/login`, payload, {
       withCredentials: true,
     })
     .pipe(
@@ -70,8 +70,8 @@ login(payload: AdminLoginPayload): Observable<void> {
     this.authService.logout();
   }
 
-  private persistSession(data: AdminLoginData): void {
-    this.tokenService.setToken(data.accessToken);
+  private persistSession(token: string): void {
+    this.tokenService.setToken(token);
   }
 
   private clearAdminSession(): void {

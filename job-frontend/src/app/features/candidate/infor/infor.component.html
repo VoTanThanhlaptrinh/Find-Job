@@ -38,7 +38,7 @@
 
     <!-- Footer Tab: Logout -->
     <div class="mt-auto border-t border-slate-100" [ngClass]="isOpen ? 'px-3' : 'px-2'">
-      <a href="javascript:void(0)"
+      <a (click) = "onLogout()"
         class="flex min-w-0 items-center rounded-md transition-all duration-200 text-slate-600 hover:bg-red-50 hover:text-red-600 group"
         [ngClass]="
           isOpen ? 'justify-start gap-3 px-3' : 'justify-center gap-0 px-0'

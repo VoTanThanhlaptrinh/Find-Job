@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { computed, Injectable, signal } from '@angular/core';
-import { finalize, Observable, take } from 'rxjs';
+import { finalize, Observable, take, tap } from 'rxjs';
 import { UtilitiesService } from '../../../core/services/utilities.service';
 import {
   ApplyCvWithExistingRequest,
@@ -11,12 +11,16 @@ import {
 import {
   HirerJobCountApiResponse,
   HirerJobListApiResponse,
+  JobAddressCountApiResponse,
+  JobCountApiResponse,
   JobDetailApiResponse,
   JobExistsApiResponse,
   JobFilterPayload,
   JobListApiResponse,
   JobSubmitApiResponse,
   JobDetailViewModel,
+  AddressCountViewModel,
+  PagedPayload,
 } from '../../../shared/models/jobs/job-api-response.model';
 import { JobCardModel } from '../../../shared/models/jobs/job-card.model';
 import { JobMatchView } from '../../../shared/models/jobs/job-match-view.model';
@@ -243,10 +247,6 @@ export class JobService {
       `${this.url}/hirer/jobs/posted/count`,
       { withCredentials: true }
     ).pipe(take(1));
-  }
-
-  filterWithAddressTimeSalary(filter: JobFilterPayload): Observable<JobListApiResponse> {
-    return this.http.post<JobListApiResponse>(`${this.url}/jobs/filter`, filter).pipe(take(1));
   }
 
   listJobUserApplied(pageIndex: number, pageSize: number): Observable<JobListApiResponse> {

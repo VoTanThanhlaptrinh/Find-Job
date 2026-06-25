@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { take } from 'rxjs';
 import { AdminBillingService } from '../../services/admin-billing.service';
@@ -13,46 +13,36 @@ import { AdminBillingTier, AdminBillingTransactionItem } from '../../services/ad
 export class BillingComponent implements OnInit {
   private readonly billingService = inject(AdminBillingService);
 
+  summary: any = null;
+  tiers: AdminBillingTier[] = [];
+  transactions: AdminBillingTransactionItem[] = [];
+  totalTransactions = 0;
+  isLoadingSummary = false;
+  isLoadingTiers = false;
+  isLoadingTransactions = false;
+  updatingTierId: string | null = null;
+  selectedTransactionStatus = '';
+
+  constructor() {
+    effect(() => {
+      this.summary = this.billingService.summary();
+      this.tiers = this.billingService.tiers();
+      this.transactions = this.billingService.transactions();
+      this.totalTransactions = this.billingService.totalTransactions();
+      this.isLoadingSummary = this.billingService.isLoadingSummary();
+      this.isLoadingTiers = this.billingService.isLoadingTiers();
+      this.isLoadingTransactions = this.billingService.isLoadingTransactions();
+      this.updatingTierId = this.billingService.updatingTierId();
+      
+      const query = this.billingService.transactionsQuery();
+      this.selectedTransactionStatus = query.status ?? '';
+    });
+  }
+
   ngOnInit(): void {
     this.billingService.loadSummary();
     this.billingService.loadTiers();
     this.billingService.loadTransactions();
-  }
-
-  get summary() {
-    return this.billingService.summary();
-  }
-
-  get tiers() {
-    return this.billingService.tiers();
-  }
-
-  get transactions() {
-    return this.billingService.transactions();
-  }
-
-  get totalTransactions(): number {
-    return this.billingService.totalTransactions();
-  }
-
-  get isLoadingSummary(): boolean {
-    return this.billingService.isLoadingSummary();
-  }
-
-  get isLoadingTiers(): boolean {
-    return this.billingService.isLoadingTiers();
-  }
-
-  get isLoadingTransactions(): boolean {
-    return this.billingService.isLoadingTransactions();
-  }
-
-  get updatingTierId(): string | null {
-    return this.billingService.updatingTierId();
-  }
-
-  get selectedTransactionStatus(): string {
-    return this.billingService.transactionsQuery().status ?? '';
   }
 
   onTransactionsStatusChange(event: Event): void {

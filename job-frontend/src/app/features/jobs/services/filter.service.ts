@@ -19,20 +19,22 @@ const DEFAULT_JOB_FILTER: JobFilterPayload = {
   address: [],
   times: [],
   title: '',
+  categoryIds: [],
 };
 
 @Injectable({
   providedIn: 'root',
 })
-export class CategoryService {
+export class FilterService {
   private static readonly MIN_LOADING_MS = 1000;
-
   private url: string;
+
   private jobData = signal<JobCardModel[]>([]);
   private addressData = signal<AddressCountViewModel[]>([]);
   private totalJobData = signal<number | null>(null);
   private loadingJobs = signal(false);
   private filterPayload = signal<JobFilterPayload>({ ...DEFAULT_JOB_FILTER });
+  
   private activeJobRequests = 0;
   private loadingStartAt = 0;
   private hideLoadingTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -70,6 +72,7 @@ export class CategoryService {
       address: Array.isArray(filter.address) ? [...filter.address] : [],
       times: Array.isArray(filter.times) ? [...filter.times] : [],
       title: (filter.title ?? '').trim(),
+      categoryIds: Array.isArray(filter.categoryIds) ? [...filter.categoryIds] : [],
     };
   }
 
@@ -97,7 +100,7 @@ export class CategoryService {
     }
 
     const elapsed = Date.now() - this.loadingStartAt;
-    const remaining = Math.max(0, CategoryService.MIN_LOADING_MS - elapsed);
+    const remaining = Math.max(0, FilterService.MIN_LOADING_MS - elapsed);
 
     if (remaining === 0) {
       this.loadingJobs.set(false);

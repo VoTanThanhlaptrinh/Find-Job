@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/admin/billing", produces = "application/json")
+@RequestMapping(path = "/api/admin/billing", produces = "application/json")
 @RequiredArgsConstructor
 public class AdminBillingController {
     private final AdminService adminService;

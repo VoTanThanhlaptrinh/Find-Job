@@ -37,6 +37,15 @@ export class CandidateListComponent {
 
   readonly jobDetail = signal<JobDetailViewModel | null>(null);
 
+  candidates: RecruiterCandidateViewModel[] = [];
+  resumes: any[] = [];
+  totalCandidates = 0;
+  totalPagesCount = 1;
+  isLoadingCandidates = false;
+  isLoadingResumes = false;
+  interviewingCount = 0;
+  newThisWeekCount = 0;
+
   constructor(
     private readonly recruiterAccountService: RecruiterAccountService,
     private readonly recruiterResumeService: RecruiterResumeService,
@@ -44,6 +53,16 @@ export class CandidateListComponent {
     private readonly notify: NotifyMessageService,
     private readonly i18nService: I18nService
   ) {
+    effect(() => {
+      this.candidates = this.recruiterAccountService.candidates$();
+      this.resumes = this.recruiterResumeService.candidateResumes$();
+      this.totalCandidates = this.recruiterAccountService.candidatesTotal$();
+      this.totalPagesCount = Math.max(this.recruiterAccountService.candidatesTotalPages$(), 1);
+      this.isLoadingCandidates = this.recruiterAccountService.isLoadingCandidates$();
+      this.isLoadingResumes = this.recruiterResumeService.isLoadingCandidateResumes$();
+      this.interviewingCount = this.candidates.filter((candidate) => candidate.status === 'interviewing').length;
+      this.newThisWeekCount = this.candidates.filter((candidate) => candidate.status === 'new').length;
+    });
     effect(() => {
       const params = this.paramMap();
       const jobIdStr = params.get('jobId');
@@ -76,26 +95,12 @@ export class CandidateListComponent {
     });
   }
 
-  get candidates(): RecruiterCandidateViewModel[] {
-    return this.recruiterAccountService.candidates$();
-  }
-
-
-
-  get resumes() {
-    return this.recruiterResumeService.candidateResumes$();
-  }
-
-  get totalCandidates(): number {
-    return this.recruiterAccountService.candidatesTotal$();
+  get totalPages(): number {
+    return this.totalPagesCount;
   }
 
   get currentPage(): number {
     return this.pageIndex() + 1;
-  }
-
-  get totalPages(): number {
-    return Math.max(this.recruiterAccountService.candidatesTotalPages$(), 1);
   }
 
   get canGoPrev(): boolean {
@@ -103,23 +108,7 @@ export class CandidateListComponent {
   }
 
   get canGoNext(): boolean {
-    return this.pageIndex() + 1 < Math.max(this.recruiterAccountService.candidatesTotalPages$(), 1);
-  }
-
-  get isLoadingCandidates(): boolean {
-    return this.recruiterAccountService.isLoadingCandidates$();
-  }
-
-  get isLoadingResumes(): boolean {
-    return this.recruiterResumeService.isLoadingCandidateResumes$();
-  }
-
-  get interviewingCount(): number {
-    return this.candidates.filter((candidate) => candidate.status === 'interviewing').length;
-  }
-
-  get newThisWeekCount(): number {
-    return this.candidates.filter((candidate) => candidate.status === 'new').length;
+    return this.pageIndex() + 1 < this.totalPagesCount;
   }
 
   trackByCandidate(index: number, candidate: RecruiterCandidateViewModel): string {

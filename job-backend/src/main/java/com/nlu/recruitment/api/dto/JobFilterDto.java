@@ -11,7 +11,8 @@ public record JobFilterDto(
         int max,
         List<String> address,
         List<EmploymentType> times,
-        String title
+        String title,
+        List<Long> categoryIds
 ) {
     public int getPageIndex() {
         return pageIndex;
@@ -37,4 +38,5 @@ public record JobFilterDto(
         return times;
     }
     public String getTitle(){ return title;}
+    public List<Long> getCategoryIds() { return categoryIds; }
 }

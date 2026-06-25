@@ -43,7 +43,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 		try {
 			String jti = jwtService.extractJTI(token);
 			String familyId = jwtService.extractFamily(token);
-			boolean valid = familyId != null && jwtFamilyService.getFamilyJti(familyId).equals(jti);
+			String familyJTI = jwtFamilyService.getFamilyJti(familyId);
+			boolean valid = familyId != null && familyJTI != null && familyJTI.equals(jti);
 			if (!valid) {
 				log.warn("Refresh token JTI mismatch — possible token reuse detected");
 			}

@@ -55,7 +55,8 @@ public class PublicJobController {
                 jobFilterDTO.getMax(),
                 jobFilterDTO.getAddress(),
                 jobFilterDTO.getTimes(),
-                jobFilterDTO.getTitle());
+                jobFilterDTO.getTitle(),
+                jobFilterDTO.getCategoryIds());
         return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("message.success"), data, HttpStatus.OK.value()));
     }
 

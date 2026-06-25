@@ -19,4 +19,5 @@ public class JobJsonDto implements Serializable {
     private Long addressId;
     private Long hirerId;
     private Long imageId;
+    private Integer category;
 }

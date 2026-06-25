@@ -1,6 +1,6 @@
 <form class="serach-form-area" (ngSubmit)="onSubmit()">
     <div class="row justify-content-center form-wrap">
-      <div class="col-lg-6 form-cols">
+      <div class="col-lg-4 form-cols">
         <label for="search-title" class="sr-only">{{ 'searchForm.jobPlaceholder' | t }}</label>
         <input
           id="search-title"
@@ -13,7 +13,24 @@
           [attr.title]="'searchForm.jobPlaceholder' | t"
         />
       </div>
-      <div class="col-lg-4 form-cols ">
+      <div class="col-lg-3 form-cols">
+        <div class="default-select" id="default-selects-category">
+          <label for="search-category" class="sr-only">Danh mục</label>
+          <select
+            id="search-category"
+            title="category"
+            class="form-control"
+            name="category"
+            [(ngModel)]="selectedCategory"
+          >
+            <option value="">Chọn danh mục</option>
+            @for (item of categories(); track item.id) {
+              <option [value]="item.id">{{ item.name }}</option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="col-lg-3 form-cols ">
         <div class="default-select" id="default-selects">
           <label for="search-area" class="sr-only">{{ 'searchForm.area' | t }}</label>
           <select
@@ -31,7 +48,7 @@
         </div>
       </div>
       <div class="col-lg-2 form-cols">
-        <button type="submit" class="btn btn-info">
+        <button type="submit" class="btn btn-info" [disabled]="isSearchDisabled">
           <span class="lnr lnr-magnifier"></span> {{ 'searchForm.search' | t }}
         </button>
       </div>

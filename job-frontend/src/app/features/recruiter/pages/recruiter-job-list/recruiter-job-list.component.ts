@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, signal } from '@angular/core';
+import { Component, effect, signal, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { RecruiterJobsService, RecruiterJobViewModel } from '../../services/recruiter-jobs.service';
 import { NotifyMessageService } from '../../../../core/services/notify-message.service';
@@ -20,6 +20,13 @@ export class RecruiterJobListComponent {
   private readonly pageSize = signal(5);
   readonly pageSizeOptions = [5, 10, 20, 50];
 
+  readonly jobs = computed(() => this.recruiterJobsService.postedJobs$());
+  readonly isLoading = computed(() => this.recruiterJobsService.isLoadingPostedJobs$());
+  readonly totalPostedJobs = computed(() => this.recruiterJobsService.postedJobsTotalCount$());
+  readonly totalPagesCount = computed(() => Math.max(this.recruiterJobsService.postedJobsTotalPages$(), 1));
+
+  private lastActionTick = 0;
+
   constructor(
     private readonly recruiterJobsService: RecruiterJobsService,
     private readonly notify: NotifyMessageService,
@@ -28,41 +35,26 @@ export class RecruiterJobListComponent {
     effect(() => {
       const currentPageIndex = this.pageIndex();
       const currentPageSize = this.pageSize();
+      const actionTick = this.recruiterJobsService.actionTick$();
+      const actionType = this.recruiterJobsService.lastActionType$();
+
+      if (actionTick > 0 && actionTick !== this.lastActionTick) {
+        this.lastActionTick = actionTick;
+        if (actionType === 'delete') {
+          const isSuccess = this.recruiterJobsService.lastActionSuccess$();
+          const message = this.recruiterJobsService.lastActionMessage$();
+
+          if (isSuccess) {
+            this.notify.success(message || this.i18nService.translate('recruiterJobList.notifications.deleteSuccess'));
+          } else {
+            this.notify.error(message || this.i18nService.translate('recruiterJobList.notifications.deleteFailed'));
+          }
+        }
+      }
+
       this.recruiterJobsService.loadPostedJobs(currentPageIndex, currentPageSize);
       this.recruiterJobsService.loadPostedJobCount();
     });
-
-    effect(() => {
-      const actionTick = this.recruiterJobsService.actionTick$();
-      const actionType = this.recruiterJobsService.lastActionType$();
-      if (actionTick === 0 || actionType !== 'delete') {
-        return;
-      }
-
-      const isSuccess = this.recruiterJobsService.lastActionSuccess$();
-      const message = this.recruiterJobsService.lastActionMessage$();
-
-      if (isSuccess) {
-        this.notify.success(message || this.i18nService.translate('recruiterJobList.notifications.deleteSuccess'));
-        this.recruiterJobsService.loadPostedJobs(this.pageIndex(), this.pageSize());
-        this.recruiterJobsService.loadPostedJobCount();
-        return;
-      }
-
-      this.notify.error(message || this.i18nService.translate('recruiterJobList.notifications.deleteFailed'));
-    });
-  }
-
-  get jobs(): RecruiterJobViewModel[] {
-    return this.recruiterJobsService.postedJobs$();
-  }
-
-  get isLoading(): boolean {
-    return this.recruiterJobsService.isLoadingPostedJobs$();
-  }
-
-  get totalPostedJobs(): number {
-    return this.recruiterJobsService.postedJobsTotalCount$();
   }
 
   get currentPage(): number {
@@ -70,7 +62,7 @@ export class RecruiterJobListComponent {
   }
 
   get totalPages(): number {
-    return Math.max(this.recruiterJobsService.postedJobsTotalPages$(), 1);
+    return this.totalPagesCount();
   }
 
   get currentPageSize(): number {
@@ -96,7 +88,7 @@ export class RecruiterJobListComponent {
   }
 
   get canGoNext(): boolean {
-    return this.pageIndex() + 1 < Math.max(this.recruiterJobsService.postedJobsTotalPages$(), 1);
+    return this.pageIndex() + 1 < this.totalPagesCount();
   }
 
   goPrevPage(): void {

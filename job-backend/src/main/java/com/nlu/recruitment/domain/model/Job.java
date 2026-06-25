@@ -65,6 +65,10 @@ public class Job extends BaseEntity {
 	private String logo;
 	private Integer headcount;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "category_id")
+	private Category category;
+
 	@Column(nullable = false, columnDefinition = "boolean default false")
 	private boolean isAnalyzed = false;
 
@@ -159,6 +163,10 @@ public class Job extends BaseEntity {
 
 	public boolean isOwnedBy(Recruitment h) {
 		return recruitment != null && h != null && recruitment.getId() == h.getId();
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
 	}
 }
 

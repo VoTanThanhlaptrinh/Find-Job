@@ -10,6 +10,8 @@ import { SearchFormComponent } from '../../../../shared/components/search-form/s
 import { JobCardModel } from '../../../../shared/models/jobs/job-card.model';
 import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
 import { SkeletonJobCardComponent } from '../../../../shared/components/skeleton-job-card/skeleton-job-card.component';
+import { AddressCountViewModel } from '../../../../shared/models/jobs/job-api-response.model';
+import { FilterService } from '../../../jobs/services/filter.service';
 
 @Component({
   selector: 'app-home',
@@ -30,15 +32,19 @@ import { SkeletonJobCardComponent } from '../../../../shared/components/skeleton
 export class HomeComponent implements OnInit {
   jobPosts: JobCardModel[] = [];
   isLoading = false;
-  constructor(private homeService: HomeService) {
+  addressCounts: AddressCountViewModel[] = [];
+
+  constructor(private homeService: HomeService, private filterService: FilterService) {
     effect(() => {
       this.jobPosts = this.homeService.jobPosts();
       this.isLoading = this.homeService.isLoading();
+      this.addressCounts = this.filterService.addressCount();
     })
   }
 
   ngOnInit(): void {
     this.homeService.getData();
+    this.filterService.getAddressCount();
   }
 
   trackById(index: number, item: JobCardModel): string | number {

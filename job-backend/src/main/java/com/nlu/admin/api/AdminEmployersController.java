@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping(path = "/admin/employers", produces = "application/json")
+@RequestMapping(path = "/api/admin/employers", produces = "application/json")
 @RequiredArgsConstructor
 public class AdminEmployersController {
     private final AdminService adminService;

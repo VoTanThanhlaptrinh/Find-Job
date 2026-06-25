@@ -41,7 +41,10 @@ public record JobDto(
 
         @Min(value = 1, message = "{validation.job.headcount.min}")
         Integer headcount,
-        boolean enableAiAnalysis
+        boolean enableAiAnalysis,
+        
+        @NotNull(message = "{validation.job.category.required}")
+        Long categoryId
 ) {
     @AssertTrue(message = "{validation.job.deadline.future}")
     public boolean isDeadlineValid() {
@@ -86,5 +89,9 @@ public record JobDto(
 
     public boolean isEnableAiAnalysis() {
         return enableAiAnalysis;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
     }
 }

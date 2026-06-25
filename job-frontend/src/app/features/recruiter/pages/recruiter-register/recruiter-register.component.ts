@@ -28,6 +28,8 @@ export class RecruiterRegisterComponent {
 
   showPassword = false;
   showConfirmPassword = false;
+  isSubmitting = false;
+  formError: string | null = null;
 
   togglePassword(): void {
     this.showPassword = !this.showPassword;
@@ -39,6 +41,9 @@ export class RecruiterRegisterComponent {
 
   constructor() {
     effect(() => {
+      this.isSubmitting = this.recruiterAuth.isSubmittingAuth$();
+      this.formError = this.recruiterAuth.authError$();
+
       const isRegistered = this.recruiterAuth.registerSuccess$();
       if (!isRegistered) {
         return;
@@ -49,13 +54,7 @@ export class RecruiterRegisterComponent {
     });
   }
 
-  get isSubmitting(): boolean {
-    return this.recruiterAuth.isSubmittingAuth$();
-  }
 
-  get formError(): string | null {
-    return this.recruiterAuth.authError$();
-  }
 
   get isPasswordMismatch(): boolean {
     const password = this.form.controls.password.value;

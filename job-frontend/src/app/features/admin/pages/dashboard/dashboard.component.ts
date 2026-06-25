@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AdminAuthService } from '../../services/admin-auth.service';
 
 @Component({
@@ -10,9 +10,10 @@ import { AdminAuthService } from '../../services/admin-auth.service';
   templateUrl: './dashboard.component.html'
 })
 export class DashboardComponent {
-  constructor(private readonly adminAuthService: AdminAuthService) {}
+  constructor(private readonly adminAuthService: AdminAuthService,private readonly router: Router) {}
 
   onLogout(): void {
     this.adminAuthService.logout();
+    this.router.navigateByUrl('/admin/login');
   }
 }

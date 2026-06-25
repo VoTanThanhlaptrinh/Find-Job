@@ -435,6 +435,7 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       home: 'Trang chủ',
       applied: 'Đã ứng tuyển',
       applyNow: 'Ứng tuyển',
+      jobDescription: 'Mô tả công việc',
       experienceRequirements: 'Yêu cầu kinh nghiệm',
       jobSkills: 'Kỹ năng công việc',
       jobsByLocation: 'Việc làm theo khu vực',
@@ -529,7 +530,14 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       badge: {
         analyzed: 'Đã phân tích',
         notAnalyzed: 'Chưa phân tích',
-        failed: 'Thất bại'
+        failed: 'Thất bại',
+        parsing: 'AI đang trích xuất dữ liệu CV của bạn...',
+        vectorizing: 'Đang vector hóa dữ liệu...',
+        parsedIn: 'Hoàn thành trong'
+      },
+      errors: {
+        viewFailed: 'Không thể xem CV. Vui lòng thử lại.',
+        downloadFailed: 'Không thể tải CV. Vui lòng thử lại.'
       },
       analyzing: 'Đang phân tích...',
       analyzeNow: 'Phân tích ngay',
@@ -987,6 +995,7 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       home: 'Home',
       applied: 'Applied',
       applyNow: 'Apply now',
+      jobDescription: 'Job description',
       experienceRequirements: 'Experience requirements',
       jobSkills: 'Job skills',
       jobsByLocation: 'Jobs by location',
@@ -1081,7 +1090,14 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       badge: {
         analyzed: 'Analyzed',
         notAnalyzed: 'Not Analyzed',
-        failed: 'Failed'
+        failed: 'Failed',
+        parsing: 'AI is parsing your CV...',
+        vectorizing: 'Vectorizing data...',
+        parsedIn: 'Parsed in'
+      },
+      errors: {
+        viewFailed: 'Unable to view CV. Please try again.',
+        downloadFailed: 'Unable to download CV. Please try again.'
       },
       analyzing: 'Analyzing...',
       analyzeNow: 'Analyze Now',

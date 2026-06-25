@@ -41,8 +41,8 @@ public class JobQueryServiceImpl implements JobQueryService {
     }
 
     @Override
-    public Page<JobCardView> findJobsBySalaryAddressAndEmploymentTypes(int pageIndex, int pageSize, int min, int max, List<String> cities, List<EmploymentType> times, String title) {
-        return jobQuery.findJobsBySalaryAddressAndEmploymentTypes(pageIndex, pageSize, min, max, cities, times, title);
+    public Page<JobCardView> findJobsBySalaryAddressAndEmploymentTypes(int pageIndex, int pageSize, int min, int max, List<String> cities, List<EmploymentType> times, String title, List<Long> categoryIds) {
+        return jobQuery.findJobsBySalaryAddressAndEmploymentTypes(pageIndex, pageSize, min, max, cities, times, title, categoryIds);
     }
 
     @Override

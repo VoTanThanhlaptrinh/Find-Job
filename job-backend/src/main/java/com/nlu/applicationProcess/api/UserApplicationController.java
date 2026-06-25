@@ -61,7 +61,7 @@ public class UserApplicationController {
     @GetMapping("/applications/{jobId}/status")
     public ResponseEntity<ApiResponse<Boolean>> hasApplied(@PathVariable("jobId") long jobId, @CurrentUser User currentUser) {
         Boolean res = jobApplicationService.hasApplied(currentUser.getEmail(), jobId);
-        return ResponseEntity.ok().body(new ApiResponse<>(MessageUtils.getMessage("message.success"),null , HttpStatus.OK.value()));
+        return ResponseEntity.ok().body(new ApiResponse<>(MessageUtils.getMessage("message.success"), res, HttpStatus.OK.value()));
     }
 
     @GetMapping("/applied")

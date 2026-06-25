@@ -17,7 +17,9 @@ import com.nlu.recruitment.api.dto.JdDataContext;
 import com.nlu.recruitment.api.dto.JobJsonDto;
 import com.nlu.recruitment.api.dto.VectorizeJdRequest;
 import com.nlu.recruitment.domain.model.Address;
+import com.nlu.recruitment.domain.model.Category;
 import com.nlu.recruitment.domain.model.Job;
+import com.nlu.recruitment.domain.repository.CategoryRepository;
 import com.nlu.identity.domain.model.User;
 import com.nlu.applicationProcess.application.VectorizationClient;
 import com.nlu.shared.application.HtmlParserService;
@@ -56,6 +58,12 @@ public class MasterDataSeeder implements CommandLineRunner {
             "TechNova", "BrightCloud", "FinStack", "GreenByte", "UrbanLab", "DataSpring"
     );
 
+    private static final List<String> CATEGORY_NAMES = List.of(
+            "Phát triển phần mềm & Cloud", "Dữ liệu & Trí tuệ nhân tạo (AI)", "Phân tích nghiệp vụ (BA) & Quản lý dự án", 
+            "Kế toán & Tài chính", "Marketing & Truyền thông", "Nhân sự & Hành chính", 
+            "Kỹ thuật Điện & Xây dựng", "Y tế & Dược phẩm"
+    );
+
     private static final List<String> COMPANY_DESC = List.of(
             "Product-focused team building scalable platforms.",
             "Cloud-first company serving regional enterprises.",
@@ -92,6 +100,7 @@ public class MasterDataSeeder implements CommandLineRunner {
     private final RecruitmentRepository recruitmentRepository;
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
+    private final CategoryRepository categoryRepository;
     private final PasswordEncoder passwordEncoder;
     private final JobRepository jobRepository;
     private final VectorizationClient vectorizationClient;
@@ -112,20 +121,26 @@ public class MasterDataSeeder implements CommandLineRunner {
             recruitments = seedHirers();
             ensureAddresses(recruitments);
         }
+        
+        List<Category> categories = seedCategoriesIfNeeded();
+
         if (jobRepository.count() == 0) {
             log.info("Tiến hành đọc file JSON và tạo dữ liệu Job...");
-            var jobsJson = convertJsonFileToList("C:/Users/DELL/Downloads/job_data_500.json");
-            jobsJson.addAll(convertJsonFileToList("C:/Users/DELL/Downloads/job_data_vn_300.json"));
+            String jsonPath = "job_data.json";
+            if (!new java.io.File(jsonPath).exists()) {
+                jsonPath = "job-backend/job_data.json";
+            }
+            var jobsJson = convertJsonFileToList(jsonPath);
             List<Recruitment> finalRecruitments = recruitments;
             List<Job> jobEntities = jobsJson.stream()
-                    .map(dto -> convertJob(dto, finalRecruitments))
+                    .map(dto -> convertJob(dto, finalRecruitments, categories))
                     .toList();
 
             jobRepository.saveAll(jobEntities);
             log.info("✅ Đã lưu {} công việc vào database.", jobEntities.size());
 
-            // Vectorize tất cả các JD đã lưu
-//            vectorizeJobs(jobEntities);
+        }else{
+//            vectorizeJobs(jobRepository.findAll());
         }
         log.info("✅ Hoàn tất khởi tạo Master Data.");
     }
@@ -153,6 +168,28 @@ public class MasterDataSeeder implements CommandLineRunner {
         userRepository.save(admin);
 
         log.info("Seeded admin account: {}", admin.getEmail());
+    }
+
+    private List<Category> seedCategoriesIfNeeded() {
+        List<Category> existingCategories = categoryRepository.findAll();
+        if (existingCategories.size() >= CATEGORY_NAMES.size()) {
+            existingCategories.sort(java.util.Comparator.comparing(Category::getId));
+            return existingCategories;
+        }
+
+        log.info("Đang tạo 10 Category...");
+        List<Category> newCategories = new ArrayList<>();
+        for (String name : CATEGORY_NAMES) {
+            Category category = new Category();
+            category.setName(name);
+            newCategories.add(category);
+        }
+        categoryRepository.saveAll(newCategories);
+        log.info("✅ Đã tạo thành công 10 Category.");
+        
+        List<Category> allCategories = categoryRepository.findAll();
+        allCategories.sort(java.util.Comparator.comparing(Category::getId));
+        return allCategories;
     }
 
     private List<Recruitment> seedHirers() {
@@ -280,7 +317,7 @@ public class MasterDataSeeder implements CommandLineRunner {
             return new ArrayList<>();
         }
     }
-    private Job convertJob(JobJsonDto j, List<Recruitment> recruitments) {
+    private Job convertJob(JobJsonDto j, List<Recruitment> recruitments, List<Category> categories) {
         Job job = new Job();
         job.setTitle(j.getTitle());
         job.setDescription(j.getJobDescription());
@@ -314,6 +351,11 @@ public class MasterDataSeeder implements CommandLineRunner {
 
         // 6. Set Headcount (Số lượng tuyển: 1 - 10)
         job.setHeadcount(1 + random.nextInt(10));
+
+        // 7. Set Category
+        if (j.getCategory() != null && j.getCategory() >= 1 && j.getCategory() <= categories.size()) {
+            job.setCategory(categories.get(j.getCategory() - 1));
+        }
 
         return job;
     }

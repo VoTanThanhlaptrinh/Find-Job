@@ -142,7 +142,7 @@ export class ResumeReviewComponent implements OnDestroy {
         this.isLoadingView = false;
       },
       error: () => {
-        this.notifyService.error('Không thể xem CV. Vui lòng thử lại.');
+        this.notifyService.error(this.i18n.translate('cvList.errors.viewFailed'));
         this.isLoadingView = false;
       }
     });
@@ -165,7 +165,7 @@ export class ResumeReviewComponent implements OnDestroy {
         this.isLoadingDownload = false;
       },
       error: () => {
-        this.notifyService.error('Không thể tải CV. Vui lòng thử lại.');
+        this.notifyService.error(this.i18n.translate('cvList.errors.downloadFailed'));
         this.isLoadingDownload = false;
       }
     });

@@ -1,5 +1,7 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
+import { inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Router } from '@angular/router';
 import {
   catchError,
   finalize,
@@ -35,7 +37,20 @@ function extractTokenFromResponse(response: unknown): string | null {
 export const refreshTokenInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const tokenService = inject(TokenService);
+  const router = inject(Router);
   const isRefreshRequest = req.url.includes('/auth/refreshToken');
+  const platformId = inject(PLATFORM_ID);
+
+  const getLoginUrl = () => {
+    const url = router.url;
+    if (url.includes('/recruiter')) {
+      return '/recruiter/login';
+    } else if (url.includes('/admin')) {
+      return '/admin/login';
+    } else {
+      return '/login';
+    }
+  };
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
@@ -43,10 +58,19 @@ export const refreshTokenInterceptor: HttpInterceptorFn = (req, next) => {
         return throwError(() => error);
       }
 
+      if (!isPlatformBrowser(platformId)) {
+        return throwError(() => error);
+      }
+
       if (!refreshRequest$) {
         refreshRequest$ = authService.refreshToken$().pipe(
           take(1),
           map((response) => extractTokenFromResponse(response)),
+          catchError((refreshError: HttpErrorResponse) => {
+            // Only catch errors from the refresh token request itself
+            authService.logout(getLoginUrl());
+            return throwError(() => refreshError);
+          }),
           finalize(() => {
             refreshRequest$ = null;
           }),
@@ -57,8 +81,7 @@ export const refreshTokenInterceptor: HttpInterceptorFn = (req, next) => {
       return refreshRequest$.pipe(
         switchMap((nextToken) => {
           if (!nextToken) {
-            tokenService.clearToken();
-            authService.setLoggedIn(false);
+            authService.logout(getLoginUrl());
             return throwError(() => error);
           }
 
@@ -72,11 +95,6 @@ export const refreshTokenInterceptor: HttpInterceptorFn = (req, next) => {
               },
             })
           );
-        }),
-        catchError((refreshError: HttpErrorResponse) => {
-          tokenService.clearToken();
-          authService.setLoggedIn(false);
-          return throwError(() => refreshError);
         })
       );
     })

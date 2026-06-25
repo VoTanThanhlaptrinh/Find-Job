@@ -38,10 +38,10 @@ export class ResumeService {
         if (local.id === undefined && !sseEvent) return null;
 
         if (local.status === 'uploading' || local.status === 'uploaded' || local.status === 'error') {
-            return { 
-                id: local.id ?? 0, 
-                status: local.status, 
-                name: local.name || 'Unknown', 
+            return {
+                id: local.id ?? 0,
+                status: local.status,
+                name: local.name || 'Unknown',
                 isManualAnalyze: local.isManualAnalyze,
                 executionTime: sseEvent?.executionTime
             };
@@ -77,10 +77,10 @@ export class ResumeService {
                 const timeoutMs = (file.status === 'failed' || file.status === 'error') ? 2000 : (file.status === 'uploaded' ? 1000 : 5000);
                 setTimeout(() => {
                     if (file.status === 'analyzed') {
-                         this.resumes.update(list => list.map(r => r.id === file.id ? { ...r, isAnalyzed: true } : r));
+                        this.resumes.update(list => list.map(r => r.id === file.id ? { ...r, isAnalyzed: true } : r));
                     }
                     if (file.status === 'error' || file.status === 'failed') {
-                         this.resumes.update(list => list.filter(r => r.id !== file.id));
+                        this.resumes.update(list => list.filter(r => r.id !== file.id));
                     }
                     this.localFileData.set({});
                     this.sseService.clearEvent(this.SSE_EVENT_NAME);
@@ -151,7 +151,7 @@ export class ResumeService {
 
     postResume(file: File, enableAiAnalysis: boolean = false) {
         this.sseService.clearEvent(this.SSE_EVENT_NAME);
-        
+
         const tempId = --this.counter;
         const newResume: ResumeReviewInput = {
             id: tempId,
@@ -160,7 +160,7 @@ export class ResumeService {
             isAnalyzed: false,
             isNewlyUploaded: true
         };
-        
+
         this.resumes.update(resumes => [newResume, ...resumes]);
         this.localFileData.set({ name: file.name, status: 'uploading', id: tempId, isManualAnalyze: false });
 
@@ -171,12 +171,12 @@ export class ResumeService {
         this.http.post<ApiResponse<ResumePreview>>(`${this.url}/user/resumes`, formData).subscribe({
             next: (response) => {
                 const resumeId = response.data.id;
-                
+
                 this.resumes.update(list => list.map(r => r.id === tempId ? { ...r, id: resumeId } : r));
 
-                this.localFileData.update(prev => ({ 
-                    ...prev, 
-                    id: resumeId, 
+                this.localFileData.update(prev => ({
+                    ...prev,
+                    id: resumeId,
                     status: enableAiAnalysis ? 'analyzing' : 'uploaded'
                 }));
             },

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, effect, inject, OnInit, signal, untracked } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { JobMatchCardComponent } from '../../../shared/components/job-match-card/job-match-card.component';
@@ -8,14 +8,12 @@ import { ResumeService } from '../../../core/services/resume.service';
 import { JobService } from '../../jobs/services/job.service';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 
-
 @Component({
   selector: 'app-recommended-jobs',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink, JobMatchCardComponent, SkeletonCvCardComponent, TranslatePipe],
   templateUrl: './recommended-jobs.component.html',
-  styleUrl: './recommended-jobs.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrl: './recommended-jobs.component.css'
 })
 export class RecommendedJobsComponent implements OnInit {
   private readonly resumeService = inject(ResumeService);
@@ -23,27 +21,30 @@ export class RecommendedJobsComponent implements OnInit {
 
   readonly skeletonRows = [1, 2, 3];
 
-  readonly resumes = this.resumeService.analyzedResumes$;
-  readonly isResumeLoading = this.resumeService.isLoadingResumes$;
-  readonly suggestedJobs = this.jobService.recommendedJobs$;
-  readonly isJobLoading = this.jobService.isLoadingRecommendedJobs$;
+  resumes: any[] = [];
+  isResumeLoading = false;
+  suggestedJobs: any[] = [];
+  isJobLoading = false;
   readonly selectedResumeId = signal<number | null>(null);
   readonly isDropdownOpen = signal(false);
 
-  readonly selectedResume = computed(() => {
-    const resumeId = this.selectedResumeId();
-    if (resumeId === null) return null;
-    return this.resumes().find((resume) => resume.id === resumeId) ?? null;
-  });
-
-  readonly suggestionCount = computed(() => this.suggestedJobs().length);
+  selectedResume: any = null;
+  suggestionCount = 0;
 
   constructor() {
     effect(() => {
+      this.resumes = this.resumeService.analyzedResumes$();
+      this.isResumeLoading = this.resumeService.isLoadingResumes$();
+      this.suggestedJobs = this.jobService.recommendedJobs$();
+      this.isJobLoading = this.jobService.isLoadingRecommendedJobs$();
+
       const resumeId = this.selectedResumeId();
-      if (resumeId !== null) {
-        this.jobService.getSuggestedJobsByResume(resumeId);
+      if (resumeId === null) {
+        this.selectedResume = null;
+      } else {
+        this.selectedResume = this.resumes.find((resume) => resume.id === resumeId) ?? null;
       }
+      this.suggestionCount = this.suggestedJobs.length;
     });
   }
 
@@ -54,10 +55,11 @@ export class RecommendedJobsComponent implements OnInit {
   onResumeChange(resumeId: number | null): void {
     if (resumeId === null) return;
     this.selectedResumeId.set(resumeId);
+    this.jobService.getSuggestedJobsByResume(resumeId);
   }
 
   toggleDropdown(): void {
-    if (this.isResumeLoading() || this.resumes().length === 0) return;
+    if (this.isResumeLoading || this.resumes.length === 0) return;
     this.isDropdownOpen.update(v => !v);
   }
 

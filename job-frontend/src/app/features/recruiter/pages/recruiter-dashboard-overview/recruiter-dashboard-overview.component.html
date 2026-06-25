@@ -7,7 +7,7 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
       <article
-        *ngFor="let metric of metrics()"
+        *ngFor="let metric of metrics"
         class="bg-re-surface-container-lowest border border-re-outline-variant/20 p-5 rounded-2xl"
       >
         <p class="text-sm text-re-on-surface-variant">{{ metric.titleKey }}</p>
@@ -16,8 +16,5 @@
       </article>
     </div>
 
-    <div class="bg-re-surface-container-low p-4 rounded-xl text-sm text-re-on-surface-variant">
-      Hien tai API recruiter moi cap metric dem so tin dang dang. Cac metric con lai can endpoint rieng.
-    </div>
   </section>
 </main>

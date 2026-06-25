@@ -1,5 +1,5 @@
-import { Component, effect, inject, signal, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, effect, inject, signal, OnInit, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { RecruiterAuthService } from '../../services/recruiter-auth.service';
@@ -22,18 +22,16 @@ export interface NavItem {
   styleUrl: './recruiter-layout.component.css',
 })
 export class RecruiterLayoutComponent implements OnInit {
-  private readonly router = inject(Router);
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly recruiterAuth = inject(RecruiterAuthService);
   private readonly tokenService = inject(TokenService);
-  private readonly authService = inject(AuthService);
   private readonly i18nService = inject(I18nService);
-
+  private readonly platformId = inject(PLATFORM_ID);
   readonly hasLoadedRoles = signal<boolean>(false);
   readonly hirerRoles = signal<string[]>([]);
   readonly isMobileSidebarOpen = signal<boolean>(false);
   readonly pageTitle = signal<string>('Overview');
-  
+
   readonly navItems: NavItem[] = [
     { label: 'Overview', icon: 'dashboard', route: '/recruiter/dashboard' },
     { label: 'Jobs', icon: 'work', route: '/recruiter/jobs' },
@@ -47,7 +45,7 @@ export class RecruiterLayoutComponent implements OnInit {
     company: true,
   };
 
-  constructor() {
+  constructor(private router: Router, private authService: AuthService) {
     effect(() => {
       const isAuthReady = this.authService.isAuthReady();
       if (!isAuthReady) {
@@ -123,9 +121,10 @@ export class RecruiterLayoutComponent implements OnInit {
 
   onLogout(): void {
     this.closeMobileSidebar();
-    this.tokenService.clearToken();
     this.authService.logout();
-    this.router.navigate(['/recruiter/login']);
+    if (isPlatformBrowser(this.platformId)) {
+      window.location.reload();
+    }
   }
 
   get currentLanguage(): AppLanguage {

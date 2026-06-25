@@ -98,8 +98,8 @@ public class JobApplicationServiceImpl implements JobApplicationService {
 
             // 2. Quota Check
             long activeResumeCount = resumeRepository.countActiveByUserEmail(context.currentUser().getEmail());
-            if (activeResumeCount >= 5) {
-                log.warn("Resume quota exceeded — user: {} has {} active resumes (max: 5)",
+            if (activeResumeCount >= 10) {
+                log.warn("Resume quota exceeded — user: {} has {} active resumes (max: 10)",
                         context.currentUser().getId(), activeResumeCount);
                 throw new BadRequestException(MessageUtils.getMessage("resume.max_count"));
             }

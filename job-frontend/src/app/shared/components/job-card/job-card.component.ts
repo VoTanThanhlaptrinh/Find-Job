@@ -15,6 +15,6 @@ export class JobCardComponent {
   @Input() detailRoute = '/single';
 
   formatMoney(value: number): string {
-    return `${value.toLocaleString('vi-VN')} VND`;
+    return `${value.toLocaleString('vi-VN')}`;
   }
 }

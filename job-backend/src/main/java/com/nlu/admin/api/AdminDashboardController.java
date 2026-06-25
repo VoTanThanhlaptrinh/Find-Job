@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(path = "/admin", produces = "application/json")
+@RequestMapping(path = "/api/admin", produces = "application/json")
 @RequiredArgsConstructor
 public class AdminDashboardController {
     private final AdminService adminService;

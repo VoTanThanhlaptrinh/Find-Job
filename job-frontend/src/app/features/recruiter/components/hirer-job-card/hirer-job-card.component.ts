@@ -44,7 +44,7 @@ export class HirerJobCardComponent {
     if (Number.isNaN(num)) {
       return value;
     }
-    return `${num.toLocaleString('vi-VN')} VND`;
+    return `${num.toLocaleString('vi-VN')}`;
   }
 
   statusClass(status?: string): string {
