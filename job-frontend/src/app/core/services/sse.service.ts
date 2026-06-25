@@ -4,6 +4,8 @@ import { TokenService } from './token.service';
 import { UtilitiesService } from './utilities.service';
 import { AuthService } from './auth.service';
 import { take } from 'rxjs';
+import { isPlatformBrowser } from '@angular/common';
+import { PLATFORM_ID } from '@angular/core';
 
 // ===== TYPES =====
 export type SseStatus = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'error' | 'disconnected';
@@ -40,6 +42,7 @@ export class SseService {
   private tokenService = inject(TokenService);
   private utilities = inject(UtilitiesService);
   private injector = inject(Injector);
+  private platformId = inject(PLATFORM_ID);
 
   // ===== PUBLIC STATE =====
   readonly status = signal<SseStatus>('idle');
@@ -87,6 +90,10 @@ export class SseService {
    * Nếu đã có kết nối cũ, sẽ đóng trước khi mở mới.
    */
   connect(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    
     this.disconnect();
 
     const token = this.tokenService.getToken();
@@ -104,6 +111,10 @@ export class SseService {
    * Ngắt kết nối an toàn.
    */
   disconnect(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    
     if (this.abortController) {
       this.abortController.abort();
       this.abortController = undefined;

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, effect, inject, OnInit, signal, untracked } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { JobMatchCardComponent } from '../../../shared/components/job-match-card/job-match-card.component';
@@ -13,8 +13,7 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink, JobMatchCardComponent, SkeletonCvCardComponent, TranslatePipe],
   templateUrl: './recommended-jobs.component.html',
-  styleUrl: './recommended-jobs.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrl: './recommended-jobs.component.css'
 })
 export class RecommendedJobsComponent implements OnInit {
   private readonly resumeService = inject(ResumeService);
@@ -44,7 +43,6 @@ export class RecommendedJobsComponent implements OnInit {
         this.selectedResume = null;
       } else {
         this.selectedResume = this.resumes.find((resume) => resume.id === resumeId) ?? null;
-        this.jobService.getSuggestedJobsByResume(resumeId);
       }
       this.suggestionCount = this.suggestedJobs.length;
     });
@@ -57,6 +55,7 @@ export class RecommendedJobsComponent implements OnInit {
   onResumeChange(resumeId: number | null): void {
     if (resumeId === null) return;
     this.selectedResumeId.set(resumeId);
+    this.jobService.getSuggestedJobsByResume(resumeId);
   }
 
   toggleDropdown(): void {

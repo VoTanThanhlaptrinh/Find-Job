@@ -27,24 +27,9 @@ export class RecruiterDashboardOverviewComponent implements OnInit {
       this.metrics = [
         {
           titleKey: 'recruiterOverview.metrics.openJobsTitle',
-          value: this.openJobsCount === null ? 'Khong co du lieu' : String(this.openJobsCount),
+          value: this.openJobsCount === null ? '0' : String(this.openJobsCount),
           trendKey: 'recruiterOverview.metrics.openJobsTrend',
-        },
-        {
-          titleKey: 'recruiterOverview.metrics.newCandidatesTitle',
-          value: 'Khong co du lieu',
-          trendKey: 'recruiterOverview.metrics.newCandidatesTrend',
-        },
-        {
-          titleKey: 'recruiterOverview.metrics.interviewsTitle',
-          value: 'Khong co du lieu',
-          trendKey: 'recruiterOverview.metrics.interviewsTrend',
-        },
-        {
-          titleKey: 'recruiterOverview.metrics.responseRateTitle',
-          value: 'Khong co du lieu',
-          trendKey: 'recruiterOverview.metrics.responseRateTrend',
-        },
+        }
       ];
     });
   }

@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
+import { AuthService } from '../../../core/services/auth.service';
 
 interface InforMenuItem {
   nameKey: string;
@@ -30,6 +31,9 @@ export class InforComponent {
     { nameKey: 'recommendedJobs.title', icon: 'work', route: '/infor/recommended-jobs' },
     { nameKey: 'candidateList.applied', icon: 'history', route: '/infor/history-apply' }
   ];
+  constructor(private auth: AuthService) {
+
+  }
 
   toggleSidebar(): void {
     this.isOpen = !this.isOpen;
@@ -46,5 +50,9 @@ export class InforComponent {
       fragment: 'ignored',
       matrixParams: 'ignored'
     });
+  }
+  onLogout() {
+    this.auth.logout();
+    this.router.navigate(['/login']);
   }
 }

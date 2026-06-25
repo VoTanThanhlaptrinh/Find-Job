@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping(path = "/admin/categories", produces = "application/json")
+@RequestMapping(path = "/api/admin/categories", produces = "application/json")
 @RequiredArgsConstructor
 public class AdminCategoryController {
 

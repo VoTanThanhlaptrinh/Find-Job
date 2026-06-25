@@ -4,7 +4,7 @@
       <div>
         <h1 class="text-2xl md:text-3xl font-bold">{{ 'recruiterJobList.title' | t }}</h1>
         <p class="text-re-on-surface-variant mt-1">
-          {{ 'recruiterJobList.totalPostedJobs' | t }}: <span class="font-semibold">{{ totalPostedJobs }}</span>
+          {{ 'recruiterJobList.totalPostedJobs' | t }}: <span class="font-semibold">{{ totalPostedJobs() }}</span>
         </p>
       </div>
 
@@ -17,21 +17,21 @@
       </div>
     </header>
 
-    <div *ngIf="isLoading" class="flex flex-col items-center gap-6">
+    <div *ngIf="isLoading()" class="flex flex-col items-center gap-6">
       <app-skeleton-job-card [count]="3"></app-skeleton-job-card>
     </div>
 
-    <div *ngIf="!isLoading && jobs.length === 0"
+    <div *ngIf="!isLoading() && jobs().length === 0"
       class="bg-re-surface-container-low p-6 rounded-xl text-re-on-surface-variant">
       {{ 'recruiterJobList.empty' | t }}
     </div>
 
-    <div *ngIf="!isLoading && jobs.length > 0" class="flex flex-col items-center gap-6">
-      <app-hirer-job-card *ngFor="let job of jobs; trackBy: trackByJob" [job]="job" (delete)="deleteJob($event)"
+    <div *ngIf="!isLoading() && jobs().length > 0" class="flex flex-col items-center gap-6">
+      <app-hirer-job-card *ngFor="let job of jobs(); trackBy: trackByJob" [job]="job" (delete)="deleteJob($event)"
         (analyze)="analyzeJob($event)"></app-hirer-job-card>
     </div>
 
-    <footer *ngIf="!isLoading && jobs.length > 0"
+    <footer *ngIf="!isLoading() && jobs().length > 0"
       class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between pt-2">
       <div class="flex items-center gap-2 text-sm">
         <label for="job-page-size">{{ 'pagination.rowsPerPage' | t }}</label>

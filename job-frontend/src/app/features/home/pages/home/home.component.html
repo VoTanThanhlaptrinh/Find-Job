@@ -162,48 +162,14 @@
         <div class="single-slidebar">
           <h4>{{ 'home.jobsByLocation' | t }}</h4>
           <ul class="cat-list">
+            @for(item of addressCounts; track item.city) {
             <li>
               <a class="justify-content-between d-flex">
-                <p>Hồ Chí Minh</p>
-                <span>37</span>
+                <p>{{ item.city }}</p>
+                <span>{{ item.count }}</span>
               </a>
             </li>
-            <li>
-              <a class="justify-content-between d-flex">
-                <p>Hà Nội</p>
-                <span>57</span>
-              </a>
-            </li>
-            <li>
-              <a class="justify-content-between d-flex">
-                <p>Đà Nẵng</p>
-                <span>33</span>
-              </a>
-            </li>
-            <li>
-              <a class="justify-content-between d-flex">
-                <p>Đồng Nai</p>
-                <span>36</span>
-              </a>
-            </li>
-            <li>
-              <a class="justify-content-between d-flex">
-                <p>Cần Thơ</p>
-                <span>47</span>
-              </a>
-            </li>
-            <li>
-              <a class="justify-content-between d-flex">
-                <p>Đà Lạt</p>
-                <span>27</span>
-              </a>
-            </li>
-            <li>
-              <a class="justify-content-between d-flex">
-                <p>Bình Dương</p>
-                <span>17</span>
-              </a>
-            </li>
+            }
           </ul>
         </div>
         <div class="single-slidebar">

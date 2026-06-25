@@ -8,6 +8,8 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
 import { I18nService } from '../../../../core/i18n/i18n.service';
 import { SkeletonJobSingleComponent } from '../../../../shared/components/skeleton-job-single/skeleton-job-single.component';
+import { FilterService } from '../../services/filter.service';
+import { AddressCountViewModel } from '../../../../shared/models/jobs/job-api-response.model';
 
 @Component({
   selector: 'app-job-single',
@@ -36,12 +38,14 @@ export class JobSingleComponent implements OnInit {
   hasApplied: boolean | null = null;
   isCheckingApply = false;
   isLoading = false;
+  addressCounts: AddressCountViewModel[] = [];
 
   constructor(
     private jobSerivce: JobService,
     private route: ActivatedRoute,
     private authService: AuthService,
     private i18nService: I18nService,
+    private filterService: FilterService,
   ) {
     this.jobSerivce.resetJobDetailState();
     this.jobSerivce.resetCheckApplyState();
@@ -62,6 +66,7 @@ export class JobSingleComponent implements OnInit {
       this.hasApplied = this.jobSerivce.hasApplied$();
       this.isCheckingApply = this.jobSerivce.isCheckingApply$();
       this.isLoading = this.jobSerivce.isLoadingJobDetail$();
+      this.addressCounts = this.filterService.addressCount();
     });
 
     effect(() => {
@@ -108,6 +113,7 @@ export class JobSingleComponent implements OnInit {
       this.currentJobId.set(this.jobId);
       this.getDetailJob(this.jobId);
     });
+    this.filterService.getAddressCount();
   }
 
   getDetailJob(id: string): void {
@@ -148,6 +154,6 @@ export class JobSingleComponent implements OnInit {
 
   formatMoney(value: number): string {
     const locale = this.i18nService.currentLanguage === 'vi' ? 'vi-VN' : 'en-US';
-    return `${value.toLocaleString(locale)} VND`;
+    return `${value.toLocaleString(locale)}`;
   }
 }

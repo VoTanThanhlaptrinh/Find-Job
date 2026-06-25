@@ -59,9 +59,9 @@ public class MasterDataSeeder implements CommandLineRunner {
     );
 
     private static final List<String> CATEGORY_NAMES = List.of(
-            "Công nghệ thông tin", "Marketing & Truyền thông", "Kế toán & Tài chính", 
-            "Bán hàng & Phát triển kinh doanh", "Thiết kế & Mỹ thuật", "Nhân sự & Hành chính", 
-            "Dịch vụ Khách hàng", "Kỹ thuật Cơ khí & Xây dựng", "Giáo dục & Đào tạo", "Y tế & Dược phẩm"
+            "Phát triển phần mềm & Cloud", "Dữ liệu & Trí tuệ nhân tạo (AI)", "Phân tích nghiệp vụ (BA) & Quản lý dự án", 
+            "Kế toán & Tài chính", "Marketing & Truyền thông", "Nhân sự & Hành chính", 
+            "Kỹ thuật Điện & Xây dựng", "Y tế & Dược phẩm"
     );
 
     private static final List<String> COMPANY_DESC = List.of(
@@ -126,7 +126,11 @@ public class MasterDataSeeder implements CommandLineRunner {
 
         if (jobRepository.count() == 0) {
             log.info("Tiến hành đọc file JSON và tạo dữ liệu Job...");
-            var jobsJson = convertJsonFileToList("C:/Users/DELL/Downloads/data.json");
+            String jsonPath = "job_data.json";
+            if (!new java.io.File(jsonPath).exists()) {
+                jsonPath = "job-backend/job_data.json";
+            }
+            var jobsJson = convertJsonFileToList(jsonPath);
             List<Recruitment> finalRecruitments = recruitments;
             List<Job> jobEntities = jobsJson.stream()
                     .map(dto -> convertJob(dto, finalRecruitments, categories))
@@ -135,8 +139,8 @@ public class MasterDataSeeder implements CommandLineRunner {
             jobRepository.saveAll(jobEntities);
             log.info("✅ Đã lưu {} công việc vào database.", jobEntities.size());
 
-            // Vectorize tất cả các JD đã lưu
-            vectorizeJobs(jobEntities);
+        }else{
+//            vectorizeJobs(jobRepository.findAll());
         }
         log.info("✅ Hoàn tất khởi tạo Master Data.");
     }

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import {
   catchError,
   finalize,
@@ -177,17 +177,18 @@ export class AuthService {
     this._authReady.set(true);
   }
 
-  logout(): void {
+  logout(redirectUrl?: string): void {
+    this.tokenService.clearToken();
+    this.loggedIn.set(false);
     this.sseService.disconnect();
     this.http
       .get<any>(`${this.url}/auth/logout`, { withCredentials: true })
       .pipe(
-        take(1),
-        finalize(() => {
-          this.tokenService.clearToken();
-          this.loggedIn.set(false);
-        })
-      ).subscribe();
+        take(1)
+      ).subscribe({
+        next: () => console.info('[AuthService] Logout request completed'),
+        error: (err) => console.warn('[AuthService] Logout request failed', err)
+      });
   }
 
   forgotPass(form: any): Observable<any> {

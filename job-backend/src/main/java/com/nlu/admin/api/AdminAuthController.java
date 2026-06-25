@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(path = "api/auth/admin", produces = "application/json")
+@RequestMapping(path = "/api/auth/admin", produces = "application/json")
 @RequiredArgsConstructor
 public class AdminAuthController {
     private final AuthService authService;

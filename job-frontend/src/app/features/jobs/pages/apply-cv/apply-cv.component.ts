@@ -105,7 +105,7 @@ export class ApplyCvComponent implements OnInit {
   }
   formatMoney(val: number): string {
     const locale = this.i18nService.currentLanguage === 'vi' ? 'vi-VN' : 'en-US';
-    return `${val.toLocaleString(locale)} VND`;
+    return `${val.toLocaleString(locale)}`;
   }
 
   get cvMode(): CvMode {

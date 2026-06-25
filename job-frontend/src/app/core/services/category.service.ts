@@ -18,7 +18,7 @@ export class CategoryService {
   isLoadingCategories = computed(() => this.loadingCategories());
 
   constructor(
-    private http: HttpClient, 
+    private http: HttpClient,
     private utilities: UtilitiesService,
     private notify: NotifyMessageService
   ) {
@@ -28,7 +28,7 @@ export class CategoryService {
   loadCategories(): void {
     this.loadingCategories.set(true);
     this.http
-      .get<ApiResponse<Category[]>>(`${this.url}/categories`)
+      .get<ApiResponse<Category[]>>(`${this.url}/v1/categories`)
       .pipe(
         take(1),
         finalize(() => this.loadingCategories.set(false))

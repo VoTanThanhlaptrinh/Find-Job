@@ -13,7 +13,6 @@ import hljs from 'highlight.js';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { JwtModule } from '@auth0/angular-jwt';
 import { provideToastr } from 'ngx-toastr';
-import { CustomToastComponent } from './shared/components/custom-toast/custom-toast.component';
 import { AuthService } from './core/services/auth.service';
 
 export function initializeApp(authService: AuthService) {
@@ -31,7 +30,6 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(JwtModule.forRoot({})),
     provideNativeDateAdapter(),
     provideToastr({
-      toastComponent: CustomToastComponent,
       timeOut: 3000,
       positionClass: 'toast-top-right',
       preventDuplicates: true,

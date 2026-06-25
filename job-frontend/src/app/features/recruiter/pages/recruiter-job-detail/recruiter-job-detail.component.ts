@@ -70,11 +70,11 @@ export class RecruiterJobDetailComponent implements OnInit {
   formatMoney(value: number | string): string {
     if (typeof value === 'number') {
       const locale = this.i18nService.currentLanguage === 'vi' ? 'vi-VN' : 'en-US';
-      return `${value.toLocaleString(locale)} VND`;
+      return `${value.toLocaleString(locale)}`;
     }
 
     const normalized = value?.trim() ?? '';
-    return normalized.length > 0 ? normalized : '0 VND';
+    return normalized.length > 0 ? normalized : '0';
   }
 
   private loadJobDetail(id: string): void {

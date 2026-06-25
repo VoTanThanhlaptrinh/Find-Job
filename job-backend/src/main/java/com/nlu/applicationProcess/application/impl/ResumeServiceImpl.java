@@ -76,6 +76,9 @@ public class ResumeServiceImpl implements ResumeService {
         if (user == null) {
             throw new UnauthorizedException(MessageUtils.getMessage("message.unauthorized"));
         }
+        if(resumeRepository.countResumesByUser_Id(user.getId()) > 100){
+            throw new BadRequestException(MessageUtils.getMessage("resume.limit_exceeded"));
+        }
         MDC.put(MDC_USER_ID, String.valueOf(user.getId()));
 
         log.info("Creating resume for user: {}, file: {}",
@@ -93,20 +96,26 @@ public class ResumeServiceImpl implements ResumeService {
         String rawText;
         try {
             data = fileService.toByteArray(resumeUploadDTO.getFile().getInputStream());
-            rawText = fileService.extractTextFromFile(resumeUploadDTO.getFile().getInputStream());
-            if (rawText == null || rawText.isEmpty()) {
-                log.info("Standard text extraction yielded empty result for user: {} — falling back to OCR", user.getId());
-                rawText = fileService.extractTextFromFileOcr(resumeUploadDTO.getFile());
+            if (data.length == 0) {
+                log.warn("Empty file uploaded during resume creation for user: {}", user.getId());
+                throw new BadRequestException(MessageUtils.getMessage("resume.text.empty"));
             }
+
+            rawText = fileService.extractTextFromFile(resumeUploadDTO.getFile().getInputStream());
             rawText = fileService.cleanText(rawText);
+
+            if (rawText == null || rawText.isEmpty()) {
+                log.warn("Text extraction yielded empty result for user: {}", user.getId());
+                throw new BadRequestException(MessageUtils.getMessage("resume.text.empty"));
+            }
+            log.info("raw text extracted successfully");
+        } catch (BadRequestException e) {
+            throw e;
         } catch (Exception e) {
             log.warn("File processing failed during resume creation for user: {}", user.getId());
-            throw new RuntimeException(MessageUtils.getMessage("resume.upload.failed"));
+            throw new BadRequestException(MessageUtils.getMessage("resume.text.empty"));
         }
-        if (data.length == 0) {
-            log.warn("Empty file uploaded during resume creation for user: {}", user.getId());
-            throw new RuntimeException(MessageUtils.getMessage("message.error"));
-        }
+
         cv.setRawText(rawText);
 
         // upload to cloud

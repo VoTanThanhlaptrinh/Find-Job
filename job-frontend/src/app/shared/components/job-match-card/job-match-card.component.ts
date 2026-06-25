@@ -17,7 +17,7 @@ export class JobMatchCardComponent {
 
   formatMoney(value: number | string): string {
     if (typeof value === 'number') {
-      return `${value.toLocaleString('vi-VN')} VND`;
+      return `${value.toLocaleString('vi-VN')}`;
     }
     return value;
   }

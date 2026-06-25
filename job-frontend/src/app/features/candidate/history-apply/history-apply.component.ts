@@ -18,7 +18,7 @@ import { JobCardModel } from '../../../shared/models/jobs/job-card.model';
 export class HistoryApplyComponent implements OnInit {
   private readonly jobService = inject(JobService);
   skeleton = this.getSkeletonFlag();
-  readonly skeletonRows = [1, 2, 3];
+  readonly skeletonRows = [1, 2];
   private readonly defaultPageSize = 10;
 
   appliedJobs: JobCardModel[] = [];
@@ -51,33 +51,25 @@ export class HistoryApplyComponent implements OnInit {
     return this.appliedJobs.length;
   }
 
-  get averageSalaryLabel(): string {
+  get mostCommonLocation(): string {
     const jobs = this.appliedJobs;
-    if (jobs.length === 0) {
-      return '--';
-    }
-
-    const totalSalary = jobs.reduce((sum, job) => sum + job.salary, 0);
-    const averageSalary = totalSalary / jobs.length;
-    return `${Math.round(averageSalary).toLocaleString('vi-VN')} VND`;
+    if (jobs.length === 0) return '--';
+    const counts = jobs.reduce((acc, job) => {
+      const loc = job.address || 'Khác';
+      acc[loc] = (acc[loc] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    return Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
   }
 
-  get highestSalaryLabel(): string {
+  get mostCommonJobType(): string {
     const jobs = this.appliedJobs;
-    if (jobs.length === 0) {
-      return '--';
-    }
-
-    const highestSalary = Math.max(...jobs.map(job => job.salary));
-    return `${highestSalary.toLocaleString('vi-VN')} VND`;
-  }
-
-  get latestAppliedTime(): string {
-    const jobs = this.appliedJobs;
-    if (jobs.length === 0) {
-      return '--';
-    }
-
-    return jobs[0].time;
+    if (jobs.length === 0) return '--';
+    const counts = jobs.reduce((acc, job) => {
+      const type = job.time || 'Khác';
+      acc[type] = (acc[type] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    return Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
   }
 }

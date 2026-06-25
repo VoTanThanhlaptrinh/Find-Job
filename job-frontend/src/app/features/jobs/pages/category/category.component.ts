@@ -105,7 +105,7 @@ export class CategoryComponent implements OnInit, AfterViewInit {
 
   formatMoney(value: number): string {
     const locale = this.i18nService.currentLanguage === 'vi' ? 'vi-VN' : 'en-US';
-    return `${value.toLocaleString(locale)} VND`;
+    return `${value.toLocaleString(locale)}`;
   }
 
   get totalPages(): number {

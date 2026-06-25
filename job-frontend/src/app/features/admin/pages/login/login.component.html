@@ -145,14 +145,14 @@
                 autocomplete="email"
                 class="block w-full pl-11 pr-4 py-3 bg-ad-surface-container-low border-transparent rounded-lg text-ad-on-surface placeholder-ad-on-surface-variant/50 focus:bg-ad-surface-container-lowest focus:ring-0 focus:border-ad-primary/20 focus:outline-none transition-colors duration-200"
                 id="email"
-                formControlName="email"
+                formControlName="username"
                 placeholder="admin@elitehire.com"
                 type="email"
               />
             </div>
             @if (isInvalid('username')) {
               <p class="text-xs text-red-600">
-                Please enter a valid username.
+                Please enter a valid email address.
               </p>
             }
           </div>

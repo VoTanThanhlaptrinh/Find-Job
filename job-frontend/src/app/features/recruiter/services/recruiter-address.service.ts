@@ -15,7 +15,7 @@ export class RecruiterAddressService {
   readonly addresses$ = signal<CompanyAddress[]>([]);
   readonly isLoading$ = signal<boolean>(false);
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) { }
 
   loadAddresses(): void {
     this.isLoading$.set(true);
