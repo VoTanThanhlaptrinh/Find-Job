@@ -134,8 +134,7 @@ public class JobServiceImpl implements JobService {
             Recruitment recruitment = recruitmentRepository.findRecruitmentByUser(user)
                     .orElseThrow(() -> new ForbiddenException("message.forbidden"));
 
-            if (job.getRecruitment() == null || job.getRecruitment().getId() != recruitment.getId()) {
-                log.warn("Job update forbidden — user: {} is not owner of job: {}", user.getId(), id);
+            if (!job.isOwnedBy(recruitment)) {
                 throw new ForbiddenException("job.edit.forbidden");
             }
 
@@ -177,8 +176,7 @@ public class JobServiceImpl implements JobService {
             Recruitment recruitment = recruitmentRepository.findRecruitmentByUser(user)
                     .orElseThrow(() -> new ForbiddenException("message.forbidden"));
 
-            if (job.getRecruitment() == null || job.getRecruitment().getId() != recruitment.getId()) {
-                log.warn("Job deletion forbidden — user: {} is not owner of job: {}", user.getId(), id);
+            if (!job.isOwnedBy(recruitment)) {
                 throw new ForbiddenException("job.delete.forbidden");
             }
 
