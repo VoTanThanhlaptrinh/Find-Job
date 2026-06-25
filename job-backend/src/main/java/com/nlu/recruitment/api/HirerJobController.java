@@ -14,15 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "/api/hirer/jobs", produces = "application/json")
@@ -32,7 +24,7 @@ public class HirerJobController {
     private final JobQueryService jobQueryService;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse<String>> post(@Valid @ModelAttribute JobDto job,
+    public ResponseEntity<ApiResponse<String>> post(@Valid @RequestBody JobDto job,
                                                     @CurrentUser User currentUser) {
         jobService.createJob(job, currentUser);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -41,7 +33,7 @@ public class HirerJobController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<String>> update(@PathVariable("id") Long id,
-                                                      @Valid @ModelAttribute JobDto job,
+                                                      @Valid @RequestBody JobDto job,
                                                       @CurrentUser User currentUser) {
         jobService.updateJob(id, job, currentUser);
         return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("job.update.success"), null, HttpStatus.OK.value()));
