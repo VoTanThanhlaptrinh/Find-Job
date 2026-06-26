@@ -15,6 +15,8 @@ spring:
 app:
   cookie:
     secure: true
+  frontend-url: https://find-job-frontend.vercel.app
 
 server:
   port: ${PORT:8080}
+  forward-headers-strategy: framework

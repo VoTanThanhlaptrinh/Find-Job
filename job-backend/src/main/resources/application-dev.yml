@@ -24,6 +24,7 @@ spring:
 app:
   cookie:
     secure: false
+  frontend-url: http://localhost:4200
 
 server:
   port: 8080

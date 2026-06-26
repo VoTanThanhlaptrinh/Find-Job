@@ -103,3 +103,6 @@ cloudflare:
     secret-key: ${CLOUDFLARE_SECRET_KEY}
     bucket-name: job-portal-resume
     endpoint: https://${cloudflare.r2.account-id}.r2.cloudflarestorage.com
+
+server:
+  forward-headers-strategy: framework
