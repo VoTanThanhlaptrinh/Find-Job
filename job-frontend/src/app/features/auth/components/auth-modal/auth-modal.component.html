@@ -1,0 +1,195 @@
+<div class="relative bg-white text-slate-800 rounded-2xl overflow-hidden w-[400px] sm:w-[480px] max-w-full">
+  <!-- Close Button -->
+  <button mat-dialog-close class="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-800 transition">
+    <span class="material-symbols-outlined text-[20px]">close</span>
+  </button>
+
+  <mat-tab-group 
+    [selectedIndex]="selectedTabIndex" 
+    (selectedIndexChange)="selectedTabIndex = $event"
+    animationDuration="200ms"
+    mat-stretch-tabs="false"
+    class="w-full">
+    
+    <!-- LOGIN TAB -->
+    <mat-tab label="Đăng nhập">
+      <div class="p-6 sm:p-8">
+        <div class="text-center mb-6">
+          <h2 class="text-2xl font-bold text-slate-800">Chào mừng trở lại</h2>
+          <p class="text-sm text-slate-500 mt-1">Đăng nhập để tiếp tục</p>
+        </div>
+
+        <a *ngIf="googleUrl" [href]="googleUrl" class="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 hover:shadow transition-all">
+          <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          Tiếp tục với Google
+        </a>
+
+        <div class="relative mt-6 flex items-center gap-4">
+          <hr class="flex-1 border-slate-200" />
+          <span class="text-xs text-slate-400">Hoặc đăng nhập bằng email</span>
+          <hr class="flex-1 border-slate-200" />
+        </div>
+
+        <form class="mt-6 space-y-4" [formGroup]="loginForm" (ngSubmit)="onLogin()">
+          <div>
+            <label for="login-username" class="mb-1 block text-sm font-medium text-slate-700">Tên người dùng hoặc Email</label>
+            <input
+              id="login-username"
+              type="text"
+              class="w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500"
+              [class.border-red-500]="shouldShowError(loginUsernameControl)"
+              [class.border-slate-300]="!shouldShowError(loginUsernameControl)"
+              placeholder="Nhập email hoặc tên người dùng"
+              formControlName="username"
+              autocomplete="username"
+            />
+            <p *ngIf="loginUsernameControl.hasError('required') && shouldShowError(loginUsernameControl)" class="mt-1 text-xs text-red-600">Vui lòng nhập tên người dùng hoặc email.</p>
+            <p *ngIf="loginUsernameControl.hasError('usernameOrEmail') && shouldShowError(loginUsernameControl)" class="mt-1 text-xs text-red-600">Định dạng không hợp lệ.</p>
+          </div>
+
+          <div>
+            <label for="login-password" class="mb-1 block text-sm font-medium text-slate-700">Mật khẩu</label>
+            <div class="relative">
+              <input
+                id="login-password"
+                [type]="showLoginPassword ? 'text' : 'password'"
+                class="w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition pr-10 focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500"
+                [class.border-red-500]="shouldShowError(loginPasswordControl)"
+                [class.border-slate-300]="!shouldShowError(loginPasswordControl)"
+                placeholder="Mật khẩu"
+                formControlName="password"
+                autocomplete="current-password"
+              />
+              <button type="button" (click)="toggleLoginPassword()" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-600 transition-colors">
+                <span class="material-symbols-outlined text-[18px]">{{ showLoginPassword ? 'visibility' : 'visibility_off' }}</span>
+              </button>
+            </div>
+            <p *ngIf="loginPasswordControl.hasError('required') && shouldShowError(loginPasswordControl)" class="mt-1 text-xs text-red-600">Vui lòng nhập mật khẩu.</p>
+            <p *ngIf="loginPasswordControl.hasError('minlength') && shouldShowError(loginPasswordControl)" class="mt-1 text-xs text-red-600">Mật khẩu cần ít nhất 6 ký tự.</p>
+          </div>
+
+          <div class="flex items-center justify-between text-sm">
+            <a (click)="dialogRef.close()" routerLink="/forgot-pass" class="font-medium text-indigo-600 hover:text-indigo-700 transition-colors cursor-pointer">Quên mật khẩu?</a>
+            <p class="text-slate-500 cursor-pointer" (click)="switchToRegister()">
+              Chưa có tài khoản? <span class="font-semibold text-slate-700 hover:text-slate-900">Đăng ký</span>
+            </p>
+          </div>
+
+          <button
+            class="w-full mt-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:from-blue-700 hover:to-indigo-700 shadow-md shadow-indigo-200 disabled:cursor-not-allowed disabled:opacity-70 disabled:shadow-none"
+            type="submit"
+            [disabled]="loginForm.invalid || isLoginSubmitting"
+          >
+            {{ isLoginSubmitting ? 'Đang đăng nhập...' : 'Đăng nhập' }}
+          </button>
+        </form>
+      </div>
+    </mat-tab>
+
+    <!-- REGISTER TAB -->
+    <mat-tab label="Đăng ký">
+      <div class="p-6 sm:p-8">
+        <div class="text-center mb-6">
+          <h2 class="text-2xl font-bold text-slate-800">Tạo tài khoản mới</h2>
+          <p class="text-sm text-slate-500 mt-1">Gia nhập hệ thống Job Portal</p>
+        </div>
+
+        <form class="space-y-4" [formGroup]="registerForm" (ngSubmit)="onRegister()">
+          <div>
+            <label for="reg-fullName" class="mb-1 block text-sm font-medium text-slate-700">Họ và tên</label>
+            <input
+              id="reg-fullName"
+              type="text"
+              formControlName="fullName"
+              placeholder="Nguyễn Văn A"
+              class="w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500"
+              [class.border-red-500]="shouldShowError(regFullNameControl)"
+              [class.border-slate-300]="!shouldShowError(regFullNameControl)"
+            />
+            <p *ngIf="regFullNameControl.hasError('required') && shouldShowError(regFullNameControl)" class="mt-1 text-xs text-red-600">Vui lòng nhập họ và tên.</p>
+          </div>
+
+          <div>
+            <label for="reg-username" class="mb-1 block text-sm font-medium text-slate-700">Email</label>
+            <input
+              id="reg-username"
+              type="email"
+              formControlName="username"
+              placeholder="you@example.com"
+              class="w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500"
+              [class.border-red-500]="shouldShowError(regUsernameControl)"
+              [class.border-slate-300]="!shouldShowError(regUsernameControl)"
+            />
+            <p *ngIf="regUsernameControl.hasError('required') && shouldShowError(regUsernameControl)" class="mt-1 text-xs text-red-600">Email không được để trống.</p>
+            <p *ngIf="regUsernameControl.hasError('email') && shouldShowError(regUsernameControl)" class="mt-1 text-xs text-red-600">Email không hợp lệ.</p>
+          </div>
+
+          <div>
+            <label for="reg-password" class="mb-1 block text-sm font-medium text-slate-700">Mật khẩu</label>
+            <div class="relative">
+              <input
+                id="reg-password"
+                [type]="showRegisterPassword ? 'text' : 'password'"
+                formControlName="password"
+                placeholder="Ít nhất 8 ký tự, có Hoa, thường, số"
+                class="w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition pr-10 focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500"
+                [class.border-red-500]="shouldShowError(regPasswordControl)"
+                [class.border-slate-300]="!shouldShowError(regPasswordControl)"
+              />
+              <button type="button" (click)="toggleRegisterPassword()" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-600 transition-colors">
+                <span class="material-symbols-outlined text-[18px]">{{ showRegisterPassword ? 'visibility' : 'visibility_off' }}</span>
+              </button>
+            </div>
+            <div class="mt-1.5" *ngIf="regPasswordControl.value && (regPasswordControl.dirty || regPasswordControl.touched)">
+              <div class="h-1 w-full bg-slate-100 rounded-full overflow-hidden flex gap-1">
+                <div class="h-full transition-all duration-300" [style.width.%]="passwordStrength.percent" [ngClass]="passwordStrength.colorClass"></div>
+              </div>
+            </div>
+            <p *ngIf="regPasswordControl.hasError('required') && shouldShowError(regPasswordControl)" class="mt-1 text-xs text-red-600">Vui lòng nhập mật khẩu.</p>
+          </div>
+
+          <div>
+            <label for="reg-confirmPassword" class="mb-1 block text-sm font-medium text-slate-700">Xác nhận mật khẩu</label>
+            <div class="relative">
+              <input
+                id="reg-confirmPassword"
+                [type]="showConfirmPassword ? 'text' : 'password'"
+                formControlName="confirmPassword"
+                placeholder="Nhập lại mật khẩu"
+                class="w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition pr-10 focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500"
+                [class.border-red-500]="shouldShowError(regConfirmPasswordControl)"
+                [class.border-slate-300]="!shouldShowError(regConfirmPasswordControl)"
+              />
+              <button type="button" (click)="toggleConfirmPassword()" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-600 transition-colors">
+                <span class="material-symbols-outlined text-[18px]">{{ showConfirmPassword ? 'visibility' : 'visibility_off' }}</span>
+              </button>
+            </div>
+            <p *ngIf="regConfirmPasswordControl.hasError('mismatch') && shouldShowError(regConfirmPasswordControl)" class="mt-1 text-xs text-red-600">Mật khẩu xác nhận không khớp.</p>
+          </div>
+
+          <div *ngIf="formErrors" class="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+            {{ formErrors }}
+          </div>
+
+          <button
+            type="submit"
+            class="w-full mt-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:from-blue-700 hover:to-indigo-700 shadow-md shadow-indigo-200 disabled:cursor-not-allowed disabled:opacity-70 disabled:shadow-none"
+            [disabled]="registerForm.invalid || isRegisterSubmitting"
+          >
+            {{ isRegisterSubmitting ? 'Đang tạo...' : 'Đăng ký' }}
+          </button>
+          
+          <p class="text-center text-sm text-slate-500 cursor-pointer" (click)="switchToLogin()">
+            Bạn đã có tài khoản? <span class="font-semibold text-indigo-600 hover:text-indigo-700">Đăng nhập</span>
+          </p>
+        </form>
+      </div>
+    </mat-tab>
+
+  </mat-tab-group>
+</div>

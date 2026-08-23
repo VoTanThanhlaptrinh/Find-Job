@@ -1,10 +1,43 @@
 @import "tailwindcss";
 @import "ngx-toastr/toastr";
 
+:root {
+  --color-primary: #1E63F3;
+  --color-primary-hover: #174FCB;
+  --color-primary-light: #EAF2FF;
+  --color-navy: #07142F;
+  --color-cyan: #24C6DC;
+  --color-text: #0F172A;
+  --color-text-muted: #526077;
+  --color-border: #DCE5F2;
+  --color-surface-soft: #F5F8FE;
+  --color-white: #FFFFFF;
+}
 
-
+html {
+  scroll-behavior: smooth;
+}
 
 @theme {
+  /* Public portal tokens. */
+  --color-primary: #1E63F3;
+  --color-primary-hover: #174FCB;
+  --color-primary-light: #EAF2FF;
+  --color-navy: #07142F;
+  --color-cyan: #24C6DC;
+  --color-text: #0F172A;
+  --color-text-muted: #526077;
+  --color-border: #DCE5F2;
+  --color-surface-soft: #F5F8FE;
+  --color-white: #FFFFFF;
+
+  --color-site-primary: #1E63F3;
+  --color-site-primary-hover: #174FCB;
+  --color-site-ink: #0F172A;
+  --color-site-muted: #526077;
+  --color-site-surface: #F5F8FE;
+  --color-site-border: #DCE5F2;
+
   /* --- Admin Colors --- */
   --color-ad-error-container: #fb5151;
   --color-ad-on-background: #282b51;
@@ -108,19 +141,17 @@
   --color-re-surface-dim: #d8dadc;
 
   /* --- Border Radius --- */
-  /* Admin */
   --radius-ad: 0.125rem;
   --radius-ad-lg: 0.25rem;
   --radius-ad-xl: 0.5rem;
   --radius-ad-full: 0.75rem;
-  /* Recruiter */
   --radius-re: 0.25rem;
   --radius-re-lg: 0.5rem;
   --radius-re-xl: 0.75rem;
   --radius-re-full: 9999px;
 
   /* --- Font Families --- */
-  --font-headline: 'Manrope', sans-serif;
+  --font-headline: 'Manrope', 'Inter', sans-serif;
   --font-body: 'Inter', sans-serif;
   --font-label: 'Inter', sans-serif;
   --font-manrope: 'Manrope', sans-serif;
@@ -141,6 +172,7 @@
 }
 body {
   font-family: "Inter", sans-serif;
+  color: var(--color-text);
 }
 .material-symbols-outlined {
   font-family: "Material Symbols Outlined";
@@ -157,6 +189,70 @@ body {
   -webkit-font-feature-settings: "liga";
   -webkit-font-smoothing: antialiased;
 }
+
+/* Global Reusable Button Tokens */
+.btn-primary {
+  background-color: var(--color-primary);
+  color: #ffffff;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  transition: all 200ms ease;
+  box-shadow: 0 10px 20px -5px rgba(30, 99, 243, 0.25);
+}
+.btn-primary:hover {
+  background-color: var(--color-primary-hover);
+  box-shadow: 0 12px 24px -5px rgba(30, 99, 243, 0.35);
+  transform: translateY(-1px);
+}
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-secondary {
+  background-color: #ffffff;
+  color: var(--color-primary);
+  border: 1px solid var(--color-border);
+  font-weight: 600;
+  border-radius: 0.75rem;
+  transition: all 200ms ease;
+}
+.btn-secondary:hover {
+  background-color: var(--color-primary-light);
+  border-color: var(--color-primary);
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: inherit;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  transition: all 200ms ease;
+}
+.btn-ghost:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Subpage Hero Banner (Jobs, Blog, Single Pages) */
+.page-hero-banner {
+  background-image: url('/assets/images/hero-images.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  overflow: hidden;
+}
+
+.page-hero-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(ellipse at center, rgba(7, 20, 47, 0.88) 0%, rgba(7, 20, 47, 0.6) 70%, rgba(7, 20, 47, 0.78) 100%),
+    linear-gradient(to bottom, rgba(7, 20, 47, 0.8) 0%, rgba(7, 20, 47, 0.5) 50%, rgba(7, 20, 47, 0.92) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
 
 @keyframes flow {
   0% {

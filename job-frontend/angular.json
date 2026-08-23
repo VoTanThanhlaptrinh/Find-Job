@@ -26,7 +26,6 @@
             ],
             "styles": [
               "src/styles.css",
-              "src/assets/web_css/css/bootstrap.css",
               "src/assets/web_css/css/linearicons.css",
               "src/assets/web_css/css/font-awesome.min.css",
               "src/assets/web_css/css/animate.min.css",

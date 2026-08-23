@@ -22,6 +22,7 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       navigationMenu: 'Menu điều hướng',
       logoAlt: 'Logo Job Listing',
       switchLanguage: 'Ngôn ngữ',
+      more: 'Thêm',
     },
     footer: {
       topJobsTitle: 'Top công việc',
@@ -582,6 +583,7 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       navigationMenu: 'Navigation menu',
       logoAlt: 'Job Listing logo',
       switchLanguage: 'Language',
+      more: 'More',
     },
     footer: {
       topJobsTitle: 'Top jobs',

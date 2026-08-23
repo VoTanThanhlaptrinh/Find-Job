@@ -1,0 +1,76 @@
+:host {
+  display: block;
+}
+
+/* Stagger entrance for benefits */
+.benefit-item {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 450ms cubic-bezier(0.16, 1, 0.3, 1), transform 450ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.benefit-item.benefit-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Sparkline Drawing Animation */
+.sparkline-path {
+  stroke-dasharray: 380;
+  stroke-dashoffset: 380;
+  transition: stroke-dashoffset 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sparkline-path.sparkline-active {
+  stroke-dashoffset: 0;
+}
+
+.sparkline-pulse {
+  animation: sparkPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes sparkPulse {
+  0%, 100% {
+    transform: scale(0.9);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.6);
+    opacity: 0.7;
+  }
+}
+
+.online-pulse {
+  animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .benefit-item {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .sparkline-path {
+    stroke-dashoffset: 0 !important;
+    transition: none !important;
+  }
+
+  .sparkline-pulse,
+  .online-pulse {
+    animation: none !important;
+    opacity: 0.4 !important;
+  }
+
+  .progress-ring-circle {
+    transition: none !important;
+  }
+}

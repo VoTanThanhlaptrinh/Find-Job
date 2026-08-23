@@ -1,161 +1,218 @@
-<section class="banner-area relative" id="mini">
-  <div class="overlay overlay-bg"></div>
+<!-- Banner Area -->
+<section class="page-hero-banner relative min-h-[260px] sm:min-h-[280px] lg:min-h-[300px] flex items-center justify-center pt-32 pb-14 sm:pt-36 sm:pb-16 lg:pt-40 lg:pb-18 font-body">
+  <div class="relative z-10 mx-auto w-full max-w-[1440px] px-6 sm:px-10 lg:px-12 text-center">
+    <h1 class="font-headline text-3xl sm:text-4xl lg:text-[42px] font-extrabold tracking-tight text-white drop-shadow-md">
+      Tìm kiếm việc làm
+    </h1>
+    <p class="mt-3 text-base text-white/85 max-w-xl mx-auto font-normal">
+      Khám phá các vị trí tuyển dụng phù hợp với kỹ năng và định hướng của bạn
+    </p>
+  </div>
 </section>
 
-<!-- Start post Area -->
-<section class="post-area section-gap">
-  <div class="container">
-    <div class="row justify-content-center d-flex">
-      <div class="col-lg-4 sidebar">
-        <div class="single-slidebar">
-          <h4>{{ "category.filterByTitle" | t }}</h4>
-          <div class="flex w-full items-center gap-2 px-2 py-2 bg-white cursor-pointer rounded-xl shadow-md border">
-            <label for="category-title" class="sr-only">{{
-              "category.titlePlaceholder" | t
-              }}</label>
-            <input id="category-title" [attr.title]="'category.titlePlaceholder' | t"
-              [attr.aria-label]="'category.titlePlaceholder' | t" class="w-full outline-none border-none focus:ring-0"
-              type="text" [placeholder]="'category.titlePlaceholder' | t" value="" name="title" [ngModel]="title"
-              (ngModelChange)="onTitleChange($event)" />
+<!-- Job Discovery & Filter Area -->
+<section class="bg-slate-50 py-12 font-body">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-12">
+      <!-- Left Sidebar (Filters - 4 columns) -->
+      <aside class="space-y-6 lg:col-span-4">
+        <!-- Title Filter -->
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <h3 class="font-headline text-sm font-bold uppercase tracking-wider text-slate-900 mb-3">
+            {{ "category.filterByTitle" | t }}
+          </h3>
+          <div class="relative flex items-center">
+            <span class="material-symbols-outlined absolute left-3 text-slate-400 text-[20px]">search</span>
+            <label for="category-title" class="sr-only">{{ "category.titlePlaceholder" | t }}</label>
+            <input
+              id="category-title"
+              type="text"
+              [placeholder]="'category.titlePlaceholder' | t"
+              [attr.aria-label]="'category.titlePlaceholder' | t"
+              [ngModel]="title"
+              (ngModelChange)="onTitleChange($event)"
+              class="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2.5 pl-10 pr-4 text-sm font-medium text-slate-900 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
+            />
           </div>
         </div>
-        <div class="single-slidebar">
-          <h4>Danh mục</h4>
-          <div class="list-group cat-list overflow-y-auto max-h-75">
+
+        <!-- Category Filter -->
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <h3 class="font-headline text-sm font-bold uppercase tracking-wider text-slate-900 mb-3">
+            Danh mục
+          </h3>
+          <div class="max-h-60 space-y-2 overflow-y-auto pr-1">
             @for (item of categories; track item.id) {
-            <div class="list-group-item flex justify-between">
-              <div class="form-check flex w-full items-center gap-2">
-                <input title="input" [id]="'category-filter-' + $index" [attr.title]="item.name"
-                  [attr.aria-label]="item.name" class="form-check-input" type="checkbox" [value]="item.id"
-                  [checked]="selectedCategories.has(item.id)"
-                  (change)="onFilterChange('CATEGORY', item.id, $event.target.checked)" />
-                <label class="form-check-label" [attr.for]="'category-filter-' + $index">{{ item.name }}</label>
-              </div>
-            </div>
-            }
-          </div>
-        </div>
-
-        <div class="single-slidebar">
-          <h4>{{ "category.filterByLocation" | t }}</h4>
-          <div class="list-group cat-list overflow-y-auto max-h-75">
-            @for (item of addressCount; track item.city) {
-            <div class="list-group-item flex justify-between">
-              <div class="form-check flex w-full items-center gap-2">
-                <input title="input" [id]="'city-filter-' + $index" [attr.title]="item.city"
-                  [attr.aria-label]="item.city" class="form-check-input" type="checkbox" [value]="item.city"
-                  [checked]="selectedAddresses.has(item.city)"
-                  (change)="onFilterChange('ADDRESS', item.city, $event.target.checked)" />
-                <label class="form-check-label" [attr.for]="'city-filter-' + $index">{{ item.city }}</label>
-              </div>
-              <span>{{ item.count }}</span>
-            </div>
-            }
-          </div>
-        </div>
-
-        <div class="single-slidebar">
-          <h4>{{ "category.jobType" | t }}</h4>
-          <div class="list-group cat-list">
-            @for (job of jobTypes; track job.id) {
-            <div class="list-group-item flex flex-col justify-between">
-              <label class="form-switch">
-                <label [attr.for]="'job-type-' + job.id" class="sr-only">{{
-                  "category.jobTypeOptions." + job.id | t
-                  }}</label>
-                <input [id]="'job-type-' + job.id" type="checkbox" [checked]="job.checked" value="{{ job.value }}"
-                  [attr.title]="'category.jobTypeOptions.' + job.id | t"
-                  [attr.aria-label]="'category.jobTypeOptions.' + job.id | t"
-                  (change)="onFilterChange('JOB_TYPE', job.value, $event.target.checked)" />
-                <span>{{ "category.jobTypeOptions." + job.id | t }}</span>
-                <span class="slider round"></span>
-              </label>
-            </div>
-            }
-          </div>
-        </div>
-      </div>
-      <div class="col-lg-8 post-list">
-        <div class="flex flex-col gap-y-2">
-          @if (isLoadingJobs) {
-          @for (skeleton of [1, 2, 3, 4, 5]; track skeleton) {
-          <app-skeleton-job-card></app-skeleton-job-card>
-          }
-          } @else {
-          @for (item of jobs; track item.id) {
-          <app-job-card [job]="item" image="assets/web_css/img/post.png" detailRoute="/single"></app-job-card>
-          } @empty {
-          <div>{{ "category.empty" | t }}</div>
-          }
-          }
-        </div>
-        @if (length > 0) {
-        <section class="mt-6 rounded-2xl bg-white/95 p-2 backdrop-blur-sm"
-          [attr.aria-label]="'category.paginatorLabel' | t">
-          <div class="flex w-full gap-4 items-center justify-center lg:justify-end">
-            <div class="hidden md:flex md:flex-col gap-3 sm:gap-4">
               <label
-                class="inline-flex shadow-md items-center p-2 gap-3 rounded-xl border border-slate-200 bg-slate-50 text-sm font-medium text-slate-700"
-                for="page-size-select">
+                [attr.for]="'category-filter-' + $index"
+                class="flex cursor-pointer items-center justify-between rounded-lg px-2 py-1.5 transition hover:bg-slate-50"
+              >
+                <div class="flex items-center gap-2.5">
+                  <input
+                    [id]="'category-filter-' + $index"
+                    type="checkbox"
+                    [value]="item.id"
+                    [checked]="selectedCategories.has(item.id)"
+                    (change)="onFilterChange('CATEGORY', item.id, $event.target.checked)"
+                    class="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                  />
+                  <span class="text-sm font-medium text-slate-700">{{ item.name }}</span>
+                </div>
+              </label>
+            }
+          </div>
+        </div>
+
+        <!-- Location Filter -->
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <h3 class="font-headline text-sm font-bold uppercase tracking-wider text-slate-900 mb-3">
+            {{ "category.filterByLocation" | t }}
+          </h3>
+          <div class="max-h-60 space-y-2 overflow-y-auto pr-1">
+            @for (item of addressCount; track item.city) {
+              <label
+                [attr.for]="'city-filter-' + $index"
+                class="flex cursor-pointer items-center justify-between rounded-lg px-2 py-1.5 transition hover:bg-slate-50"
+              >
+                <div class="flex items-center gap-2.5">
+                  <input
+                    [id]="'city-filter-' + $index"
+                    type="checkbox"
+                    [value]="item.city"
+                    [checked]="selectedAddresses.has(item.city)"
+                    (change)="onFilterChange('ADDRESS', item.city, $event.target.checked)"
+                    class="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                  />
+                  <span class="text-sm font-medium text-slate-700">{{ item.city }}</span>
+                </div>
+                <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">{{ item.count }}</span>
+              </label>
+            }
+          </div>
+        </div>
+
+        <!-- Job Type Filter -->
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <h3 class="font-headline text-sm font-bold uppercase tracking-wider text-slate-900 mb-3">
+            {{ "category.jobType" | t }}
+          </h3>
+          <div class="space-y-2.5">
+            @for (job of jobTypes; track job.id) {
+              <label
+                [attr.for]="'job-type-' + job.id"
+                class="flex cursor-pointer items-center justify-between rounded-lg px-2 py-1.5 transition hover:bg-slate-50"
+              >
+                <span class="text-sm font-medium text-slate-700">{{ "category.jobTypeOptions." + job.id | t }}</span>
+                <input
+                  [id]="'job-type-' + job.id"
+                  type="checkbox"
+                  [checked]="job.checked"
+                  [value]="job.value"
+                  (change)="onFilterChange('JOB_TYPE', job.value, $event.target.checked)"
+                  class="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                />
+              </label>
+            }
+          </div>
+        </div>
+      </aside>
+
+      <!-- Right Main Content (Job Listings - 8 columns) -->
+      <main class="space-y-4 lg:col-span-8">
+        @if (isLoadingJobs) {
+          <div class="flex flex-col gap-3 w-full">
+            @for (skeleton of [1, 2, 3, 4, 5]; track skeleton) {
+              <app-skeleton-job-card></app-skeleton-job-card>
+            }
+          </div>
+        } @else {
+          <div class="flex flex-col gap-3 w-full">
+            @for (item of jobs; track item.id) {
+              <app-job-card [job]="item" image="assets/web_css/img/post.png" detailRoute="/single"></app-job-card>
+            } @empty {
+              <div class="rounded-3xl border border-slate-200 bg-white p-12 text-center">
+                <span class="material-symbols-outlined text-slate-300 text-[48px]">search_off</span>
+                <h3 class="mt-4 font-headline text-lg font-bold text-slate-800">
+                  {{ "category.empty" | t }}
+                </h3>
+                <p class="mt-1 text-sm text-slate-500">
+                  Thử điều chỉnh bộ lọc hoặc từ khóa tìm kiếm của bạn.
+                </p>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Modern Pagination Bar -->
+        @if (length > 0) {
+          <section class="mt-8 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm" [attr.aria-label]="'category.paginatorLabel' | t">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between px-2">
+              <!-- Page Size Selector -->
+              <div class="flex items-center gap-2 text-sm text-slate-600">
                 <span>{{ 'pagination.rowsPerPage' | t }}</span>
-                <select id="page-size-select"
-                  class="rounded-lg border border-slate-200 bg-white px-2 py-2 text-sm font-semibold text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10"
-                  [ngModel]="pageSize" (ngModelChange)="onPageSizeChange($event)">
+                <select
+                  id="page-size-select"
+                  class="rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-sm font-semibold text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  [ngModel]="pageSize"
+                  (ngModelChange)="onPageSizeChange($event)"
+                >
                   @for (option of pageSizeOptions; track option) {
-                  <option [ngValue]="option">{{ option }}</option>
+                    <option [ngValue]="option">{{ option }}</option>
                   }
                 </select>
-              </label>
-            </div>
-            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div
-                class="inline-flex shadow-md flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-2 py-2">
-                <button type="button"
-                  class="inline-flex items-center gap-2 rounded-xl px-2 py-2 text-sm font-semibold transition"
-                  [class.cursor-not-allowed]="pageIndex === 0" [class.opacity-50]="pageIndex === 0"
-                  [class.text-slate-400]="pageIndex === 0" [class.text-slate-700]="pageIndex > 0"
-                  [class.hover:bg-white]="pageIndex > 0" (click)="goToPreviousPage()" [disabled]="pageIndex === 0">
-                  <span class="material-symbols-outlined text-[18px]">chevron_left</span>
-                  <span class="hidden md:block">{{ 'pagination.previous' | t }}</span>
+              </div>
+
+              <!-- Pagination Navigation -->
+              <div class="flex items-center justify-center gap-1.5">
+                <button
+                  type="button"
+                  class="inline-flex h-9 items-center gap-1 rounded-lg border border-slate-200 px-3 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+                  (click)="goToPreviousPage()"
+                  [disabled]="pageIndex === 0"
+                >
+                  <span class="material-symbols-outlined text-[16px]">chevron_left</span>
+                  <span class="hidden sm:inline">{{ 'pagination.previous' | t }}</span>
                 </button>
 
-                <div class="flex flex-wrap items-center gap-2">
+                <div class="flex items-center gap-1">
                   @for (pageItem of visiblePageItems; track $index) {
-                  @if (pageItem === "ellipsis") {
-                  <span class="px-1 text-slate-400">...</span>
-                  } @else {
-                  <button type="button" class="h-10 min-w-10 rounded-xl px-3 text-sm font-bold transition"
-                    [class.bg-blue-600]="isCurrentPage(pageItem)" [class.text-white]="isCurrentPage(pageItem)"
-                    [class.shadow-lg]="isCurrentPage(pageItem)" [class.shadow-blue-600/20]="isCurrentPage(pageItem)"
-                    [class.text-slate-700]="!isCurrentPage(pageItem)" [class.hover:bg-white]="!isCurrentPage(pageItem)"
-                    (click)="goToPage(pageItem)">
-                    {{ pageItem }}
-                  </button>
-                  }
+                    @if (pageItem === "ellipsis") {
+                      <span class="px-2 text-slate-400">...</span>
+                    } @else {
+                      <button
+                        type="button"
+                        class="h-9 w-9 rounded-lg text-xs font-bold transition"
+                        [class.bg-blue-600]="isCurrentPage(pageItem)"
+                        [class.text-white]="isCurrentPage(pageItem)"
+                        [class.shadow-md]="isCurrentPage(pageItem)"
+                        [class.shadow-blue-600/30]="isCurrentPage(pageItem)"
+                        [class.text-slate-700]="!isCurrentPage(pageItem)"
+                        [class.hover:bg-slate-100]="!isCurrentPage(pageItem)"
+                        (click)="goToPage(pageItem)"
+                      >
+                        {{ pageItem }}
+                      </button>
+                    }
                   }
                 </div>
 
-                <button type="button"
-                  class="inline-flex items-center gap-2 rounded-xl px-2 py-2 text-sm font-semibold transition"
-                  [class.cursor-not-allowed]="pageIndex + 1 >= totalPages"
-                  [class.opacity-50]="pageIndex + 1 >= totalPages" [class.text-slate-400]="pageIndex + 1 >= totalPages"
-                  [class.text-slate-700]="pageIndex + 1 < totalPages"
-                  [class.hover:bg-white]="pageIndex + 1 < totalPages" (click)="goToNextPage()"
-                  [disabled]="pageIndex + 1 >= totalPages">
-                  <span class="hidden md:block">{{ 'pagination.next' | t }}</span>
-                  <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                <button
+                  type="button"
+                  class="inline-flex h-9 items-center gap-1 rounded-lg border border-slate-200 px-3 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+                  (click)="goToNextPage()"
+                  [disabled]="pageIndex + 1 >= totalPages"
+                >
+                  <span class="hidden sm:inline">{{ 'pagination.next' | t }}</span>
+                  <span class="material-symbols-outlined text-[16px]">chevron_right</span>
                 </button>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
         }
-      </div>
+      </main>
     </div>
   </div>
 </section>
-<!-- End post Area -->
 
-<!-- Start callto-action Area -->
+<!-- Call to Action Area -->
 <app-call-to-action [withTopMargin]="true"></app-call-to-action>
-<!-- End calto-action Area -->

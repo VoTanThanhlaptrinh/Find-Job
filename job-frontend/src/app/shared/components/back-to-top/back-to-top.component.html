@@ -1,0 +1,39 @@
+<button
+  type="button"
+  (click)="scrollToTop()"
+  [attr.aria-label]="'Cuộn lên đầu trang'"
+  [title]="'Cuộn lên đầu trang'"
+  class="fixed bottom-20 right-4 sm:bottom-8 sm:right-8 z-40 flex h-12 w-12 sm:h-13 sm:w-13 items-center justify-center rounded-full bg-[#1E63F3] text-white shadow-xl shadow-[#1E63F3]/35 transition-all duration-300 ease-out hover:bg-[#174FCB] hover:shadow-2xl hover:shadow-[#1E63F3]/50 hover:-translate-y-1 hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#1E63F3] cursor-pointer group"
+  [ngClass]="isVisible ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto' : 'opacity-0 translate-y-6 scale-75 pointer-events-none'">
+  
+  <!-- Subtle circular progress ring -->
+  <svg class="absolute inset-0 h-full w-full -rotate-90 pointer-events-none" viewBox="0 0 52 52">
+    <!-- Background track -->
+    <circle
+      cx="26"
+      cy="26"
+      r="23"
+      fill="none"
+      stroke="rgba(255, 255, 255, 0.2)"
+      stroke-width="2.5"
+    />
+    <!-- Active progress track -->
+    <circle
+      cx="26"
+      cy="26"
+      r="23"
+      fill="none"
+      stroke="#ffffff"
+      stroke-width="2.5"
+      stroke-linecap="round"
+      stroke-dasharray="144.5"
+      [style.strokeDashoffset]="144.5 - (144.5 * scrollProgress) / 100"
+      class="transition-all duration-150"
+    />
+  </svg>
+
+  <!-- Up Arrow Icon -->
+  <span class="material-symbols-outlined text-[24px] transition-transform duration-300 group-hover:-translate-y-0.5" aria-hidden="true">
+    arrow_upward
+  </span>
+</button>

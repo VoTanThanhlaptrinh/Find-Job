@@ -1,81 +1,112 @@
-<footer class="footer-area section-gap">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-3 col-md-12">
-                <div class="single-footer-widget">
-                    <h6>{{ 'footer.topJobsTitle' | t }}</h6>
-                    <ul class="footer-nav">
-                        <li><a href="#">{{ 'footer.developer' | t }}</a></li>
-                        <li><a href="#">{{ 'footer.sales' | t }}</a></li>
-                        <li><a href="#">{{ 'footer.hrManager' | t }}</a></li>
-                        <li><a href="#">{{ 'footer.collaborator' | t }}</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-lg-6 col-md-12">
-                <div class="single-footer-widget newsletter">
-                    <h6>{{ 'footer.newsletterTitle' | t }}</h6>
-                    <p>{{ 'footer.newsletterDesc' | t }}</p>
-                    <div id="mc_embed_signup">
-                        <form target="_blank" novalidate="true" action="" method="get" class="form-inline">
-                            <div class="form-group row" style="width: 100%">
-                                <div class="col-lg-7 col-md-12">
-                                    <input
-                                      name="EMAIL"
-                                      [placeholder]="'footer.emailPlaceholder' | t"
-                                      [attr.aria-label]="'footer.emailPlaceholder' | t"
-                                      [attr.title]="'footer.emailPlaceholder' | t"
-                                      required
-                                      type="email"
-                                    >
-                                    <div style="position: absolute; left: -5000px;">
-                                        <input title="newsletter-email" name="b_36c4fd991d266f23781ded980_aefe40901a" tabindex="-1" value=""
-                                            type="text">
-                                    </div>
-                                </div>
-                                <div class="col-lg-5 col-md-12">
-                                    <button class="nw-btn primary-btn">{{ 'footer.subscribe' | t }}<span
-                                            class="lnr lnr-arrow-right"></span></button>
-                                </div>
-                            </div>
-                            <div class="info"></div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-12">
-                <div class="single-footer-widget mail-chimp">
-                    <h6 class="mb-20">{{ 'footer.instagramFeed' | t }}</h6>
-                    <ul class="instafeed d-flex flex-wrap">
-                        <li><img src="assets/web_css/img/i1.jpg" alt="Instagram 1"></li>
-                        <li><img src="assets/web_css/img/i2.jpg" alt="Instagram 2"></li>
-                        <li><img src="assets/web_css/img/i3.jpg" alt="Instagram 3"></li>
-                        <li><img src="assets/web_css/img/i4.jpg" alt="Instagram 4"></li>
-                        <li><img src="assets/web_css/img/i5.jpg" alt="Instagram 5"></li>
-                        <li><img src="assets/web_css/img/i6.jpg" alt="Instagram 6"></li>
-                        <li><img src="assets/web_css/img/i7.jpg" alt="Instagram 7"></li>
-                        <li><img src="assets/web_css/img/i8.jpg" alt="Instagram 8"></li>
-                    </ul>
-                </div>
-            </div>
+<footer class="bg-slate-950 text-slate-400 font-body border-t border-slate-800 pb-20 lg:pb-0">
+  <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-12">
+      <!-- Top Jobs column -->
+      <div class="lg:col-span-3">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-white">
+          {{ 'footer.topJobsTitle' | t }}
+        </h3>
+        <ul class="mt-4 space-y-2.5 text-sm">
+          <li>
+            <a href="#" class="transition-colors hover:text-white">{{ 'footer.developer' | t }}</a>
+          </li>
+          <li>
+            <a href="#" class="transition-colors hover:text-white">{{ 'footer.sales' | t }}</a>
+          </li>
+          <li>
+            <a href="#" class="transition-colors hover:text-white">{{ 'footer.hrManager' | t }}</a>
+          </li>
+          <li>
+            <a href="#" class="transition-colors hover:text-white">{{ 'footer.collaborator' | t }}</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Newsletter column -->
+      <div class="lg:col-span-5">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-white">
+          {{ 'footer.newsletterTitle' | t }}
+        </h3>
+        <p class="mt-4 text-sm leading-relaxed text-slate-400">
+          {{ 'footer.newsletterDesc' | t }}
+        </p>
+        <form class="mt-4 flex flex-col gap-2 sm:flex-row" (submit)="$event.preventDefault()">
+          <input
+            name="EMAIL"
+            [placeholder]="'footer.emailPlaceholder' | t"
+            [attr.aria-label]="'footer.emailPlaceholder' | t"
+            required
+            type="email"
+            class="w-full rounded-xl border border-slate-800 bg-slate-900/90 px-4 py-2.5 text-sm text-white placeholder-slate-500 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+          />
+          <button
+            type="submit"
+            class="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/30 transition hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          >
+            <span>{{ 'footer.subscribe' | t }}</span>
+            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Gallery / Images column -->
+      <div class="lg:col-span-4">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-white mb-4">
+          {{ 'footer.instagramFeed' | t }}
+        </h3>
+        <div class="grid grid-cols-4 gap-2">
+          <div class="overflow-hidden rounded-lg aspect-square bg-slate-900">
+            <img class="h-full w-full object-cover transition-transform duration-300 hover:scale-110" src="assets/web_css/img/i1.jpg" alt="Gallery 1" />
+          </div>
+          <div class="overflow-hidden rounded-lg aspect-square bg-slate-900">
+            <img class="h-full w-full object-cover transition-transform duration-300 hover:scale-110" src="assets/web_css/img/i2.jpg" alt="Gallery 2" />
+          </div>
+          <div class="overflow-hidden rounded-lg aspect-square bg-slate-900">
+            <img class="h-full w-full object-cover transition-transform duration-300 hover:scale-110" src="assets/web_css/img/i3.jpg" alt="Gallery 3" />
+          </div>
+          <div class="overflow-hidden rounded-lg aspect-square bg-slate-900">
+            <img class="h-full w-full object-cover transition-transform duration-300 hover:scale-110" src="assets/web_css/img/i4.jpg" alt="Gallery 4" />
+          </div>
+          <div class="overflow-hidden rounded-lg aspect-square bg-slate-900">
+            <img class="h-full w-full object-cover transition-transform duration-300 hover:scale-110" src="assets/web_css/img/i5.jpg" alt="Gallery 5" />
+          </div>
+          <div class="overflow-hidden rounded-lg aspect-square bg-slate-900">
+            <img class="h-full w-full object-cover transition-transform duration-300 hover:scale-110" src="assets/web_css/img/i6.jpg" alt="Gallery 6" />
+          </div>
+          <div class="overflow-hidden rounded-lg aspect-square bg-slate-900">
+            <img class="h-full w-full object-cover transition-transform duration-300 hover:scale-110" src="assets/web_css/img/i7.jpg" alt="Gallery 7" />
+          </div>
+          <div class="overflow-hidden rounded-lg aspect-square bg-slate-900">
+            <img class="h-full w-full object-cover transition-transform duration-300 hover:scale-110" src="assets/web_css/img/i8.jpg" alt="Gallery 8" />
+          </div>
         </div>
-        <div class="row footer-bottom d-flex justify-content-between">
-            <p class="col-lg-8 col-sm-12 footer-text m-0 text-white">
-                {{ 'footer.copyrightPrefix' | t }}
-                {{ currentYear }}
-                {{ 'footer.copyrightSuffix' | t }}
-                <i class="fa fa-heart-o" aria-hidden="true"></i>
-                {{ 'footer.byCompany' | t }}
-                <a>Thành Corperation</a>
-            </p>
-            <div class="col-lg-4 col-sm-12 footer-social">
-                <a href="#"><i class="fa fa-facebook"></i></a>
-                <a href="#"><i class="fa fa-twitter"></i></a>
-                <a href="#"><i class="fa fa-dribbble"></i></a>
-                <a href="#"><i class="fa fa-behance"></i></a>
-            </div>
-        </div>
+      </div>
     </div>
+
+    <!-- Bottom copyright bar -->
+    <div class="mt-12 flex flex-col items-center justify-between gap-4 border-t border-slate-800/80 pt-8 sm:flex-row">
+      <p class="text-xs text-slate-500 text-center sm:text-left">
+        {{ 'footer.copyrightPrefix' | t }}
+        {{ currentYear }}
+        {{ 'footer.copyrightSuffix' | t }}
+        <span class="text-rose-500 mx-1">♥</span>
+        {{ 'footer.byCompany' | t }}
+        <span class="font-semibold text-slate-300">Thành Corperation</span>
+      </p>
+
+      <div class="flex items-center gap-3">
+        <a href="#" class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-900 text-slate-400 transition hover:bg-blue-600 hover:text-white" aria-label="Facebook">
+          <svg class="h-4 w-4 fill-current" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </a>
+        <a href="#" class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-900 text-slate-400 transition hover:bg-sky-500 hover:text-white" aria-label="Twitter">
+          <svg class="h-4 w-4 fill-current" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.936 9.936 0 0024 4.59z"/></svg>
+        </a>
+        <a href="#" class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-900 text-slate-400 transition hover:bg-pink-600 hover:text-white" aria-label="Dribbble">
+          <svg class="h-4 w-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm9.76 10.42c-.65-.12-2.73-.47-5.5-.24-.13-.3-.26-.61-.39-.92-.29-.68-.61-1.37-.95-2.06 3.01-1.34 4.2-3.1 4.31-3.26 1.51 1.75 2.44 4.02 2.53 6.48zM12 2.15c2.4 0 4.6.84 6.34 2.25-.17.25-1.42 2.01-4.48 3.32-1.39-2.54-2.91-4.7-3.1-4.96.4-.04.81-.06 1.24-.06v-.55zm-3.08 1.13c.18.25 1.68 2.37 3.06 4.88-3.9 1.12-7.39 1.16-7.83 1.16-.01-.19-.02-.38-.02-.57 0-2.45.98-4.68 2.57-6.31l2.22.84zm-6.77 8.35c.48 0 3.73-.04 7.54-1.12.23.51.46 1.03.67 1.55-3.8 1.13-7.55 4.35-7.73 4.51-.4-1.47-.63-3.03-.63-4.64 0-.1 0-.2.01-.3h.14zm3.07 7.74c.21-.19 3.5-3.07 7.33-4.14 1.05 2.76 1.48 5.17 1.58 5.76-1.57.85-3.37 1.33-5.28 1.33-1.33 0-2.59-.24-3.75-.68l.12-2.27zm10.74.88c-.14-.68-.58-2.96-1.58-5.61 2.61-.27 4.9.41 5.17.49-.69 2.15-2.02 3.96-3.75 5.12h.16z"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
 </footer>
 
 

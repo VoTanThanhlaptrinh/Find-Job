@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from '@angular/router';
+import {CommonModule} from '@angular/common';
 import {AuthService} from '../../../../core/services/auth.service';
 import {AccountService} from '../../../../core/services/account.service';
 import {take} from 'rxjs';
@@ -8,6 +9,7 @@ import {take} from 'rxjs';
 @Component({
   selector: 'app-reset-pass',
   imports: [
+    CommonModule,
     ReactiveFormsModule,
   ],
   templateUrl: './reset-pass.component.html',

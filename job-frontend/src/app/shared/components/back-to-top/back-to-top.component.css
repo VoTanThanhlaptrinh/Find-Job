@@ -1,0 +1,10 @@
+:host {
+  display: block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button {
+    transition: opacity 150ms ease !important;
+    transform: none !important;
+  }
+}
