@@ -1,113 +1,303 @@
-<footer class="bg-slate-950 text-slate-400 font-body border-t border-slate-800 pb-20 lg:pb-0">
-  <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-12">
-      <!-- Top Jobs column -->
-      <div class="lg:col-span-3">
-        <h3 class="text-sm font-bold uppercase tracking-wider text-white">
-          {{ 'footer.topJobsTitle' | t }}
-        </h3>
-        <ul class="mt-4 space-y-2.5 text-sm">
-          <li>
-            <a href="#" class="transition-colors hover:text-white">{{ 'footer.developer' | t }}</a>
-          </li>
-          <li>
-            <a href="#" class="transition-colors hover:text-white">{{ 'footer.sales' | t }}</a>
-          </li>
-          <li>
-            <a href="#" class="transition-colors hover:text-white">{{ 'footer.hrManager' | t }}</a>
-          </li>
-          <li>
-            <a href="#" class="transition-colors hover:text-white">{{ 'footer.collaborator' | t }}</a>
-          </li>
-        </ul>
-      </div>
+<footer class="relative bg-[#07142F] text-slate-400 font-body border-t border-white/10 overflow-hidden pb-24 md:pb-12 lg:pb-8">
+  <!-- Subtle Ambient Glows (Performance friendly, minimal) -->
+  <div class="pointer-events-none absolute -top-24 left-1/4 h-[320px] w-[500px] -translate-x-1/2 rounded-full bg-[#1E63F3]/10 blur-[100px]" aria-hidden="true"></div>
+  <div class="pointer-events-none absolute bottom-10 right-10 h-[260px] w-[380px] rounded-full bg-[#24C6DC]/5 blur-[90px]" aria-hidden="true"></div>
 
-      <!-- Newsletter column -->
-      <div class="lg:col-span-5">
-        <h3 class="text-sm font-bold uppercase tracking-wider text-white">
-          {{ 'footer.newsletterTitle' | t }}
-        </h3>
-        <p class="mt-4 text-sm leading-relaxed text-slate-400">
-          {{ 'footer.newsletterDesc' | t }}
-        </p>
-        <form class="mt-4 flex flex-col gap-2 sm:flex-row" (submit)="$event.preventDefault()">
-          <input
-            name="EMAIL"
-            [placeholder]="'footer.emailPlaceholder' | t"
-            [attr.aria-label]="'footer.emailPlaceholder' | t"
-            required
-            type="email"
-            class="w-full rounded-xl border border-slate-800 bg-slate-900/90 px-4 py-2.5 text-sm text-white placeholder-slate-500 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-          />
-          <button
-            type="submit"
-            class="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/30 transition hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+  <div class="relative mx-auto max-w-[1440px] px-6 sm:px-10 lg:px-12 pt-12 sm:pt-16">
+    <!-- 1. Compact End-of-Page CTA Card -->
+    <section aria-labelledby="footer-cta-heading" class="relative mb-12 sm:mb-16 overflow-hidden rounded-2xl sm:rounded-3xl border border-white/10 bg-gradient-to-r from-white/[0.06] via-white/[0.04] to-white/[0.02] p-6 sm:p-8 lg:p-10 shadow-2xl backdrop-blur-md">
+      <!-- Decorative Accent Line -->
+      <div class="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#1E63F3] to-[#24C6DC]/60" aria-hidden="true"></div>
+
+      <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+        <!-- Left: Copy -->
+        <div class="max-w-2xl space-y-2">
+          <div class="inline-flex items-center gap-1.5 rounded-full bg-[#24C6DC]/10 px-3 py-1 text-xs font-semibold text-[#24C6DC] border border-[#24C6DC]/20">
+            <span class="h-1.5 w-1.5 rounded-full bg-[#24C6DC] animate-pulse"></span>
+            <span>{{ 'footer.ctaBadge' | t }}</span>
+          </div>
+          <h2 id="footer-cta-heading" class="font-headline text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight">
+            {{ 'footer.ctaHeadline' | t }}
+          </h2>
+          <p class="text-sm sm:text-base text-slate-300 leading-relaxed">
+            {{ 'footer.ctaDesc' | t }}
+          </p>
+        </div>
+
+        <!-- Right: Actions -->
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 shrink-0">
+          <a
+            routerLink="/category"
+            class="group inline-flex items-center justify-center gap-2 rounded-xl bg-[#1E63F3] px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-[#1E63F3]/25 transition-all duration-200 hover:bg-[#174FCB] hover:shadow-xl hover:shadow-[#1E63F3]/40 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#1E63F3]"
           >
-            <span>{{ 'footer.subscribe' | t }}</span>
-            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-          </button>
-        </form>
-      </div>
+            <span>{{ 'footer.ctaExploreBtn' | t }}</span>
+            <span class="material-symbols-outlined text-[18px] transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true">
+              arrow_forward
+            </span>
+          </a>
 
-      <!-- Gallery / Images column -->
-      <div class="lg:col-span-4">
-        <h3 class="text-sm font-bold uppercase tracking-wider text-white mb-4">
-          {{ 'footer.instagramFeed' | t }}
-        </h3>
-        <div class="grid grid-cols-4 gap-2">
-          <div class="overflow-hidden rounded-lg aspect-square bg-slate-900">
-            <img class="h-full w-full object-cover transition-transform duration-300 hover:scale-110" src="assets/web_css/img/i1.jpg" alt="Gallery 1" />
+          <a
+            routerLink="/recruiter/register"
+            class="inline-flex items-center justify-center gap-1.5 rounded-xl border border-white/15 bg-white/5 px-5 py-3.5 text-sm font-semibold text-white/90 backdrop-blur-xs transition-all duration-200 hover:bg-white/10 hover:border-white/30 hover:text-white hover:-translate-y-0.5 active:translate-y-0 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+          >
+            <span>{{ 'footer.ctaEmployerLink' | t }}</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Main Footer (Desktop 5/12 + 7/12 & Mobile Accordion) -->
+    <div class="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-12 pb-12 sm:pb-16 items-start">
+      
+      <!-- 2.1 Brand & Contact Column (Left - 5 Cols on Desktop) -->
+      <div class="lg:col-span-5 space-y-6">
+        <!-- Logo Brand Header -->
+        <a routerLink="/" (click)="navigateToAnchor('')" class="inline-flex items-center gap-3 cursor-pointer group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E63F3] rounded-xl p-1 -m-1" aria-label="Job Listing Home">
+          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-[#1E63F3] to-[#24C6DC] shadow-md shadow-[#1E63F3]/25 transition-transform duration-200 group-hover:scale-105">
+            <span class="material-symbols-outlined text-white text-[22px]" aria-hidden="true">work</span>
           </div>
-          <div class="overflow-hidden rounded-lg aspect-square bg-slate-900">
-            <img class="h-full w-full object-cover transition-transform duration-300 hover:scale-110" src="assets/web_css/img/i2.jpg" alt="Gallery 2" />
+          <div class="flex flex-col">
+            <span class="font-headline text-xl font-extrabold tracking-tight text-white">Job <span class="text-[#24C6DC]">Listing</span></span>
+            <span class="text-[10px] font-semibold tracking-wider uppercase text-slate-400 -mt-1">Cổng tuyển dụng Việt Nam</span>
           </div>
-          <div class="overflow-hidden rounded-lg aspect-square bg-slate-900">
-            <img class="h-full w-full object-cover transition-transform duration-300 hover:scale-110" src="assets/web_css/img/i3.jpg" alt="Gallery 3" />
-          </div>
-          <div class="overflow-hidden rounded-lg aspect-square bg-slate-900">
-            <img class="h-full w-full object-cover transition-transform duration-300 hover:scale-110" src="assets/web_css/img/i4.jpg" alt="Gallery 4" />
-          </div>
-          <div class="overflow-hidden rounded-lg aspect-square bg-slate-900">
-            <img class="h-full w-full object-cover transition-transform duration-300 hover:scale-110" src="assets/web_css/img/i5.jpg" alt="Gallery 5" />
-          </div>
-          <div class="overflow-hidden rounded-lg aspect-square bg-slate-900">
-            <img class="h-full w-full object-cover transition-transform duration-300 hover:scale-110" src="assets/web_css/img/i6.jpg" alt="Gallery 6" />
-          </div>
-          <div class="overflow-hidden rounded-lg aspect-square bg-slate-900">
-            <img class="h-full w-full object-cover transition-transform duration-300 hover:scale-110" src="assets/web_css/img/i7.jpg" alt="Gallery 7" />
-          </div>
-          <div class="overflow-hidden rounded-lg aspect-square bg-slate-900">
-            <img class="h-full w-full object-cover transition-transform duration-300 hover:scale-110" src="assets/web_css/img/i8.jpg" alt="Gallery 8" />
+        </a>
+
+        <!-- Description -->
+        <p class="text-sm leading-relaxed text-slate-300 max-w-md">
+          {{ 'footer.brandDesc' | t }}
+        </p>
+
+        <!-- Real Direct Contact Channels -->
+        <div class="space-y-3 pt-1">
+          <!-- Hotline -->
+          <a
+            href="tel:+84123456789"
+            class="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-3 text-slate-300 transition-all duration-200 hover:border-white/15 hover:bg-white/[0.05] hover:text-white group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E63F3]"
+          >
+            <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 text-[#1E63F3] transition-colors group-hover:bg-[#1E63F3] group-hover:text-white">
+              <span class="material-symbols-outlined text-[18px]" aria-hidden="true">call</span>
+            </div>
+            <div class="min-w-0">
+              <p class="text-[11px] font-medium text-slate-400">{{ 'footer.contactHotline' | t }}</p>
+              <p class="text-sm font-bold text-white tracking-wide">+84 123 456 789</p>
+            </div>
+          </a>
+
+          <!-- Email -->
+          <a
+            href="mailto:support@jobportal.vn"
+            class="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-3 text-slate-300 transition-all duration-200 hover:border-white/15 hover:bg-white/[0.05] hover:text-white group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E63F3]"
+          >
+            <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 text-[#1E63F3] transition-colors group-hover:bg-[#1E63F3] group-hover:text-white">
+              <span class="material-symbols-outlined text-[18px]" aria-hidden="true">mail</span>
+            </div>
+            <div class="min-w-0">
+              <p class="text-[11px] font-medium text-slate-400">{{ 'footer.contactEmail' | t }}</p>
+              <p class="text-sm font-semibold text-white truncate">support&#64;jobportal.vn</p>
+            </div>
+          </a>
+
+          <!-- Location -->
+          <div class="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-3 text-slate-300">
+            <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 text-[#1E63F3]">
+              <span class="material-symbols-outlined text-[18px]" aria-hidden="true">location_on</span>
+            </div>
+            <div class="min-w-0">
+              <p class="text-[11px] font-medium text-slate-400">{{ 'footer.contactLocation' | t }}</p>
+              <p class="text-sm font-medium text-slate-200">Hà Nội &amp; TP. Hồ Chí Minh, Việt Nam</p>
+            </div>
           </div>
         </div>
+
+        <!-- Verified Real Social Link (Project GitHub Repo) -->
+        <div class="pt-2">
+          <a
+            href="https://github.com/VoTanThanhlaptrinh/Find-Job"
+            target="_blank"
+            rel="noopener noreferrer"
+            [attr.aria-label]="'footer.githubAria' | t"
+            class="inline-flex items-center gap-2.5 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-xs font-semibold text-slate-300 transition-all duration-200 hover:border-white/30 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E63F3] cursor-pointer"
+          >
+            <!-- GitHub SVG Icon -->
+            <svg class="h-4 w-4 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+            </svg>
+            <span>GitHub Repository</span>
+            <span class="material-symbols-outlined text-[14px] text-slate-400" aria-hidden="true">open_in_new</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 2.2 Link Groups (Right - 7 Cols on Desktop / Accordion on Mobile) -->
+      <div class="lg:col-span-7">
+        
+        <!-- Desktop & Tablet Layout (Grid 4 columns) -->
+        <div class="hidden md:grid md:grid-cols-4 gap-6 lg:gap-8">
+          @for (group of linkGroups; track group.id) {
+            <nav [attr.aria-label]="group.titleKey | t" class="space-y-4">
+              <h3 class="font-headline text-sm font-bold tracking-wider text-white">
+                {{ group.titleKey | t }}
+              </h3>
+              <ul class="space-y-2.5 text-sm">
+                @for (item of group.items; track item.labelKey) {
+                  <li>
+                    @if (item.type === 'route') {
+                      <a
+                        [routerLink]="item.route"
+                        [queryParams]="item.queryParams"
+                        [fragment]="item.fragment"
+                        class="group inline-flex items-center text-slate-400 transition-all duration-200 hover:text-white hover:translate-x-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E63F3] rounded-md py-0.5"
+                      >
+                        <span>{{ item.labelKey | t }}</span>
+                      </a>
+                    } @else if (item.type === 'anchor') {
+                      <button
+                        type="button"
+                        (click)="handleLinkClick(item)"
+                        class="group inline-flex items-center text-left text-slate-400 transition-all duration-200 hover:text-white hover:translate-x-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E63F3] rounded-md py-0.5 cursor-pointer"
+                      >
+                        <span>{{ item.labelKey | t }}</span>
+                      </button>
+                    } @else if (item.type === 'legal') {
+                      <button
+                        type="button"
+                        (click)="handleLinkClick(item)"
+                        class="group inline-flex items-center text-left text-slate-400 transition-all duration-200 hover:text-white hover:translate-x-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E63F3] rounded-md py-0.5 cursor-pointer"
+                      >
+                        <span>{{ item.labelKey | t }}</span>
+                      </button>
+                    }
+                  </li>
+                }
+              </ul>
+            </nav>
+          }
+        </div>
+
+        <!-- Mobile Layout (Accordion View for Compact Clean Mobile Experience) -->
+        <div class="md:hidden divide-y divide-white/10 rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden">
+          @for (group of linkGroups; track group.id; let idx = $index) {
+            <div>
+              <button
+                type="button"
+                (click)="toggleGroup(idx)"
+                [attr.aria-expanded]="isGroupOpen(idx)"
+                [attr.aria-controls]="'accordion-panel-' + group.id"
+                class="flex w-full items-center justify-between p-4 text-left font-headline text-sm font-bold text-white transition-colors hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E63F3] cursor-pointer"
+              >
+                <span>{{ group.titleKey | t }}</span>
+                <span
+                  class="material-symbols-outlined text-[20px] transition-transform duration-300"
+                  [ngClass]="isGroupOpen(idx) ? 'rotate-180 text-[#24C6DC]' : 'text-slate-400'"
+                  aria-hidden="true"
+                >
+                  expand_more
+                </span>
+              </button>
+
+              @if (isGroupOpen(idx)) {
+                <div
+                  [id]="'accordion-panel-' + group.id"
+                  class="px-4 pb-4 pt-1 transition-all duration-200"
+                >
+                  <ul class="space-y-2.5 text-sm pl-2 border-l border-white/10">
+                    @for (item of group.items; track item.labelKey) {
+                      <li>
+                        @if (item.type === 'route') {
+                          <a
+                            [routerLink]="item.route"
+                            [queryParams]="item.queryParams"
+                            [fragment]="item.fragment"
+                            class="inline-block py-1 text-slate-300 transition-colors hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E63F3] rounded-md"
+                          >
+                            {{ item.labelKey | t }}
+                          </a>
+                        } @else if (item.type === 'anchor') {
+                          <button
+                            type="button"
+                            (click)="handleLinkClick(item)"
+                            class="inline-block py-1 text-left text-slate-300 transition-colors hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E63F3] rounded-md cursor-pointer"
+                          >
+                            {{ item.labelKey | t }}
+                          </button>
+                        } @else if (item.type === 'legal') {
+                          <button
+                            type="button"
+                            (click)="handleLinkClick(item)"
+                            class="inline-block py-1 text-left text-slate-300 transition-colors hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E63F3] rounded-md cursor-pointer"
+                          >
+                            {{ item.labelKey | t }}
+                          </button>
+                        }
+                      </li>
+                    }
+                  </ul>
+                </div>
+              }
+            </div>
+          }
+        </div>
+
       </div>
     </div>
 
-    <!-- Bottom copyright bar -->
-    <div class="mt-12 flex flex-col items-center justify-between gap-4 border-t border-slate-800/80 pt-8 sm:flex-row">
-      <p class="text-xs text-slate-500 text-center sm:text-left">
-        {{ 'footer.copyrightPrefix' | t }}
-        {{ currentYear }}
-        {{ 'footer.copyrightSuffix' | t }}
-        <span class="text-rose-500 mx-1">♥</span>
-        {{ 'footer.byCompany' | t }}
-        <span class="font-semibold text-slate-300">Thành Corperation</span>
-      </p>
-
-      <div class="flex items-center gap-3">
-        <a href="#" class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-900 text-slate-400 transition hover:bg-blue-600 hover:text-white" aria-label="Facebook">
-          <svg class="h-4 w-4 fill-current" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-        </a>
-        <a href="#" class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-900 text-slate-400 transition hover:bg-sky-500 hover:text-white" aria-label="Twitter">
-          <svg class="h-4 w-4 fill-current" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.936 9.936 0 0024 4.59z"/></svg>
-        </a>
-        <a href="#" class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-900 text-slate-400 transition hover:bg-pink-600 hover:text-white" aria-label="Dribbble">
-          <svg class="h-4 w-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm9.76 10.42c-.65-.12-2.73-.47-5.5-.24-.13-.3-.26-.61-.39-.92-.29-.68-.61-1.37-.95-2.06 3.01-1.34 4.2-3.1 4.31-3.26 1.51 1.75 2.44 4.02 2.53 6.48zM12 2.15c2.4 0 4.6.84 6.34 2.25-.17.25-1.42 2.01-4.48 3.32-1.39-2.54-2.91-4.7-3.1-4.96.4-.04.81-.06 1.24-.06v-.55zm-3.08 1.13c.18.25 1.68 2.37 3.06 4.88-3.9 1.12-7.39 1.16-7.83 1.16-.01-.19-.02-.38-.02-.57 0-2.45.98-4.68 2.57-6.31l2.22.84zm-6.77 8.35c.48 0 3.73-.04 7.54-1.12.23.51.46 1.03.67 1.55-3.8 1.13-7.55 4.35-7.73 4.51-.4-1.47-.63-3.03-.63-4.64 0-.1 0-.2.01-.3h.14zm3.07 7.74c.21-.19 3.5-3.07 7.33-4.14 1.05 2.76 1.48 5.17 1.58 5.76-1.57.85-3.37 1.33-5.28 1.33-1.33 0-2.59-.24-3.75-.68l.12-2.27zm10.74.88c-.14-.68-.58-2.96-1.58-5.61 2.61-.27 4.9.41 5.17.49-.69 2.15-2.02 3.96-3.75 5.12h.16z"/></svg>
-        </a>
+    <!-- 3. Bottom Bar -->
+    <div class="border-t border-white/10 pt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between text-xs text-slate-400">
+      
+      <!-- Copyright & Credit -->
+      <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 text-center sm:text-left">
+        <p class="font-medium text-slate-300">
+          {{ 'footer.copyright' | t }}
+        </p>
+        <span class="hidden sm:inline text-white/20">&bull;</span>
+        <p class="text-slate-400">
+          {{ 'footer.developedBy' | t }}
+        </p>
       </div>
+
+      <!-- Quick Legal Actions & Desktop Language Control -->
+      <div class="flex items-center justify-center sm:justify-end gap-4">
+        <!-- Privacy Quick Button -->
+        <button
+          type="button"
+          (click)="openLegalModal('privacy')"
+          class="transition-colors hover:text-white focus:outline-none focus-visible:ring-1 focus-visible:ring-[#1E63F3] rounded cursor-pointer"
+        >
+          {{ 'footer.privacyPolicy' | t }}
+        </button>
+
+        <span class="text-white/20">&bull;</span>
+
+        <!-- Terms Quick Button -->
+        <button
+          type="button"
+          (click)="openLegalModal('terms')"
+          class="transition-colors hover:text-white focus:outline-none focus-visible:ring-1 focus-visible:ring-[#1E63F3] rounded cursor-pointer"
+        >
+          {{ 'footer.termsOfService' | t }}
+        </button>
+
+        <!-- Desktop Segmented Language Switcher (VI | EN) -->
+        <div class="hidden md:inline-flex items-center ml-3 rounded-full bg-white/10 p-0.5 text-xs font-bold border border-white/10" role="group" aria-label="Language switcher">
+          <button
+            type="button"
+            class="rounded-full px-2.5 py-1 text-[11px] font-bold transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-white"
+            [ngClass]="currentLanguage === 'vi' ? 'bg-[#1E63F3] text-white shadow-sm font-extrabold' : 'text-slate-300 hover:text-white'"
+            (click)="switchLanguage('vi')"
+          >
+            VI
+          </button>
+          <button
+            type="button"
+            class="rounded-full px-2.5 py-1 text-[11px] font-bold transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-white"
+            [ngClass]="currentLanguage === 'en' ? 'bg-[#1E63F3] text-white shadow-sm font-extrabold' : 'text-slate-300 hover:text-white'"
+            (click)="switchLanguage('en')"
+          >
+            EN
+          </button>
+        </div>
+      </div>
+
     </div>
   </div>
 </footer>
-
-
-

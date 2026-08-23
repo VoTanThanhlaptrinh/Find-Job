@@ -1,5 +1,6 @@
-import { Component, HostListener, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, HostListener, Inject, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { I18nService } from '../../../core/i18n/i18n.service';
 
 @Component({
   selector: 'app-back-to-top',
@@ -10,7 +11,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 })
 export class BackToTopComponent implements OnInit {
   isVisible = false;
-  scrollProgress = 0;
+  private readonly i18nService = inject(I18nService);
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
@@ -29,20 +30,19 @@ export class BackToTopComponent implements OnInit {
     if (!isPlatformBrowser(this.platformId)) return;
 
     const scrollTop = window.scrollY || document.documentElement.scrollTop;
-    const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-    
-    this.isVisible = scrollTop > 280;
-    
-    if (scrollHeight > 0) {
-      this.scrollProgress = Math.min(Math.max((scrollTop / scrollHeight) * 100, 0), 100);
-    }
+    this.isVisible = scrollTop > 300;
+  }
+
+  get ariaLabel(): string {
+    return this.i18nService.translate('footer.backToTop') || 'Quay lại đầu trang';
   }
 
   scrollToTop(): void {
     if (isPlatformBrowser(this.platformId)) {
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       window.scrollTo({
         top: 0,
-        behavior: 'smooth'
+        behavior: prefersReducedMotion ? 'auto' : 'smooth'
       });
     }
   }

@@ -19,6 +19,8 @@ import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
 import { I18nService } from '../../../../core/i18n/i18n.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
+import { ActivatedRoute } from '@angular/router';
+
 @Component({
   selector: 'app-category',
   imports: [
@@ -36,6 +38,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 export class CategoryComponent implements OnInit, AfterViewInit {
   readonly pageSizeOptions = [5, 10, 25];
   private readonly destroyRef = inject(DestroyRef);
+  private readonly route = inject(ActivatedRoute);
   addressCount: AddressCountViewModel[] = [];
   jobs: JobCardModel[] = [];
   categories: Category[] = [];
@@ -85,7 +88,34 @@ export class CategoryComponent implements OnInit, AfterViewInit {
     this.getAddressCount();
     this.category.loadCategories();
     this.applyFilterState(this.filterService.getFilterSnapshot());
-    this.fetchJobs();
+
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        let hasParamChange = false;
+        if (params['keyword'] || params['title']) {
+          this.title = params['keyword'] || params['title'];
+          hasParamChange = true;
+        }
+        if (params['workType'] === 'remote-hybrid') {
+          this.selectedTypes.add('REMOTE');
+          this.selectedTypes.add('HYBRID');
+          this.jobTypes.forEach((j) => {
+            if (j.value === 'REMOTE' || j.value === 'HYBRID') {
+              j.checked = true;
+            }
+          });
+          hasParamChange = true;
+        }
+        if (params['level'] === 'intern-fresher') {
+          this.title = 'Intern';
+          hasParamChange = true;
+        }
+        if (hasParamChange) {
+          this.pageIndex = 0;
+        }
+        this.fetchJobs();
+      });
   }
 
   ngAfterViewInit(): void {
