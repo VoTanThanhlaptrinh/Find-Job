@@ -6,15 +6,28 @@
   <div class="relative z-10 mx-auto w-full max-w-[1440px] px-6 sm:px-10 lg:px-12">
     <div class="mx-auto max-w-4xl text-center">
       
-      <!-- Eyebrow Badge -->
+      <!-- Eyebrow Badge (Rotating Phrases every 2s) -->
       <div class="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/20 px-4 py-1.5 text-xs sm:text-sm font-semibold text-white/90 backdrop-blur-md mb-6 shadow-sm">
-        <span class="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span class="tracking-wider uppercase text-[11px] sm:text-xs font-bold">1.500+ CƠ HỘI MỚI MỖI NGÀY</span>
+        <span class="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+        <div class="flip-wrapper h-4.5 sm:h-5 items-center">
+          <span
+            class="flip-item tracking-wider uppercase text-[11px] sm:text-xs font-bold text-white whitespace-nowrap"
+            [ngClass]="isFlipping ? 'flip-out' : 'flip-in'">
+            {{ eyebrowPhrases[currentEyebrowIndex] }}
+          </span>
+        </div>
       </div>
 
-      <!-- Headline -->
-      <h1 class="font-headline text-4xl sm:text-5xl lg:text-[58px] xl:text-[62px] font-extrabold tracking-tight text-white leading-[1.12] drop-shadow-md max-w-[900px] mx-auto">
-        Tìm đúng việc. <span class="text-[#38BDF8]">Tiến xa hơn.</span>
+      <!-- Headline (Dynamic Slogan Flipping every 2s) -->
+      <h1 class="font-headline text-4xl sm:text-5xl lg:text-[58px] xl:text-[62px] font-extrabold tracking-tight text-white leading-[1.14] drop-shadow-md max-w-[950px] mx-auto">
+        Tìm đúng việc.
+        <span class="flip-wrapper h-[1.18em] align-bottom">
+          <span
+            class="flip-item text-[#38BDF8] whitespace-nowrap"
+            [ngClass]="isFlipping ? 'flip-out' : 'flip-in'">
+            {{ headlinePhrases[currentHeadlineIndex] }}
+          </span>
+        </span>
       </h1>
 
       <!-- Description -->

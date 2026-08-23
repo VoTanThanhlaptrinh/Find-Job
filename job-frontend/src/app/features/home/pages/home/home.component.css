@@ -45,6 +45,31 @@
   -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
 }
 
+/* Vertical Flip Text Animation */
+.flip-wrapper {
+  display: inline-flex;
+  overflow: hidden;
+  vertical-align: bottom;
+  perspective: 600px;
+}
+
+.flip-item {
+  display: inline-block;
+  will-change: transform, opacity;
+  transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1), opacity 300ms ease;
+  transform-origin: center center;
+}
+
+.flip-item.flip-out {
+  transform: translateY(-110%) rotateX(50deg);
+  opacity: 0;
+}
+
+.flip-item.flip-in {
+  transform: translateY(0%) rotateX(0deg);
+  opacity: 1;
+}
+
 /* Smooth transitions */
 button, a {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);

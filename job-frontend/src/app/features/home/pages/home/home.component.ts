@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CallToActionComponent } from '../../../../shared/components/call-to-action/call-to-action.component';
@@ -29,8 +29,29 @@ import { ContactFormModel, FaqItem, TestimonialItem } from '../../models/home.mo
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit, OnDestroy {
   tags = ['Công nghệ', 'Kinh doanh', 'Tư vấn', 'Thiết kế', 'Lập trình'];
+
+  // Dynamic Rotating Phrases (Flip transition every 2 seconds)
+  headlinePhrases: string[] = [
+    'Tiến xa hơn.',
+    'Bứt phá thu nhập.',
+    'Nâng tầm sự nghiệp.',
+    'Chinh phục ước mơ.',
+    'Phát triển tương lai.'
+  ];
+
+  eyebrowPhrases: string[] = [
+    '1.500+ CƠ HỘI MỚI MỖI NGÀY',
+    '5.000+ DOANH NGHIỆP HÀNG ĐẦU',
+    '100.000+ ỨNG VIÊN TIN DÙNG',
+    'KẾT NỐI NHANH TRONG 24H'
+  ];
+
+  currentHeadlineIndex = 0;
+  currentEyebrowIndex = 0;
+  isFlipping = false;
+  private rotationTimer?: any;
 
   // Testimonials
   testimonials: TestimonialItem[] = [
@@ -100,7 +121,29 @@ export class HomeComponent {
   };
   contactSubmitted = false;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
+
+  ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      this.rotationTimer = setInterval(() => {
+        this.isFlipping = true;
+        setTimeout(() => {
+          this.currentHeadlineIndex = (this.currentHeadlineIndex + 1) % this.headlinePhrases.length;
+          this.currentEyebrowIndex = (this.currentEyebrowIndex + 1) % this.eyebrowPhrases.length;
+          this.isFlipping = false;
+        }, 300);
+      }, 2000);
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.rotationTimer) {
+      clearInterval(this.rotationTimer);
+    }
+  }
 
   toggleFaq(index: number): void {
     this.expandedFaqIndex = this.expandedFaqIndex === index ? null : index;
