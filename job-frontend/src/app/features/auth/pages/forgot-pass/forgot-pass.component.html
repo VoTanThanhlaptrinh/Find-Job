@@ -1,63 +1,82 @@
-<section class="banner-area relative" id="home">
-  <div class="overlay overlay-bg"></div>
-  <div class="container">
-    <div class="row d-flex align-items-center justify-content-center">
-      <div class="about-content col-lg-12">
-        <h1 class="text-white">
-          Quên mật khẩu
+<main class="min-h-screen bg-slate-100 py-12 px-4 sm:px-6 lg:px-8 font-body">
+  <div class="mx-auto max-w-md">
+    <div class="rounded-3xl bg-white p-8 shadow-xl ring-1 ring-slate-200 sm:p-10">
+      <!-- Icon & Header -->
+      <div class="text-center">
+        <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 shadow-sm border border-blue-100">
+          <span class="material-symbols-outlined text-[28px]">lock_reset</span>
+        </div>
+        <h1 class="mt-4 font-headline text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+          Quên mật khẩu?
         </h1>
-        <p class="text-white link-nav"><a [routerLink]="['/']">Home </a> <span class="lnr lnr-arrow-right"></span>
-          <a [routerLink]="['/forgot-pass']">Quên mật khẩu</a>
+        <p class="mt-2 text-sm text-slate-500">
+          Nhập email của bạn để nhận mã xác thực và đặt lại mật khẩu.
         </p>
       </div>
-    </div>
-  </div>
-</section>
-<main>
-  <!-- login Area Start -->
-  <div class="login-form-area section-padding">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-xl-6 col-lg-7 col-md-10">
-          <form [formGroup]="formGroup" (submit)="onSubmit()" >
-            <div class="login-form">
-              <!-- Login Heading -->
-              <div class="login-heading">
-                <span>Quên mật khẩu</span>
-                <p>Nhập email bạn đăng nhập tài khoản</p>
-              </div>
-              <!-- Single Input Fields -->
-              <div class="input-box">
-                <div class="single-input-fields ">
-                  <label>Email</label>
-                  <input type="text" placeholder="Địa chỉ Email" name="email"
-                         required formControlName="email">
-                  <button class="btn login-btn" type="button" (click)="getCode()"> Lấy mã</button>
-                </div>
-                <div class="single-input-fields mt-2">
-                  <label>Mã xác nhận</label>
-                  <input title="code" type="text" placeholder="" name="code"
-                         required formControlName="code">
-                </div>
-                @if (isError) {
-                  <div class="text-danger">
-                    {{ message }}
-                  </div>
-                } @else {
-                  <div class="text-success">
-                    {{ message }}
-                  </div>
-                }
-              </div>
-              <!-- form Footer -->
-              <div class="login-footer">
-                <button class="btn login-btn" type="submit" >Xác thực</button>
-              </div>
-            </div>
-          </form>
+
+      <form [formGroup]="formGroup" (ngSubmit)="onSubmit()" class="mt-8 space-y-5">
+        <!-- Email Field -->
+        <div>
+          <label for="email" class="mb-1.5 block text-sm font-medium text-slate-700">Email</label>
+          <div class="flex gap-2">
+            <input
+              id="email"
+              type="email"
+              placeholder="Địa chỉ Email"
+              formControlName="email"
+              class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+            />
+            <button
+              type="button"
+              (click)="getCode()"
+              class="shrink-0 rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 active:scale-95"
+            >
+              Lấy mã
+            </button>
+          </div>
         </div>
-      </div>
+
+        <!-- Code Field -->
+        <div>
+          <label for="code" class="mb-1.5 block text-sm font-medium text-slate-700">Mã xác nhận</label>
+          <input
+            id="code"
+            type="text"
+            placeholder="Nhập mã 6 chữ số"
+            formControlName="code"
+            class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+          />
+        </div>
+
+        <!-- Feedback Message -->
+        @if (message) {
+          <div
+            class="rounded-xl p-3 text-sm font-medium"
+            [ngClass]="isError ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'"
+          >
+            {{ message }}
+          </div>
+        }
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          class="w-full rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-md shadow-blue-600/20 transition hover:from-blue-700 hover:to-indigo-700 active:scale-95 disabled:cursor-not-allowed disabled:from-slate-400 disabled:to-slate-400 disabled:shadow-none"
+        >
+          Xác thực & Tiếp tục
+        </button>
+
+        <!-- Back to Login -->
+        <div class="text-center pt-2">
+          <a
+            [routerLink]="['/login']"
+            class="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors"
+          >
+            <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+            <span>Quay lại đăng nhập</span>
+          </a>
+        </div>
+      </form>
     </div>
   </div>
-  <!-- login Area End -->
 </main>

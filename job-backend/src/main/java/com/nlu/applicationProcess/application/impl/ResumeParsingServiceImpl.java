@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class ResumeParsingServiceImpl implements ResumeParsingService {
-    private  ChatModel model;
+    private ChatModel model;
     private ResumeParserAgent parserAgent;
     private static final int MAX_RETRIES = 1;
     private static final int PASS_THRESHOLD = 80;

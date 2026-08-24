@@ -1,82 +1,230 @@
-<footer class="footer-area section-gap">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-3 col-md-12">
-                <div class="single-footer-widget">
-                    <h6>{{ 'footer.topJobsTitle' | t }}</h6>
-                    <ul class="footer-nav">
-                        <li><a href="#">{{ 'footer.developer' | t }}</a></li>
-                        <li><a href="#">{{ 'footer.sales' | t }}</a></li>
-                        <li><a href="#">{{ 'footer.hrManager' | t }}</a></li>
-                        <li><a href="#">{{ 'footer.collaborator' | t }}</a></li>
-                    </ul>
-                </div>
+<footer
+  class="relative bg-[#07142F] text-slate-400 font-body border-t border-white/10 overflow-hidden pb-24 md:pb-12 lg:pb-8">
+  <!-- Subtle Ambient Glows (Performance friendly, minimal) -->
+  <div
+    class="pointer-events-none absolute -top-24 left-1/4 h-[320px] w-[500px] -translate-x-1/2 rounded-full bg-[#1E63F3]/10 blur-[100px]"
+    aria-hidden="true"></div>
+  <div
+    class="pointer-events-none absolute bottom-10 right-10 h-[260px] w-[380px] rounded-full bg-[#24C6DC]/5 blur-[90px]"
+    aria-hidden="true"></div>
+
+  <div class="relative mx-auto max-w-[1440px] px-6 sm:px-10 lg:px-12 pt-12 sm:pt-16">
+    <!-- 2. Main Footer (Desktop 5/12 + 7/12 & Mobile Accordion) -->
+    <div class="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-12 pb-12 sm:pb-16 items-start">
+
+      <!-- 2.1 Brand & Contact Column (Left - 5 Cols on Desktop) -->
+      <div class="lg:col-span-5 space-y-6">
+        <!-- Logo Brand Header -->
+        <a routerLink="/" (click)="navigateToAnchor('')"
+          class="inline-flex items-center gap-3 cursor-pointer group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E63F3] rounded-xl p-1 -m-1"
+          aria-label="Job Listing Home">
+          <div
+            class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-[#1E63F3] to-[#24C6DC] shadow-md shadow-[#1E63F3]/25 transition-transform duration-200 group-hover:scale-105">
+            <span class="material-symbols-outlined text-white text-[22px]" aria-hidden="true">work</span>
+          </div>
+          <div class="flex flex-col">
+            <span class="font-headline text-xl font-extrabold tracking-tight text-white">Job <span
+                class="text-[#24C6DC]">Listing</span></span>
+            <span class="text-[10px] font-semibold tracking-wider uppercase text-slate-400 -mt-1">Cổng tuyển dụng Việt
+              Nam</span>
+          </div>
+        </a>
+
+        <!-- Description -->
+        <p class="text-sm leading-relaxed text-slate-300 max-w-md">
+          {{ 'footer.brandDesc' | t }}
+        </p>
+
+        <!-- Real Direct Contact Channels -->
+        <div class="space-y-3 pt-1">
+          <!-- Hotline -->
+          <a href="tel:+84123456789"
+            class="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-3 text-slate-300 transition-all duration-200 hover:border-white/15 hover:bg-white/[0.05] hover:text-white group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E63F3]">
+            <div
+              class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 text-[#1E63F3] transition-colors group-hover:bg-[#1E63F3] group-hover:text-white">
+              <span class="material-symbols-outlined text-[18px]" aria-hidden="true">call</span>
             </div>
-            <div class="col-lg-6 col-md-12">
-                <div class="single-footer-widget newsletter">
-                    <h6>{{ 'footer.newsletterTitle' | t }}</h6>
-                    <p>{{ 'footer.newsletterDesc' | t }}</p>
-                    <div id="mc_embed_signup">
-                        <form target="_blank" novalidate="true" action="" method="get" class="form-inline">
-                            <div class="form-group row" style="width: 100%">
-                                <div class="col-lg-7 col-md-12">
-                                    <input
-                                      name="EMAIL"
-                                      [placeholder]="'footer.emailPlaceholder' | t"
-                                      [attr.aria-label]="'footer.emailPlaceholder' | t"
-                                      [attr.title]="'footer.emailPlaceholder' | t"
-                                      required
-                                      type="email"
-                                    >
-                                    <div style="position: absolute; left: -5000px;">
-                                        <input title="newsletter-email" name="b_36c4fd991d266f23781ded980_aefe40901a" tabindex="-1" value=""
-                                            type="text">
-                                    </div>
-                                </div>
-                                <div class="col-lg-5 col-md-12">
-                                    <button class="nw-btn primary-btn">{{ 'footer.subscribe' | t }}<span
-                                            class="lnr lnr-arrow-right"></span></button>
-                                </div>
-                            </div>
-                            <div class="info"></div>
-                        </form>
-                    </div>
-                </div>
+            <div class="min-w-0">
+              <p class="text-[11px] font-medium text-slate-400">{{ 'footer.contactHotline' | t }}</p>
+              <p class="text-sm font-bold text-white tracking-wide">+84 123 456 789</p>
             </div>
-            <div class="col-lg-3 col-md-12">
-                <div class="single-footer-widget mail-chimp">
-                    <h6 class="mb-20">{{ 'footer.instagramFeed' | t }}</h6>
-                    <ul class="instafeed d-flex flex-wrap">
-                        <li><img src="assets/web_css/img/i1.jpg" alt="Instagram 1"></li>
-                        <li><img src="assets/web_css/img/i2.jpg" alt="Instagram 2"></li>
-                        <li><img src="assets/web_css/img/i3.jpg" alt="Instagram 3"></li>
-                        <li><img src="assets/web_css/img/i4.jpg" alt="Instagram 4"></li>
-                        <li><img src="assets/web_css/img/i5.jpg" alt="Instagram 5"></li>
-                        <li><img src="assets/web_css/img/i6.jpg" alt="Instagram 6"></li>
-                        <li><img src="assets/web_css/img/i7.jpg" alt="Instagram 7"></li>
-                        <li><img src="assets/web_css/img/i8.jpg" alt="Instagram 8"></li>
-                    </ul>
-                </div>
+          </a>
+
+          <!-- Email -->
+          <a href="mailto:support@jobportal.vn"
+            class="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-3 text-slate-300 transition-all duration-200 hover:border-white/15 hover:bg-white/[0.05] hover:text-white group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E63F3]">
+            <div
+              class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 text-[#1E63F3] transition-colors group-hover:bg-[#1E63F3] group-hover:text-white">
+              <span class="material-symbols-outlined text-[18px]" aria-hidden="true">mail</span>
             </div>
+            <div class="min-w-0">
+              <p class="text-[11px] font-medium text-slate-400">{{ 'footer.contactEmail' | t }}</p>
+              <p class="text-sm font-semibold text-white truncate">support&#64;jobportal.vn</p>
+            </div>
+          </a>
+
+          <!-- Location -->
+          <div class="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-3 text-slate-300">
+            <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 text-[#1E63F3]">
+              <span class="material-symbols-outlined text-[18px]" aria-hidden="true">location_on</span>
+            </div>
+            <div class="min-w-0">
+              <p class="text-[11px] font-medium text-slate-400">{{ 'footer.contactLocation' | t }}</p>
+              <p class="text-sm font-medium text-slate-200">Hà Nội &amp; TP. Hồ Chí Minh, Việt Nam</p>
+            </div>
+          </div>
         </div>
-        <div class="row footer-bottom d-flex justify-content-between">
-            <p class="col-lg-8 col-sm-12 footer-text m-0 text-white">
-                {{ 'footer.copyrightPrefix' | t }}
-                {{ currentYear }}
-                {{ 'footer.copyrightSuffix' | t }}
-                <i class="fa fa-heart-o" aria-hidden="true"></i>
-                {{ 'footer.byCompany' | t }}
-                <a>Thành Corperation</a>
-            </p>
-            <div class="col-lg-4 col-sm-12 footer-social">
-                <a href="#"><i class="fa fa-facebook"></i></a>
-                <a href="#"><i class="fa fa-twitter"></i></a>
-                <a href="#"><i class="fa fa-dribbble"></i></a>
-                <a href="#"><i class="fa fa-behance"></i></a>
-            </div>
+
+        <!-- Verified Real Social Link (Project GitHub Repo) -->
+        <div class="pt-2">
+          <a href="https://github.com/VoTanThanhlaptrinh/Find-Job" target="_blank" rel="noopener noreferrer"
+            [attr.aria-label]="'footer.githubAria' | t"
+            class="inline-flex items-center gap-2.5 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-xs font-semibold text-slate-300 transition-all duration-200 hover:border-white/30 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E63F3] cursor-pointer">
+            <!-- GitHub SVG Icon -->
+            <svg class="h-4 w-4 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+            </svg>
+            <span>GitHub Repository</span>
+            <span class="material-symbols-outlined text-[14px] text-slate-400" aria-hidden="true">open_in_new</span>
+          </a>
         </div>
+      </div>
+
+      <!-- 2.2 Link Groups (Right - 7 Cols on Desktop / Accordion on Mobile) -->
+      <div class="lg:col-span-7">
+
+        <!-- Desktop & Tablet Layout (Grid 4 columns) -->
+        <div class="hidden md:grid md:grid-cols-4 gap-6 lg:gap-8">
+          @for (group of linkGroups; track group.id) {
+          <nav [attr.aria-label]="group.titleKey | t" class="space-y-4">
+            <h3 class="font-headline text-sm font-bold tracking-wider text-white">
+              {{ group.titleKey | t }}
+            </h3>
+            <ul class="space-y-2.5 text-sm">
+              @for (item of group.items; track item.labelKey) {
+              <li>
+                @if (item.type === 'route') {
+                <a [routerLink]="item.route" [queryParams]="item.queryParams" [fragment]="item.fragment"
+                  class="group inline-flex items-center text-slate-400 transition-all duration-200 hover:text-white hover:translate-x-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E63F3] rounded-md py-0.5">
+                  <span>{{ item.labelKey | t }}</span>
+                </a>
+                } @else if (item.type === 'anchor') {
+                <button type="button" (click)="handleLinkClick(item)"
+                  class="group inline-flex items-center text-left text-slate-400 transition-all duration-200 hover:text-white hover:translate-x-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E63F3] rounded-md py-0.5 cursor-pointer">
+                  <span>{{ item.labelKey | t }}</span>
+                </button>
+                } @else if (item.type === 'legal') {
+                <button type="button" (click)="handleLinkClick(item)"
+                  class="group inline-flex items-center text-left text-slate-400 transition-all duration-200 hover:text-white hover:translate-x-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E63F3] rounded-md py-0.5 cursor-pointer">
+                  <span>{{ item.labelKey | t }}</span>
+                </button>
+                }
+              </li>
+              }
+            </ul>
+          </nav>
+          }
+        </div>
+
+        <!-- Mobile Layout (Accordion View for Compact Clean Mobile Experience) -->
+        <div
+          class="md:hidden divide-y divide-white/10 rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden">
+          @for (group of linkGroups; track group.id; let idx = $index) {
+          <div>
+            <button type="button" (click)="toggleGroup(idx)" [attr.aria-expanded]="isGroupOpen(idx)"
+              [attr.aria-controls]="'accordion-panel-' + group.id"
+              class="flex w-full items-center justify-between p-4 text-left font-headline text-sm font-bold text-white transition-colors hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E63F3] cursor-pointer">
+              <span>{{ group.titleKey | t }}</span>
+              <span class="material-symbols-outlined text-[20px] transition-transform duration-300"
+                [ngClass]="isGroupOpen(idx) ? 'rotate-180 text-[#24C6DC]' : 'text-slate-400'" aria-hidden="true">
+                expand_more
+              </span>
+            </button>
+
+            @if (isGroupOpen(idx)) {
+            <div [id]="'accordion-panel-' + group.id" class="px-4 pb-4 pt-1 transition-all duration-200">
+              <ul class="space-y-2.5 text-sm pl-2 border-l border-white/10">
+                @for (item of group.items; track item.labelKey) {
+                <li>
+                  @if (item.type === 'route') {
+                  <a [routerLink]="item.route" [queryParams]="item.queryParams" [fragment]="item.fragment"
+                    class="inline-block py-1 text-slate-300 transition-colors hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E63F3] rounded-md">
+                    {{ item.labelKey | t }}
+                  </a>
+                  } @else if (item.type === 'anchor') {
+                  <button type="button" (click)="handleLinkClick(item)"
+                    class="inline-block py-1 text-left text-slate-300 transition-colors hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E63F3] rounded-md cursor-pointer">
+                    {{ item.labelKey | t }}
+                  </button>
+                  } @else if (item.type === 'legal') {
+                  <button type="button" (click)="handleLinkClick(item)"
+                    class="inline-block py-1 text-left text-slate-300 transition-colors hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E63F3] rounded-md cursor-pointer">
+                    {{ item.labelKey | t }}
+                  </button>
+                  }
+                </li>
+                }
+              </ul>
+            </div>
+            }
+          </div>
+          }
+        </div>
+
+      </div>
     </div>
+
+    <!-- 3. Bottom Bar -->
+    <div
+      class="border-t border-white/10 pt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between text-xs text-slate-400">
+
+      <!-- Copyright & Credit -->
+      <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 text-center sm:text-left">
+        <p class="font-medium text-slate-300">
+          {{ 'footer.copyright' | t }}
+        </p>
+        <span class="hidden sm:inline text-white/20">&bull;</span>
+        <p class="text-slate-400">
+          {{ 'footer.developedBy' | t }}
+        </p>
+      </div>
+
+      <!-- Quick Legal Actions & Desktop Language Control -->
+      <div class="flex items-center justify-center sm:justify-end gap-4">
+        <!-- Privacy Quick Button -->
+        <button type="button" (click)="openLegalModal('privacy')"
+          class="transition-colors hover:text-white focus:outline-none focus-visible:ring-1 focus-visible:ring-[#1E63F3] rounded cursor-pointer">
+          {{ 'footer.privacyPolicy' | t }}
+        </button>
+
+        <span class="text-white/20">&bull;</span>
+
+        <!-- Terms Quick Button -->
+        <button type="button" (click)="openLegalModal('terms')"
+          class="transition-colors hover:text-white focus:outline-none focus-visible:ring-1 focus-visible:ring-[#1E63F3] rounded cursor-pointer">
+          {{ 'footer.termsOfService' | t }}
+        </button>
+
+        <!-- Desktop Segmented Language Switcher (VI | EN) -->
+        <div
+          class="hidden md:inline-flex items-center ml-3 rounded-full bg-white/10 p-0.5 text-xs font-bold border border-white/10"
+          role="group" aria-label="Language switcher">
+          <button type="button"
+            class="rounded-full px-2.5 py-1 text-[11px] font-bold transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-white"
+            [ngClass]="currentLanguage === 'vi' ? 'bg-[#1E63F3] text-white shadow-sm font-extrabold' : 'text-slate-300 hover:text-white'"
+            (click)="switchLanguage('vi')">
+            VI
+          </button>
+          <button type="button"
+            class="rounded-full px-2.5 py-1 text-[11px] font-bold transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-white"
+            [ngClass]="currentLanguage === 'en' ? 'bg-[#1E63F3] text-white shadow-sm font-extrabold' : 'text-slate-300 hover:text-white'"
+            (click)="switchLanguage('en')">
+            EN
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </footer>
-
-
-

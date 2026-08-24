@@ -1,86 +1,145 @@
-<!-- start banner Area -->
-<section class="banner-area relative" id="category">
-    <div class="overlay overlay-bg"></div>
-    <div class="container">
-        <div class="row d-flex align-items-center justify-content-center">
-            <div class="about-content col-lg-12">
-                <h1 class="text-white">
-                    {{ 'contact.bannerTitle' | t }}
-                </h1>
-                <p class="text-white"><a href="/">{{ 'contact.breadcrumbHome' | t }}</a> <span class="lnr lnr-arrow-right"></span> <a
-                        href="/contact">{{ 'contact.breadcrumbCurrent' | t }}</a></p>
-            </div>
-        </div>
-    </div>
+<!-- Banner Area -->
+<section class="relative overflow-hidden bg-slate-950 py-24 font-body">
+  <div class="absolute inset-0 bg-gradient-to-r from-blue-900/60 to-slate-950/80 z-0"></div>
+  <div class="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+    <h1 class="font-headline text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
+      {{ 'contact.bannerTitle' | t }}
+    </h1>
+    <nav class="mt-4 flex items-center justify-center gap-2 text-sm text-slate-300">
+      <a href="/" class="hover:text-white transition-colors">{{ 'contact.breadcrumbHome' | t }}</a>
+      <span class="material-symbols-outlined text-[16px] text-slate-500">chevron_right</span>
+      <span class="text-blue-400 font-medium">{{ 'contact.breadcrumbCurrent' | t }}</span>
+    </nav>
+  </div>
 </section>
-<!-- End banner Area -->
 
-<!-- Start contact-page Area -->
-<section class="contact-page-area section-gap">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-4 d-flex flex-column">
-                <a class="contact-btns" href="#">{{ 'contact.submitCv' | t }}</a>
-                <a class="contact-btns" href="#">{{ 'contact.postJob' | t }}</a>
-                <a class="contact-btns" href="#">{{ 'contact.createAccount' | t }}</a>
-            </div>
-            <div class="col-lg-8">
-                <form class="form-area " id="myForm" action="mail.php" method="post" class="contact-form text-right">
-                    <div class="row">
-                        <div class="col-lg-12 form-group">
-                            <label for="contact-name" class="sr-only">{{ 'contact.namePlaceholder' | t }}</label>
-                            <input
-                              id="contact-name"
-                              name="name"
-                              [placeholder]="'contact.namePlaceholder' | t"
-                              [attr.aria-label]="'contact.namePlaceholder' | t"
-                              [attr.title]="'contact.namePlaceholder' | t"
-                              class="common-input mb-20 form-control"
-                              required=""
-                              type="text"
-                            >
-
-                            <label for="contact-email" class="sr-only">{{ 'contact.emailPlaceholder' | t }}</label>
-                            <input
-                              id="contact-email"
-                              name="email"
-                              [placeholder]="'contact.emailPlaceholder' | t"
-                              [attr.aria-label]="'contact.emailPlaceholder' | t"
-                              [attr.title]="'contact.emailPlaceholder' | t"
-                              pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{1,63}$"
-                              class="common-input mb-20 form-control"
-                              required=""
-                              type="email"
-                            >
-
-                            <label for="contact-subject" class="sr-only">{{ 'contact.subjectPlaceholder' | t }}</label>
-                            <input
-                              id="contact-subject"
-                              name="subject"
-                              [placeholder]="'contact.subjectPlaceholder' | t"
-                              [attr.aria-label]="'contact.subjectPlaceholder' | t"
-                              [attr.title]="'contact.subjectPlaceholder' | t"
-                              class="common-input mb-20 form-control"
-                              required=""
-                              type="text"
-                            >
-                            <label for="contact-message" class="sr-only">{{ 'contact.messagePlaceholder' | t }}</label>
-                            <textarea
-                              id="contact-message"
-                              class="common-textarea mt-10 form-control"
-                              name="message"
-                              [placeholder]="'contact.messagePlaceholder' | t"
-                              [attr.aria-label]="'contact.messagePlaceholder' | t"
-                              [attr.title]="'contact.messagePlaceholder' | t"
-                              required=""
-                            ></textarea>
-                            <button class="primary-btn mt-20 text-white" style="float: right;">{{ 'contact.sendMessage' | t }}</button>
-                            <div class="mt-20 alert-msg" style="text-align: left;"></div>
-                        </div>
-                    </div>
-                </form>
-            </div>
+<!-- Contact Form & Info Area -->
+<section class="bg-slate-50 py-16 font-body">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 gap-12 lg:grid-cols-12">
+      <!-- Quick Action Cards (Left) -->
+      <div class="space-y-4 lg:col-span-4">
+        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 class="font-headline text-lg font-bold text-slate-900 mb-4">Liên kết nhanh</h2>
+          <div class="flex flex-col gap-3">
+            <a
+              href="/apply-cv/1"
+              class="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 p-4 font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50/60 hover:text-blue-600 group"
+            >
+              <span>{{ 'contact.submitCv' | t }}</span>
+              <span class="material-symbols-outlined text-slate-400 group-hover:text-blue-600 transition-colors">upload_file</span>
+            </a>
+            <a
+              href="/recruiter/login"
+              class="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 p-4 font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50/60 hover:text-blue-600 group"
+            >
+              <span>{{ 'contact.postJob' | t }}</span>
+              <span class="material-symbols-outlined text-slate-400 group-hover:text-blue-600 transition-colors">post_add</span>
+            </a>
+            <a
+              href="/register"
+              class="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 p-4 font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50/60 hover:text-blue-600 group"
+            >
+              <span>{{ 'contact.createAccount' | t }}</span>
+              <span class="material-symbols-outlined text-slate-400 group-hover:text-blue-600 transition-colors">person_add</span>
+            </a>
+          </div>
         </div>
+
+        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm text-sm space-y-3">
+          <div class="flex items-center gap-3 text-slate-600">
+            <span class="material-symbols-outlined text-blue-600 text-[20px]">location_on</span>
+            <span>Việt Nam</span>
+          </div>
+          <div class="flex items-center gap-3 text-slate-600">
+            <span class="material-symbols-outlined text-blue-600 text-[20px]">mail</span>
+            <span>support&#64;jobportal.vn</span>
+          </div>
+          <div class="flex items-center gap-3 text-slate-600">
+            <span class="material-symbols-outlined text-blue-600 text-[20px]">call</span>
+            <span>+84 123 456 789</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Form (Right) -->
+      <div class="lg:col-span-8">
+        <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm sm:p-10">
+          <h2 class="font-headline text-2xl font-bold text-slate-900">
+            Gửi tin nhắn cho chúng tôi
+          </h2>
+          <p class="mt-2 text-sm text-slate-500">
+            Chúng tôi sẽ phản hồi bạn trong thời gian sớm nhất có thể.
+          </p>
+
+          <form class="mt-8 space-y-5" (submit)="$event.preventDefault()">
+            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+              <div>
+                <label for="contact-name" class="mb-1.5 block text-sm font-medium text-slate-700">Họ và tên</label>
+                <input
+                  id="contact-name"
+                  name="name"
+                  [placeholder]="'contact.namePlaceholder' | t"
+                  [attr.aria-label]="'contact.namePlaceholder' | t"
+                  required
+                  type="text"
+                  class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                />
+              </div>
+
+              <div>
+                <label for="contact-email" class="mb-1.5 block text-sm font-medium text-slate-700">Email</label>
+                <input
+                  id="contact-email"
+                  name="email"
+                  [placeholder]="'contact.emailPlaceholder' | t"
+                  [attr.aria-label]="'contact.emailPlaceholder' | t"
+                  pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{1,63}$"
+                  required
+                  type="email"
+                  class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label for="contact-subject" class="mb-1.5 block text-sm font-medium text-slate-700">Tiêu đề</label>
+              <input
+                id="contact-subject"
+                name="subject"
+                [placeholder]="'contact.subjectPlaceholder' | t"
+                [attr.aria-label]="'contact.subjectPlaceholder' | t"
+                required
+                type="text"
+                class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+              />
+            </div>
+
+            <div>
+              <label for="contact-message" class="mb-1.5 block text-sm font-medium text-slate-700">Nội dung tin nhắn</label>
+              <textarea
+                id="contact-message"
+                name="message"
+                rows="5"
+                [placeholder]="'contact.messagePlaceholder' | t"
+                [attr.aria-label]="'contact.messagePlaceholder' | t"
+                required
+                class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+              ></textarea>
+            </div>
+
+            <div class="flex justify-end">
+              <button
+                type="submit"
+                class="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-8 py-3.5 text-sm font-bold text-white shadow-md shadow-blue-600/25 transition hover:bg-blue-500 active:scale-95"
+              >
+                <span>{{ 'contact.sendMessage' | t }}</span>
+                <span class="material-symbols-outlined text-[18px]">send</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
+  </div>
 </section>
-<!-- End contact-page Area -->

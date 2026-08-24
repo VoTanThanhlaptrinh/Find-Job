@@ -1,397 +1,202 @@
-<!-- start banner Area -->
-<section class="banner-area relative" id="home">
-    <div class="overlay overlay-bg"></div>
-    <div class="container">
-        <div class="row d-flex align-items-center justify-content-center">
-            <div class="about-content col-lg-12">
-                <h1 class="text-white">
-                    Blog Single
-                </h1>
-                <p class="text-white link-nav"><a [routerLink]="['/home']" >Home </a> <span
-                        class="lnr lnr-arrow-right"></span> <a [routerLink]="['/blogHome']"> Blog</a> <span
-                        class="lnr lnr-arrow-right"></span> <a [routerLink]="['/blogHome',this.id]"> Blog Single</a></p>
-            </div>
-        </div>
-    </div>
+<!-- Banner Area -->
+<section class="page-hero-banner relative min-h-[260px] sm:min-h-[280px] lg:min-h-[300px] flex items-center justify-center pt-32 pb-14 sm:pt-36 sm:pb-16 lg:pt-40 lg:pb-18 font-body" id="home">
+  <div class="relative z-10 mx-auto w-full max-w-[1440px] px-6 sm:px-10 lg:px-12 text-center">
+    <h1 class="font-headline text-3xl sm:text-4xl lg:text-[42px] font-extrabold tracking-tight text-white drop-shadow-md">
+      Chi tiết bài viết
+    </h1>
+    <nav class="mt-3.5 flex items-center justify-center gap-2 text-sm text-white/80" aria-label="Breadcrumb">
+      <a [routerLink]="['/']" class="hover:text-white transition-colors">Home</a>
+      <span class="material-symbols-outlined text-[16px] text-white/50" aria-hidden="true">chevron_right</span>
+      <a [routerLink]="['/blogHome']" class="hover:text-white transition-colors">Blog</a>
+      <span class="material-symbols-outlined text-[16px] text-white/50" aria-hidden="true">chevron_right</span>
+      <span class="text-[#38BDF8] font-semibold truncate max-w-xs sm:max-w-md">{{ this.blog?.title || 'Blog Single' }}</span>
+    </nav>
+  </div>
 </section>
-<!-- End banner Area -->
 
-<!-- Start blog-posts Area -->
-<section class="blog-posts-area section-gap">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 post-list blog-post-list">
-              @if (isLoading || !blog) {
-                <app-skeleton-blog-single></app-skeleton-blog-single>
-              } @else {
-                <div class="single-post">
-                    <img class="img-fluid" src="assets/web_css/img/blog/p1.jpg" alt="">
-                    <a href="#">
-                        <h1>{{this.blog.title}}</h1>
-                    </a>
-                    <div class="content-wrap">
-                            <p>{{this.blog.content}}</p>
-                        <blockquote class="generic-blockquote">
-                            “Recently, the US Federal government banned online casinos from operating in America by
-                            making it illegal to transfer money to them through any US bank or payment system. As a
-                            result of this law, most of the popular online casino networks such as Party Gaming and
-                            PlayTech left the United States. Overnight, online casino players found themselves being
-                            chased by the Federal government.banking”
-                        </blockquote>
-                    </div>
-                    <div class="bottom-meta">
-                        <div class="user-details row align-items-center">
-                            <div class="comment-wrap col-lg-6 col-sm-6">
-                                <ul>
-                                    <li><a href="#">120</a></li>
-                                    <li><a href="#"><span class="lnr lnr-bubble"></span> 06 Comments</a></li>
-                                </ul>
-                            </div>
-                            <div class="social-wrap col-lg-6">
-                                <ul>
-                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-behance"></i></a></li>
-                                </ul>
-
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Start nav Area -->
-                    <section class="nav-area pt-50 pb-100">
-                        <div class="container">
-                            <div class="row justify-content-between">
-                                <div class="col-sm-6 nav-left justify-content-start d-flex">
-                                    <div class="thumb">
-                                        <img src="assets/web_css/img/blog/prev.jpg" alt="">
-                                    </div>
-                                    <div class="post-details">
-                                        <p>Prev Post</p>
-                                        <h4 class="text-uppercase"><a href="#">A Discount Toner</a></h4>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6 nav-right justify-content-end d-flex">
-                                    <div class="post-details">
-                                        <p>Prev Post</p>
-                                        <h4 class="text-uppercase"><a href="#">A Discount Toner</a></h4>
-                                    </div>
-                                    <div class="thumb">
-                                        <img src="assets/web_css/img/blog/next.jpg" alt="">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                    <!-- End nav Area -->
-
-                    <!-- Start comment-sec Area -->
-                    <section class="comment-sec-area pt-80 pb-80">
-                        <div class="container">
-                            <div class="row flex-column">
-                                <h5 class="text-uppercase pb-80">05 Comments</h5>
-                                <br>
-                                <div class="comment-list">
-                                    <div class="single-comment justify-content-between d-flex">
-                                        <div class="user justify-content-between d-flex">
-                                            <div class="thumb">
-                                                <img src="assets/web_css/img/blog/c1.jpg" alt="">
-                                            </div>
-                                            <div class="desc">
-                                                <h5><a href="#">Emilly Blunt</a></h5>
-                                                <p class="date">December 4, 2017 at 3:12 pm </p>
-                                                <p class="comment">
-                                                    Never say goodbye till the end comes!
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="reply-btn">
-                                            <a href="" class="btn-reply text-uppercase">reply</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="comment-list left-padding">
-                                    <div class="single-comment justify-content-between d-flex">
-                                        <div class="user justify-content-between d-flex">
-                                            <div class="thumb">
-                                                <img src="assets/web_css/img/blog/c2.jpg" alt="">
-                                            </div>
-                                            <div class="desc">
-                                                <h5><a href="#">Emilly Blunt</a></h5>
-                                                <p class="date">December 4, 2017 at 3:12 pm </p>
-                                                <p class="comment">
-                                                    Never say goodbye till the end comes!
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="reply-btn">
-                                            <a href="" class="btn-reply text-uppercase">reply</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="comment-list left-padding">
-                                    <div class="single-comment justify-content-between d-flex">
-                                        <div class="user justify-content-between d-flex">
-                                            <div class="thumb">
-                                                <img src="assets/web_css/img/blog/c3.jpg" alt="">
-                                            </div>
-                                            <div class="desc">
-                                                <h5><a href="#">Emilly Blunt</a></h5>
-                                                <p class="date">December 4, 2017 at 3:12 pm </p>
-                                                <p class="comment">
-                                                    Never say goodbye till the end comes!
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="reply-btn">
-                                            <a href="" class="btn-reply text-uppercase">reply</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="comment-list">
-                                    <div class="single-comment justify-content-between d-flex">
-                                        <div class="user justify-content-between d-flex">
-                                            <div class="thumb">
-                                                <img src="assets/web_css/img/blog/c4.jpg" alt="">
-                                            </div>
-                                            <div class="desc">
-                                                <h5><a href="#">Emilly Blunt</a></h5>
-                                                <p class="date">December 4, 2017 at 3:12 pm </p>
-                                                <p class="comment">
-                                                    Never say goodbye till the end comes!
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="reply-btn">
-                                            <a href="" class="btn-reply text-uppercase">reply</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="comment-list">
-                                    <div class="single-comment justify-content-between d-flex">
-                                        <div class="user justify-content-between d-flex">
-                                            <div class="thumb">
-                                                <img src="assets/web_css/img/blog/c5.jpg" alt="">
-                                            </div>
-                                            <div class="desc">
-                                                <h5><a href="#">Emilly Blunt</a></h5>
-                                                <p class="date">December 4, 2017 at 3:12 pm </p>
-                                                <p class="comment">
-                                                    Never say goodbye till the end comes!
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="reply-btn">
-                                            <a href="" class="btn-reply text-uppercase">reply</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                    <!-- End comment-sec Area -->
-
-                    <!-- Start commentform Area -->
-                    <section class="commentform-area pt-80">
-                        <div class="container">
-                            <h5 class="pb-50">Leave a Reply</h5>
-                            <div class="row flex-row d-flex">
-                                <div class="col-lg-4 col-md-6">
-                                    <input name="name" placeholder="Enter your name" onfocus="this.placeholder = ''"
-                                        onblur="this.placeholder = 'Enter your name'"
-                                        class="common-input mb-20 form-control" required="" type="text">
-                                    <input name="email" placeholder="Enter your email"
-                                        onfocus="this.placeholder = ''"
-                                        onblur="this.placeholder = 'Enter your email'"
-                                        class="common-input mb-20 form-control" required="" type="email">
-                                    <input name="Subject" placeholder="Subject" onfocus="this.placeholder = ''"
-                                        onblur="this.placeholder = 'Enter your Subject'"
-                                        class="common-input mb-20 form-control" required="" type="text">
-
-                                </div>
-                                <div class="col-lg-8 col-md-6">
-                                    <textarea class="form-control mb-10" name="message" placeholder="Messege"
-                                        onfocus="this.placeholder = ''" onblur="this.placeholder = 'Messege'"
-                                        required=""></textarea>
-                                    <a class="primary-btn mt-20" href="#">Comment</a>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                    <!-- End commentform Area -->
-
-
-                </div>
-              }
+<!-- Blog Detail & Sidebar Area -->
+<section class="bg-slate-50 py-12 font-body">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-12">
+      <!-- Main Content (8 columns) -->
+      <main class="space-y-8 lg:col-span-8">
+        @if (isLoading || !blog) {
+          <app-skeleton-blog-single></app-skeleton-blog-single>
+        } @else {
+          <!-- Single Post Article Card -->
+          <article class="overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 sm:p-10 shadow-sm">
+            <div class="aspect-video w-full overflow-hidden rounded-2xl bg-slate-100 mb-8">
+              <img class="h-full w-full object-cover" src="assets/web_css/img/blog/p1.jpg" alt="Cover" />
             </div>
-            <div class="col-lg-4 sidebar">
-                <div class="single-widget search-widget">
-                    <form class="example" action="#" style="margin:auto;max-width:300px">
-                        <input type="text" placeholder="Search Posts" name="search2">
-                        <button type="submit"><i class="fa fa-search"></i></button>
-                    </form>
-                </div>
 
-                <div class="single-widget protfolio-widget">
-                    <img src="assets/web_css/img/blog/user2.jpg" alt="">
-                    <a href="#">
-                        <h4>Adele Gonzalez</h4>
-                    </a>
-                    <p>
-                        MCSE boot camps have its supporters and
-                        its detractors. Some people do not understand why you should have to spend money
-                        on boot camp when you can get.
-                    </p>
-                    <ul>
-                        <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                        <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                        <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-                        <li><a href="#"><i class="fa fa-behance"></i></a></li>
-                    </ul>
-                </div>
+            <h1 class="font-headline text-3xl font-extrabold tracking-tight text-slate-900 leading-tight sm:text-4xl">
+              {{ this.blog.title }}
+            </h1>
 
-                <div class="single-widget category-widget">
-                    <h4 class="title">Post Categories</h4>
-                    <ul>
-                        <li><a href="#" class="justify-content-between align-items-center d-flex">
-                                <h6>Techlology</h6> <span>37</span>
-                            </a></li>
-                        <li><a href="#" class="justify-content-between align-items-center d-flex">
-                                <h6>Lifestyle</h6> <span>24</span>
-                            </a></li>
-                        <li><a href="#" class="justify-content-between align-items-center d-flex">
-                                <h6>Fashion</h6> <span>59</span>
-                            </a></li>
-                        <li><a href="#" class="justify-content-between align-items-center d-flex">
-                                <h6>Art</h6> <span>29</span>
-                            </a></li>
-                        <li><a href="#" class="justify-content-between align-items-center d-flex">
-                                <h6>Food</h6> <span>15</span>
-                            </a></li>
-                        <li><a href="#" class="justify-content-between align-items-center d-flex">
-                                <h6>Architecture</h6> <span>09</span>
-                            </a></li>
-                        <li><a href="#" class="justify-content-between align-items-center d-flex">
-                                <h6>Adventure</h6> <span>44</span>
-                            </a></li>
-                    </ul>
-                </div>
+            <div class="mt-6 space-y-6 text-base leading-relaxed text-slate-700">
+              <p>{{ this.blog.content }}</p>
 
-                <div class="single-widget recent-posts-widget">
-                    <h4 class="title">Recent Posts</h4>
-                    <div class="blog-list ">
-                        <div class="single-recent-post d-flex flex-row">
-                            <div class="recent-thumb">
-                                <img class="img-fluid" src="assets/web_css/img/blog/r1.jpg" alt="">
-                            </div>
-                            <div class="recent-details">
-                                <a href="blog-single.html">
-                                    <h4>
-                                        Home Audio Recording
-                                        For Everyone
-                                    </h4>
-                                </a>
-                                <p>
-                                    02 hours ago
-                                </p>
-                            </div>
-                        </div>
-                        <div class="single-recent-post d-flex flex-row">
-                            <div class="recent-thumb">
-                                <img class="img-fluid" src="assets/web_css/img/blog/r2.jpg" alt="">
-                            </div>
-                            <div class="recent-details">
-                                <a href="blog-single.html">
-                                    <h4>
-                                        Home Audio Recording
-                                        For Everyone
-                                    </h4>
-                                </a>
-                                <p>
-                                    02 hours ago
-                                </p>
-                            </div>
-                        </div>
-                        <div class="single-recent-post d-flex flex-row">
-                            <div class="recent-thumb">
-                                <img class="img-fluid" src="assets/web_css/img/blog/r3.jpg" alt="">
-                            </div>
-                            <div class="recent-details">
-                                <a href="blog-single.html">
-                                    <h4>
-                                        Home Audio Recording
-                                        For Everyone
-                                    </h4>
-                                </a>
-                                <p>
-                                    02 hours ago
-                                </p>
-                            </div>
-                        </div>
-                        <div class="single-recent-post d-flex flex-row">
-                            <div class="recent-thumb">
-                                <img class="img-fluid" src="assets/web_css/img/blog/r4.jpg" alt="">
-                            </div>
-                            <div class="recent-details">
-                                <a href="blog-single.html">
-                                    <h4>
-                                        Home Audio Recording
-                                        For Everyone
-                                    </h4>
-                                </a>
-                                <p>
-                                    02 hours ago
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="single-widget category-widget">
-                    <h4 class="title">Post Archive</h4>
-                    <ul>
-                        <li><a href="#" class="justify-content-between align-items-center d-flex">
-                                <h6>Dec '17</h6> <span>37</span>
-                            </a></li>
-                        <li><a href="#" class="justify-content-between align-items-center d-flex">
-                                <h6>Nov '17</h6> <span>24</span>
-                            </a></li>
-                        <li><a href="#" class="justify-content-between align-items-center d-flex">
-                                <h6>Oct '17</h6> <span>59</span>
-                            </a></li>
-                        <li><a href="#" class="justify-content-between align-items-center d-flex">
-                                <h6>Sep '17</h6> <span>29</span>
-                            </a></li>
-                        <li><a href="#" class="justify-content-between align-items-center d-flex">
-                                <h6>Aug '17</h6> <span>15</span>
-                            </a></li>
-                        <li><a href="#" class="justify-content-between align-items-center d-flex">
-                                <h6>Jul '17</h6> <span>09</span>
-                            </a></li>
-                        <li><a href="#" class="justify-content-between align-items-center d-flex">
-                                <h6>Jun '17</h6> <span>44</span>
-                            </a></li>
-                    </ul>
-                </div>
-
-                <div class="single-widget tags-widget">
-                    <h4 class="title">Tag Clouds</h4>
-                    <ul>
-                        <li><a href="#">Lifestyle</a></li>
-                        <li><a href="#">Art</a></li>
-                        <li><a href="#">Adventure</a></li>
-                        <li><a href="#">Food</a></li>
-                        <li><a href="#">Techlology</a></li>
-                        <li><a href="#">Fashion</a></li>
-                        <li><a href="#">Architecture</a></li>
-                        <li><a href="#">Food</a></li>
-                        <li><a href="#">Technology</a></li>
-                    </ul>
-                </div>
-
+              <blockquote class="my-6 rounded-2xl border-l-4 border-blue-600 bg-blue-50/50 p-6 italic text-slate-700">
+                “Recently, the US Federal government banned online casinos from operating in America by
+                making it illegal to transfer money to them through any US bank or payment system. As a
+                result of this law, most of the popular online casino networks left the United States.”
+              </blockquote>
             </div>
+
+            <!-- Meta info -->
+            <div class="mt-8 flex items-center justify-between border-t border-slate-100 pt-6 text-sm text-slate-500">
+              <div class="flex items-center gap-4">
+                <span class="flex items-center gap-1.5 font-semibold text-slate-700">
+                  <span class="material-symbols-outlined text-[20px] text-rose-500">favorite</span>
+                  <span>120 Likes</span>
+                </span>
+                <span class="flex items-center gap-1.5 font-semibold text-slate-700">
+                  <span class="material-symbols-outlined text-[20px] text-blue-500">chat_bubble</span>
+                  <span>06 Comments</span>
+                </span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Prev / Next Post Nav -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <a href="#" class="group flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-blue-300 hover:shadow-md">
+              <img src="assets/web_css/img/blog/prev.jpg" alt="" class="h-14 w-14 rounded-xl object-cover" />
+              <div>
+                <p class="text-xs font-semibold text-slate-400 uppercase">Bài trước</p>
+                <p class="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors line-clamp-1">A Discount Toner</p>
+              </div>
+            </a>
+            <a href="#" class="group flex items-center justify-end gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-blue-300 hover:shadow-md text-right">
+              <div>
+                <p class="text-xs font-semibold text-slate-400 uppercase">Bài tiếp theo</p>
+                <p class="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors line-clamp-1">A Discount Toner</p>
+              </div>
+              <img src="assets/web_css/img/blog/next.jpg" alt="" class="h-14 w-14 rounded-xl object-cover" />
+            </a>
+          </div>
+
+          <!-- Comments Section -->
+          <section class="rounded-3xl border border-slate-200 bg-white p-6 sm:p-10 shadow-sm space-y-6">
+            <h3 class="font-headline text-xl font-bold text-slate-900 border-b border-slate-100 pb-4">
+              05 Bình luận
+            </h3>
+
+            <div class="space-y-6">
+              <!-- Comment 1 -->
+              <div class="flex gap-4 items-start">
+                <img src="assets/web_css/img/blog/c1.jpg" alt="User" class="h-12 w-12 rounded-full object-cover border border-slate-200" />
+                <div class="flex-1 bg-slate-50 p-4 rounded-2xl">
+                  <div class="flex items-center justify-between">
+                    <h4 class="text-sm font-bold text-slate-900">Emilly Blunt</h4>
+                    <span class="text-xs text-slate-400">Dec 4, 2017</span>
+                  </div>
+                  <p class="mt-2 text-sm text-slate-600">Never say goodbye till the end comes!</p>
+                </div>
+              </div>
+
+              <!-- Comment 2 -->
+              <div class="flex gap-4 items-start ml-8">
+                <img src="assets/web_css/img/blog/c2.jpg" alt="User" class="h-10 w-10 rounded-full object-cover border border-slate-200" />
+                <div class="flex-1 bg-slate-50 p-4 rounded-2xl">
+                  <div class="flex items-center justify-between">
+                    <h4 class="text-sm font-bold text-slate-900">John Doe</h4>
+                    <span class="text-xs text-slate-400">Dec 4, 2017</span>
+                  </div>
+                  <p class="mt-2 text-sm text-slate-600">Great article, very insightful!</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Leave a Reply Form -->
+          <section class="rounded-3xl border border-slate-200 bg-white p-6 sm:p-10 shadow-sm">
+            <h3 class="font-headline text-xl font-bold text-slate-900 mb-6">
+              Để lại bình luận
+            </h3>
+            <form class="space-y-4" (submit)="$event.preventDefault()">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <input
+                  type="text"
+                  placeholder="Họ và tên của bạn"
+                  class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                />
+                <input
+                  type="email"
+                  placeholder="Địa chỉ Email"
+                  class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                />
+              </div>
+              <textarea
+                rows="4"
+                placeholder="Nội dung bình luận..."
+                class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+              ></textarea>
+              <div class="flex justify-end">
+                <button
+                  type="submit"
+                  class="rounded-xl bg-blue-600 px-6 py-3 text-sm font-bold text-white shadow-md shadow-blue-600/20 transition hover:bg-blue-500 active:scale-95"
+                >
+                  Gửi bình luận
+                </button>
+              </div>
+            </form>
+          </section>
+        }
+      </main>
+
+      <!-- Sidebar (4 columns) -->
+      <aside class="space-y-6 lg:col-span-4">
+        <!-- Search widget -->
+        <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <form class="relative flex items-center" (submit)="$event.preventDefault()">
+            <span class="material-symbols-outlined absolute left-3.5 text-slate-400 text-[20px]">search</span>
+            <input
+              type="text"
+              placeholder="Tìm kiếm bài viết..."
+              class="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2.5 pl-11 pr-4 text-sm font-medium text-slate-900 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
+            />
+          </form>
         </div>
+
+        <!-- Author Profile -->
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm text-center">
+          <div class="mx-auto h-20 w-20 overflow-hidden rounded-full border-2 border-blue-500 p-0.5 shadow-md">
+            <img src="assets/web_css/img/blog/user2.jpg" alt="Author" class="h-full w-full rounded-full object-cover" />
+          </div>
+          <h3 class="mt-4 font-headline text-lg font-bold text-slate-900">Adele Gonzalez</h3>
+          <p class="mt-2 text-xs leading-relaxed text-slate-500">
+            Tác giả chuyên sâu về xu hướng nhân sự, công nghệ và phát triển nghề nghiệp.
+          </p>
+        </div>
+
+        <!-- Categories Widget -->
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h3 class="font-headline text-base font-bold uppercase tracking-wider text-slate-900 pb-3 border-b border-slate-100">
+            Chủ đề
+          </h3>
+          <ul class="mt-4 divide-y divide-slate-100 space-y-1">
+            <li>
+              <a href="#" class="flex items-center justify-between py-2 text-sm font-medium text-slate-700 hover:text-blue-600 transition-colors">
+                <span>Technology</span>
+                <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">37</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center justify-between py-2 text-sm font-medium text-slate-700 hover:text-blue-600 transition-colors">
+                <span>Lifestyle</span>
+                <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">24</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center justify-between py-2 text-sm font-medium text-slate-700 hover:text-blue-600 transition-colors">
+                <span>Career Advice</span>
+                <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">59</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </aside>
     </div>
+  </div>
 </section>
-<!-- End blog-posts Area -->

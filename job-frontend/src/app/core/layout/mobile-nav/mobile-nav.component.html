@@ -1,0 +1,145 @@
+@if (isAuthReady) {
+<!-- Backdrop Overlay for More Drawer -->
+<div class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs transition-opacity duration-300 md:hidden"
+  [class.opacity-100]="isMoreOpen" [class.pointer-events-auto]="isMoreOpen" [class.opacity-0]="!isMoreOpen"
+  [class.pointer-events-none]="!isMoreOpen" (click)="closeMore()"></div>
+
+<!-- Slide-up More Drawer / Bottom Sheet -->
+<aside role="dialog" aria-modal="true" [attr.aria-label]="'header.navigationMenu' | t"
+  class="fixed inset-x-0 bottom-0 z-50 max-h-[85vh] overflow-y-auto rounded-t-3xl bg-white p-6 font-body shadow-2xl transition-transform duration-300 ease-out md:hidden"
+  [class.translate-y-0]="isMoreOpen" [class.translate-y-full]="!isMoreOpen">
+  <!-- Drag Handle -->
+  <div class="mx-auto -mt-2 mb-4 h-1.5 w-12 rounded-full bg-slate-200"></div>
+
+  <!-- Header of Drawer -->
+  <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-[#1E63F3]">apps</span>
+      <span class="font-headline text-base font-bold text-slate-900">{{ 'header.navigationMenu' | t }}</span>
+    </div>
+    <button type="button"
+      class="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 text-slate-500 transition hover:bg-slate-200 hover:text-slate-700 cursor-pointer"
+      [attr.aria-label]="'header.closeMenu' | t" (click)="closeMore()">
+      <span class="material-symbols-outlined text-[20px]">close</span>
+    </button>
+  </div>
+
+  <!-- Secondary Menu Links (Scroll to About & Contact on Landing Page) -->
+  <nav class="mt-4 space-y-1">
+    <button type="button"
+      class="flex w-full items-center gap-3 rounded-2xl px-4 py-3.5 text-sm font-semibold text-slate-700 transition hover:bg-blue-50 hover:text-[#1E63F3] cursor-pointer text-left"
+      (click)="navigateToSection('about')">
+      <span class="material-symbols-outlined text-slate-400">info</span>
+      <span>{{ 'header.about' | t }}</span>
+    </button>
+    <button type="button"
+      class="flex w-full items-center gap-3 rounded-2xl px-4 py-3.5 text-sm font-semibold text-slate-700 transition hover:bg-blue-50 hover:text-[#1E63F3] cursor-pointer text-left"
+      (click)="navigateToSection('contact')">
+      <span class="material-symbols-outlined text-slate-400">contact_support</span>
+      <span>{{ 'header.contact' | t }}</span>
+    </button>
+  </nav>
+
+  <!-- Language Switcher Section (No pink/red, clean segmented control) -->
+  <div class="mt-4 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-slate-400 text-[20px]">language</span>
+        <span class="text-xs font-bold uppercase tracking-wider text-slate-500">{{ 'header.switchLanguage' | t }}</span>
+      </div>
+      <div class="inline-flex items-center rounded-full bg-slate-200/80 p-0.5 text-xs font-bold" role="group" aria-label="Language selection">
+        <button type="button"
+          class="rounded-full px-3 py-1 text-xs font-bold transition cursor-pointer"
+          [ngClass]="currentLanguage === 'en' ? 'bg-white text-[#1E63F3] shadow-sm font-extrabold' : 'text-slate-600'"
+          (click)="switchLanguage('en')">
+          EN
+        </button>
+        <button type="button"
+          class="rounded-full px-3 py-1 text-xs font-bold transition cursor-pointer"
+          [ngClass]="currentLanguage === 'vi' ? 'bg-white text-[#1E63F3] shadow-sm font-extrabold' : 'text-slate-600'"
+          (click)="switchLanguage('vi')">
+          VI
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Auth Actions Section -->
+  <div class="mt-6 pt-2">
+    @if (isLoggedIn) {
+    <div class="space-y-2">
+      <button type="button"
+        class="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#1E63F3] px-4 py-3.5 text-sm font-bold text-white shadow-md shadow-[#1E63F3]/20 transition hover:bg-[#174FCB] active:scale-95 cursor-pointer"
+        (click)="goAccount()">
+        <span class="material-symbols-outlined text-[18px]">manage_accounts</span>
+        <span>{{ 'header.accountInfo' | t }}</span>
+      </button>
+      <button type="button"
+        class="flex w-full items-center justify-center gap-2 rounded-2xl bg-rose-50 px-4 py-3.5 text-sm font-bold text-rose-600 transition hover:bg-rose-100 active:scale-95 cursor-pointer"
+        (click)="logout()">
+        <span class="material-symbols-outlined text-[18px]">logout</span>
+        <span>{{ 'header.logout' | t }}</span>
+      </button>
+    </div>
+    } @else {
+      <button type="button"
+        class="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#1E63F3] px-4 py-3.5 text-sm font-bold text-white shadow-md shadow-[#1E63F3]/20 transition hover:bg-[#174FCB] active:scale-95 cursor-pointer"
+        (click)="goAccount()">
+        <span class="material-symbols-outlined text-[18px]">account_circle</span>
+        <span>{{ 'header.account' | t }}</span>
+      </button>
+    }
+  </div>
+</aside>
+
+<!-- Fixed Bottom Navigation Bar (5 Tabs) -->
+<nav aria-label="Mobile Navigation"
+  class="mobile-bottom-nav fixed bottom-0 inset-x-0 z-40 border-t border-slate-200/80 bg-white/95 backdrop-blur-md shadow-[0_-4px_16px_rgba(0,0,0,0.04)] font-body md:hidden">
+  <div class="grid grid-cols-5 h-16 max-w-lg mx-auto">
+    <!-- Tab 1: Home -->
+    <a routerLink="/" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active-tab text-[#1E63F3]"
+      class="group flex flex-col items-center justify-center py-1 text-slate-500 transition hover:text-[#1E63F3]">
+      <span class="material-symbols-outlined text-[22px] transition-transform group-hover:scale-110">home</span>
+      <span class="text-[11px] font-semibold mt-0.5 tracking-tight">{{ 'header.home' | t }}</span>
+      <span class="active-dot h-1 w-1 rounded-full bg-[#1E63F3] mt-0.5 opacity-0"></span>
+    </a>
+
+    <!-- Tab 2: Jobs -->
+    <a routerLink="/jobs" routerLinkActive="active-tab text-[#1E63F3]"
+      class="group flex flex-col items-center justify-center py-1 text-slate-500 transition hover:text-[#1E63F3]">
+      <span class="material-symbols-outlined text-[22px] transition-transform group-hover:scale-110">work</span>
+      <span class="text-[11px] font-semibold mt-0.5 tracking-tight">{{ 'header.jobs' | t }}</span>
+      <span class="active-dot h-1 w-1 rounded-full bg-[#1E63F3] mt-0.5 opacity-0"></span>
+    </a>
+
+    <!-- Tab 3: Blog -->
+    <a routerLink="/blogHome" routerLinkActive="active-tab text-[#1E63F3]"
+      class="group flex flex-col items-center justify-center py-1 text-slate-500 transition hover:text-[#1E63F3]">
+      <span class="material-symbols-outlined text-[22px] transition-transform group-hover:scale-110">article</span>
+      <span class="text-[11px] font-semibold mt-0.5 tracking-tight">{{ 'header.blog' | t }}</span>
+      <span class="active-dot h-1 w-1 rounded-full bg-[#1E63F3] mt-0.5 opacity-0"></span>
+    </a>
+
+    <!-- Tab 4: Account / Infor -->
+    <button type="button" (click)="goAccount()"
+      class="group flex flex-col items-center justify-center py-1 text-slate-500 transition hover:text-[#1E63F3] focus:outline-none cursor-pointer">
+      <span class="material-symbols-outlined text-[22px] transition-transform group-hover:scale-110">
+        {{ isLoggedIn ? 'account_circle' : 'person' }}
+      </span>
+      <span class="text-[11px] font-semibold mt-0.5 tracking-tight">
+        {{ isLoggedIn ? ('header.account' | t) : ('header.login' | t) }}
+      </span>
+      <span class="h-1 w-1 rounded-full bg-transparent mt-0.5"></span>
+    </button>
+
+    <!-- Tab 5: More -->
+    <button type="button" (click)="toggleMore()" [class.text-[#1E63F3]]="isMoreOpen"
+      class="group flex flex-col items-center justify-center py-1 text-slate-500 transition hover:text-[#1E63F3] focus:outline-none cursor-pointer"
+      [attr.aria-label]="'header.more' | t">
+      <span class="material-symbols-outlined text-[22px] transition-transform group-hover:scale-110">grid_view</span>
+      <span class="text-[11px] font-semibold mt-0.5 tracking-tight">{{ 'header.more' | t }}</span>
+      <span class="h-1 w-1 rounded-full bg-transparent mt-0.5"></span>
+    </button>
+  </div>
+</nav>
+}

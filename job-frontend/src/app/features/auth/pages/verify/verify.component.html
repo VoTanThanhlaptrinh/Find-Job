@@ -1,11 +1,29 @@
-<section class="banner-area relative" id="mini">
-  <div class="overlay overlay-bg"></div>
-</section>
-<div class="verify-notice">
-    <h2>✔️ Đã gửi email kích hoạt!</h2>
-    <p>Chúng tôi đã gửi liên kết kích hoạt đến email của bạn. Vui lòng kiểm tra hộp thư.</p>
-    <p>Nếu không nhận được email, hãy kiểm tra trong mục spam hoặc 
-       <a (click)="reSendLink()">gửi lại liên kết kích hoạt</a>.</p>
-       
+<main class="flex min-h-[70vh] items-center justify-center bg-slate-50 py-12 px-4 sm:px-6 lg:px-8 font-body">
+  <div class="w-full max-w-md text-center">
+    <div class="rounded-3xl bg-white p-8 shadow-xl ring-1 ring-slate-200 sm:p-10">
+      <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 shadow-sm border border-blue-100">
+        <span class="material-symbols-outlined text-[36px]">mark_email_read</span>
+      </div>
+      
+      <h2 class="mt-6 font-headline text-2xl font-bold tracking-tight text-slate-900">
+        Đã gửi email kích hoạt!
+      </h2>
+      
+      <p class="mt-3 text-sm leading-relaxed text-slate-600">
+        Chúng tôi đã gửi liên kết kích hoạt đến email <span class="font-semibold text-slate-900">{{ email }}</span>. Vui lòng kiểm tra hộp thư (bao gồm cả thư mục Spam/Rác).
+      </p>
+
+      <div class="mt-8 border-t border-slate-100 pt-6 text-sm text-slate-500">
+        Không nhận được email?
+        <button
+          type="button"
+          (click)="reSendLink()"
+          class="ml-1 font-semibold text-blue-600 hover:text-blue-700 underline focus:outline-none"
+        >
+          Gửi lại liên kết
+        </button>
+      </div>
+    </div>
   </div>
+</main>
   

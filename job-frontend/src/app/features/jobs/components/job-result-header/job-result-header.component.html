@@ -1,0 +1,47 @@
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 pt-1">
+  <!-- Left: Result Count Heading -->
+  <div class="min-w-0">
+    <h2 class="text-xl sm:text-2xl font-bold text-[#0F172A] tracking-tight leading-tight">
+      <span class="text-[#1E63F3] font-extrabold">{{ totalJobs }}</span> {{ 'category.results.matchingJobs' | t }}
+      @if (keyword && keyword.trim().length > 0) {
+        <span class="text-[#526077] font-normal text-sm sm:text-base">
+          {{ 'category.results.withKeyword' | t }} “<span class="text-[#0F172A] font-semibold">{{ keyword.trim() }}</span>”
+        </span>
+      }
+    </h2>
+  </div>
+
+  <!-- Right: Sort Dropdown + Mobile Filter Button -->
+  <div class="flex items-center gap-2.5 self-end sm:self-auto shrink-0">
+    <!-- Mobile Filter Toggle Button (Strictly hidden on desktop lg: >=1024px) -->
+    <button
+      type="button"
+      (click)="onToggleMobileFilter()"
+      class="hidden max-lg:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-[#DCE5F2] hover:border-[#1E63F3] text-xs sm:text-sm font-bold text-[#0F172A] shadow-xs transition cursor-pointer"
+      [attr.aria-label]="'category.results.openFilterAria' | t"
+    >
+      <span class="material-symbols-outlined text-[18px] text-[#1E63F3]">tune</span>
+      <span>{{ 'category.results.mobileFilterBtn' | t }}</span>
+      @if (activeFiltersCount > 0) {
+        <span class="inline-flex items-center justify-center h-5 px-1.5 rounded-full bg-[#1E63F3] text-white text-[11px] font-bold">
+          {{ activeFiltersCount }}
+        </span>
+      }
+    </button>
+
+    <!-- Custom Sort Dropdown (Pill style with localized prefix) -->
+    <div class="relative inline-flex items-center">
+      <app-custom-select
+        id="result-sort-select"
+        [ariaLabel]="'category.results.sortAria' | t"
+        [prefixLabel]="'category.results.sortPrefix' | t"
+        icon="sort"
+        variant="pill"
+        [searchable]="false"
+        [options]="sortSelectOptions"
+        [value]="currentSort"
+        (valueChange)="onSortChange($event)"
+      ></app-custom-select>
+    </div>
+  </div>
+</div>

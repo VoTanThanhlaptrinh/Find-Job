@@ -8,9 +8,11 @@ import { AuthService } from './core/services/auth.service';
 import { I18nService } from './core/i18n/i18n.service';
 import { isPlatformBrowser } from '@angular/common';
 
+import { BackToTopComponent } from './shared/components/back-to-top/back-to-top.component';
+
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, HeaderComponent, FooterComponent],
+  imports: [RouterOutlet, HeaderComponent, FooterComponent, BackToTopComponent],
   standalone: true,
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',

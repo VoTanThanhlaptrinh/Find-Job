@@ -1,161 +1,190 @@
-<section class="banner-area relative" id="mini">
-  <div class="overlay overlay-bg"></div>
+<!-- Page Hero Banner Area -->
+<section class="page-hero-banner relative min-h-[220px] sm:min-h-[250px] lg:min-h-[270px] flex items-center justify-center pt-28 pb-12 sm:pt-32 sm:pb-14 lg:pt-36 lg:pb-16 font-body">
+  <div class="relative z-10 mx-auto w-full max-w-[1440px] px-6 sm:px-10 lg:px-12 text-center">
+    <h1 class="font-headline text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white drop-shadow-md">
+      {{ 'category.hero.title' | t }}
+    </h1>
+    <p class="mt-2.5 text-sm sm:text-base text-white/85 max-w-2xl mx-auto font-normal">
+      {{ 'category.hero.subtitle' | t }}
+    </p>
+  </div>
 </section>
 
-<!-- Start post Area -->
-<section class="post-area section-gap">
-  <div class="container">
-    <div class="row justify-content-center d-flex">
-      <div class="col-lg-4 sidebar">
-        <div class="single-slidebar">
-          <h4>{{ "category.filterByTitle" | t }}</h4>
-          <div class="flex w-full items-center gap-2 px-2 py-2 bg-white cursor-pointer rounded-xl shadow-md border">
-            <label for="category-title" class="sr-only">{{
-              "category.titlePlaceholder" | t
-              }}</label>
-            <input id="category-title" [attr.title]="'category.titlePlaceholder' | t"
-              [attr.aria-label]="'category.titlePlaceholder' | t" class="w-full outline-none border-none focus:ring-0"
-              type="text" [placeholder]="'category.titlePlaceholder' | t" value="" name="title" [ngModel]="title"
-              (ngModelChange)="onTitleChange($event)" />
-          </div>
-        </div>
-        <div class="single-slidebar">
-          <h4>Danh mục</h4>
-          <div class="list-group cat-list overflow-y-auto max-h-75">
-            @for (item of categories; track item.id) {
-            <div class="list-group-item flex justify-between">
-              <div class="form-check flex w-full items-center gap-2">
-                <input title="input" [id]="'category-filter-' + $index" [attr.title]="item.name"
-                  [attr.aria-label]="item.name" class="form-check-input" type="checkbox" [value]="item.id"
-                  [checked]="selectedCategories.has(item.id)"
-                  (change)="onFilterChange('CATEGORY', item.id, $event.target.checked)" />
-                <label class="form-check-label" [attr.for]="'category-filter-' + $index">{{ item.name }}</label>
-              </div>
-            </div>
+<!-- Main Job Search & Discovery Section -->
+<section class="bg-[#F5F8FE] py-8 sm:py-10 lg:py-12 font-body min-h-[70vh]">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-6">
+
+    <!-- 1. Full-width Main Search Bar -->
+    <div class="w-full">
+      <app-job-search-bar
+        [keyword]="keyword"
+        [selectedCategoryId]="selectedCategoryId"
+        [selectedAddress]="selectedAddress"
+        (search)="onMainSearch($event)"
+      ></app-job-search-bar>
+    </div>
+
+    <!-- 2. Active Filter Chips (Shown only when conditions are applied) -->
+    <div class="w-full">
+      <app-job-active-filters
+        [keyword]="keyword"
+        [categoryIds]="categoryIds"
+        [addresses]="addresses"
+        [employmentTypes]="employmentTypes"
+        [salaryRange]="salaryRange"
+        [experience]="experience"
+        [level]="level"
+        [workplaces]="workplaces"
+        [allCategories]="categories"
+        (removeChip)="onRemoveChip($event)"
+        (clearAll)="onClearAllFilters()"
+      ></app-job-active-filters>
+    </div>
+
+    <!-- 3. Two-Column Layout (Sidebar 280px + Results flex-1) -->
+    <div class="flex flex-col lg:flex-row gap-6 lg:gap-7 items-start">
+
+      <!-- Left Column: Filter Sidebar (Desktop only, 280px sticky) -->
+      <aside class="hidden lg:block w-[280px] shrink-0 sticky top-24 self-start">
+        <app-job-filter-sidebar
+          [categories]="categories"
+          [addressCount]="addressCount"
+          [selectedCategoryIds]="categoryIds"
+          [selectedAddresses]="addresses"
+          [selectedSalaryRange]="salaryRange"
+          [selectedExperience]="experience"
+          [selectedLevel]="level"
+          [selectedEmploymentTypes]="employmentTypes"
+          [selectedWorkplaces]="workplaces"
+          [activeFiltersCount]="totalActiveFiltersCount"
+          (categoryChange)="onCategoryChange($event)"
+          (addressChange)="onAddressChange($event)"
+          (salaryChange)="onSalaryChange($event)"
+          (experienceChange)="onExperienceChange($event)"
+          (levelChange)="onLevelChange($event)"
+          (employmentTypeChange)="onEmploymentTypeChange($event)"
+          (workplaceChange)="onWorkplaceChange($event)"
+          (clearAll)="onClearAllFilters()"
+        ></app-job-filter-sidebar>
+      </aside>
+
+      <!-- Right Column: Job Results & Pagination (flex-1) -->
+      <main id="job-results-container" class="flex-1 min-w-0 w-full space-y-4">
+
+        <!-- Result Header (Counts, Sort Dropdown & Mobile Filter Button) -->
+        <app-job-result-header
+          [totalJobs]="totalJobs"
+          [keyword]="keyword"
+          [currentSort]="sort"
+          [activeFiltersCount]="totalActiveFiltersCount"
+          (sortChange)="onSortChange($event)"
+          (openMobileFilter)="openMobileDrawer()"
+        ></app-job-result-header>
+
+        <!-- Loading State: Skeletons -->
+        @if (isLoadingJobs) {
+          <div class="flex flex-col gap-3 w-full">
+            @for (skeleton of [1, 2, 3, 4, 5]; track skeleton) {
+              <app-skeleton-job-card></app-skeleton-job-card>
             }
           </div>
-        </div>
-
-        <div class="single-slidebar">
-          <h4>{{ "category.filterByLocation" | t }}</h4>
-          <div class="list-group cat-list overflow-y-auto max-h-75">
-            @for (item of addressCount; track item.city) {
-            <div class="list-group-item flex justify-between">
-              <div class="form-check flex w-full items-center gap-2">
-                <input title="input" [id]="'city-filter-' + $index" [attr.title]="item.city"
-                  [attr.aria-label]="item.city" class="form-check-input" type="checkbox" [value]="item.city"
-                  [checked]="selectedAddresses.has(item.city)"
-                  (change)="onFilterChange('ADDRESS', item.city, $event.target.checked)" />
-                <label class="form-check-label" [attr.for]="'city-filter-' + $index">{{ item.city }}</label>
-              </div>
-              <span>{{ item.count }}</span>
-            </div>
-            }
-          </div>
-        </div>
-
-        <div class="single-slidebar">
-          <h4>{{ "category.jobType" | t }}</h4>
-          <div class="list-group cat-list">
-            @for (job of jobTypes; track job.id) {
-            <div class="list-group-item flex flex-col justify-between">
-              <label class="form-switch">
-                <label [attr.for]="'job-type-' + job.id" class="sr-only">{{
-                  "category.jobTypeOptions." + job.id | t
-                  }}</label>
-                <input [id]="'job-type-' + job.id" type="checkbox" [checked]="job.checked" value="{{ job.value }}"
-                  [attr.title]="'category.jobTypeOptions.' + job.id | t"
-                  [attr.aria-label]="'category.jobTypeOptions.' + job.id | t"
-                  (change)="onFilterChange('JOB_TYPE', job.value, $event.target.checked)" />
-                <span>{{ "category.jobTypeOptions." + job.id | t }}</span>
-                <span class="slider round"></span>
-              </label>
-            </div>
-            }
-          </div>
-        </div>
-      </div>
-      <div class="col-lg-8 post-list">
-        <div class="flex flex-col gap-y-2">
-          @if (isLoadingJobs) {
-          @for (skeleton of [1, 2, 3, 4, 5]; track skeleton) {
-          <app-skeleton-job-card></app-skeleton-job-card>
-          }
-          } @else {
-          @for (item of jobs; track item.id) {
-          <app-job-card [job]="item" image="assets/web_css/img/post.png" detailRoute="/single"></app-job-card>
-          } @empty {
-          <div>{{ "category.empty" | t }}</div>
-          }
-          }
-        </div>
-        @if (length > 0) {
-        <section class="mt-6 rounded-2xl bg-white/95 p-2 backdrop-blur-sm"
-          [attr.aria-label]="'category.paginatorLabel' | t">
-          <div class="flex w-full gap-4 items-center justify-center lg:justify-end">
-            <div class="hidden md:flex md:flex-col gap-3 sm:gap-4">
-              <label
-                class="inline-flex shadow-md items-center p-2 gap-3 rounded-xl border border-slate-200 bg-slate-50 text-sm font-medium text-slate-700"
-                for="page-size-select">
-                <span>{{ 'pagination.rowsPerPage' | t }}</span>
-                <select id="page-size-select"
-                  class="rounded-lg border border-slate-200 bg-white px-2 py-2 text-sm font-semibold text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10"
-                  [ngModel]="pageSize" (ngModelChange)="onPageSizeChange($event)">
-                  @for (option of pageSizeOptions; track option) {
-                  <option [ngValue]="option">{{ option }}</option>
-                  }
-                </select>
-              </label>
-            </div>
-            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div
-                class="inline-flex shadow-md flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-2 py-2">
-                <button type="button"
-                  class="inline-flex items-center gap-2 rounded-xl px-2 py-2 text-sm font-semibold transition"
-                  [class.cursor-not-allowed]="pageIndex === 0" [class.opacity-50]="pageIndex === 0"
-                  [class.text-slate-400]="pageIndex === 0" [class.text-slate-700]="pageIndex > 0"
-                  [class.hover:bg-white]="pageIndex > 0" (click)="goToPreviousPage()" [disabled]="pageIndex === 0">
-                  <span class="material-symbols-outlined text-[18px]">chevron_left</span>
-                  <span class="hidden md:block">{{ 'pagination.previous' | t }}</span>
-                </button>
-
-                <div class="flex flex-wrap items-center gap-2">
-                  @for (pageItem of visiblePageItems; track $index) {
-                  @if (pageItem === "ellipsis") {
-                  <span class="px-1 text-slate-400">...</span>
-                  } @else {
-                  <button type="button" class="h-10 min-w-10 rounded-xl px-3 text-sm font-bold transition"
-                    [class.bg-blue-600]="isCurrentPage(pageItem)" [class.text-white]="isCurrentPage(pageItem)"
-                    [class.shadow-lg]="isCurrentPage(pageItem)" [class.shadow-blue-600/20]="isCurrentPage(pageItem)"
-                    [class.text-slate-700]="!isCurrentPage(pageItem)" [class.hover:bg-white]="!isCurrentPage(pageItem)"
-                    (click)="goToPage(pageItem)">
-                    {{ pageItem }}
-                  </button>
-                  }
-                  }
-                </div>
-
-                <button type="button"
-                  class="inline-flex items-center gap-2 rounded-xl px-2 py-2 text-sm font-semibold transition"
-                  [class.cursor-not-allowed]="pageIndex + 1 >= totalPages"
-                  [class.opacity-50]="pageIndex + 1 >= totalPages" [class.text-slate-400]="pageIndex + 1 >= totalPages"
-                  [class.text-slate-700]="pageIndex + 1 < totalPages"
-                  [class.hover:bg-white]="pageIndex + 1 < totalPages" (click)="goToNextPage()"
-                  [disabled]="pageIndex + 1 >= totalPages">
-                  <span class="hidden md:block">{{ 'pagination.next' | t }}</span>
-                  <span class="material-symbols-outlined text-[18px]">chevron_right</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
         }
-      </div>
+        <!-- Error State -->
+        @else if (hasError) {
+          <div class="rounded-3xl border border-rose-200 bg-white p-10 sm:p-14 text-center shadow-xs">
+            <div class="w-16 h-16 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mx-auto mb-4">
+              <span class="material-symbols-outlined text-[32px]">error_outline</span>
+            </div>
+            <h3 class="font-headline text-lg sm:text-xl font-bold text-[#0F172A]">
+              {{ 'category.errors.title' | t }}
+            </h3>
+            <p class="mt-1.5 text-sm text-[#526077] max-w-md mx-auto">
+              {{ 'category.errors.description' | t }}
+            </p>
+            <button
+              type="button"
+              (click)="fetchJobs()"
+              class="mt-5 inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#1E63F3] hover:bg-[#174FCB] text-white text-sm font-bold shadow-md shadow-[#1E63F3]/25 transition cursor-pointer"
+            >
+              <span class="material-symbols-outlined text-[18px]">refresh</span>
+              <span>{{ 'category.errors.retry' | t }}</span>
+            </button>
+          </div>
+        }
+        <!-- Empty State -->
+        @else if (jobs.length === 0) {
+          <div class="rounded-3xl border border-[#DCE5F2] bg-white p-10 sm:p-14 text-center shadow-xs">
+            <div class="w-16 h-16 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-4">
+              <span class="material-symbols-outlined text-[32px]">search_off</span>
+            </div>
+            <h3 class="font-headline text-lg sm:text-xl font-bold text-[#0F172A]">
+              {{ 'category.empty.title' | t }}
+            </h3>
+            <p class="mt-1.5 text-sm text-[#526077] max-w-md mx-auto">
+              {{ 'category.empty.description' | t }}
+            </p>
+            @if (totalActiveFiltersCount > 0) {
+              <button
+                type="button"
+                (click)="onClearAllFilters()"
+                class="mt-5 inline-flex items-center gap-2 px-6 py-2.5 rounded-xl border border-[#1E63F3] text-[#1E63F3] hover:bg-[#EAF2FF] text-sm font-bold transition cursor-pointer"
+              >
+                <span class="material-symbols-outlined text-[18px]">restart_alt</span>
+                <span>{{ 'category.empty.clearFilters' | t }}</span>
+              </button>
+            }
+          </div>
+        }
+        <!-- Job List Results -->
+        @else {
+          <div class="flex flex-col gap-3 w-full">
+            @for (item of jobs; track item.id) {
+              <app-job-card [job]="item" detailRoute="/single"></app-job-card>
+            }
+          </div>
+        }
+
+        <!-- Pagination Bar (Shown if totalJobs > 0) -->
+        @if (!isLoadingJobs && !hasError && totalJobs > 0) {
+          <div class="pt-4">
+            <app-job-pagination
+              [totalItems]="totalJobs"
+              [pageSize]="pageSize"
+              [currentPage]="pageIndex + 1"
+              (pageChange)="onPageChange($event)"
+            ></app-job-pagination>
+          </div>
+        }
+      </main>
     </div>
   </div>
 </section>
-<!-- End post Area -->
 
-<!-- Start callto-action Area -->
-<app-call-to-action [withTopMargin]="true"></app-call-to-action>
-<!-- End calto-action Area -->
+<!-- Mobile & Tablet Filter Drawer / Bottom Sheet -->
+<app-job-mobile-filter-drawer
+  [isOpen]="isMobileDrawerOpen"
+  [totalJobs]="totalJobs"
+  [categories]="categories"
+  [addressCount]="addressCount"
+  [selectedCategoryIds]="categoryIds"
+  [selectedAddresses]="addresses"
+  [selectedSalaryRange]="salaryRange"
+  [selectedExperience]="experience"
+  [selectedLevel]="level"
+  [selectedEmploymentTypes]="employmentTypes"
+  [selectedWorkplaces]="workplaces"
+  [activeFiltersCount]="totalActiveFiltersCount"
+  (closeDrawer)="closeMobileDrawer()"
+  (categoryChange)="onCategoryChange($event)"
+  (addressChange)="onAddressChange($event)"
+  (salaryChange)="onSalaryChange($event)"
+  (experienceChange)="onExperienceChange($event)"
+  (levelChange)="onLevelChange($event)"
+  (employmentTypeChange)="onEmploymentTypeChange($event)"
+  (workplaceChange)="onWorkplaceChange($event)"
+  (clearAll)="onClearAllFilters()"
+  (apply)="closeMobileDrawer()"
+></app-job-mobile-filter-drawer>
+
+<!-- Call to Action Area -->
+<app-call-to-action [withTopMargin]="false"></app-call-to-action>

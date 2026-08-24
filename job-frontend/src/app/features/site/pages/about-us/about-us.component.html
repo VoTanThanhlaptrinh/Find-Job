@@ -1,190 +1,198 @@
-<!-- start banner Area -->
-<section class="banner-area relative" id="category">
-  <div class="overlay overlay-bg"></div>
-  <div class="container">
-    <div class="row d-flex align-items-center justify-content-center">
-      <div class="about-content col-lg-12">
-        <h1 class="text-white">
-          {{ 'about.bannerTitle' | t }}
-        </h1>
-        <p class="text-white link-nav">
-          <a href="/">{{ 'about.breadcrumbHome' | t }}</a>
-          <span class="lnr lnr-arrow-right"></span>
-          <a href="/about">{{ 'about.breadcrumbCurrent' | t }}</a>
+<!-- Banner Area -->
+<section class="relative overflow-hidden bg-slate-950 py-24 font-body">
+  <div class="absolute inset-0 bg-gradient-to-r from-blue-900/60 to-slate-950/80 z-0"></div>
+  <div class="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+    <h1 class="font-headline text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
+      {{ 'about.bannerTitle' | t }}
+    </h1>
+    <nav class="mt-4 flex items-center justify-center gap-2 text-sm text-slate-300">
+      <a href="/" class="hover:text-white transition-colors">{{ 'about.breadcrumbHome' | t }}</a>
+      <span class="material-symbols-outlined text-[16px] text-slate-500">chevron_right</span>
+      <span class="text-blue-400 font-medium">{{ 'about.breadcrumbCurrent' | t }}</span>
+    </nav>
+  </div>
+</section>
+
+<!-- Why Choose Us (Services) Area -->
+<section class="bg-white py-20 font-body">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-3xl text-center">
+      <h2 class="font-headline text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+        {{ 'about.whyChooseUsTitle' | t }}
+      </h2>
+      <p class="mt-4 text-base leading-relaxed text-slate-600 sm:text-lg">
+        {{ 'about.whyChooseUsDesc' | t }}
+      </p>
+    </div>
+
+    <div class="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+      <!-- Feature 1 -->
+      <div class="group relative rounded-3xl border border-slate-100 bg-slate-50/70 p-8 transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:bg-white hover:shadow-xl hover:shadow-blue-900/5">
+        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100/80 text-blue-600 transition-colors group-hover:bg-blue-600 group-hover:text-white">
+          <span class="material-symbols-outlined text-[28px]">person</span>
+        </div>
+        <h3 class="mt-6 font-headline text-xl font-bold text-slate-900">
+          {{ 'about.services.expertTitle' | t }}
+        </h3>
+        <p class="mt-3 text-sm leading-relaxed text-slate-600">
+          {{ 'about.services.expertDesc' | t }}
+        </p>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="group relative rounded-3xl border border-slate-100 bg-slate-50/70 p-8 transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:bg-white hover:shadow-xl hover:shadow-blue-900/5">
+        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-100/80 text-indigo-600 transition-colors group-hover:bg-indigo-600 group-hover:text-white">
+          <span class="material-symbols-outlined text-[28px]">verified_user</span>
+        </div>
+        <h3 class="mt-6 font-headline text-xl font-bold text-slate-900">
+          {{ 'about.services.professionalTitle' | t }}
+        </h3>
+        <p class="mt-3 text-sm leading-relaxed text-slate-600">
+          {{ 'about.services.professionalDesc' | t }}
+        </p>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="group relative rounded-3xl border border-slate-100 bg-slate-50/70 p-8 transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:bg-white hover:shadow-xl hover:shadow-blue-900/5">
+        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100/80 text-emerald-600 transition-colors group-hover:bg-emerald-600 group-hover:text-white">
+          <span class="material-symbols-outlined text-[28px]">support_agent</span>
+        </div>
+        <h3 class="mt-6 font-headline text-xl font-bold text-slate-900">
+          {{ 'about.services.supportTitle' | t }}
+        </h3>
+        <p class="mt-3 text-sm leading-relaxed text-slate-600">
+          {{ 'about.services.supportDesc' | t }}
+        </p>
+      </div>
+
+      <!-- Feature 4 -->
+      <div class="group relative rounded-3xl border border-slate-100 bg-slate-50/70 p-8 transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:bg-white hover:shadow-xl hover:shadow-blue-900/5">
+        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-100/80 text-amber-600 transition-colors group-hover:bg-amber-600 group-hover:text-white">
+          <span class="material-symbols-outlined text-[28px]">rocket_launch</span>
+        </div>
+        <h3 class="mt-6 font-headline text-xl font-bold text-slate-900">
+          {{ 'about.services.matchingTitle' | t }}
+        </h3>
+        <p class="mt-3 text-sm leading-relaxed text-slate-600">
+          {{ 'about.services.matchingDesc' | t }}
+        </p>
+      </div>
+
+      <!-- Feature 5 -->
+      <div class="group relative rounded-3xl border border-slate-100 bg-slate-50/70 p-8 transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:bg-white hover:shadow-xl hover:shadow-blue-900/5">
+        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-purple-100/80 text-purple-600 transition-colors group-hover:bg-purple-600 group-hover:text-white">
+          <span class="material-symbols-outlined text-[28px]">diamond</span>
+        </div>
+        <h3 class="mt-6 font-headline text-xl font-bold text-slate-900">
+          {{ 'about.services.trustedTitle' | t }}
+        </h3>
+        <p class="mt-3 text-sm leading-relaxed text-slate-600">
+          {{ 'about.services.trustedDesc' | t }}
+        </p>
+      </div>
+
+      <!-- Feature 6 -->
+      <div class="group relative rounded-3xl border border-slate-100 bg-slate-50/70 p-8 transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:bg-white hover:shadow-xl hover:shadow-blue-900/5">
+        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-100/80 text-rose-600 transition-colors group-hover:bg-rose-600 group-hover:text-white">
+          <span class="material-symbols-outlined text-[28px]">forum</span>
+        </div>
+        <h3 class="mt-6 font-headline text-xl font-bold text-slate-900">
+          {{ 'about.services.reviewTitle' | t }}
+        </h3>
+        <p class="mt-3 text-sm leading-relaxed text-slate-600">
+          {{ 'about.services.reviewDesc' | t }}
         </p>
       </div>
     </div>
   </div>
 </section>
-<!-- End banner Area -->
 
-<!-- Start service Area -->
-<section class="service-area section-gap" id="service">
-  <div class="container">
-    <div class="row d-flex justify-content-center">
-      <div class="col-md-8 pb-40 header-text">
-        <h1>{{ 'about.whyChooseUsTitle' | t }}</h1>
-        <p>
-          {{ 'about.whyChooseUsDesc' | t }}
-        </p>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-lg-4 col-md-6">
-        <div class="single-service">
-          <h4><span class="lnr lnr-user"></span>{{ 'about.services.expertTitle' | t }}</h4>
-          <p>
-            {{ 'about.services.expertDesc' | t }}
-          </p>
+<!-- Mission & Vision Area -->
+<section class="bg-slate-900 text-white font-body py-20 overflow-hidden">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 gap-12 lg:grid-cols-2 items-center">
+      <!-- Block 1 -->
+      <div class="flex flex-col md:flex-row gap-6 items-center bg-slate-800/60 p-6 rounded-3xl border border-slate-700/60">
+        <img class="h-48 w-full md:w-48 rounded-2xl object-cover shrink-0" src="assets/web_css/img/pages/f1.jpg" alt="Who we are" />
+        <div class="space-y-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-blue-400">{{ 'about.mission.tag' | t }}</span>
+          <h3 class="font-headline text-2xl font-bold text-white">{{ 'about.mission.whoTitle' | t }}</h3>
+          <p class="text-sm text-slate-300 leading-relaxed">{{ 'about.mission.whoDesc' | t }}</p>
         </div>
       </div>
-      <div class="col-lg-4 col-md-6">
-        <div class="single-service">
-          <h4><span class="lnr lnr-license"></span>{{ 'about.services.professionalTitle' | t }}</h4>
-          <p>
-            {{ 'about.services.professionalDesc' | t }}
-          </p>
-        </div>
-      </div>
-      <div class="col-lg-4 col-md-6">
-        <div class="single-service">
-          <h4><span class="lnr lnr-phone"></span>{{ 'about.services.supportTitle' | t }}</h4>
-          <p>
-            {{ 'about.services.supportDesc' | t }}
-          </p>
-        </div>
-      </div>
-      <div class="col-lg-4 col-md-6">
-        <div class="single-service">
-          <h4><span class="lnr lnr-rocket"></span>{{ 'about.services.matchingTitle' | t }}</h4>
-          <p>
-            {{ 'about.services.matchingDesc' | t }}
-          </p>
-        </div>
-      </div>
-      <div class="col-lg-4 col-md-6">
-        <div class="single-service">
-          <h4><span class="lnr lnr-diamond"></span>{{ 'about.services.trustedTitle' | t }}</h4>
-          <p>
-            {{ 'about.services.trustedDesc' | t }}
-          </p>
-        </div>
-      </div>
-      <div class="col-lg-4 col-md-6">
-        <div class="single-service">
-          <h4><span class="lnr lnr-bubble"></span>{{ 'about.services.reviewTitle' | t }}</h4>
-          <p>
-            {{ 'about.services.reviewDesc' | t }}
-          </p>
+
+      <!-- Block 2 -->
+      <div class="flex flex-col md:flex-row gap-6 items-center bg-slate-800/60 p-6 rounded-3xl border border-slate-700/60">
+        <img class="h-48 w-full md:w-48 rounded-2xl object-cover shrink-0" src="assets/web_css/img/pages/f2.jpg" alt="What we do" />
+        <div class="space-y-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-blue-400">{{ 'about.mission.tag' | t }}</span>
+          <h3 class="font-headline text-2xl font-bold text-white">{{ 'about.mission.whatTitle' | t }}</h3>
+          <p class="text-sm text-slate-300 leading-relaxed">{{ 'about.mission.whatDesc' | t }}</p>
         </div>
       </div>
     </div>
   </div>
 </section>
-<!-- End service Area -->
 
-<!-- Start feature Area -->
-<section class="feature-area">
-  <div class="container-fluid">
-    <div class="row justify-content-center align-items-center">
-      <div class="col-lg-3 feat-img no-padding">
-        <img class="img-fluid" src="assets/web_css/img/pages/f1.jpg" alt="Who we are" />
-      </div>
-      <div class="col-lg-3 no-padding feat-txt">
-        <h6 class="text-uppercase text-white">{{ 'about.mission.tag' | t }}</h6>
-        <h1>{{ 'about.mission.whoTitle' | t }}</h1>
-        <p>
-          {{ 'about.mission.whoDesc' | t }}
-        </p>
-      </div>
-      <div class="col-lg-3 feat-img no-padding">
-        <img class="img-fluid" src="assets/web_css/img/pages/f2.jpg" alt="What we do" />
-      </div>
-      <div class="col-lg-3 no-padding feat-txt">
-        <h6 class="text-uppercase text-white">{{ 'about.mission.tag' | t }}</h6>
-        <h1>{{ 'about.mission.whatTitle' | t }}</h1>
-        <p>
-          {{ 'about.mission.whatDesc' | t }}
-        </p>
-      </div>
+<!-- Team Area -->
+<section class="bg-slate-50 py-20 font-body" id="team">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-3xl text-center">
+      <h2 class="font-headline text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+        {{ 'about.team.title' | t }}
+      </h2>
+      <p class="mt-4 text-base leading-relaxed text-slate-600">
+        {{ 'about.team.description' | t }}
+      </p>
     </div>
-  </div>
-</section>
-<!-- End feature Area -->
 
-<!-- Start team Area -->
-<section class="team-area section-gap" id="team">
-  <div class="container">
-    <div class="row d-flex justify-content-center">
-      <div class="menu-content pb-70 col-lg-8">
-        <div class="title text-center">
-          <h1 class="mb-10">{{ 'about.team.title' | t }}</h1>
-          <p>{{ 'about.team.description' | t }}</p>
+    <div class="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+      <!-- Member 1 -->
+      <div class="group rounded-3xl bg-white p-5 shadow-sm border border-slate-200 transition duration-300 hover:shadow-xl hover:-translate-y-1">
+        <div class="overflow-hidden rounded-2xl aspect-square bg-slate-100">
+          <img class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" src="assets/web_css/img/pages/t1.jpg" alt="Ethel Davis" />
+        </div>
+        <div class="mt-5 text-center">
+          <h4 class="font-headline text-lg font-bold text-slate-900">Ethel Davis</h4>
+          <p class="text-xs font-medium text-blue-600 mt-1">{{ 'about.team.member1Role' | t }}</p>
         </div>
       </div>
-    </div>
-    <div class="row justify-content-center d-flex align-items-center">
-      <div class="col-md-3 single-team">
-        <div class="thumb">
-          <img class="img-fluid" src="assets/web_css/img/pages/t1.jpg" alt="Ethel Davis" />
-          <div class="align-items-center justify-content-center d-flex">
-            <a href="#"><i class="fa fa-facebook"></i></a>
-            <a href="#"><i class="fa fa-twitter"></i></a>
-            <a href="#"><i class="fa fa-linkedin"></i></a>
-          </div>
+
+      <!-- Member 2 -->
+      <div class="group rounded-3xl bg-white p-5 shadow-sm border border-slate-200 transition duration-300 hover:shadow-xl hover:-translate-y-1">
+        <div class="overflow-hidden rounded-2xl aspect-square bg-slate-100">
+          <img class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" src="assets/web_css/img/pages/t2.jpg" alt="Rodney Cooper" />
         </div>
-        <div class="meta-text mt-30 text-center">
-          <h4>Ethel Davis</h4>
-          <p>{{ 'about.team.member1Role' | t }}</p>
+        <div class="mt-5 text-center">
+          <h4 class="font-headline text-lg font-bold text-slate-900">Rodney Cooper</h4>
+          <p class="text-xs font-medium text-blue-600 mt-1">{{ 'about.team.member2Role' | t }}</p>
         </div>
       </div>
-      <div class="col-md-3 single-team">
-        <div class="thumb">
-          <img class="img-fluid" src="assets/web_css/img/pages/t2.jpg" alt="Rodney Cooper" />
-          <div class="align-items-center justify-content-center d-flex">
-            <a href="#"><i class="fa fa-facebook"></i></a>
-            <a href="#"><i class="fa fa-twitter"></i></a>
-            <a href="#"><i class="fa fa-linkedin"></i></a>
-          </div>
+
+      <!-- Member 3 -->
+      <div class="group rounded-3xl bg-white p-5 shadow-sm border border-slate-200 transition duration-300 hover:shadow-xl hover:-translate-y-1">
+        <div class="overflow-hidden rounded-2xl aspect-square bg-slate-100">
+          <img class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" src="assets/web_css/img/pages/t3.jpg" alt="Dora Walker" />
         </div>
-        <div class="meta-text mt-30 text-center">
-          <h4>Rodney Cooper</h4>
-          <p>{{ 'about.team.member2Role' | t }}</p>
+        <div class="mt-5 text-center">
+          <h4 class="font-headline text-lg font-bold text-slate-900">Dora Walker</h4>
+          <p class="text-xs font-medium text-blue-600 mt-1">{{ 'about.team.member3Role' | t }}</p>
         </div>
       </div>
-      <div class="col-md-3 single-team">
-        <div class="thumb">
-          <img class="img-fluid" src="assets/web_css/img/pages/t3.jpg" alt="Dora Walker" />
-          <div class="align-items-center justify-content-center d-flex">
-            <a href="#"><i class="fa fa-facebook"></i></a>
-            <a href="#"><i class="fa fa-twitter"></i></a>
-            <a href="#"><i class="fa fa-linkedin"></i></a>
-          </div>
+
+      <!-- Member 4 -->
+      <div class="group rounded-3xl bg-white p-5 shadow-sm border border-slate-200 transition duration-300 hover:shadow-xl hover:-translate-y-1">
+        <div class="overflow-hidden rounded-2xl aspect-square bg-slate-100">
+          <img class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" src="assets/web_css/img/pages/t4.jpg" alt="Lena Keller" />
         </div>
-        <div class="meta-text mt-30 text-center">
-          <h4>Dora Walker</h4>
-          <p>{{ 'about.team.member3Role' | t }}</p>
-        </div>
-      </div>
-      <div class="col-md-3 single-team">
-        <div class="thumb">
-          <img class="img-fluid" src="assets/web_css/img/pages/t4.jpg" alt="Lena Keller" />
-          <div class="align-items-center justify-content-center d-flex">
-            <a href="#"><i class="fa fa-facebook"></i></a>
-            <a href="#"><i class="fa fa-twitter"></i></a>
-            <a href="#"><i class="fa fa-linkedin"></i></a>
-          </div>
-        </div>
-        <div class="meta-text mt-30 text-center">
-          <h4>Lena Keller</h4>
-          <p>{{ 'about.team.member4Role' | t }}</p>
+        <div class="mt-5 text-center">
+          <h4 class="font-headline text-lg font-bold text-slate-900">Lena Keller</h4>
+          <p class="text-xs font-medium text-blue-600 mt-1">{{ 'about.team.member4Role' | t }}</p>
         </div>
       </div>
     </div>
   </div>
 </section>
-<!-- End team Area -->
 
-<!-- Start callto-action Area -->
+<!-- Call to Action Area -->
 <app-call-to-action></app-call-to-action>
-<!-- End calto-action Area -->

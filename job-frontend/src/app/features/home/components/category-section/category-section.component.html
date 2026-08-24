@@ -1,0 +1,175 @@
+<section #sectionRef class="category-section relative overflow-hidden bg-gradient-to-b from-[#f8faff] via-white to-[#f4f7fc] py-16 sm:py-20 lg:py-24 font-body border-y border-slate-200/50" id="category" [class.is-visible]="isSectionVisible">
+  <!-- Subtle ambient background glow -->
+  <div
+    class="pointer-events-none absolute -left-32 top-1/2 -translate-y-1/2 h-[450px] w-[450px] rounded-full bg-blue-100/35 blur-[100px]">
+  </div>
+  <div
+    class="pointer-events-none absolute -right-32 top-1/3 h-[400px] w-[400px] rounded-full bg-indigo-100/25 blur-[100px]">
+  </div>
+
+  <div class="relative mx-auto max-w-[1440px] px-6 sm:px-12 lg:px-16">
+
+    <!-- Top Showcase Grid: Illustration Stage (Left) & Content (Right) -->
+    <div class="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-16 xl:gap-24">
+
+      <!-- Left Column: Career Constellation Stage -->
+      <div class="lg:col-span-6 flex items-center justify-center enter-stage">
+        <div class="relative w-full max-w-[560px] min-h-[440px] sm:min-h-[480px] flex items-center justify-center px-4 sm:px-6">
+
+          <!-- Constellation SVG connecting lines & glowing nodes -->
+          <svg class="pointer-events-none absolute inset-0 h-full w-full select-none" viewBox="0 0 560 480" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <!-- Outer Orbit Paths -->
+            <path d="M 120 70 Q 280 40 440 70" stroke="rgba(26, 86, 219, 0.12)" stroke-width="1.5" stroke-dasharray="4 4" />
+            <path d="M 60 210 Q 280 240 500 210" stroke="rgba(26, 86, 219, 0.10)" stroke-width="1.5" stroke-dasharray="4 4" />
+            <path d="M 140 410 Q 280 440 420 410" stroke="rgba(26, 86, 219, 0.12)" stroke-width="1.5" stroke-dasharray="4 4" />
+            
+            <!-- Inner Core Connecting Lines -->
+            <line x1="160" y1="240" x2="280" y2="225" stroke="rgba(26, 86, 219, 0.18)" stroke-width="1.5" stroke-dasharray="3 3" />
+            <line x1="280" y1="225" x2="370" y2="240" stroke="rgba(26, 86, 219, 0.18)" stroke-width="1.5" stroke-dasharray="3 3" />
+            <line x1="370" y1="240" x2="450" y2="240" stroke="rgba(26, 86, 219, 0.14)" stroke-width="1.5" stroke-dasharray="3 3" />
+            
+            <!-- Glowing Connection Nodes -->
+            <circle cx="160" cy="240" r="3.5" fill="#6366f1" class="constellation-dot-1" />
+            <circle cx="280" cy="225" r="4.5" fill="#1a56db" class="constellation-dot-2" />
+            <circle cx="370" cy="240" r="3.5" fill="#10b981" class="constellation-dot-3" />
+            <circle cx="450" cy="240" r="3" fill="#0ea5e9" class="constellation-dot-1" />
+          </svg>
+
+          <!-- Center Stage Platform (Glassmorphism Pod) -->
+          <div class="relative z-10 w-full max-w-[490px] rounded-[32px] bg-gradient-to-b from-white/95 via-blue-50/40 to-indigo-50/25 p-6 sm:p-8 border border-blue-100/90 shadow-[0_20px_50px_rgba(26,86,219,0.06)] backdrop-blur-md">
+
+            <!-- Radial Glow behind Active Role Card -->
+            <div class="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-44 w-44 rounded-full bg-blue-500/15 blur-2xl"></div>
+
+            <!-- 4 Role Cards in Balanced Row -->
+            <div class="relative z-10 flex items-center justify-center gap-2.5 sm:gap-4 py-4 sm:py-6">
+
+              <!-- Role 1: Developer -->
+              <button
+                type="button"
+                (click)="setActiveRole('developer')"
+                class="category-role-card enter-role enter-role-1 role-card-dev flex flex-col items-center group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-2xl">
+                <div
+                  class="flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 transition-transform duration-300 group-hover:scale-105"
+                  [ngClass]="{'ring-4 ring-indigo-200': activeRoleId === 'developer'}">
+                  <span class="material-symbols-outlined text-[28px] sm:text-[32px]" aria-hidden="true">terminal</span>
+                </div>
+                <span class="mt-2 text-[11px] font-bold text-slate-700 group-hover:text-indigo-600 transition-colors">{{ 'home.categorySection.roles.developer' | t }}</span>
+              </button>
+
+              <!-- Role 2: Chuyên gia (Active Default) -->
+              <button
+                type="button"
+                (click)="setActiveRole('expert')"
+                class="category-role-card enter-role enter-role-2 role-card-expert flex flex-col items-center group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-3xl z-20">
+                <div
+                  class="relative flex h-18 w-18 sm:h-20 sm:w-20 items-center justify-center rounded-3xl bg-[#1a56db] text-white shadow-xl shadow-[#1a56db]/40 ring-4 ring-white transition-transform duration-300 group-hover:scale-105"
+                  [ngClass]="{'ring-blue-200 ring-4': activeRoleId === 'expert'}">
+                  <span class="material-symbols-outlined text-[36px] sm:text-[40px]" aria-hidden="true">psychology</span>
+                  <!-- Glowing Star Badge -->
+                  <span
+                    class="active-star-sparkle absolute -top-1.5 -right-1.5 flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-full bg-amber-400 text-amber-950 font-bold text-[11px] sm:text-[12px] shadow-md ring-2 ring-white"
+                    [attr.aria-label]="'home.categorySection.featuredBadge' | t">
+                    ★
+                  </span>
+                </div>
+                <span class="mt-2 text-xs sm:text-[13px] font-extrabold text-[#1a56db] group-hover:text-blue-800 transition-colors">{{ 'home.categorySection.roles.expert' | t }}</span>
+              </button>
+
+              <!-- Role 3: Kỹ sư -->
+              <button
+                type="button"
+                (click)="setActiveRole('engineer')"
+                class="category-role-card enter-role enter-role-3 role-card-eng flex flex-col items-center group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded-2xl">
+                <div
+                  class="flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 transition-transform duration-300 group-hover:scale-105"
+                  [ngClass]="{'ring-4 ring-emerald-200': activeRoleId === 'engineer'}">
+                  <span class="material-symbols-outlined text-[28px] sm:text-[32px]" aria-hidden="true">engineering</span>
+                </div>
+                <span class="mt-2 text-[11px] font-bold text-slate-700 group-hover:text-emerald-600 transition-colors">{{ 'home.categorySection.roles.engineer' | t }}</span>
+              </button>
+
+              <!-- Role 4: Quản lý -->
+              <button
+                type="button"
+                (click)="setActiveRole('manager')"
+                class="category-role-card enter-role enter-role-4 role-card-mgr flex flex-col items-center group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 rounded-2xl">
+                <div
+                  class="flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-2xl bg-sky-500 text-white shadow-lg shadow-sky-500/30 transition-transform duration-300 group-hover:scale-105"
+                  [ngClass]="{'ring-4 ring-sky-200': activeRoleId === 'manager'}">
+                  <span class="material-symbols-outlined text-[28px] sm:text-[32px]" aria-hidden="true">badge</span>
+                </div>
+                <span class="mt-2 text-[11px] font-bold text-slate-700 group-hover:text-sky-600 transition-colors">{{ 'home.categorySection.roles.manager' | t }}</span>
+              </button>
+
+            </div>
+
+            <!-- Pedestal Light Bar -->
+            <div class="h-2 w-48 sm:w-64 rounded-full bg-gradient-to-r from-transparent via-blue-300/40 to-transparent mx-auto mt-2 sm:mt-3"></div>
+          </div>
+
+          <!-- 6 Floating Category Badges Around Stage -->
+          @for (badge of badges; track badge.id) {
+          <a
+            [routerLink]="badge.link"
+            [class]="'category-chip-item enter-chip ' + badge.enterDelayClass + ' ' + badge.chipFloatClass + ' absolute z-20 flex items-center gap-2 rounded-2xl border px-3 sm:px-3.5 py-1.5 sm:py-2 shadow-md backdrop-blur-md focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ' + badge.positionClasses + ' ' + badge.badgeClasses"
+            [attr.aria-label]="badge.titleKey | t">
+            <div [class]="'flex h-7 w-7 items-center justify-center rounded-xl font-bold ' + badge.iconBgClasses">
+              <span [class]="'material-symbols-outlined text-[16px] ' + badge.iconAnimationClass" aria-hidden="true">{{ badge.icon }}</span>
+            </div>
+            <span class="text-xs font-bold whitespace-nowrap">{{ badge.titleKey | t }}</span>
+          </a>
+          }
+
+        </div>
+
+      </div>
+
+      <!-- Right Column: Content & Direct Actions -->
+      <div class="lg:col-span-6 flex flex-col justify-center">
+        <!-- Subtitle with bar -->
+        <div class="enter-content mb-4">
+          <span class="font-headline text-xs font-extrabold uppercase tracking-widest text-[#1a56db]">
+            {{ 'home.categorySection.eyebrow' | t }}
+          </span>
+          <div class="mt-2 h-1 w-8 rounded-full bg-[#1a56db]"></div>
+        </div>
+
+        <!-- Main Title -->
+        <h2 class="enter-content font-headline text-3xl sm:text-4xl lg:text-[46px] xl:text-[50px] font-extrabold tracking-tight text-slate-900 leading-[1.15]">
+          {{ 'home.categorySection.titlePre' | t }} <span class="text-[#1a56db]">{{ 'home.categorySection.titleHighlight' | t }}</span>
+        </h2>
+
+        <!-- Description -->
+        <p class="enter-content mt-5 text-base sm:text-lg text-slate-600 leading-relaxed max-w-lg font-normal">
+          {{ 'home.categorySection.desc' | t }}
+        </p>
+
+        <!-- Stats Highlight Pill with single pulse icon -->
+        <div class="enter-content mt-6 flex items-center gap-3">
+          <div class="pulse-stats-once flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-[#1a56db]">
+            <span class="material-symbols-outlined text-[20px]" aria-hidden="true">trending_up</span>
+          </div>
+          <span class="text-sm sm:text-base font-bold text-slate-800">{{ 'home.categorySection.dailyStats' | t }}</span>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="enter-cta mt-8 flex flex-wrap items-center gap-4 sm:gap-6">
+          <a routerLink="/jobs"
+            class="group inline-flex items-center justify-center gap-3 h-[54px] sm:h-[58px] px-8 rounded-xl bg-[#1a56db] text-sm sm:text-base font-bold text-white shadow-lg shadow-[#1a56db]/25 transition-all duration-200 hover:bg-[#1e429f] hover:shadow-xl hover:shadow-[#1a56db]/35 hover:-translate-y-0.5 active:scale-95 w-full sm:w-auto">
+            <span>{{ 'home.categorySection.viewAllBtn' | t }}</span>
+            <span class="material-symbols-outlined text-[20px] transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true">arrow_forward</span>
+          </a>
+
+          <a routerLink="/jobs"
+            class="animated-underline-link group inline-flex items-center gap-2 h-[54px] sm:h-[58px] px-4 py-3.5 text-sm sm:text-base font-bold text-[#1a56db] hover:text-[#1e429f] transition-colors w-full sm:w-auto justify-center sm:justify-start">
+            <span>{{ 'home.categorySection.viewFeaturedBtn' | t }}</span>
+            <span class="material-symbols-outlined text-[18px] transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true">arrow_forward</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>

@@ -1,234 +1,593 @@
-<section class="banner-area relative" id="home">
-  <div class="overlay overlay-bg"></div>
-  <div class="container">
-    <div class="row search-page-top d-flex align-items-center justify-content-center">
-      <div class="banner-content col-lg-12">
-        <h1 class="text-white">
-          <span>1500+</span> {{ 'home.hero.jobsPosted' | t }}
-        </h1>
-        <div class="h-10"></div>
+<!-- 1. Hero Banner Area -->
+<section class="hero-section relative overflow-hidden flex items-center justify-center pt-32 pb-20 sm:pt-36 sm:pb-24 lg:pt-40 lg:pb-28 font-body" id="home">
+  <!-- Multi-layered overlay for optimal contrast and side office visibility -->
+  <div class="hero-overlay absolute inset-0 z-0 pointer-events-none"></div>
+
+  <div class="relative z-10 mx-auto w-full max-w-[1440px] px-6 sm:px-10 lg:px-12">
+    <div class="mx-auto max-w-4xl text-center">
+      
+      <!-- Eyebrow Badge (Rotating Phrases every 2s) -->
+      <div class="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/20 px-4 py-1.5 text-xs sm:text-sm font-semibold text-white/90 backdrop-blur-md mb-6 shadow-sm">
+        <span class="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+        <div class="flip-wrapper h-4.5 sm:h-5 items-center">
+          <span
+            class="flip-item tracking-wider uppercase text-[11px] sm:text-xs font-bold text-white whitespace-nowrap"
+            [ngClass]="isFlipping ? 'flip-out' : 'flip-in'">
+            {{ eyebrowPhrases[currentEyebrowIndex] }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Headline (Dynamic Slogan Flipping every 2s) -->
+      <h1 class="font-headline text-4xl sm:text-5xl lg:text-[58px] xl:text-[62px] font-extrabold tracking-tight text-white leading-[1.14] drop-shadow-md max-w-[950px] mx-auto">
+        {{ 'home.hero.headlinePrefix' | t }}
+        <span class="flip-wrapper h-[1.18em] align-bottom">
+          <span
+            class="flip-item text-[#38BDF8] whitespace-nowrap"
+            [ngClass]="isFlipping ? 'flip-out' : 'flip-in'">
+            {{ headlinePhrases[currentHeadlineIndex] }}
+          </span>
+        </span>
+      </h1>
+
+      <!-- Description -->
+      <p class="mt-5 text-base sm:text-lg lg:text-xl text-white/85 max-w-[720px] mx-auto font-normal leading-relaxed drop-shadow-sm">
+        {{ 'home.hero.desc' | t }}
+      </p>
+
+      <!-- Search Bar -->
+      <div class="mt-8 sm:mt-10">
         <app-search-form></app-search-form>
-        <p class="text-white">
-          <span>{{ 'home.hero.searchByTags' | t }}</span>
-          {{ 'home.hero.tags' | t }}
-        </p>
       </div>
-    </div>
-  </div>
-</section>
-<!-- Start features Area -->
-<section class="features-area">
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-3 col-md-6">
-        <div class="single-feature">
-          <h4>{{ 'home.features.searchingTitle' | t }}</h4>
-          <p>
-            {{ 'home.features.searchingDesc' | t }}
-          </p>
-        </div>
-      </div>
-      <div class="col-lg-3 col-md-6">
-        <div class="single-feature">
-          <h4>{{ 'home.features.applyingTitle' | t }}</h4>
-          <p>
-            {{ 'home.features.applyingDesc' | t }}
-          </p>
-        </div>
-      </div>
-      <div class="col-lg-3 col-md-6">
-        <div class="single-feature">
-          <h4>{{ 'home.features.securityTitle' | t }}</h4>
-          <p>
-            {{ 'home.features.securityDesc' | t }}
-          </p>
-        </div>
-      </div>
-      <div class="col-lg-3 col-md-6">
-        <div class="single-feature">
-          <h4>{{ 'home.features.notificationsTitle' | t }}</h4>
-          <p>
-            {{ 'home.features.notificationsDesc' | t }}
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- End features Area -->
 
-<!-- Start feature-cat Area -->
-<section class="feature-cat-area pt-100" id="category">
-  <div class="container">
-    <div class="row d-flex justify-content-center">
-      <div class="menu-content pb-60 col-lg-10">
-        <div class="title text-center">
-          <h1 class="mb-10">{{ 'home.categories.title' | t }}</h1>
-          <p>
-            {{ 'home.categories.subtitle' | t }}
-          </p>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-lg-2 col-md-4 col-sm-6">
-        <div class="single-fcat">
-          <a>
-            <img src="assets/web_css/img/o1.png" alt="" />
-          </a>
-          <p>{{ 'home.categories.accounting' | t }}</p>
-        </div>
-      </div>
-      <div class="col-lg-2 col-md-4 col-sm-6">
-        <div class="single-fcat">
-          <a>
-            <img src="assets/web_css/img/o2.png" alt="" />
-          </a>
-          <p>{{ 'home.categories.programming' | t }}</p>
-        </div>
-      </div>
-      <div class="col-lg-2 col-md-4 col-sm-6">
-        <div class="single-fcat">
-          <a>
-            <img src="assets/web_css/img/o3.png" alt="" />
-          </a>
-          <p>{{ 'home.categories.engineering' | t }}</p>
-        </div>
-      </div>
-      <div class="col-lg-2 col-md-4 col-sm-6">
-        <div class="single-fcat">
-          <a>
-            <img src="assets/web_css/img/o4.png" alt="" />
-          </a>
-          <p>{{ 'home.categories.media' | t }}</p>
-        </div>
-      </div>
-      <div class="col-lg-2 col-md-4 col-sm-6">
-        <div class="single-fcat">
-          <a>
-            <img src="assets/web_css/img/o5.png" alt="" />
-          </a>
-          <p>{{ 'home.categories.consulting' | t }}</p>
-        </div>
-      </div>
-      <div class="col-lg-2 col-md-4 col-sm-6">
-        <div class="single-fcat">
-          <a>
-            <img src="assets/web_css/img/o6.png" alt="" />
-          </a>
-          <p>{{ 'home.categories.management' | t }}</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- End feature-cat Area -->
-
-<!-- Start post Area -->
-<section class="post-area section-gap">
-  <div class="container">
-    <div class="row justify-content-center d-flex">
-      <div class="col-lg-8 post-list w-full">
-        <ul class="cat-list">
-          <li><a href="#">{{ 'home.tabs.recent' | t }}</a></li>
-          <li><a href="#">{{ 'home.tabs.fullTime' | t }}</a></li>
-          <li><a href="#">{{ 'home.tabs.intern' | t }}</a></li>
-          <li><a href="#">{{ 'home.tabs.partTime' | t }}</a></li>
-        </ul>
-
-        <!-- Nếu có công việc -->
-        @if (isLoading) {
-        <div class="flex flex-col gap-y-2 items-center w-full">
-          @for (skeleton of [1, 2, 3, 4, 5]; track skeleton) {
-          <app-skeleton-job-card></app-skeleton-job-card>
+      <!-- Tag Chips (Horizontal scroll on mobile, clickable interactive chips) -->
+      <div class="mt-6 flex items-center justify-center gap-2 text-xs sm:text-sm text-white/80">
+        <span class="font-semibold text-white/90 shrink-0">{{ 'home.hero.searchByTags' | t }}</span>
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 px-1">
+          @for (tag of tags; track tag) {
+          <button
+            type="button"
+            (click)="searchByTag(tag)"
+            class="inline-flex items-center rounded-full bg-white/10 hover:bg-[#1E63F3] border border-white/20 hover:border-[#1E63F3] px-3.5 py-1.5 text-xs font-semibold text-white/85 hover:text-white backdrop-blur-sm transition-all duration-200 cursor-pointer whitespace-nowrap active:scale-95">
+            {{ tag }}
+          </button>
           }
         </div>
-        } @else if (jobPosts.length > 0) {
-        <div class="flex flex-col gap-y-2 items-center w-full">
-          @for (item of jobPosts; track trackById($index, item)) {
-          <app-job-card [job]="item" image="assets/web_css/img/post.png" detailRoute="/single" />
-          }
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. Partner Brands Marquee Section (Opaque, Large Colored Logos, No Border) -->
+<section class="bg-white border-b border-slate-200/80 py-10 font-body overflow-hidden">
+  <div class="mx-auto max-w-[1440px] px-6 sm:px-10 lg:px-12 text-center mb-7">
+    <p class="text-xs sm:text-sm font-bold uppercase tracking-widest text-slate-500">
+      {{ 'home.brands.title' | t }}
+    </p>
+  </div>
+
+  <!-- Marquee Container with soft side fades -->
+  <div class="relative w-full overflow-hidden marquee-mask py-2">
+    <div class="animate-marquee flex items-center gap-12 sm:gap-16 lg:gap-20">
+      
+      <!-- Track 1 of Brands -->
+      <!-- FPT Software -->
+      <div class="flex items-center justify-center shrink-0 cursor-default opacity-85 hover:opacity-100 transition-opacity duration-200" title="FPT Software">
+        <svg class="h-10 sm:h-12 w-auto" viewBox="0 0 175 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="14" cy="21" rx="10" ry="15" fill="#F37021" transform="rotate(-18 14 21)" />
+          <ellipse cx="29" cy="21" rx="10" ry="15" fill="#008853" transform="rotate(-18 29 21)" />
+          <ellipse cx="44" cy="21" rx="10" ry="15" fill="#0054A6" transform="rotate(-18 44 21)" />
+          <text x="14" y="27" font-family="Arial, sans-serif" font-weight="900" font-size="16" fill="#FFFFFF" text-anchor="middle">F</text>
+          <text x="29" y="27" font-family="Arial, sans-serif" font-weight="900" font-size="16" fill="#FFFFFF" text-anchor="middle">P</text>
+          <text x="44" y="27" font-family="Arial, sans-serif" font-weight="900" font-size="16" fill="#FFFFFF" text-anchor="middle">T</text>
+          <text x="62" y="27" font-family="Arial, sans-serif" font-weight="800" font-size="17" fill="#0054A6" letter-spacing="-0.3">Software</text>
+        </svg>
+      </div>
+
+      <!-- Viettel -->
+      <div class="flex items-center justify-center shrink-0 cursor-default opacity-85 hover:opacity-100 transition-opacity duration-200" title="Viettel Group">
+        <svg class="h-9 sm:h-11 w-auto" viewBox="0 0 120 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <text x="0" y="28" font-family="Arial, sans-serif" font-weight="900" font-size="30" fill="#EE0033" letter-spacing="-0.8">viettel</text>
+        </svg>
+      </div>
+
+      <!-- VNG -->
+      <div class="flex items-center justify-center shrink-0 cursor-default opacity-85 hover:opacity-100 transition-opacity duration-200" title="VNG Corporation">
+        <svg class="h-10 sm:h-12 w-auto" viewBox="0 0 110 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="5" width="30" height="30" rx="9" fill="#FF6500" />
+          <path d="M8 12L15 26L22 12" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <text x="38" y="28" font-family="Arial, sans-serif" font-weight="900" font-size="24" fill="#222222" letter-spacing="-0.5">vng</text>
+        </svg>
+      </div>
+
+      <!-- Techcombank -->
+      <div class="flex items-center justify-center shrink-0 cursor-default opacity-85 hover:opacity-100 transition-opacity duration-200" title="Techcombank">
+        <svg class="h-9 sm:h-11 w-auto" viewBox="0 0 195 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="4" width="28" height="28" fill="#EE2026" />
+          <path d="M16 4L30 18L16 32L2 18Z" fill="#FFFFFF" />
+          <rect x="10" y="12" width="12" height="12" fill="#EE2026" />
+          <text x="38" y="24" font-family="Arial, sans-serif" font-weight="800" font-size="16" fill="#1C1C1C" letter-spacing="0.5">TECHCOMBANK</text>
+        </svg>
+      </div>
+
+      <!-- Shopee -->
+      <div class="flex items-center justify-center shrink-0 cursor-default opacity-85 hover:opacity-100 transition-opacity duration-200" title="Shopee Vietnam">
+        <svg class="h-10 sm:h-12 w-auto" viewBox="0 0 130 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="9" width="26" height="25" rx="5" fill="#EE4D2D" />
+          <path d="M9 9C9 5.5 11.5 3 15 3C18.5 3 21 5.5 21 9" stroke="#EE4D2D" stroke-width="2.8" fill="none"/>
+          <path d="M11.5 17.5C11.5 15.5 13.5 15 15 15C16.5 15 18 15.8 18 17.5C18 19.8 11.5 19.8 11.5 22C11.5 23.8 13.2 24.5 15 24.5C16.8 24.5 18.5 23.5 18.5 23.5" stroke="white" stroke-width="2.4" stroke-linecap="round"/>
+          <text x="36" y="27" font-family="Arial, sans-serif" font-weight="800" font-size="20" fill="#EE4D2D">Shopee</text>
+        </svg>
+      </div>
+
+      <!-- MoMo -->
+      <div class="flex items-center justify-center shrink-0 cursor-default opacity-85 hover:opacity-100 transition-opacity duration-200" title="MoMo">
+        <svg class="h-10 sm:h-12 w-auto" viewBox="0 0 115 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="4" width="32" height="32" rx="9" fill="#A50064" />
+          <text x="16" y="25" font-family="Arial, sans-serif" font-weight="900" font-size="14" fill="#FFFFFF" text-anchor="middle">momo</text>
+          <text x="40" y="27" font-family="Arial, sans-serif" font-weight="800" font-size="20" fill="#A50064">MoMo</text>
+        </svg>
+      </div>
+
+      <!-- MB Bank -->
+      <div class="flex items-center justify-center shrink-0 cursor-default opacity-85 hover:opacity-100 transition-opacity duration-200" title="MB Bank">
+        <svg class="h-9 sm:h-11 w-auto" viewBox="0 0 110 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 8L16 30H8L4 22V8Z" fill="#002D72" />
+          <path d="M16 30L24 15L28 30H20L16 30Z" fill="#EE1C25" />
+          <text x="34" y="27" font-family="Arial, sans-serif" font-weight="900" font-size="24" fill="#002D72">MB</text>
+        </svg>
+      </div>
+
+      <!-- VNPT -->
+      <div class="flex items-center justify-center shrink-0 cursor-default opacity-85 hover:opacity-100 transition-opacity duration-200" title="VNPT Group">
+        <svg class="h-9 sm:h-11 w-auto" viewBox="0 0 110 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="16" cy="19" r="14" fill="#0066B2" />
+          <path d="M8 19C13 10 19 10 24 19C19 28 13 28 8 19Z" fill="#FFFFFF" opacity="0.8" />
+          <circle cx="16" cy="19" r="4.5" fill="#0066B2" />
+          <text x="38" y="26" font-family="Arial, sans-serif" font-weight="900" font-size="19" fill="#0066B2">VNPT</text>
+        </svg>
+      </div>
+
+      <!-- Samsung -->
+      <div class="flex items-center justify-center shrink-0 cursor-default opacity-85 hover:opacity-100 transition-opacity duration-200" title="Samsung">
+        <svg class="h-8 sm:h-10 w-auto" viewBox="0 0 140 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <text x="0" y="26" font-family="Arial, sans-serif" font-weight="900" font-size="21" fill="#1428A0" letter-spacing="1">SAMSUNG</text>
+        </svg>
+      </div>
+
+      <!-- Tiki -->
+      <div class="flex items-center justify-center shrink-0 cursor-default opacity-85 hover:opacity-100 transition-opacity duration-200" title="Tiki">
+        <svg class="h-9 sm:h-11 w-auto" viewBox="0 0 95 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="14" cy="19" r="13" fill="#1A94FF" />
+          <text x="14" y="24" font-family="Arial, sans-serif" font-weight="900" font-size="14" fill="#FFFFFF" text-anchor="middle">ti</text>
+          <text x="34" y="27" font-family="Arial, sans-serif" font-weight="800" font-size="22" fill="#1A94FF">tiki</text>
+        </svg>
+      </div>
+
+
+      <!-- Track 2 (Duplicate for Seamless Infinite Marquee Loop) -->
+      <!-- FPT Software -->
+      <div class="flex items-center justify-center shrink-0 cursor-default opacity-85 hover:opacity-100 transition-opacity duration-200" title="FPT Software" aria-hidden="true">
+        <svg class="h-10 sm:h-12 w-auto" viewBox="0 0 175 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="14" cy="21" rx="10" ry="15" fill="#F37021" transform="rotate(-18 14 21)" />
+          <ellipse cx="29" cy="21" rx="10" ry="15" fill="#008853" transform="rotate(-18 29 21)" />
+          <ellipse cx="44" cy="21" rx="10" ry="15" fill="#0054A6" transform="rotate(-18 44 21)" />
+          <text x="14" y="27" font-family="Arial, sans-serif" font-weight="900" font-size="16" fill="#FFFFFF" text-anchor="middle">F</text>
+          <text x="29" y="27" font-family="Arial, sans-serif" font-weight="900" font-size="16" fill="#FFFFFF" text-anchor="middle">P</text>
+          <text x="44" y="27" font-family="Arial, sans-serif" font-weight="900" font-size="16" fill="#FFFFFF" text-anchor="middle">T</text>
+          <text x="62" y="27" font-family="Arial, sans-serif" font-weight="800" font-size="17" fill="#0054A6" letter-spacing="-0.3">Software</text>
+        </svg>
+      </div>
+
+      <!-- Viettel -->
+      <div class="flex items-center justify-center shrink-0 cursor-default opacity-85 hover:opacity-100 transition-opacity duration-200" title="Viettel Group" aria-hidden="true">
+        <svg class="h-9 sm:h-11 w-auto" viewBox="0 0 120 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <text x="0" y="28" font-family="Arial, sans-serif" font-weight="900" font-size="30" fill="#EE0033" letter-spacing="-0.8">viettel</text>
+        </svg>
+      </div>
+
+      <!-- VNG -->
+      <div class="flex items-center justify-center shrink-0 cursor-default opacity-85 hover:opacity-100 transition-opacity duration-200" title="VNG Corporation" aria-hidden="true">
+        <svg class="h-10 sm:h-12 w-auto" viewBox="0 0 110 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="5" width="30" height="30" rx="9" fill="#FF6500" />
+          <path d="M8 12L15 26L22 12" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <text x="38" y="28" font-family="Arial, sans-serif" font-weight="900" font-size="24" fill="#222222" letter-spacing="-0.5">vng</text>
+        </svg>
+      </div>
+
+      <!-- Techcombank -->
+      <div class="flex items-center justify-center shrink-0 cursor-default opacity-85 hover:opacity-100 transition-opacity duration-200" title="Techcombank" aria-hidden="true">
+        <svg class="h-9 sm:h-11 w-auto" viewBox="0 0 195 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="4" width="28" height="28" fill="#EE2026" />
+          <path d="M16 4L30 18L16 32L2 18Z" fill="#FFFFFF" />
+          <rect x="10" y="12" width="12" height="12" fill="#EE2026" />
+          <text x="38" y="24" font-family="Arial, sans-serif" font-weight="800" font-size="16" fill="#1C1C1C" letter-spacing="0.5">TECHCOMBANK</text>
+        </svg>
+      </div>
+
+      <!-- Shopee -->
+      <div class="flex items-center justify-center shrink-0 cursor-default opacity-85 hover:opacity-100 transition-opacity duration-200" title="Shopee Vietnam" aria-hidden="true">
+        <svg class="h-10 sm:h-12 w-auto" viewBox="0 0 130 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="9" width="26" height="25" rx="5" fill="#EE4D2D" />
+          <path d="M9 9C9 5.5 11.5 3 15 3C18.5 3 21 5.5 21 9" stroke="#EE4D2D" stroke-width="2.8" fill="none"/>
+          <path d="M11.5 17.5C11.5 15.5 13.5 15 15 15C16.5 15 18 15.8 18 17.5C18 19.8 11.5 19.8 11.5 22C11.5 23.8 13.2 24.5 15 24.5C16.8 24.5 18.5 23.5 18.5 23.5" stroke="white" stroke-width="2.4" stroke-linecap="round"/>
+          <text x="36" y="27" font-family="Arial, sans-serif" font-weight="800" font-size="20" fill="#EE4D2D">Shopee</text>
+        </svg>
+      </div>
+
+      <!-- MoMo -->
+      <div class="flex items-center justify-center shrink-0 cursor-default opacity-85 hover:opacity-100 transition-opacity duration-200" title="MoMo" aria-hidden="true">
+        <svg class="h-10 sm:h-12 w-auto" viewBox="0 0 115 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="4" width="32" height="32" rx="9" fill="#A50064" />
+          <text x="16" y="25" font-family="Arial, sans-serif" font-weight="900" font-size="14" fill="#FFFFFF" text-anchor="middle">momo</text>
+          <text x="40" y="27" font-family="Arial, sans-serif" font-weight="800" font-size="20" fill="#A50064">MoMo</text>
+        </svg>
+      </div>
+
+      <!-- MB Bank -->
+      <div class="flex items-center justify-center shrink-0 cursor-default opacity-85 hover:opacity-100 transition-opacity duration-200" title="MB Bank" aria-hidden="true">
+        <svg class="h-9 sm:h-11 w-auto" viewBox="0 0 110 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 8L16 30H8L4 22V8Z" fill="#002D72" />
+          <path d="M16 30L24 15L28 30H20L16 30Z" fill="#EE1C25" />
+          <text x="34" y="27" font-family="Arial, sans-serif" font-weight="900" font-size="24" fill="#002D72">MB</text>
+        </svg>
+      </div>
+
+      <!-- VNPT -->
+      <div class="flex items-center justify-center shrink-0 cursor-default opacity-85 hover:opacity-100 transition-opacity duration-200" title="VNPT Group" aria-hidden="true">
+        <svg class="h-9 sm:h-11 w-auto" viewBox="0 0 110 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="16" cy="19" r="14" fill="#0066B2" />
+          <path d="M8 19C13 10 19 10 24 19C19 28 13 28 8 19Z" fill="#FFFFFF" opacity="0.8" />
+          <circle cx="16" cy="19" r="4.5" fill="#0066B2" />
+          <text x="38" y="26" font-family="Arial, sans-serif" font-weight="900" font-size="19" fill="#0066B2">VNPT</text>
+        </svg>
+      </div>
+
+      <!-- Samsung -->
+      <div class="flex items-center justify-center shrink-0 cursor-default opacity-85 hover:opacity-100 transition-opacity duration-200" title="Samsung" aria-hidden="true">
+        <svg class="h-8 sm:h-10 w-auto" viewBox="0 0 140 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <text x="0" y="26" font-family="Arial, sans-serif" font-weight="900" font-size="21" fill="#1428A0" letter-spacing="1">SAMSUNG</text>
+        </svg>
+      </div>
+
+      <!-- Tiki -->
+      <div class="flex items-center justify-center shrink-0 cursor-default opacity-85 hover:opacity-100 transition-opacity duration-200" title="Tiki" aria-hidden="true">
+        <svg class="h-9 sm:h-11 w-auto" viewBox="0 0 95 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="14" cy="19" r="13" fill="#1A94FF" />
+          <text x="14" y="24" font-family="Arial, sans-serif" font-weight="900" font-size="14" fill="#FFFFFF" text-anchor="middle">ti</text>
+          <text x="34" y="27" font-family="Arial, sans-serif" font-weight="800" font-size="22" fill="#1A94FF">tiki</text>
+        </svg>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- 3. Features Area (Carousel & Tabs) -->
+<app-features-section></app-features-section>
+
+<!-- 4. Career Strengths & Feature Grid Area ("Cơ hội cho mọi thế mạnh") -->
+<app-category-section></app-category-section>
+
+<!-- 5. About Section (Integrated on Landing Page) -->
+<app-about-section></app-about-section>
+
+<!-- 6. Testimonials Section ("Hàng ngàn ứng viên đã tìm được công việc mơ ước") -->
+<section class="bg-gradient-to-b from-[#f8faff] to-white py-20 lg:py-24 font-body border-t border-slate-200/80">
+  <div class="mx-auto max-w-[1440px] px-6 sm:px-10 lg:px-12">
+    
+    <div class="mx-auto max-w-3xl text-center mb-16">
+      <h2 class="font-headline text-3xl sm:text-4xl lg:text-[44px] font-extrabold tracking-tight text-slate-900 leading-tight">
+        {{ 'home.testimonials.titlePre' | t }} <span class="text-[#1E63F3]">{{ 'home.testimonials.titleHighlight' | t }}</span>
+      </h2>
+      <p class="mt-4 text-base sm:text-lg text-slate-600 leading-relaxed font-normal">
+        {{ 'home.testimonials.desc' | t }}
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      @for (item of testimonials; track item.name) {
+      <div class="rounded-3xl border border-slate-200/90 bg-white p-7 sm:p-8 shadow-lg shadow-slate-900/4 flex flex-col justify-between transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+        
+        <div>
+          <!-- Star Rating & Tag -->
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-1 text-amber-400">
+              @for (star of [1,2,3,4,5]; track star) {
+              <span class="material-symbols-outlined text-[18px]">star</span>
+              }
+            </div>
+            <span class="rounded-full px-2.5 py-0.5 text-[11px] font-bold {{ item.tagClass }}">
+              {{ item.tag }}
+            </span>
+          </div>
+
+          <!-- Quote Content -->
+          <p class="text-sm text-slate-600 leading-relaxed italic">
+            "{{ item.content }}"
+          </p>
         </div>
-        } @else {
-        <div class="alert alert-info text-center">{{ 'home.emptyJobs' | t }}</div>
+
+        <!-- User Info -->
+        <div class="mt-6 pt-5 border-t border-slate-100 flex items-center gap-3.5">
+          <img [src]="item.avatar" [alt]="item.name" class="h-11 w-11 rounded-full object-cover border border-slate-200 shadow-xs" />
+          <div>
+            <h4 class="font-headline text-sm font-bold text-slate-900">{{ item.name }}</h4>
+            <p class="text-xs text-slate-500 font-medium">{{ item.role }} • <span class="text-[#1E63F3] font-semibold">{{ item.company }}</span></p>
+          </div>
+        </div>
+
+      </div>
+      }
+    </div>
+
+  </div>
+</section>
+
+<!-- 7. Blog / Career Insights Preview Area -->
+<section class="bg-white py-20 font-body border-t border-slate-200/80">
+  <div class="mx-auto max-w-[1440px] px-6 sm:px-10 lg:px-12">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
+      <div>
+        <h2 class="font-headline text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900">
+          {{ 'home.blog.title' | t }}
+        </h2>
+      </div>
+      <a routerLink="/blogHome"
+        class="inline-flex items-center gap-1.5 text-sm font-bold text-[#1E63F3] hover:text-[#174FCB] transition-colors group">
+        <span>{{ 'home.blog.viewAll' | t }}</span>
+        <span class="material-symbols-outlined text-[18px] transition-transform group-hover:translate-x-1">arrow_forward</span>
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+      <!-- Article 1 -->
+      <article class="group rounded-3xl border border-slate-200/80 bg-slate-50/50 p-5 transition-all duration-300 hover:bg-white hover:shadow-xl hover:-translate-y-1">
+        <div class="overflow-hidden rounded-2xl aspect-[16/10] bg-slate-100">
+          <img src="assets/web_css/img/blog1.jpg" alt="Resume writing" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+        </div>
+        <div class="mt-5">
+          <span class="text-xs font-bold uppercase tracking-wider text-[#1E63F3]">{{ 'home.blog.articles.0.category' | t }}</span>
+          <h3 class="mt-2 font-headline text-lg font-bold text-slate-900 group-hover:text-[#1E63F3] transition-colors line-clamp-2">
+            {{ 'home.blog.articles.0.title' | t }}
+          </h3>
+          <p class="mt-2 text-sm text-slate-600 line-clamp-2">{{ 'home.blog.articles.0.desc' | t }}</p>
+          <a routerLink="/blogHome/blogSingle/3" class="mt-4 inline-flex items-center gap-1 text-xs font-bold text-[#1E63F3] group-hover:underline">
+            <span>{{ 'home.blog.readMore' | t }}</span>
+            <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+          </a>
+        </div>
+      </article>
+
+      <!-- Article 2 -->
+      <article class="group rounded-3xl border border-slate-200/80 bg-slate-50/50 p-5 transition-all duration-300 hover:bg-white hover:shadow-xl hover:-translate-y-1">
+        <div class="overflow-hidden rounded-2xl aspect-[16/10] bg-slate-100">
+          <img src="assets/web_css/img/blog1.jpg" alt="Job search tips" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+        </div>
+        <div class="mt-5">
+          <span class="text-xs font-bold uppercase tracking-wider text-[#1E63F3]">{{ 'home.blog.articles.1.category' | t }}</span>
+          <h3 class="mt-2 font-headline text-lg font-bold text-slate-900 group-hover:text-[#1E63F3] transition-colors line-clamp-2">
+            {{ 'home.blog.articles.1.title' | t }}
+          </h3>
+          <p class="mt-2 text-sm text-slate-600 line-clamp-2">{{ 'home.blog.articles.1.desc' | t }}</p>
+          <a routerLink="/blogHome/blogSingle/1" class="mt-4 inline-flex items-center gap-1 text-xs font-bold text-[#1E63F3] group-hover:underline">
+            <span>{{ 'home.blog.readMore' | t }}</span>
+            <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+          </a>
+        </div>
+      </article>
+
+      <!-- Article 3 -->
+      <article class="group rounded-3xl border border-slate-200/80 bg-slate-50/50 p-5 transition-all duration-300 hover:bg-white hover:shadow-xl hover:-translate-y-1">
+        <div class="overflow-hidden rounded-2xl aspect-[16/10] bg-slate-100">
+          <img src="assets/web_css/img/blog1.jpg" alt="Career trends" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+        </div>
+        <div class="mt-5">
+          <span class="text-xs font-bold uppercase tracking-wider text-[#1E63F3]">{{ 'home.blog.articles.2.category' | t }}</span>
+          <h3 class="mt-2 font-headline text-lg font-bold text-slate-900 group-hover:text-[#1E63F3] transition-colors line-clamp-2">
+            {{ 'home.blog.articles.2.title' | t }}
+          </h3>
+          <p class="mt-2 text-sm text-slate-600 line-clamp-2">{{ 'home.blog.articles.2.desc' | t }}</p>
+          <a routerLink="/blogHome/blogSingle/2" class="mt-4 inline-flex items-center gap-1 text-xs font-bold text-[#1E63F3] group-hover:underline">
+            <span>{{ 'home.blog.readMore' | t }}</span>
+            <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+          </a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- 8. FAQ Accordion Section ("Câu hỏi thường gặp") -->
+<section class="bg-gradient-to-b from-[#f8faff] via-white to-slate-50 py-20 lg:py-24 font-body border-t border-slate-200/80">
+  <div class="mx-auto max-w-[1000px] px-6 sm:px-10 lg:px-12">
+    
+    <div class="text-center mb-14">
+      <h2 class="font-headline text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 leading-tight">
+        {{ 'home.faq.title' | t }}
+      </h2>
+      <p class="mt-3 text-base text-slate-600 leading-relaxed font-normal">
+        {{ 'home.faq.desc' | t }}
+      </p>
+    </div>
+
+    <!-- Accordion List -->
+    <div class="space-y-4">
+      @for (item of faqItems; track item.question; let i = $index) {
+      <div class="rounded-2xl border border-slate-200/90 bg-white overflow-hidden shadow-sm transition-all duration-200">
+        <button
+          type="button"
+          (click)="toggleFaq(i)"
+          class="w-full flex items-center justify-between p-5 sm:p-6 text-left cursor-pointer hover:bg-slate-50/80 transition-colors focus:outline-none">
+          <span class="font-headline text-base sm:text-lg font-bold text-slate-900 pr-4">
+            {{ item.question }}
+          </span>
+          <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-50 text-[#1E63F3] transition-transform duration-200"
+            [class.rotate-180]="expandedFaqIndex === i">
+            <span class="material-symbols-outlined text-[20px]">expand_more</span>
+          </div>
+        </button>
+
+        @if (expandedFaqIndex === i) {
+        <div class="px-5 sm:px-6 pb-6 pt-1 text-sm sm:text-base text-slate-600 leading-relaxed border-t border-slate-100">
+          {{ item.answer }}
+        </div>
         }
-
-        <a [routerLink]="['/category']" class="text-uppercase loadmore-btn mx-auto d-block mt-4">
-          {{ 'home.loadMoreJobs' | t }}
-        </a>
       </div>
+      }
+    </div>
 
-      <div class="col-lg-4 sidebar">
-        <div class="single-slidebar">
-          <h4>{{ 'home.jobsByLocation' | t }}</h4>
-          <ul class="cat-list">
-            @for(item of addressCounts; track item.city) {
-            <li>
-              <a class="justify-content-between d-flex">
-                <p>{{ item.city }}</p>
-                <span>{{ item.count }}</span>
-              </a>
-            </li>
-            }
-          </ul>
-        </div>
-        <div class="single-slidebar">
-          <h4>{{ 'home.recentPosts' | t }}</h4>
-          <div class="blog-list">
-            <div class="single-blog" style="background: #000 url(assets/web_css/img/blog1.jpg)">
-              <a href="/blogHome/blogSingle/3">
-                <h4>How to Write a Standout Resume</h4>
-              </a>
-              <div class="meta justify-content-between d-flex">
-                <p>2025-02-27 19:29:00</p>
-                <p>
-                  <span class="lnr lnr-heart"></span>
-                  <span>150</span>
-                  <span class="lnr lnr-bubble"></span>
-                  02
-                </p>
-              </div>
+  </div>
+</section>
+
+<!-- 9. Contact Section (Integrated on Landing Page) -->
+<section id="contact" class="bg-gradient-to-b from-slate-50 to-white py-20 lg:py-24 font-body border-t border-slate-200/80 scroll-mt-20">
+  <div class="mx-auto max-w-[1440px] px-6 sm:px-10 lg:px-12">
+    <div class="grid grid-cols-1 gap-12 lg:grid-cols-12 items-start">
+      
+      <!-- Contact Info (Left - 5 Cols) -->
+      <div class="lg:col-span-5 space-y-6">
+        <h2 class="font-headline text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 leading-tight">
+          {{ 'home.contact.title' | t }}
+        </h2>
+        <p class="text-base text-slate-600 leading-relaxed">
+          {{ 'home.contact.desc' | t }}
+        </p>
+
+        <!-- Direct Contact Channels -->
+        <div class="space-y-4 pt-4">
+          <div class="flex items-center gap-4 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm">
+            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-[#1E63F3]">
+              <span class="material-symbols-outlined text-[24px]">call</span>
             </div>
-            <div class="single-blog" style="background: #000 url(assets/web_css/img/blog1.jpg)">
-              <a href="/blogHome/blogSingle/1">
-                <h4>5 Essential Job Search Tips</h4>
-              </a>
-              <div class="meta justify-content-between d-flex">
-                <p>2025-02-27 19:29:00</p>
-                <p>
-                  <span class="lnr lnr-heart"></span>
-                  <span>120</span>
-                  <span class="lnr lnr-bubble"></span>
-                  02
-                </p>
-              </div>
+            <div>
+              <p class="text-xs font-medium text-slate-500">{{ 'home.contact.hotlineLabel' | t }}</p>
+              <p class="text-base font-bold text-slate-900">+84 123 456 789</p>
             </div>
-            <div class="single-blog" style="background: #000 url(assets/web_css/img/blog1.jpg)">
-              <a href="/blogHome/blogSingle/2">
-                <h4>Top Career Trends in 2024</h4>
-              </a>
-              <div class="meta justify-content-between d-flex">
-                <p>2025-02-27 19:29:00</p>
-                <p>
-                  <span class="lnr lnr-heart"></span>
-                  <span>98</span>
-                  <span class="lnr lnr-bubble"></span>
-                  02
-                </p>
-              </div>
+          </div>
+
+          <div class="flex items-center gap-4 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm">
+            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-[#1E63F3]">
+              <span class="material-symbols-outlined text-[24px]">mail</span>
+            </div>
+            <div>
+              <p class="text-xs font-medium text-slate-500">{{ 'home.contact.emailLabel' | t }}</p>
+              <p class="text-base font-bold text-slate-900">support&#64;jobportal.vn</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-4 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm">
+            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-[#1E63F3]">
+              <span class="material-symbols-outlined text-[24px]">location_on</span>
+            </div>
+            <div>
+              <p class="text-xs font-medium text-slate-500">{{ 'home.contact.addressLabel' | t }}</p>
+              <p class="text-base font-bold text-slate-900">{{ 'home.contact.addressValue' | t }}</p>
             </div>
           </div>
         </div>
       </div>
+
+      <!-- Compact Contact Form (Right - 7 Cols) -->
+      <div class="lg:col-span-7">
+        <div class="rounded-3xl border border-slate-200/80 bg-white p-8 sm:p-10 shadow-lg shadow-slate-900/5">
+          @if (contactSubmitted) {
+          <div class="text-center py-10 space-y-4">
+            <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+              <span class="material-symbols-outlined text-[32px]">check_circle</span>
+            </div>
+            <h3 class="font-headline text-2xl font-bold text-slate-900">{{ 'home.contact.successTitle' | t }}</h3>
+            <p class="text-slate-600 max-w-md mx-auto text-sm">
+              {{ 'home.contact.successDesc' | t }}
+            </p>
+            <button
+              type="button"
+              (click)="resetContact()"
+              class="inline-flex items-center gap-2 rounded-xl bg-[#1E63F3] hover:bg-[#174FCB] px-6 py-2.5 text-sm font-bold text-white transition-all cursor-pointer">
+              <span>{{ 'home.contact.sendAnotherBtn' | t }}</span>
+            </button>
+          </div>
+          } @else {
+          <h3 class="font-headline text-xl sm:text-2xl font-bold text-slate-900">
+            {{ 'home.contact.formTitle' | t }}
+          </h3>
+          <p class="mt-1.5 text-sm text-slate-500">
+            {{ 'home.contact.formSubtitle' | t }}
+          </p>
+
+          <form (ngSubmit)="onContactSubmit()" class="mt-6 space-y-4">
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label for="landing-contact-name" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-700">{{ 'home.contact.nameLabel' | t }}</label>
+                <input
+                  id="landing-contact-name"
+                  name="name"
+                  [(ngModel)]="contactData.name"
+                  [placeholder]="'home.contact.namePlaceholder' | t"
+                  required
+                  type="text"
+                  class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-[#1E63F3] focus:ring-2 focus:ring-[#1E63F3]/20"
+                />
+              </div>
+
+              <div>
+                <label for="landing-contact-email" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-700">Email *</label>
+                <input
+                  id="landing-contact-email"
+                  name="email"
+                  [(ngModel)]="contactData.email"
+                  [placeholder]="'home.contact.emailPlaceholder' | t"
+                  required
+                  type="email"
+                  class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-[#1E63F3] focus:ring-2 focus:ring-[#1E63F3]/20"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label for="landing-contact-subject" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-700">{{ 'home.contact.subjectLabel' | t }}</label>
+              <input
+                id="landing-contact-subject"
+                name="subject"
+                [(ngModel)]="contactData.subject"
+                [placeholder]="'home.contact.subjectPlaceholder' | t"
+                type="text"
+                class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-[#1E63F3] focus:ring-2 focus:ring-[#1E63F3]/20"
+              />
+            </div>
+
+            <div>
+              <label for="landing-contact-message" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-700">{{ 'home.contact.messageLabel' | t }}</label>
+              <textarea
+                id="landing-contact-message"
+                name="message"
+                [(ngModel)]="contactData.message"
+                rows="4"
+                [placeholder]="'home.contact.messagePlaceholder' | t"
+                required
+                class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-[#1E63F3] focus:ring-2 focus:ring-[#1E63F3]/20"
+              ></textarea>
+            </div>
+
+            <div class="pt-2 flex justify-end">
+              <button
+                type="submit"
+                class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-[#1E63F3] hover:bg-[#174FCB] px-8 py-3.5 text-sm font-bold text-white shadow-md shadow-[#1E63F3]/25 transition-all duration-200 hover:-translate-y-0.5 active:scale-95 cursor-pointer">
+                <span>{{ 'home.contact.submitBtn' | t }}</span>
+                <span class="material-symbols-outlined text-[18px]">send</span>
+              </button>
+            </div>
+          </form>
+          }
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
-<!-- End post Area -->
 
-<!-- Start callto-action Area -->
+<!-- 10. Call to Action Area -->
 <app-call-to-action></app-call-to-action>
-<!-- End calto-action Area -->
 
-<!-- Start download Area -->
+<!-- 11. Download Area -->
 <app-download-area></app-download-area>
-<!-- End download Area -->

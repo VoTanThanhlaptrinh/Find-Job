@@ -1,0 +1,87 @@
+@if (totalItems > 0) {
+  <nav
+    class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 rounded-2xl bg-white border border-[#DCE5F2] shadow-xs"
+    [attr.aria-label]="'category.pagination.ariaLabel' | t"
+  >
+    <!-- Left: Results summary (Desktop & Mobile) -->
+    <div class="text-xs sm:text-sm font-medium text-[#526077] text-center sm:text-left">
+      {{ 'category.pagination.showing' | t }} <span class="font-bold text-[#0F172A]">{{ startIndex }}–{{ endIndex }}</span> {{ 'category.pagination.in' | t }}
+      <span class="font-bold text-[#0F172A]">{{ totalItems }}</span> {{ 'category.pagination.jobs' | t }}
+    </div>
+
+    <!-- Right: Desktop Pagination buttons -->
+    <div class="hidden sm:flex items-center gap-1.5 justify-center">
+      <!-- Previous Button -->
+      <button
+        type="button"
+        (click)="goToPrev()"
+        [disabled]="currentPage <= 1"
+        class="inline-flex h-9 items-center gap-1 px-3 rounded-xl border border-[#DCE5F2] bg-white text-xs font-bold text-[#0F172A] transition-all hover:bg-slate-50 hover:border-slate-300 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E63F3]"
+      >
+        <span class="material-symbols-outlined text-[16px]">chevron_left</span>
+        <span>{{ 'category.pagination.previous' | t }}</span>
+      </button>
+
+      <!-- Page Numbers -->
+      <div class="flex items-center gap-1">
+        @for (item of visiblePages; track $index) {
+          @if (item === 'ellipsis') {
+            <span class="px-2 text-slate-400 font-bold">…</span>
+          } @else {
+            <button
+              type="button"
+              (click)="goToPage(item)"
+              class="h-9 min-w-9 px-2.5 rounded-xl text-xs font-bold transition-all duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E63F3]"
+              [ngClass]="
+                item === currentPage
+                  ? 'bg-[#1E63F3] text-white shadow-md shadow-[#1E63F3]/25 font-extrabold'
+                  : 'bg-white border border-[#DCE5F2] text-[#0F172A] hover:bg-slate-50 hover:border-slate-300'
+              "
+              [attr.aria-current]="item === currentPage ? 'page' : null"
+            >
+              {{ item }}
+            </button>
+          }
+        }
+      </div>
+
+      <!-- Next Button -->
+      <button
+        type="button"
+        (click)="goToNext()"
+        [disabled]="currentPage >= totalPages"
+        class="inline-flex h-9 items-center gap-1 px-3 rounded-xl border border-[#DCE5F2] bg-white text-xs font-bold text-[#0F172A] transition-all hover:bg-slate-50 hover:border-slate-300 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E63F3]"
+      >
+        <span>{{ 'category.pagination.next' | t }}</span>
+        <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+      </button>
+    </div>
+
+    <!-- Mobile Compact Pagination: ‹ Trước — Trang 2/43 — Sau › -->
+    <div class="flex sm:hidden items-center justify-between gap-2 border-t border-slate-100 pt-3">
+      <button
+        type="button"
+        (click)="goToPrev()"
+        [disabled]="currentPage <= 1"
+        class="inline-flex h-9 items-center gap-1 px-3 rounded-xl border border-[#DCE5F2] bg-white text-xs font-bold text-[#0F172A] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+      >
+        <span class="material-symbols-outlined text-[16px]">chevron_left</span>
+        <span>{{ 'category.pagination.previous' | t }}</span>
+      </button>
+
+      <span class="text-xs font-bold text-[#0F172A]">
+        {{ 'category.pagination.page' | t }} {{ currentPage }}/{{ totalPages }}
+      </span>
+
+      <button
+        type="button"
+        (click)="goToNext()"
+        [disabled]="currentPage >= totalPages"
+        class="inline-flex h-9 items-center gap-1 px-3 rounded-xl border border-[#DCE5F2] bg-white text-xs font-bold text-[#0F172A] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+      >
+        <span>{{ 'category.pagination.next' | t }}</span>
+        <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+      </button>
+    </div>
+  </nav>
+}

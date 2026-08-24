@@ -17,22 +17,27 @@ export const routes: Routes = [
   { path: 'post-job', redirectTo: 'recruiter/jobs/post-job', pathMatch: 'full' },
   { path: 'candidate-list', redirectTo: 'recruiter/candidates', pathMatch: 'full' },
 
-  { path: 'login', loadComponent: () => import('./features/auth/pages/login/login.component').then(c => c.LoginComponent) },
-  { path: 'register', loadComponent: () => import('./features/auth/pages/register/register.component').then(c => c.RegisterComponent) },
   { path: 'verify', loadComponent: () => import('./features/auth/pages/verify/verify.component').then(c => c.VerifyComponent) },
   { path: 'activate', loadComponent: () => import('./features/auth/pages/activate/activate.component').then(c => c.ActivateComponent) },
   { path: 'forgot-pass', loadComponent: () => import('./features/auth/pages/forgot-pass/forgot-pass.component').then(c => c.ForgotPassComponent) },
   { path: 'reset-pass/:random', loadComponent: () => import('./features/auth/pages/reset-pass/reset-pass.component').then(c => c.ResetPassComponent) },
   { path: 'login-callback', loadComponent: () => import('./features/auth/pages/login-callback/login-callback.component').then(c => c.LoginCallbackComponent) },
 
-  // Lazy load Components - Tính năng Site / Blog
-  { path: 'about', loadComponent: () => import('./features/site/pages/about-us/about-us.component').then(c => c.AboutUsComponent) },
-  { path: 'contact', loadComponent: () => import('./features/site/pages/contact/contact.component').then(c => c.ContactComponent) },
+  // Jobs Search & Listing Route (Supports both /jobs and /category)
+  { path: 'jobs', loadComponent: () => import('./features/jobs/pages/category/category.component').then(c => c.CategoryComponent) },
+  { path: 'category', loadComponent: () => import('./features/jobs/pages/category/category.component').then(c => c.CategoryComponent) },
+
+  // Aliases for clean standard routing
+  { path: 'blog', redirectTo: 'blogHome', pathMatch: 'full' },
+  { path: 'account', redirectTo: 'infor/profile', pathMatch: 'full' },
+
+  // Site / Blog routes
+  { path: 'about', redirectTo: '', pathMatch: 'full' },
+  { path: 'contact', redirectTo: '', pathMatch: 'full' },
   { path: 'blogHome', loadComponent: () => import('./features/blog/pages/blog-home/blog-home.component').then(c => c.BlogHomeComponent) },
   { path: 'blogSingle/:id', loadComponent: () => import('./features/blog/pages/blog-single/blog-single.component').then(c => c.BlogSingleComponent) },
 
-  // Lazy load Components - Tính năng Việc làm
-  { path: 'category', loadComponent: () => import('./features/jobs/pages/category/category.component').then(c => c.CategoryComponent) },
+  // Job Details & Applications
   { path: 'single/:id', loadComponent: () => import('./features/jobs/pages/job-single/job-single.component').then(c => c.JobSingleComponent) },
   { path: 'apply-cv/:id', loadComponent: () => import('./features/jobs/pages/apply-cv/apply-cv.component').then(c => c.ApplyCvComponent) },
   { path: 'apply-success', loadComponent: () => import('./shared/components/apply-success/apply-success.component').then(c => c.ApplySuccessComponent) },

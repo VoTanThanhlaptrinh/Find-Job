@@ -15,7 +15,7 @@ import { ApiResponse } from '../../../shared/models/api-response.model';
 
 const DEFAULT_JOB_FILTER: JobFilterPayload = {
   pageIndex: 0,
-  pageSize: 5,
+  pageSize: 10,
   address: [],
   times: [],
   title: '',
@@ -26,15 +26,16 @@ const DEFAULT_JOB_FILTER: JobFilterPayload = {
   providedIn: 'root',
 })
 export class FilterService {
-  private static readonly MIN_LOADING_MS = 1000;
+  private static readonly MIN_LOADING_MS = 600;
   private url: string;
 
   private jobData = signal<JobCardModel[]>([]);
   private addressData = signal<AddressCountViewModel[]>([]);
   private totalJobData = signal<number | null>(null);
   private loadingJobs = signal(false);
+  private errorState = signal(false);
   private filterPayload = signal<JobFilterPayload>({ ...DEFAULT_JOB_FILTER });
-  
+
   private activeJobRequests = 0;
   private loadingStartAt = 0;
   private hideLoadingTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -43,6 +44,7 @@ export class FilterService {
   addressCount = computed(() => this.addressData());
   totalJobs = computed(() => this.totalJobData());
   isLoadingJobs = computed(() => this.loadingJobs());
+  hasError = computed(() => this.errorState());
   jobFilter = computed(() => this.filterPayload());
 
   constructor(private http: HttpClient, private utilities: UtilitiesService) {
@@ -77,6 +79,7 @@ export class FilterService {
   }
 
   private startJobsLoading(): void {
+    this.errorState.set(false);
     if (this.hideLoadingTimeout) {
       clearTimeout(this.hideLoadingTimeout);
       this.hideLoadingTimeout = null;
@@ -113,7 +116,40 @@ export class FilterService {
     }, remaining);
   }
 
-  listJobsNewest(pageIndex: number, pageSize: number) {
+  sortJobs(jobs: JobCardModel[], sortType: string): JobCardModel[] {
+    if (!jobs || jobs.length === 0) return [];
+    const list = [...jobs];
+
+    if (sortType === 'salary-desc') {
+      return list.sort((a, b) => this.extractSalaryValue(b.salary) - this.extractSalaryValue(a.salary));
+    } else if (sortType === 'salary-asc') {
+      return list.sort((a, b) => this.extractSalaryValue(a.salary) - this.extractSalaryValue(b.salary));
+    }
+
+    return list;
+  }
+
+  private extractSalaryValue(salary: number | string | undefined | null): number {
+    if (salary === undefined || salary === null) return 0;
+    if (typeof salary === 'number') return salary;
+
+    const str = String(salary).toLowerCase().trim();
+    if (str.includes('thỏa thuận') || str === '') return 0;
+
+    const numbers = str.match(/\d+(\.\d+)?/g);
+    if (!numbers || numbers.length === 0) return 0;
+
+    const lastNum = parseFloat(numbers[numbers.length - 1]);
+    if (str.includes('triệu') || str.includes('tr')) {
+      return lastNum * 1000000;
+    } else if (str.includes('k') || str.includes('nghìn')) {
+      return lastNum * 1000;
+    }
+
+    return lastNum;
+  }
+
+  listJobsNewest(pageIndex: number, pageSize: number, sortType = 'relevant') {
     this.startJobsLoading();
     let params = new HttpParams()
       .set('page', pageIndex)
@@ -125,13 +161,17 @@ export class FilterService {
       finalize(() => this.finishJobsLoading())
     ).subscribe({
       next: (response) => {
-        this.jobData.set(response.data.content);
+        const content = response.data?.content || [];
+        this.jobData.set(this.sortJobs(content, sortType));
         if (typeof response.data?.page?.totalElements === 'number') {
           this.totalJobData.set(response.data.page.totalElements);
+        } else {
+          this.totalJobData.set(content.length);
         }
       },
       error: (error) => {
         console.error('Error fetching jobs:', error);
+        this.errorState.set(true);
       },
     });
   }
@@ -150,7 +190,7 @@ export class FilterService {
 
     this.http.get<JobAddressCountApiResponse>(`${this.url}/addresses/address-count`).pipe(take(1)).subscribe({
       next: (response) => {
-        this.addressData.set(response.data);
+        this.addressData.set(response.data || []);
       },
       error: (error) => {
         console.error('Error fetching address count:', error);
@@ -162,7 +202,7 @@ export class FilterService {
     this.loadAddressCount();
   }
 
-  filterWithAddressTimeSalary(filter: JobFilterPayload) {
+  filterWithAddressTimeSalary(filter: JobFilterPayload, sortType = 'relevant') {
     this.startJobsLoading();
     const normalizedFilter = this.cloneFilter(filter);
     this.setFilterPayload(normalizedFilter);
@@ -171,13 +211,17 @@ export class FilterService {
       finalize(() => this.finishJobsLoading())
     ).subscribe({
       next: (response) => {
-        this.jobData.set(response.data.content);
+        const content = response.data?.content || [];
+        this.jobData.set(this.sortJobs(content, sortType));
         if (typeof response.data?.page?.totalElements === 'number') {
           this.totalJobData.set(response.data.page.totalElements);
+        } else {
+          this.totalJobData.set(content.length);
         }
       },
       error: (error) => {
         console.error('Error filtering jobs:', error);
+        this.errorState.set(true);
       },
     });
   }
