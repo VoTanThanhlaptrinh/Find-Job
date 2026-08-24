@@ -1,0 +1,118 @@
+import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { AddressCountViewModel } from '../../../../shared/models/jobs/job-api-response.model';
+import { Category } from '../../../../shared/models/category.model';
+import {
+  EMPLOYMENT_TYPE_OPTIONS,
+  EXPERIENCE_OPTIONS,
+  LEVEL_OPTIONS,
+  SALARY_OPTIONS,
+  WORKPLACE_OPTIONS,
+} from '../../models/job-filter.model';
+
+@Component({
+  selector: 'app-job-filter-sidebar',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './job-filter-sidebar.component.html',
+  styleUrl: './job-filter-sidebar.component.css',
+})
+export class JobFilterSidebarComponent {
+  @Input() categories: Category[] = [];
+  @Input() addressCount: AddressCountViewModel[] = [];
+  @Input() selectedCategoryIds: number[] = [];
+  @Input() selectedAddresses: string[] = [];
+  @Input() selectedSalaryRange = 'all';
+  @Input() selectedExperience = 'all';
+  @Input() selectedLevel = 'all';
+  @Input() selectedEmploymentTypes: string[] = [];
+  @Input() selectedWorkplaces: string[] = [];
+  @Input() activeFiltersCount = 0;
+
+  @Output() categoryChange = new EventEmitter<{ id: number; checked: boolean }>();
+  @Output() addressChange = new EventEmitter<{ city: string; checked: boolean }>();
+  @Output() salaryChange = new EventEmitter<string>();
+  @Output() experienceChange = new EventEmitter<string>();
+  @Output() levelChange = new EventEmitter<string>();
+  @Output() employmentTypeChange = new EventEmitter<{ type: string; checked: boolean }>();
+  @Output() workplaceChange = new EventEmitter<{ workplace: string; checked: boolean }>();
+  @Output() clearAll = new EventEmitter<void>();
+
+  readonly salaryOptions = SALARY_OPTIONS;
+  readonly experienceOptions = EXPERIENCE_OPTIONS;
+  readonly levelOptions = LEVEL_OPTIONS;
+  readonly employmentTypeOptions = EMPLOYMENT_TYPE_OPTIONS;
+  readonly workplaceOptions = WORKPLACE_OPTIONS;
+
+  // Collapse states for each group
+  expandedGroups: Record<string, boolean> = {
+    category: true,
+    location: true,
+    salary: true,
+    experience: true,
+    level: true,
+    employmentType: true,
+    workplace: true,
+  };
+
+  // "Show more" state for groups with long lists
+  showAllCategories = false;
+  showAllLocations = false;
+
+  toggleGroup(groupId: string): void {
+    this.expandedGroups[groupId] = !this.expandedGroups[groupId];
+  }
+
+  isCategorySelected(id: number): boolean {
+    return this.selectedCategoryIds.includes(id);
+  }
+
+  isAddressSelected(city: string): boolean {
+    return this.selectedAddresses.includes(city);
+  }
+
+  isEmploymentTypeSelected(type: string): boolean {
+    return this.selectedEmploymentTypes.includes(type);
+  }
+
+  isWorkplaceSelected(wp: string): boolean {
+    return this.selectedWorkplaces.includes(wp);
+  }
+
+  onCategoryToggle(id: number, event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+    this.categoryChange.emit({ id, checked });
+  }
+
+  onAddressToggle(city: string, event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+    this.addressChange.emit({ city, checked });
+  }
+
+  onSalarySelect(salaryId: string): void {
+    this.salaryChange.emit(salaryId);
+  }
+
+  onExperienceSelect(expId: string): void {
+    this.experienceChange.emit(expId);
+  }
+
+  onLevelSelect(lvlId: string): void {
+    this.levelChange.emit(lvlId);
+  }
+
+  onEmploymentTypeToggle(type: string, event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+    this.employmentTypeChange.emit({ type, checked });
+  }
+
+  onWorkplaceToggle(workplace: string, event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+    this.workplaceChange.emit({ workplace, checked });
+  }
+
+  onClearAll(): void {
+    this.clearAll.emit();
+  }
+}

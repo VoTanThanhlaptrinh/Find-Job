@@ -1,0 +1,354 @@
+@if (isOpen) {
+  <div class="fixed inset-0 z-50 flex justify-end">
+    <!-- Backdrop Overlay -->
+    <div
+      class="fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity duration-300"
+      (click)="onClose()"
+      aria-hidden="true"
+    ></div>
+
+    <!-- Drawer Content -->
+    <div
+      class="relative z-10 flex flex-col w-full max-w-md h-full bg-white shadow-2xl overflow-hidden transition-transform duration-300 animate-slide-in"
+    >
+      <!-- Drawer Header -->
+      <div class="flex items-center justify-between px-5 py-4 border-b border-[#DCE5F2] bg-slate-50/70 shrink-0">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-[#1E63F3] text-[22px]">tune</span>
+          <h2 class="text-base font-bold text-[#0F172A]">Bộ lọc tìm kiếm</h2>
+          @if (activeFiltersCount > 0) {
+            <span class="px-2 py-0.5 rounded-full bg-[#1E63F3] text-white text-xs font-bold">
+              {{ activeFiltersCount }}
+            </span>
+          }
+        </div>
+
+        <button
+          type="button"
+          (click)="onClose()"
+          class="w-9 h-9 rounded-full flex items-center justify-center text-slate-500 hover:text-[#0F172A] hover:bg-slate-200/60 transition cursor-pointer"
+          aria-label="Đóng bộ lọc"
+        >
+          <span class="material-symbols-outlined text-[22px]">close</span>
+        </button>
+      </div>
+
+      <!-- Drawer Scrollable Body -->
+      <div class="flex-1 overflow-y-auto p-5 space-y-4 font-body">
+        <!-- Group 1: Danh mục -->
+        <div class="rounded-xl border border-[#DCE5F2] bg-white p-3.5 shadow-xs">
+          <button
+            type="button"
+            (click)="toggleGroup('category')"
+            class="flex w-full items-center justify-between text-left font-bold text-sm text-[#0F172A]"
+          >
+            <span class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#1E63F3] text-[18px]">category</span>
+              <span>Danh mục nghề nghiệp</span>
+            </span>
+            <span
+              class="material-symbols-outlined text-slate-400 text-[18px] transition-transform duration-200"
+              [class.rotate-180]="expandedGroups['category']"
+            >
+              expand_more
+            </span>
+          </button>
+
+          @if (expandedGroups['category']) {
+            <div class="mt-3 space-y-2 pt-2 border-t border-slate-100">
+              @for (item of (showAllCategories ? categories : categories.slice(0, 5)); track item.id) {
+                <label class="flex cursor-pointer items-center justify-between rounded-lg px-2 py-1.5 hover:bg-slate-50">
+                  <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                    <input
+                      type="checkbox"
+                      [checked]="isCategorySelected(item.id)"
+                      (change)="onCategoryToggle(item.id, $event)"
+                      class="h-4 w-4 shrink-0 rounded border-slate-300 text-[#1E63F3] focus:ring-[#1E63F3] accent-[#1E63F3]"
+                    />
+                    <span class="text-sm font-medium text-slate-700 truncate">{{ item.name }}</span>
+                  </div>
+                </label>
+              }
+              @if (categories.length > 5) {
+                <button
+                  type="button"
+                  (click)="showAllCategories = !showAllCategories"
+                  class="mt-1 text-xs font-bold text-[#1E63F3] px-2 py-1"
+                >
+                  {{ showAllCategories ? 'Thu gọn' : 'Xem thêm (' + (categories.length - 5) + ')' }}
+                </button>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Group 2: Địa điểm -->
+        <div class="rounded-xl border border-[#DCE5F2] bg-white p-3.5 shadow-xs">
+          <button
+            type="button"
+            (click)="toggleGroup('location')"
+            class="flex w-full items-center justify-between text-left font-bold text-sm text-[#0F172A]"
+          >
+            <span class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#1E63F3] text-[18px]">location_on</span>
+              <span>Địa điểm làm việc</span>
+            </span>
+            <span
+              class="material-symbols-outlined text-slate-400 text-[18px] transition-transform duration-200"
+              [class.rotate-180]="expandedGroups['location']"
+            >
+              expand_more
+            </span>
+          </button>
+
+          @if (expandedGroups['location']) {
+            <div class="mt-3 space-y-2 pt-2 border-t border-slate-100">
+              @for (item of (showAllLocations ? addressCount : addressCount.slice(0, 5)); track item.city) {
+                <label class="flex cursor-pointer items-center justify-between rounded-lg px-2 py-1.5 hover:bg-slate-50">
+                  <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                    <input
+                      type="checkbox"
+                      [checked]="isAddressSelected(item.city)"
+                      (change)="onAddressToggle(item.city, $event)"
+                      class="h-4 w-4 shrink-0 rounded border-slate-300 text-[#1E63F3] focus:ring-[#1E63F3] accent-[#1E63F3]"
+                    />
+                    <span class="text-sm font-medium text-slate-700 truncate">{{ item.city }}</span>
+                  </div>
+                  @if (item.count !== undefined && item.count !== null) {
+                    <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600 shrink-0 ml-1.5">
+                      {{ item.count }}
+                    </span>
+                  }
+                </label>
+              }
+              @if (addressCount.length > 5) {
+                <button
+                  type="button"
+                  (click)="showAllLocations = !showAllLocations"
+                  class="mt-1 text-xs font-bold text-[#1E63F3] px-2 py-1"
+                >
+                  {{ showAllLocations ? 'Thu gọn' : 'Xem thêm (' + (addressCount.length - 5) + ')' }}
+                </button>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Group 3: Mức lương -->
+        <div class="rounded-xl border border-[#DCE5F2] bg-white p-3.5 shadow-xs">
+          <button
+            type="button"
+            (click)="toggleGroup('salary')"
+            class="flex w-full items-center justify-between text-left font-bold text-sm text-[#0F172A]"
+          >
+            <span class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#1E63F3] text-[18px]">payments</span>
+              <span>Mức lương</span>
+            </span>
+            <span
+              class="material-symbols-outlined text-slate-400 text-[18px] transition-transform duration-200"
+              [class.rotate-180]="expandedGroups['salary']"
+            >
+              expand_more
+            </span>
+          </button>
+
+          @if (expandedGroups['salary']) {
+            <div class="mt-3 space-y-2 pt-2 border-t border-slate-100">
+              @for (opt of salaryOptions; track opt.id) {
+                <label class="flex cursor-pointer items-center justify-between rounded-lg px-2 py-1.5 hover:bg-slate-50">
+                  <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                    <input
+                      type="radio"
+                      name="mobileSalary"
+                      [value]="opt.id"
+                      [checked]="selectedSalaryRange === opt.id"
+                      (change)="onSalarySelect(opt.id)"
+                      class="h-4 w-4 shrink-0 border-slate-300 text-[#1E63F3] focus:ring-[#1E63F3] accent-[#1E63F3]"
+                    />
+                    <span class="text-sm font-medium text-slate-700 truncate">{{ opt.label }}</span>
+                  </div>
+                </label>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Group 4: Kinh nghiệm -->
+        <div class="rounded-xl border border-[#DCE5F2] bg-white p-3.5 shadow-xs">
+          <button
+            type="button"
+            (click)="toggleGroup('experience')"
+            class="flex w-full items-center justify-between text-left font-bold text-sm text-[#0F172A]"
+          >
+            <span class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#1E63F3] text-[18px]">history_edu</span>
+              <span>Kinh nghiệm</span>
+            </span>
+            <span
+              class="material-symbols-outlined text-slate-400 text-[18px] transition-transform duration-200"
+              [class.rotate-180]="expandedGroups['experience']"
+            >
+              expand_more
+            </span>
+          </button>
+
+          @if (expandedGroups['experience']) {
+            <div class="mt-3 space-y-2 pt-2 border-t border-slate-100">
+              @for (opt of experienceOptions; track opt.id) {
+                <label class="flex cursor-pointer items-center justify-between rounded-lg px-2 py-1.5 hover:bg-slate-50">
+                  <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                    <input
+                      type="radio"
+                      name="mobileExperience"
+                      [value]="opt.id"
+                      [checked]="selectedExperience === opt.id"
+                      (change)="onExperienceSelect(opt.id)"
+                      class="h-4 w-4 shrink-0 border-slate-300 text-[#1E63F3] focus:ring-[#1E63F3] accent-[#1E63F3]"
+                    />
+                    <span class="text-sm font-medium text-slate-700 truncate">{{ opt.label }}</span>
+                  </div>
+                </label>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Group 5: Cấp bậc -->
+        <div class="rounded-xl border border-[#DCE5F2] bg-white p-3.5 shadow-xs">
+          <button
+            type="button"
+            (click)="toggleGroup('level')"
+            class="flex w-full items-center justify-between text-left font-bold text-sm text-[#0F172A]"
+          >
+            <span class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#1E63F3] text-[18px]">workspace_premium</span>
+              <span>Cấp bậc</span>
+            </span>
+            <span
+              class="material-symbols-outlined text-slate-400 text-[18px] transition-transform duration-200"
+              [class.rotate-180]="expandedGroups['level']"
+            >
+              expand_more
+            </span>
+          </button>
+
+          @if (expandedGroups['level']) {
+            <div class="mt-3 space-y-2 pt-2 border-t border-slate-100">
+              @for (opt of levelOptions; track opt.id) {
+                <label class="flex cursor-pointer items-center justify-between rounded-lg px-2 py-1.5 hover:bg-slate-50">
+                  <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                    <input
+                      type="radio"
+                      name="mobileLevel"
+                      [value]="opt.id"
+                      [checked]="selectedLevel === opt.id"
+                      (change)="onLevelSelect(opt.id)"
+                      class="h-4 w-4 shrink-0 border-slate-300 text-[#1E63F3] focus:ring-[#1E63F3] accent-[#1E63F3]"
+                    />
+                    <span class="text-sm font-medium text-slate-700 truncate">{{ opt.label }}</span>
+                  </div>
+                </label>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Group 6: Hình thức làm việc -->
+        <div class="rounded-xl border border-[#DCE5F2] bg-white p-3.5 shadow-xs">
+          <button
+            type="button"
+            (click)="toggleGroup('employmentType')"
+            class="flex w-full items-center justify-between text-left font-bold text-sm text-[#0F172A]"
+          >
+            <span class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#1E63F3] text-[18px]">badge</span>
+              <span>Hình thức làm việc</span>
+            </span>
+            <span
+              class="material-symbols-outlined text-slate-400 text-[18px] transition-transform duration-200"
+              [class.rotate-180]="expandedGroups['employmentType']"
+            >
+              expand_more
+            </span>
+          </button>
+
+          @if (expandedGroups['employmentType']) {
+            <div class="mt-3 space-y-2 pt-2 border-t border-slate-100">
+              @for (opt of employmentTypeOptions; track opt.id) {
+                <label class="flex cursor-pointer items-center justify-between rounded-lg px-2 py-1.5 hover:bg-slate-50">
+                  <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                    <input
+                      type="checkbox"
+                      [checked]="isEmploymentTypeSelected(opt.id)"
+                      (change)="onEmploymentTypeToggle(opt.id, $event)"
+                      class="h-4 w-4 shrink-0 rounded border-slate-300 text-[#1E63F3] focus:ring-[#1E63F3] accent-[#1E63F3]"
+                    />
+                    <span class="text-sm font-medium text-slate-700 truncate">{{ opt.label }}</span>
+                  </div>
+                </label>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Group 7: Nơi làm việc -->
+        <div class="rounded-xl border border-[#DCE5F2] bg-white p-3.5 shadow-xs">
+          <button
+            type="button"
+            (click)="toggleGroup('workplace')"
+            class="flex w-full items-center justify-between text-left font-bold text-sm text-[#0F172A]"
+          >
+            <span class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#1E63F3] text-[18px]">home_work</span>
+              <span>Nơi làm việc</span>
+            </span>
+            <span
+              class="material-symbols-outlined text-slate-400 text-[18px] transition-transform duration-200"
+              [class.rotate-180]="expandedGroups['workplace']"
+            >
+              expand_more
+            </span>
+          </button>
+
+          @if (expandedGroups['workplace']) {
+            <div class="mt-3 space-y-2 pt-2 border-t border-slate-100">
+              @for (opt of workplaceOptions; track opt.id) {
+                <label class="flex cursor-pointer items-center justify-between rounded-lg px-2 py-1.5 hover:bg-slate-50">
+                  <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                    <input
+                      type="checkbox"
+                      [checked]="isWorkplaceSelected(opt.id)"
+                      (change)="onWorkplaceToggle(opt.id, $event)"
+                      class="h-4 w-4 shrink-0 rounded border-slate-300 text-[#1E63F3] focus:ring-[#1E63F3] accent-[#1E63F3]"
+                    />
+                    <span class="text-sm font-medium text-slate-700 truncate">{{ opt.label }}</span>
+                  </div>
+                </label>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Drawer Footer with "Xóa tất cả" & "Xem [X] việc làm" -->
+      <div class="flex items-center gap-3 p-4 border-t border-[#DCE5F2] bg-white shrink-0">
+        <button
+          type="button"
+          (click)="onClearAll()"
+          class="flex-1 h-11 inline-flex items-center justify-center rounded-xl border border-[#DCE5F2] bg-slate-50 hover:bg-slate-100 text-xs sm:text-sm font-bold text-slate-700 transition cursor-pointer"
+        >
+          Xóa tất cả
+        </button>
+
+        <button
+          type="button"
+          (click)="onApply()"
+          class="flex-[2] h-11 inline-flex items-center justify-center rounded-xl bg-[#1E63F3] hover:bg-[#174FCB] text-xs sm:text-sm font-bold text-white shadow-md shadow-[#1E63F3]/25 transition active:scale-95 cursor-pointer"
+        >
+          <span>Xem {{ totalJobs }} việc làm</span>
+        </button>
+      </div>
+    </div>
+  </div>
+}
