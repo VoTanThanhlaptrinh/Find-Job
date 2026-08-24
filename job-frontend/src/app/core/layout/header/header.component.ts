@@ -120,7 +120,7 @@ export class HeaderComponent implements OnInit {
         this.router.navigate(['/']);
       }
     } else if (target === 'jobs') {
-      this.router.navigate(['/category']);
+      this.router.navigate(['/jobs']);
     } else if (target === 'blog') {
       this.router.navigate(['/blogHome']);
     } else if (target === 'about' || target === 'contact') {

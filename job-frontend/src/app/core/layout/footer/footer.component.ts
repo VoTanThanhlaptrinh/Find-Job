@@ -46,10 +46,10 @@ export class FooterComponent {
       id: 'explore',
       titleKey: 'footer.groupExplore',
       items: [
-        { labelKey: 'footer.jobSearch', type: 'route', route: '/category' },
-        { labelKey: 'footer.internFresher', type: 'route', route: '/category', queryParams: { level: 'intern-fresher' } },
-        { labelKey: 'footer.remoteHybrid', type: 'route', route: '/category', queryParams: { workType: 'remote-hybrid' } },
-        { labelKey: 'footer.exploreCategories', type: 'route', route: '/category', fragment: 'categories' },
+        { labelKey: 'footer.jobSearch', type: 'route', route: '/jobs' },
+        { labelKey: 'footer.internFresher', type: 'route', route: '/jobs', queryParams: { level: 'intern-fresher' } },
+        { labelKey: 'footer.remoteHybrid', type: 'route', route: '/jobs', queryParams: { workType: 'remote-hybrid' } },
+        { labelKey: 'footer.exploreCategories', type: 'route', route: '/jobs', fragment: 'categories' },
       ],
     },
     {

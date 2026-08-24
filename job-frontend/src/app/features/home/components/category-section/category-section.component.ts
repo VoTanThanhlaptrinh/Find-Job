@@ -101,7 +101,7 @@ export class CategorySectionComponent implements AfterViewInit, OnDestroy {
       iconAnimationClass: 'anim-icon-code',
       chipFloatClass: 'chip-float-1',
       enterDelayClass: 'enter-chip-1',
-      link: '/category',
+      link: '/jobs',
     },
     {
       id: 2,
@@ -114,7 +114,7 @@ export class CategorySectionComponent implements AfterViewInit, OnDestroy {
       iconAnimationClass: 'anim-icon-gear',
       chipFloatClass: 'chip-float-2',
       enterDelayClass: 'enter-chip-2',
-      link: '/category',
+      link: '/jobs',
     },
     {
       id: 3,
@@ -127,7 +127,7 @@ export class CategorySectionComponent implements AfterViewInit, OnDestroy {
       iconAnimationClass: 'anim-icon-wave',
       chipFloatClass: 'chip-float-4',
       enterDelayClass: 'enter-chip-3',
-      link: '/category',
+      link: '/jobs',
     },
     {
       id: 4,
@@ -140,7 +140,7 @@ export class CategorySectionComponent implements AfterViewInit, OnDestroy {
       iconAnimationClass: 'anim-icon-calc',
       chipFloatClass: 'chip-float-3',
       enterDelayClass: 'enter-chip-4',
-      link: '/category',
+      link: '/jobs',
     },
     {
       id: 5,
@@ -153,7 +153,7 @@ export class CategorySectionComponent implements AfterViewInit, OnDestroy {
       iconAnimationClass: 'anim-icon-headset',
       chipFloatClass: 'chip-float-5',
       enterDelayClass: 'enter-chip-5',
-      link: '/category',
+      link: '/jobs',
     },
     {
       id: 6,
@@ -166,7 +166,7 @@ export class CategorySectionComponent implements AfterViewInit, OnDestroy {
       iconAnimationClass: 'anim-icon-chart',
       chipFloatClass: 'chip-float-6',
       enterDelayClass: 'enter-chip-6',
-      link: '/category',
+      link: '/jobs',
     },
   ];
 

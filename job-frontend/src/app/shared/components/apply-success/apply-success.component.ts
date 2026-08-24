@@ -41,7 +41,7 @@ export class ApplySuccessComponent implements OnInit {
   }
 
   goBackToJobs() {
-    this.router.navigate(['/category']);
+    this.router.navigate(['/jobs']);
   }
 
   goHome() {

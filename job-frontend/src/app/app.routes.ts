@@ -23,8 +23,11 @@ export const routes: Routes = [
   { path: 'reset-pass/:random', loadComponent: () => import('./features/auth/pages/reset-pass/reset-pass.component').then(c => c.ResetPassComponent) },
   { path: 'login-callback', loadComponent: () => import('./features/auth/pages/login-callback/login-callback.component').then(c => c.LoginCallbackComponent) },
 
+  // Jobs Search & Listing Route (Supports both /jobs and /category)
+  { path: 'jobs', loadComponent: () => import('./features/jobs/pages/category/category.component').then(c => c.CategoryComponent) },
+  { path: 'category', loadComponent: () => import('./features/jobs/pages/category/category.component').then(c => c.CategoryComponent) },
+
   // Aliases for clean standard routing
-  { path: 'jobs', redirectTo: 'category', pathMatch: 'full' },
   { path: 'blog', redirectTo: 'blogHome', pathMatch: 'full' },
   { path: 'account', redirectTo: 'infor/profile', pathMatch: 'full' },
 
@@ -34,8 +37,7 @@ export const routes: Routes = [
   { path: 'blogHome', loadComponent: () => import('./features/blog/pages/blog-home/blog-home.component').then(c => c.BlogHomeComponent) },
   { path: 'blogSingle/:id', loadComponent: () => import('./features/blog/pages/blog-single/blog-single.component').then(c => c.BlogSingleComponent) },
 
-  // Lazy load Components - Tính năng Việc làm
-  { path: 'category', loadComponent: () => import('./features/jobs/pages/category/category.component').then(c => c.CategoryComponent) },
+  // Job Details & Applications
   { path: 'single/:id', loadComponent: () => import('./features/jobs/pages/job-single/job-single.component').then(c => c.JobSingleComponent) },
   { path: 'apply-cv/:id', loadComponent: () => import('./features/jobs/pages/apply-cv/apply-cv.component').then(c => c.ApplyCvComponent) },
   { path: 'apply-success', loadComponent: () => import('./shared/components/apply-success/apply-success.component').then(c => c.ApplySuccessComponent) },

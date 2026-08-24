@@ -150,7 +150,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   searchByTag(tag: string): void {
-    this.router.navigate(['/category'], { queryParams: { keyword: tag } });
+    this.router.navigate(['/jobs'], { queryParams: { keyword: tag } });
   }
 
   onContactSubmit(): void {
