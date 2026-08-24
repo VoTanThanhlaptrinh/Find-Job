@@ -20,7 +20,7 @@
 
       <!-- Headline (Dynamic Slogan Flipping every 2s) -->
       <h1 class="font-headline text-4xl sm:text-5xl lg:text-[58px] xl:text-[62px] font-extrabold tracking-tight text-white leading-[1.14] drop-shadow-md max-w-[950px] mx-auto">
-        Tìm đúng việc.
+        {{ 'home.hero.headlinePrefix' | t }}
         <span class="flip-wrapper h-[1.18em] align-bottom">
           <span
             class="flip-item text-[#38BDF8] whitespace-nowrap"
@@ -32,7 +32,7 @@
 
       <!-- Description -->
       <p class="mt-5 text-base sm:text-lg lg:text-xl text-white/85 max-w-[720px] mx-auto font-normal leading-relaxed drop-shadow-sm">
-        Khám phá hàng nghìn cơ hội phù hợp từ các doanh nghiệp uy tín trên khắp Việt Nam.
+        {{ 'home.hero.desc' | t }}
       </p>
 
       <!-- Search Bar -->
@@ -42,7 +42,7 @@
 
       <!-- Tag Chips (Horizontal scroll on mobile, clickable interactive chips) -->
       <div class="mt-6 flex items-center justify-center gap-2 text-xs sm:text-sm text-white/80">
-        <span class="font-semibold text-white/90 shrink-0">{{ 'home.hero.searchByTags' | t }}:</span>
+        <span class="font-semibold text-white/90 shrink-0">{{ 'home.hero.searchByTags' | t }}</span>
         <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 px-1">
           @for (tag of tags; track tag) {
           <button
@@ -62,7 +62,7 @@
 <section class="bg-white border-b border-slate-200/80 py-10 font-body overflow-hidden">
   <div class="mx-auto max-w-[1440px] px-6 sm:px-10 lg:px-12 text-center mb-7">
     <p class="text-xs sm:text-sm font-bold uppercase tracking-widest text-slate-500">
-      Được tin tưởng bởi hơn 5.000+ doanh nghiệp & tập đoàn hàng đầu
+      {{ 'home.brands.title' | t }}
     </p>
   </div>
 
@@ -278,10 +278,10 @@
     
     <div class="mx-auto max-w-3xl text-center mb-16">
       <h2 class="font-headline text-3xl sm:text-4xl lg:text-[44px] font-extrabold tracking-tight text-slate-900 leading-tight">
-        Hàng ngàn ứng viên đã tìm được <span class="text-[#1E63F3]">công việc mơ ước</span>
+        {{ 'home.testimonials.titlePre' | t }} <span class="text-[#1E63F3]">{{ 'home.testimonials.titleHighlight' | t }}</span>
       </h2>
       <p class="mt-4 text-base sm:text-lg text-slate-600 leading-relaxed font-normal">
-        Lắng nghe những chia sẻ chân thực từ cộng đồng người tìm việc và các nhà tuyển dụng hàng đầu.
+        {{ 'home.testimonials.desc' | t }}
       </p>
     </div>
 
@@ -330,12 +330,12 @@
     <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
       <div>
         <h2 class="font-headline text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900">
-          Cẩm nang nghề nghiệp & Tuyển dụng
+          {{ 'home.blog.title' | t }}
         </h2>
       </div>
       <a routerLink="/blogHome"
         class="inline-flex items-center gap-1.5 text-sm font-bold text-[#1E63F3] hover:text-[#174FCB] transition-colors group">
-        <span>Xem tất cả bài viết</span>
+        <span>{{ 'home.blog.viewAll' | t }}</span>
         <span class="material-symbols-outlined text-[18px] transition-transform group-hover:translate-x-1">arrow_forward</span>
       </a>
     </div>
@@ -347,13 +347,13 @@
           <img src="assets/web_css/img/blog1.jpg" alt="Resume writing" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
         </div>
         <div class="mt-5">
-          <span class="text-xs font-bold uppercase tracking-wider text-[#1E63F3]">Cẩm nang CV</span>
+          <span class="text-xs font-bold uppercase tracking-wider text-[#1E63F3]">{{ 'home.blog.articles.0.category' | t }}</span>
           <h3 class="mt-2 font-headline text-lg font-bold text-slate-900 group-hover:text-[#1E63F3] transition-colors line-clamp-2">
-            Cách viết CV ấn tượng chinh phục nhà tuyển dụng IT
+            {{ 'home.blog.articles.0.title' | t }}
           </h3>
-          <p class="mt-2 text-sm text-slate-600 line-clamp-2">Tổng hợp các mẫu CV chuẩn quốc tế và cấu trúc hồ sơ giúp bạn nổi bật trong hàng trăm ứng viên.</p>
+          <p class="mt-2 text-sm text-slate-600 line-clamp-2">{{ 'home.blog.articles.0.desc' | t }}</p>
           <a routerLink="/blogHome/blogSingle/3" class="mt-4 inline-flex items-center gap-1 text-xs font-bold text-[#1E63F3] group-hover:underline">
-            <span>Đọc tiếp</span>
+            <span>{{ 'home.blog.readMore' | t }}</span>
             <span class="material-symbols-outlined text-[14px]">chevron_right</span>
           </a>
         </div>
@@ -365,13 +365,13 @@
           <img src="assets/web_css/img/blog1.jpg" alt="Job search tips" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
         </div>
         <div class="mt-5">
-          <span class="text-xs font-bold uppercase tracking-wider text-[#1E63F3]">Kinh nghiệm phỏng vấn</span>
+          <span class="text-xs font-bold uppercase tracking-wider text-[#1E63F3]">{{ 'home.blog.articles.1.category' | t }}</span>
           <h3 class="mt-2 font-headline text-lg font-bold text-slate-900 group-hover:text-[#1E63F3] transition-colors line-clamp-2">
-            5 Bí quyết tìm kiếm việc làm hiệu quả trong kỷ nguyên AI
+            {{ 'home.blog.articles.1.title' | t }}
           </h3>
-          <p class="mt-2 text-sm text-slate-600 line-clamp-2">Cách tận dụng các công cụ số và chuẩn bị câu hỏi phỏng vấn kỹ thuật giúp gia tăng cơ hội trúng tuyển.</p>
+          <p class="mt-2 text-sm text-slate-600 line-clamp-2">{{ 'home.blog.articles.1.desc' | t }}</p>
           <a routerLink="/blogHome/blogSingle/1" class="mt-4 inline-flex items-center gap-1 text-xs font-bold text-[#1E63F3] group-hover:underline">
-            <span>Đọc tiếp</span>
+            <span>{{ 'home.blog.readMore' | t }}</span>
             <span class="material-symbols-outlined text-[14px]">chevron_right</span>
           </a>
         </div>
@@ -383,13 +383,13 @@
           <img src="assets/web_css/img/blog1.jpg" alt="Career trends" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
         </div>
         <div class="mt-5">
-          <span class="text-xs font-bold uppercase tracking-wider text-[#1E63F3]">Xu hướng thị trường</span>
+          <span class="text-xs font-bold uppercase tracking-wider text-[#1E63F3]">{{ 'home.blog.articles.2.category' | t }}</span>
           <h3 class="mt-2 font-headline text-lg font-bold text-slate-900 group-hover:text-[#1E63F3] transition-colors line-clamp-2">
-            Xu hướng nghề nghiệp & Mức lương công nghệ năm 2025
+            {{ 'home.blog.articles.2.title' | t }}
           </h3>
-          <p class="mt-2 text-sm text-slate-600 line-clamp-2">Báo cáo khảo sát thị trường lao động và nhóm kỹ năng được săn đón nhiều nhất hiện nay.</p>
+          <p class="mt-2 text-sm text-slate-600 line-clamp-2">{{ 'home.blog.articles.2.desc' | t }}</p>
           <a routerLink="/blogHome/blogSingle/2" class="mt-4 inline-flex items-center gap-1 text-xs font-bold text-[#1E63F3] group-hover:underline">
-            <span>Đọc tiếp</span>
+            <span>{{ 'home.blog.readMore' | t }}</span>
             <span class="material-symbols-outlined text-[14px]">chevron_right</span>
           </a>
         </div>
@@ -404,10 +404,10 @@
     
     <div class="text-center mb-14">
       <h2 class="font-headline text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 leading-tight">
-        Câu hỏi thường gặp
+        {{ 'home.faq.title' | t }}
       </h2>
       <p class="mt-3 text-base text-slate-600 leading-relaxed font-normal">
-        Những thắc mắc phổ biến nhất từ ứng viên và nhà tuyển dụng khi tham gia hệ thống.
+        {{ 'home.faq.desc' | t }}
       </p>
     </div>
 
@@ -448,10 +448,10 @@
       <!-- Contact Info (Left - 5 Cols) -->
       <div class="lg:col-span-5 space-y-6">
         <h2 class="font-headline text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 leading-tight">
-          Bạn cần chúng tôi hỗ trợ?
+          {{ 'home.contact.title' | t }}
         </h2>
         <p class="text-base text-slate-600 leading-relaxed">
-          Đội ngũ chuyên viên tư vấn nghề nghiệp và hỗ trợ kỹ thuật luôn sẵn sàng đồng hành và giải đáp mọi yêu cầu của bạn 24/7.
+          {{ 'home.contact.desc' | t }}
         </p>
 
         <!-- Direct Contact Channels -->
@@ -461,7 +461,7 @@
               <span class="material-symbols-outlined text-[24px]">call</span>
             </div>
             <div>
-              <p class="text-xs font-medium text-slate-500">Hotline hỗ trợ</p>
+              <p class="text-xs font-medium text-slate-500">{{ 'home.contact.hotlineLabel' | t }}</p>
               <p class="text-base font-bold text-slate-900">+84 123 456 789</p>
             </div>
           </div>
@@ -471,7 +471,7 @@
               <span class="material-symbols-outlined text-[24px]">mail</span>
             </div>
             <div>
-              <p class="text-xs font-medium text-slate-500">Email tư vấn</p>
+              <p class="text-xs font-medium text-slate-500">{{ 'home.contact.emailLabel' | t }}</p>
               <p class="text-base font-bold text-slate-900">support&#64;jobportal.vn</p>
             </div>
           </div>
@@ -481,8 +481,8 @@
               <span class="material-symbols-outlined text-[24px]">location_on</span>
             </div>
             <div>
-              <p class="text-xs font-medium text-slate-500">Địa chỉ</p>
-              <p class="text-base font-bold text-slate-900">Hà Nội & TP. Hồ Chí Minh, Việt Nam</p>
+              <p class="text-xs font-medium text-slate-500">{{ 'home.contact.addressLabel' | t }}</p>
+              <p class="text-base font-bold text-slate-900">{{ 'home.contact.addressValue' | t }}</p>
             </div>
           </div>
         </div>
@@ -496,34 +496,34 @@
             <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
               <span class="material-symbols-outlined text-[32px]">check_circle</span>
             </div>
-            <h3 class="font-headline text-2xl font-bold text-slate-900">Gửi yêu cầu thành công!</h3>
+            <h3 class="font-headline text-2xl font-bold text-slate-900">{{ 'home.contact.successTitle' | t }}</h3>
             <p class="text-slate-600 max-w-md mx-auto text-sm">
-              Cảm ơn bạn đã liên hệ. Đội ngũ chuyên viên sẽ phản hồi lại bạn qua email trong vòng 24 giờ làm việc.
+              {{ 'home.contact.successDesc' | t }}
             </p>
             <button
               type="button"
               (click)="resetContact()"
               class="inline-flex items-center gap-2 rounded-xl bg-[#1E63F3] hover:bg-[#174FCB] px-6 py-2.5 text-sm font-bold text-white transition-all cursor-pointer">
-              <span>Gửi tin nhắn khác</span>
+              <span>{{ 'home.contact.sendAnotherBtn' | t }}</span>
             </button>
           </div>
           } @else {
           <h3 class="font-headline text-xl sm:text-2xl font-bold text-slate-900">
-            Gửi tin nhắn cho chúng tôi
+            {{ 'home.contact.formTitle' | t }}
           </h3>
           <p class="mt-1.5 text-sm text-slate-500">
-            Điền thông tin bên dưới và chúng tôi sẽ liên hệ lại với bạn sớm nhất.
+            {{ 'home.contact.formSubtitle' | t }}
           </p>
 
           <form (ngSubmit)="onContactSubmit()" class="mt-6 space-y-4">
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label for="landing-contact-name" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-700">Họ và tên *</label>
+                <label for="landing-contact-name" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-700">{{ 'home.contact.nameLabel' | t }}</label>
                 <input
                   id="landing-contact-name"
                   name="name"
                   [(ngModel)]="contactData.name"
-                  placeholder="Nguyễn Văn A"
+                  [placeholder]="'home.contact.namePlaceholder' | t"
                   required
                   type="text"
                   class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-[#1E63F3] focus:ring-2 focus:ring-[#1E63F3]/20"
@@ -536,7 +536,7 @@
                   id="landing-contact-email"
                   name="email"
                   [(ngModel)]="contactData.email"
-                  placeholder="email@example.com"
+                  [placeholder]="'home.contact.emailPlaceholder' | t"
                   required
                   type="email"
                   class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-[#1E63F3] focus:ring-2 focus:ring-[#1E63F3]/20"
@@ -545,25 +545,25 @@
             </div>
 
             <div>
-              <label for="landing-contact-subject" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-700">Tiêu đề</label>
+              <label for="landing-contact-subject" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-700">{{ 'home.contact.subjectLabel' | t }}</label>
               <input
                 id="landing-contact-subject"
                 name="subject"
                 [(ngModel)]="contactData.subject"
-                placeholder="Nhu cầu tư vấn tìm việc / đăng tin tuyển dụng"
+                [placeholder]="'home.contact.subjectPlaceholder' | t"
                 type="text"
                 class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-[#1E63F3] focus:ring-2 focus:ring-[#1E63F3]/20"
               />
             </div>
 
             <div>
-              <label for="landing-contact-message" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-700">Nội dung tin nhắn *</label>
+              <label for="landing-contact-message" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-700">{{ 'home.contact.messageLabel' | t }}</label>
               <textarea
                 id="landing-contact-message"
                 name="message"
                 [(ngModel)]="contactData.message"
                 rows="4"
-                placeholder="Nhập nội dung cần hỗ trợ..."
+                [placeholder]="'home.contact.messagePlaceholder' | t"
                 required
                 class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-[#1E63F3] focus:ring-2 focus:ring-[#1E63F3]/20"
               ></textarea>
@@ -573,7 +573,7 @@
               <button
                 type="submit"
                 class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-[#1E63F3] hover:bg-[#174FCB] px-8 py-3.5 text-sm font-bold text-white shadow-md shadow-[#1E63F3]/25 transition-all duration-200 hover:-translate-y-0.5 active:scale-95 cursor-pointer">
-                <span>Liên hệ ngay</span>
+                <span>{{ 'home.contact.submitBtn' | t }}</span>
                 <span class="material-symbols-outlined text-[18px]">send</span>
               </button>
             </div>

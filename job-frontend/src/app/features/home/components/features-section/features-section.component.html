@@ -16,7 +16,7 @@
         <!-- Eyebrow with decorative bar -->
         <div class="mb-3">
           <span class="font-headline text-xs font-extrabold uppercase tracking-widest text-[#1a56db]">
-            TÌM VIỆC THÔNG MINH
+            {{ 'home.features.eyebrow' | t }}
           </span>
           <div class="mt-2 h-1 w-8 rounded-full bg-[#1a56db]"></div>
         </div>
@@ -24,21 +24,20 @@
         <!-- Main Title -->
         <h2
           class="font-headline text-4xl sm:text-5xl lg:text-[54px] xl:text-[60px] font-extrabold tracking-tight text-slate-900 leading-[1.08]">
-          Tìm đúng việc,<br />
-          nhanh hơn
+          {{ 'home.features.titleLine1' | t }}<br />
+          {{ 'home.features.titleLine2' | t }}
         </h2>
 
         <!-- Description -->
         <p class="mt-6 text-base sm:text-lg lg:text-[18px] text-slate-600 leading-[1.6] max-w-xl font-normal">
-          Kết nối bạn với những cơ hội phù hợp nhất.<br class="hidden sm:inline" />
-          Phù hợp kỹ năng, mong muốn và mục tiêu của bạn.
+          {{ 'home.features.desc' | t }}
         </p>
 
         <!-- Main CTA Button -->
         <div class="mt-8 sm:mt-10">
-          <a routerLink="/category"
+          <a routerLink="/jobs"
             class="group inline-flex items-center justify-center gap-3 h-[54px] sm:h-[58px] px-8 rounded-[12px] bg-[#1a56db] text-base font-bold text-white shadow-lg shadow-[#1a56db]/25 transition-all duration-200 hover:bg-[#1e429f] hover:shadow-xl hover:shadow-[#1a56db]/35 hover:-translate-y-0.5 active:scale-95 w-full sm:w-auto">
-            <span>Khám phá việc làm</span>
+            <span>{{ 'home.features.exploreBtn' | t }}</span>
             <span
               class="material-symbols-outlined text-[20px] transition-transform group-hover:translate-x-1">arrow_forward</span>
           </a>
@@ -50,13 +49,13 @@
             class="grid grid-cols-4 items-center gap-1 sm:gap-1.5 rounded-2xl border border-slate-200/90 bg-white/95 p-1 sm:p-1.5 shadow-sm backdrop-blur-sm">
             @for (tab of tabs; track tab.id) {
             <button type="button" (click)="selectTab(tab.id)"
-              class="flex items-center justify-center gap-1 sm:gap-1.5 md:gap-2 rounded-xl px-1 sm:px-2.5 md:px-3 py-2 text-[11px] sm:text-xs md:text-sm font-bold transition-all duration-200"
+              class="flex items-center justify-center gap-1 sm:gap-1.5 md:gap-2 rounded-xl px-1 sm:px-2.5 md:px-3 py-2 text-[11px] sm:text-xs md:text-sm font-bold transition-all duration-200 cursor-pointer"
               [ngClass]="{
                   'bg-[#1a56db] text-white shadow-md shadow-[#1a56db]/25 scale-[1.02]': activeTabIndex === tab.id,
                   'text-slate-700 hover:bg-slate-100/80 hover:text-slate-900': activeTabIndex !== tab.id
                 }">
               <span class="material-symbols-outlined text-[16px] sm:text-[18px]">{{ tab.icon }}</span>
-              <span class="whitespace-nowrap">{{ tab.title }}</span>
+              <span class="whitespace-nowrap">{{ tab.titleKey | t }}</span>
             </button>
             }
           </div>
@@ -69,7 +68,7 @@
         <div class="relative px-2 sm:px-4">
           <!-- Previous Arrow Button -->
           <button type="button" aria-label="Previous Slide"
-            class="feature-swiper-prev absolute -left-2 sm:-left-4 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-700 shadow-xl backdrop-blur-sm transition-all duration-200 hover:bg-blue-50 hover:text-[#1a56db] hover:scale-105 active:scale-95">
+            class="feature-swiper-prev absolute -left-2 sm:-left-4 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-700 shadow-xl backdrop-blur-sm transition-all duration-200 hover:bg-blue-50 hover:text-[#1a56db] hover:scale-105 active:scale-95 cursor-pointer">
             <span class="material-symbols-outlined text-[22px]">chevron_left</span>
           </button>
 
@@ -88,7 +87,7 @@
                     class="relative h-[250px] sm:h-[270px] overflow-hidden rounded-[20px] bg-slate-100 border border-slate-100 group/img shadow-inner">
                     <img
                       [src]="slide.imageUrl"
-                      [alt]="slide.title"
+                      [alt]="slide.titleKey | t"
                       loading="lazy"
                       class="w-full h-full object-cover rounded-[20px] transition-transform duration-700 ease-out group-hover/img:scale-105" />
 
@@ -101,22 +100,22 @@
                     <div
                       class="absolute top-3.5 left-3.5 rounded-full bg-white/95 backdrop-blur-md px-3 py-1 text-[11px] font-extrabold text-slate-800 shadow-md border border-white/80 flex items-center gap-1.5">
                       <span class="material-symbols-outlined text-[15px] text-[#1a56db]">{{ slide.badgeIcon }}</span>
-                      <span>{{ slide.badgeText }}</span>
+                      <span>{{ slide.badgeKey | t }}</span>
                     </div>
                   </div>
 
                   <!-- Bottom Content Box -->
                   <div class="mt-4 text-left">
                     <h3 class="font-headline text-xl sm:text-[22px] font-bold text-slate-900 leading-snug">
-                      {{ slide.title }}
+                      {{ slide.titleKey | t }}
                     </h3>
                     <p class="mt-1.5 text-xs sm:text-[13px] text-slate-600 leading-relaxed line-clamp-2">
-                      {{ slide.description }}
+                      {{ slide.descKey | t }}
                     </p>
                     <div class="mt-4">
                       <a [routerLink]="slide.actionRoute"
                         class="inline-flex items-center justify-center rounded-xl bg-[#1a56db] px-5 py-2.5 text-xs sm:text-sm font-bold text-white shadow-md shadow-[#1a56db]/20 hover:bg-[#1e429f] transition-colors">
-                        {{ slide.actionText }}
+                        {{ slide.actionKey | t }}
                       </a>
                     </div>
                   </div>
@@ -130,7 +129,7 @@
 
           <!-- Next Arrow Button -->
           <button type="button" aria-label="Next Slide"
-            class="feature-swiper-next absolute -right-2 sm:-right-4 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-700 shadow-xl backdrop-blur-sm transition-all duration-200 hover:bg-blue-50 hover:text-[#1a56db] hover:scale-105 active:scale-95">
+            class="feature-swiper-next absolute -right-2 sm:-right-4 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200/90 bg-white/95 text-slate-700 shadow-xl backdrop-blur-sm transition-all duration-200 hover:bg-blue-50 hover:text-[#1a56db] hover:scale-105 active:scale-95 cursor-pointer">
             <span class="material-symbols-outlined text-[22px]">chevron_right</span>
           </button>
         </div>

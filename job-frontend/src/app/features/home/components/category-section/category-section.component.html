@@ -54,7 +54,7 @@
                   [ngClass]="{'ring-4 ring-indigo-200': activeRoleId === 'developer'}">
                   <span class="material-symbols-outlined text-[28px] sm:text-[32px]" aria-hidden="true">terminal</span>
                 </div>
-                <span class="mt-2 text-[11px] font-bold text-slate-700 group-hover:text-indigo-600 transition-colors">Developer</span>
+                <span class="mt-2 text-[11px] font-bold text-slate-700 group-hover:text-indigo-600 transition-colors">{{ 'home.categorySection.roles.developer' | t }}</span>
               </button>
 
               <!-- Role 2: Chuyên gia (Active Default) -->
@@ -69,11 +69,11 @@
                   <!-- Glowing Star Badge -->
                   <span
                     class="active-star-sparkle absolute -top-1.5 -right-1.5 flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-full bg-amber-400 text-amber-950 font-bold text-[11px] sm:text-[12px] shadow-md ring-2 ring-white"
-                    aria-label="Nổi bật">
+                    [attr.aria-label]="'home.categorySection.featuredBadge' | t">
                     ★
                   </span>
                 </div>
-                <span class="mt-2 text-xs sm:text-[13px] font-extrabold text-[#1a56db] group-hover:text-blue-800 transition-colors">Chuyên gia</span>
+                <span class="mt-2 text-xs sm:text-[13px] font-extrabold text-[#1a56db] group-hover:text-blue-800 transition-colors">{{ 'home.categorySection.roles.expert' | t }}</span>
               </button>
 
               <!-- Role 3: Kỹ sư -->
@@ -86,7 +86,7 @@
                   [ngClass]="{'ring-4 ring-emerald-200': activeRoleId === 'engineer'}">
                   <span class="material-symbols-outlined text-[28px] sm:text-[32px]" aria-hidden="true">engineering</span>
                 </div>
-                <span class="mt-2 text-[11px] font-bold text-slate-700 group-hover:text-emerald-600 transition-colors">Kỹ sư</span>
+                <span class="mt-2 text-[11px] font-bold text-slate-700 group-hover:text-emerald-600 transition-colors">{{ 'home.categorySection.roles.engineer' | t }}</span>
               </button>
 
               <!-- Role 4: Quản lý -->
@@ -99,7 +99,7 @@
                   [ngClass]="{'ring-4 ring-sky-200': activeRoleId === 'manager'}">
                   <span class="material-symbols-outlined text-[28px] sm:text-[32px]" aria-hidden="true">badge</span>
                 </div>
-                <span class="mt-2 text-[11px] font-bold text-slate-700 group-hover:text-sky-600 transition-colors">Quản lý</span>
+                <span class="mt-2 text-[11px] font-bold text-slate-700 group-hover:text-sky-600 transition-colors">{{ 'home.categorySection.roles.manager' | t }}</span>
               </button>
 
             </div>
@@ -113,11 +113,11 @@
           <a
             [routerLink]="badge.link"
             [class]="'category-chip-item enter-chip ' + badge.enterDelayClass + ' ' + badge.chipFloatClass + ' absolute z-20 flex items-center gap-2 rounded-2xl border px-3 sm:px-3.5 py-1.5 sm:py-2 shadow-md backdrop-blur-md focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ' + badge.positionClasses + ' ' + badge.badgeClasses"
-            [attr.aria-label]="badge.title">
+            [attr.aria-label]="badge.titleKey | t">
             <div [class]="'flex h-7 w-7 items-center justify-center rounded-xl font-bold ' + badge.iconBgClasses">
               <span [class]="'material-symbols-outlined text-[16px] ' + badge.iconAnimationClass" aria-hidden="true">{{ badge.icon }}</span>
             </div>
-            <span class="text-xs font-bold whitespace-nowrap">{{ badge.title }}</span>
+            <span class="text-xs font-bold whitespace-nowrap">{{ badge.titleKey | t }}</span>
           </a>
           }
 
@@ -130,20 +130,19 @@
         <!-- Subtitle with bar -->
         <div class="enter-content mb-4">
           <span class="font-headline text-xs font-extrabold uppercase tracking-widest text-[#1a56db]">
-            KHÁM PHÁ HƯỚNG ĐI
+            {{ 'home.categorySection.eyebrow' | t }}
           </span>
           <div class="mt-2 h-1 w-8 rounded-full bg-[#1a56db]"></div>
         </div>
 
         <!-- Main Title -->
         <h2 class="enter-content font-headline text-3xl sm:text-4xl lg:text-[46px] xl:text-[50px] font-extrabold tracking-tight text-slate-900 leading-[1.15]">
-          Cơ hội cho mọi <span class="text-[#1a56db]">thế mạnh</span>
+          {{ 'home.categorySection.titlePre' | t }} <span class="text-[#1a56db]">{{ 'home.categorySection.titleHighlight' | t }}</span>
         </h2>
 
         <!-- Description -->
         <p class="enter-content mt-5 text-base sm:text-lg text-slate-600 leading-relaxed max-w-lg font-normal">
-          Khám phá đa dạng ngành nghề phù hợp với kỹ năng và đam mê.
-          Bắt đầu hành trình sự nghiệp bạn mong muốn ngay hôm nay.
+          {{ 'home.categorySection.desc' | t }}
         </p>
 
         <!-- Stats Highlight Pill with single pulse icon -->
@@ -151,20 +150,20 @@
           <div class="pulse-stats-once flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-[#1a56db]">
             <span class="material-symbols-outlined text-[20px]" aria-hidden="true">trending_up</span>
           </div>
-          <span class="text-sm sm:text-base font-bold text-slate-800">1.500+ cơ hội mới mỗi ngày</span>
+          <span class="text-sm sm:text-base font-bold text-slate-800">{{ 'home.categorySection.dailyStats' | t }}</span>
         </div>
 
         <!-- Action Buttons -->
         <div class="enter-cta mt-8 flex flex-wrap items-center gap-4 sm:gap-6">
           <a routerLink="/jobs"
             class="group inline-flex items-center justify-center gap-3 h-[54px] sm:h-[58px] px-8 rounded-xl bg-[#1a56db] text-sm sm:text-base font-bold text-white shadow-lg shadow-[#1a56db]/25 transition-all duration-200 hover:bg-[#1e429f] hover:shadow-xl hover:shadow-[#1a56db]/35 hover:-translate-y-0.5 active:scale-95 w-full sm:w-auto">
-            <span>Xem tất cả ngành nghề</span>
+            <span>{{ 'home.categorySection.viewAllBtn' | t }}</span>
             <span class="material-symbols-outlined text-[20px] transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true">arrow_forward</span>
           </a>
 
           <a routerLink="/jobs"
             class="animated-underline-link group inline-flex items-center gap-2 h-[54px] sm:h-[58px] px-4 py-3.5 text-sm sm:text-base font-bold text-[#1a56db] hover:text-[#1e429f] transition-colors w-full sm:w-auto justify-center sm:justify-start">
-            <span>Xem việc làm nổi bật</span>
+            <span>{{ 'home.categorySection.viewFeaturedBtn' | t }}</span>
             <span class="material-symbols-outlined text-[18px] transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true">arrow_forward</span>
           </a>
         </div>

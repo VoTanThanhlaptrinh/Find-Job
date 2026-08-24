@@ -1,7 +1,7 @@
 export type AppLanguage = 'vi' | 'en';
 
 export type TranslationTree = {
-  [key: string]: string | TranslationTree;
+  [key: string]: any;
 };
 
 export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
@@ -85,23 +85,224 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
     },
     home: {
       hero: {
-        jobsPosted: 'Công việc đã được đăng trong tuần trước',
+        eyebrows: [
+          '1.500+ CƠ HỘI MỚI MỖI NGÀY',
+          '5.000+ DOANH NGHIỆP HÀNG ĐẦU',
+          '100.000+ ỨNG VIÊN TIN DÙNG',
+          'KẾT NỐI NHANH TRONG 24H',
+        ],
+        headlinePrefix: 'Tìm đúng việc.',
+        headlinePhrases: [
+          'Tiến xa hơn.',
+          'Bứt phá thu nhập.',
+          'Nâng tầm sự nghiệp.',
+          'Chinh phục ước mơ.',
+          'Phát triển tương lai.',
+        ],
+        desc: 'Khám phá hàng nghìn cơ hội phù hợp từ các doanh nghiệp uy tín trên khắp Việt Nam.',
         searchByTags: 'Tìm kiếm theo tags:',
-        tags: 'Công nghệ, Kinh doanh, Tư vấn, IT Company, Thiết kế, Lập trình',
+        tags: ['Công nghệ', 'Kinh doanh', 'Tư vấn', 'Thiết kế', 'Lập trình'],
+      },
+      brands: {
+        title: 'Được tin tưởng bởi hơn 5.000+ doanh nghiệp & tập đoàn hàng đầu',
       },
       features: {
-        searchingTitle: 'Tìm kiếm',
-        searchingDesc:
-          'Tìm kiếm thông minh, lọc hàng ngàn công việc phù hợp chỉ trong vài giây.',
-        applyingTitle: 'Ứng tuyển',
-        applyingDesc:
-          'Ứng tuyển nhanh chóng chỉ với một lần nhấn, kết nối trực tiếp tới nhà tuyển dụng.',
-        securityTitle: 'Bảo mật',
-        securityDesc:
-          'Dữ liệu cá nhân và hồ sơ ứng tuyển của bạn luôn được bảo vệ an toàn.',
-        notificationsTitle: 'Thông báo',
-        notificationsDesc:
-          'Nhận cập nhật việc làm mới và trạng thái hồ sơ theo thời gian thực.',
+        eyebrow: 'TÌM VIỆC THÔNG MINH',
+        titleLine1: 'Tìm đúng việc,',
+        titleLine2: 'nhanh hơn',
+        desc: 'Kết nối bạn với những cơ hội phù hợp nhất. Phù hợp kỹ năng, mong muốn và mục tiêu của bạn.',
+        exploreBtn: 'Khám phá việc làm',
+        tabs: {
+          search: 'Tìm kiếm',
+          consulting: 'Tư vấn',
+          apply: 'Ứng tuyển',
+          track: 'Theo dõi',
+        },
+        slides: {
+          search: {
+            title: 'Tìm kiếm thông minh',
+            desc: 'Gợi ý việc làm phù hợp nhanh chóng dựa trên kỹ năng và mục tiêu của bạn.',
+            action: 'Tìm việc ngay',
+            badge: 'AI Smart Match',
+          },
+          consulting: {
+            title: 'Tư vấn nghề nghiệp',
+            desc: 'Định hướng lộ trình phù hợp với kỹ năng và mục tiêu của bạn.',
+            action: 'Nhận tư vấn',
+            badge: 'Tư vấn 1-1',
+          },
+          apply: {
+            title: 'Ứng tuyển nhanh',
+            desc: 'Hoàn thành hồ sơ và ứng tuyển chỉ với vài thao tác đơn giản.',
+            action: 'Ứng tuyển ngay',
+            badge: 'Ứng tuyển 1 chạm',
+          },
+          track: {
+            title: 'Theo dõi ứng tuyển',
+            desc: 'Theo dõi trạng thái hồ sơ và nhận thông báo theo thời gian thực.',
+            action: 'Xem trạng thái',
+            badge: 'Cập nhật trực tiếp',
+          },
+        },
+      },
+      categorySection: {
+        eyebrow: 'KHÁM PHÁ HƯỚNG ĐI',
+        titlePre: 'Cơ hội cho mọi',
+        titleHighlight: 'thế mạnh',
+        desc: 'Khám phá đa dạng ngành nghề phù hợp với kỹ năng và đam mê. Bắt đầu hành trình sự nghiệp bạn mong muốn ngay hôm nay.',
+        dailyStats: '1.500+ cơ hội mới mỗi ngày',
+        viewAllBtn: 'Xem tất cả ngành nghề',
+        viewFeaturedBtn: 'Xem việc làm nổi bật',
+        featuredBadge: 'Nổi bật',
+        roles: {
+          developer: 'Developer',
+          expert: 'Chuyên gia',
+          engineer: 'Kỹ sư',
+          manager: 'Quản lý',
+        },
+        badges: {
+          code: 'Lập trình',
+          eng: 'Kỹ thuật',
+          media: 'Truyền thông',
+          accounting: 'Kế toán',
+          consulting: 'Tư vấn',
+          mgmt: 'Quản lý',
+        },
+      },
+      aboutSection: {
+        teamAlt: 'Đội ngũ chuyên gia tư vấn tuyển dụng',
+        titleLine1: 'Kết nối đúng người.',
+        titleHighlight: 'Kiến tạo tương lai.',
+        desc: 'Chúng tôi xây dựng nền tảng tuyển dụng thông minh, giúp ứng viên tìm đúng môi trường phát triển và đồng hành cùng doanh nghiệp xây dựng đội ngũ vững mạnh.',
+        exploreBtn: 'Khám phá việc làm',
+        employerBtn: 'Dành cho doanh nghiệp',
+        benefits: {
+          ai: {
+            title: 'Khớp nối AI thông minh',
+            desc: 'Đề xuất cơ hội phù hợp với thế mạnh.',
+          },
+          verified: {
+            title: 'Doanh nghiệp xác thực',
+            desc: 'Thông tin minh bạch và đáng tin cậy.',
+          },
+          consulting: {
+            title: 'Tư vấn chuyên nghiệp',
+            desc: 'Định hướng nghề nghiệp và phỏng vấn.',
+          },
+          security: {
+            title: 'Bảo mật hồ sơ',
+            desc: 'Bạn toàn quyền kiểm soát thông tin.',
+          },
+        },
+        stats: {
+          candidatesLabel: 'Ứng viên tin tưởng',
+          candidatesAria: 'Hình ảnh các ứng viên tiêu biểu',
+          satisfactionLabel: 'Kết nối hài lòng',
+          satisfactionAria: 'Tỷ lệ kết nối hài lòng 98%',
+          partnersLabel: 'Doanh nghiệp đối tác',
+          supportLabel: 'Hỗ trợ và đồng hành',
+        },
+      },
+      testimonials: {
+        titlePre: 'Hàng ngàn ứng viên đã tìm được',
+        titleHighlight: 'công việc mơ ước',
+        desc: 'Lắng nghe những chia sẻ chân thực từ cộng đồng người tìm việc và các nhà tuyển dụng hàng đầu.',
+        tags: {
+          candidate: 'Ứng viên tiêu biểu',
+          employer: 'Nhà tuyển dụng',
+        },
+        reviews: [
+          {
+            name: 'Trần Minh Đức',
+            role: 'Senior Frontend Engineer',
+            company: 'VNG Corporation',
+            content: 'Nền tảng giúp tôi tìm được vị trí Senior ưng ý chỉ sau 1 tuần. Tính năng gợi ý việc làm rất sát với định hướng công nghệ và kỳ vọng đãi ngộ của tôi.',
+            tag: 'Ứng viên tiêu biểu',
+          },
+          {
+            name: 'Nguyễn Thu Trang',
+            role: 'Head of Talent Acquisition',
+            company: 'FPT Software',
+            content: 'Từ khi áp dụng hệ thống tuyển dụng này, thời gian tìm kiếm ứng viên chất lượng của chúng tôi giảm hơn 40%. Tỷ lệ phản hồi từ ứng viên rất nhanh và chuyên nghiệp.',
+            tag: 'Nhà tuyển dụng',
+          },
+          {
+            name: 'Lê Hoàng Nam',
+            role: 'Product Design Lead',
+            company: 'Techcombank',
+            content: 'Trải nghiệm tạo CV và ứng tuyển cực kỳ mượt mà. Thông tin lương thưởng minh bạch giúp tôi tự tin đàm phán đãi ngộ tốt hơn.',
+            tag: 'Ứng viên tiêu biểu',
+          },
+        ],
+      },
+      blog: {
+        title: 'Cẩm nang nghề nghiệp & Tuyển dụng',
+        viewAll: 'Xem tất cả bài viết',
+        readMore: 'Đọc tiếp',
+        articles: [
+          {
+            category: 'Cẩm nang CV',
+            title: 'Cách viết CV ấn tượng chinh phục nhà tuyển dụng IT',
+            desc: 'Tổng hợp các mẫu CV chuẩn quốc tế và cấu trúc hồ sơ giúp bạn nổi bật trong hàng trăm ứng viên.',
+          },
+          {
+            category: 'Kinh nghiệm phỏng vấn',
+            title: '5 Bí quyết tìm kiếm việc làm hiệu quả trong kỷ nguyên AI',
+            desc: 'Cách tận dụng các công cụ số và chuẩn bị câu hỏi phỏng vấn kỹ thuật giúp gia tăng cơ hội trúng tuyển.',
+          },
+          {
+            category: 'Xu hướng thị trường',
+            title: 'Xu hướng nghề nghiệp & Mức lương công nghệ năm 2025',
+            desc: 'Báo cáo khảo sát thị trường lao động và nhóm kỹ năng được săn đón nhiều nhất hiện nay.',
+          },
+        ],
+      },
+      faq: {
+        title: 'Câu hỏi thường gặp',
+        desc: 'Những thắc mắc phổ biến nhất từ ứng viên và nhà tuyển dụng khi tham gia hệ thống.',
+        items: [
+          {
+            question: 'Tôi có phải trả phí khi tìm việc hoặc tạo CV trên nền tảng không?',
+            answer: 'Hoàn toàn không. Nền tảng miễn phí 100% cho mọi ứng viên khi tạo CV, tìm việc, ứng tuyển và kết nối với các doanh nghiệp.',
+          },
+          {
+            question: 'Hệ thống gợi ý việc làm hoạt động như thế nào?',
+            answer: 'Công nghệ AI phân tích các kỹ năng, kinh nghiệm và mong muốn nghề nghiệp trong hồ sơ của bạn để tự động đề xuất những vị trí tuyển dụng có độ tương thích cao nhất.',
+          },
+          {
+            question: 'Nhà tuyển dụng sẽ liên hệ với tôi qua hình thức nào?',
+            answer: 'Nhà tuyển dụng sẽ liên hệ trực tiếp qua số điện thoại, email hoặc gửi thông báo mời phỏng vấn thông qua hệ thống quản lý ứng tuyển của website.',
+          },
+          {
+            question: 'Doanh nghiệp muốn đăng tin tuyển dụng thì bắt đầu như thế nào?',
+            answer: 'Bạn chỉ cần truy cập vào cổng "Dành cho Doanh nghiệp" ở thanh điều hướng, đăng ký tài khoản nhà tuyển dụng và bắt đầu tạo tin tuyển dụng trong vòng chưa đầy 2 phút.',
+          },
+          {
+            question: 'Thông tin cá nhân của tôi có được bảo mật không?',
+            answer: 'Chúng tôi cam kết bảo mật tuyệt đối dữ liệu cá nhân theo tiêu chuẩn an ninh cao nhất. Bạn hoàn toàn có quyền ẩn hồ sơ hoặc chỉ cho phép các doanh nghiệp được chọn xem thông tin.',
+          },
+        ],
+      },
+      contact: {
+        title: 'Bạn cần chúng tôi hỗ trợ?',
+        desc: 'Đội ngũ chuyên viên tư vấn nghề nghiệp và hỗ trợ kỹ thuật luôn sẵn sàng đồng hành và giải đáp mọi yêu cầu của bạn 24/7.',
+        hotlineLabel: 'Hotline hỗ trợ',
+        emailLabel: 'Email tư vấn',
+        addressLabel: 'Địa chỉ',
+        addressValue: 'Hà Nội & TP. Hồ Chí Minh, Việt Nam',
+        formTitle: 'Gửi tin nhắn cho chúng tôi',
+        formSubtitle: 'Điền thông tin bên dưới và chúng tôi sẽ liên hệ lại với bạn sớm nhất.',
+        nameLabel: 'Họ và tên *',
+        namePlaceholder: 'Nguyễn Văn A',
+        emailPlaceholder: 'email@example.com',
+        subjectLabel: 'Tiêu đề',
+        subjectPlaceholder: 'Nhu cầu tư vấn tìm việc / đăng tin tuyển dụng',
+        messageLabel: 'Nội dung tin nhắn *',
+        messagePlaceholder: 'Nhập nội dung cần hỗ trợ...',
+        submitBtn: 'Liên hệ ngay',
+        successTitle: 'Gửi yêu cầu thành công!',
+        successDesc: 'Cảm ơn bạn đã liên hệ. Đội ngũ chuyên viên sẽ phản hồi lại bạn qua email trong vòng 24 giờ làm việc.',
+        sendAnotherBtn: 'Gửi tin nhắn khác',
       },
       categories: {
         title: 'Danh mục công việc nổi bật',
@@ -808,23 +1009,224 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
     },
     home: {
       hero: {
-        jobsPosted: 'jobs were posted in the last week',
+        eyebrows: [
+          '1,500+ NEW OPPORTUNITIES DAILY',
+          '5,000+ TOP ENTERPRISES',
+          '100,000+ TRUSTED CANDIDATES',
+          'FAST CONNECTION WITHIN 24H',
+        ],
+        headlinePrefix: 'Find the right job.',
+        headlinePhrases: [
+          'Go further.',
+          'Boost your income.',
+          'Elevate your career.',
+          'Achieve your dreams.',
+          'Build your future.',
+        ],
+        desc: 'Discover thousands of matching opportunities from trusted companies across Vietnam.',
         searchByTags: 'Search by tags:',
-        tags: 'Technology, Business, Consulting, IT Company, Design, Programming',
+        tags: ['Technology', 'Business', 'Consulting', 'Design', 'Development'],
+      },
+      brands: {
+        title: 'Trusted by over 5,000+ leading enterprises & corporations',
       },
       features: {
-        searchingTitle: 'Searching',
-        searchingDesc:
-          'Smart search helps you filter thousands of relevant jobs in just seconds.',
-        applyingTitle: 'Applying',
-        applyingDesc:
-          'Apply quickly with one click and connect directly with top employers.',
-        securityTitle: 'Security',
-        securityDesc:
-          'Your profile and personal information are securely protected at all times.',
-        notificationsTitle: 'Notifications',
-        notificationsDesc:
-          'Get real-time updates on new jobs and application status changes.',
+        eyebrow: 'SMART JOB SEARCH',
+        titleLine1: 'Find the right job,',
+        titleLine2: 'faster',
+        desc: 'Connecting you with the most relevant opportunities. Matched to your skills, preferences, and goals.',
+        exploreBtn: 'Explore Jobs',
+        tabs: {
+          search: 'Search',
+          consulting: 'Advisory',
+          apply: 'Apply',
+          track: 'Track',
+        },
+        slides: {
+          search: {
+            title: 'Smart Search',
+            desc: 'Quickly recommend matching jobs based on your skills and goals.',
+            action: 'Find Jobs Now',
+            badge: 'AI Smart Match',
+          },
+          consulting: {
+            title: 'Career Consulting',
+            desc: 'Guide career paths tailored to your skills and aspirations.',
+            action: 'Get Advice',
+            badge: '1-on-1 Mentoring',
+          },
+          apply: {
+            title: 'Quick Application',
+            desc: 'Complete your profile and apply with just a few simple steps.',
+            action: 'Apply Now',
+            badge: '1-Click Apply',
+          },
+          track: {
+            title: 'Application Tracking',
+            desc: 'Track application status and receive real-time updates.',
+            action: 'View Status',
+            badge: 'Live Updates',
+          },
+        },
+      },
+      categorySection: {
+        eyebrow: 'EXPLORE PATHWAYS',
+        titlePre: 'Opportunities for every',
+        titleHighlight: 'strength',
+        desc: 'Discover diverse careers matching your skills and passion. Start your dream career journey today.',
+        dailyStats: '1,500+ new opportunities daily',
+        viewAllBtn: 'Explore All Careers',
+        viewFeaturedBtn: 'View Featured Jobs',
+        featuredBadge: 'Featured',
+        roles: {
+          developer: 'Developer',
+          expert: 'Expert',
+          engineer: 'Engineer',
+          manager: 'Manager',
+        },
+        badges: {
+          code: 'Programming',
+          eng: 'Engineering',
+          media: 'Media',
+          accounting: 'Accounting',
+          consulting: 'Consulting',
+          mgmt: 'Management',
+        },
+      },
+      aboutSection: {
+        teamAlt: 'Professional recruitment advisory team',
+        titleLine1: 'Connecting the right talent.',
+        titleHighlight: 'Building the future.',
+        desc: 'We build an intelligent recruitment platform, empowering job seekers to find optimal growth environments while assisting employers in building high-performing teams.',
+        exploreBtn: 'Explore Jobs',
+        employerBtn: 'For Employers',
+        benefits: {
+          ai: {
+            title: 'Smart AI Matching',
+            desc: 'Recommending opportunities tailored to your strengths.',
+          },
+          verified: {
+            title: 'Verified Companies',
+            desc: 'Transparent and verified employer profiles.',
+          },
+          consulting: {
+            title: 'Professional Advisory',
+            desc: 'Career orientation and interview coaching.',
+          },
+          security: {
+            title: 'Profile Security',
+            desc: 'Full control and privacy over your data.',
+          },
+        },
+        stats: {
+          candidatesLabel: 'Trusted Candidates',
+          candidatesAria: 'Photos of featured candidates',
+          satisfactionLabel: 'Satisfaction Rate',
+          satisfactionAria: '98% Connection Satisfaction Rate',
+          partnersLabel: 'Partner Enterprises',
+          supportLabel: 'Dedicated 24/7 Support',
+        },
+      },
+      testimonials: {
+        titlePre: 'Thousands of candidates found their',
+        titleHighlight: 'dream job',
+        desc: 'Hear authentic stories from our job seeker community and leading employers.',
+        tags: {
+          candidate: 'Featured Candidate',
+          employer: 'Employer',
+        },
+        reviews: [
+          {
+            name: 'Tran Minh Duc',
+            role: 'Senior Frontend Engineer',
+            company: 'VNG Corporation',
+            content: 'The platform helped me land my ideal Senior role in just one week. Job recommendations matched my tech stack and compensation expectations perfectly.',
+            tag: 'Featured Candidate',
+          },
+          {
+            name: 'Nguyen Thu Trang',
+            role: 'Head of Talent Acquisition',
+            company: 'FPT Software',
+            content: 'Since adopting this recruiting platform, our time-to-hire for top talent dropped by over 40%. Candidate response rates are rapid and professional.',
+            tag: 'Employer',
+          },
+          {
+            name: 'Le Hoang Nam',
+            role: 'Product Design Lead',
+            company: 'Techcombank',
+            content: 'The CV builder and application experience are remarkably smooth. Transparent salary info gave me great confidence in compensation negotiations.',
+            tag: 'Featured Candidate',
+          },
+        ],
+      },
+      blog: {
+        title: 'Career Guide & Recruitment Insights',
+        viewAll: 'View all articles',
+        readMore: 'Read more',
+        articles: [
+          {
+            category: 'Resume Guide',
+            title: 'How to write an impressive resume that wows IT recruiters',
+            desc: 'International resume templates and layout strategies to stand out among hundreds of applicants.',
+          },
+          {
+            category: 'Interview Tips',
+            title: '5 Secrets for effective job hunting in the AI era',
+            desc: 'How to leverage digital tools and prepare for technical interviews to maximize hiring success.',
+          },
+          {
+            category: 'Market Trends',
+            title: 'Career Trends & Tech Salary Insights in 2025',
+            desc: 'Labor market survey report and the highest in-demand technical skill sets.',
+          },
+        ],
+      },
+      faq: {
+        title: 'Frequently Asked Questions',
+        desc: 'Common questions from candidates and employers using our platform.',
+        items: [
+          {
+            question: 'Is it free to search for jobs and create a CV on the platform?',
+            answer: 'Absolutely not. The platform is 100% free for all candidates to build CVs, find jobs, apply, and connect with employers.',
+          },
+          {
+            question: 'How does the job recommendation engine work?',
+            answer: 'AI technology analyzes skills, experience, and career preferences in your profile to automatically recommend the highest-compatibility vacancies.',
+          },
+          {
+            question: 'How will employers contact me?',
+            answer: 'Employers will reach out directly via phone, email, or send interview invitations through the platform\'s applicant tracking dashboard.',
+          },
+          {
+            question: 'How can businesses start posting job vacancies?',
+            answer: 'Simply visit the "For Employers" portal in the navigation, register a recruiter account, and publish your job posting in under 2 minutes.',
+          },
+          {
+            question: 'Is my personal data kept secure?',
+            answer: 'We are committed to total data confidentiality following top security standards. You have full control to hide your profile or disclose info only to chosen employers.',
+          },
+        ],
+      },
+      contact: {
+        title: 'Need our assistance?',
+        desc: 'Our career advisory and technical support teams are ready 24/7 to answer all your inquiries.',
+        hotlineLabel: 'Support Hotline',
+        emailLabel: 'Advisory Email',
+        addressLabel: 'Location',
+        addressValue: 'Hanoi & Ho Chi Minh City, Vietnam',
+        formTitle: 'Send us a message',
+        formSubtitle: 'Fill in the details below and we will get in touch with you shortly.',
+        nameLabel: 'Full Name *',
+        namePlaceholder: 'John Doe',
+        emailPlaceholder: 'email@example.com',
+        subjectLabel: 'Subject',
+        subjectPlaceholder: 'Job advisory inquiry / Hiring vacancy',
+        messageLabel: 'Message *',
+        messagePlaceholder: 'Enter your message or inquiry...',
+        submitBtn: 'Send Message',
+        successTitle: 'Message Sent Successfully!',
+        successDesc: 'Thank you for reaching out. Our advisory team will respond via email within 24 business hours.',
+        sendAnotherBtn: 'Send another message',
       },
       categories: {
         title: 'Featured job categories',

@@ -9,18 +9,19 @@ import {
 } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
 
 export interface BenefitItem {
   id: string;
-  title: string;
-  description: string;
+  titleKey: string;
+  descKey: string;
   iconType: 'ai' | 'verified' | 'consulting' | 'security';
 }
 
 @Component({
   selector: 'app-about-section',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TranslatePipe],
   templateUrl: './about-section.component.html',
   styleUrl: './about-section.component.css',
 })
@@ -36,26 +37,26 @@ export class AboutSectionComponent implements OnInit, AfterViewInit, OnDestroy {
   benefits: BenefitItem[] = [
     {
       id: 'ai',
-      title: 'Khớp nối AI thông minh',
-      description: 'Đề xuất cơ hội phù hợp với thế mạnh.',
+      titleKey: 'home.aboutSection.benefits.ai.title',
+      descKey: 'home.aboutSection.benefits.ai.desc',
       iconType: 'ai',
     },
     {
       id: 'verified',
-      title: 'Doanh nghiệp xác thực',
-      description: 'Thông tin minh bạch và đáng tin cậy.',
+      titleKey: 'home.aboutSection.benefits.verified.title',
+      descKey: 'home.aboutSection.benefits.verified.desc',
       iconType: 'verified',
     },
     {
       id: 'consulting',
-      title: 'Tư vấn chuyên nghiệp',
-      description: 'Định hướng nghề nghiệp và phỏng vấn.',
+      titleKey: 'home.aboutSection.benefits.consulting.title',
+      descKey: 'home.aboutSection.benefits.consulting.desc',
       iconType: 'consulting',
     },
     {
       id: 'security',
-      title: 'Bảo mật hồ sơ',
-      description: 'Bạn toàn quyền kiểm soát thông tin.',
+      titleKey: 'home.aboutSection.benefits.security.title',
+      descKey: 'home.aboutSection.benefits.security.desc',
       iconType: 'security',
     },
   ];

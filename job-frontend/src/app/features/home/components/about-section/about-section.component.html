@@ -24,7 +24,7 @@
         <!-- 4:3 Rounded Image Frame with soft blue shadow -->
         <div
           class="relative z-10 aspect-4/3 w-full rounded-[28px] overflow-hidden border border-white/80 shadow-[0_20px_50px_rgba(30,99,243,0.09)] bg-slate-100 group">
-          <img src="assets/images/about-team.webp" alt="Đội ngũ chuyên gia tư vấn tuyển dụng"
+          <img src="assets/images/about-team.webp" [alt]="'home.aboutSection.teamAlt' | t"
             class="h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
             loading="lazy" />
         </div>
@@ -35,27 +35,26 @@
         <!-- Headline: Line 1 Navy, Line 2 Primary -->
         <h2
           class="font-headline text-3xl sm:text-4xl lg:text-[46px] xl:text-[50px] font-extrabold tracking-tight text-[#07142F] leading-[1.14]">
-          Kết nối đúng người.<br />
-          <span class="text-[#1E63F3]">Kiến tạo tương lai.</span>
+          {{ 'home.aboutSection.titleLine1' | t }}<br />
+          <span class="text-[#1E63F3]">{{ 'home.aboutSection.titleHighlight' | t }}</span>
         </h2>
 
         <!-- Description -->
         <p class="text-base sm:text-[17px] text-[#526077] leading-[1.7] font-normal">
-          Chúng tôi xây dựng nền tảng tuyển dụng thông minh, giúp ứng viên tìm đúng môi trường phát triển và đồng hành
-          cùng doanh nghiệp xây dựng đội ngũ vững mạnh.
+          {{ 'home.aboutSection.desc' | t }}
         </p>
 
         <!-- CTA Action Buttons Row -->
         <div class="flex flex-wrap items-center gap-4 sm:gap-6 pt-1">
           <a routerLink="/jobs"
             class="inline-flex items-center justify-center gap-2 h-13 sm:h-14 px-8 rounded-xl bg-[#1E63F3] hover:bg-[#174FCB] text-white font-bold text-base shadow-md shadow-[#1E63F3]/25 transition-all duration-200 hover:-translate-y-0.5 active:scale-95 no-underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#1E63F3] cursor-pointer">
-            <span>Khám phá việc làm</span>
+            <span>{{ 'home.aboutSection.exploreBtn' | t }}</span>
             <span class="material-symbols-outlined text-[20px]" aria-hidden="true">arrow_forward</span>
           </a>
 
           <a routerLink="/recruiter"
             class="inline-flex items-center gap-1.5 font-bold text-base text-[#1E63F3] hover:text-[#174FCB] transition-colors group cursor-pointer">
-            <span>Dành cho doanh nghiệp</span>
+            <span>{{ 'home.aboutSection.employerBtn' | t }}</span>
             <span
               class="material-symbols-outlined text-[18px] transition-transform duration-200 group-hover:translate-x-1"
               aria-hidden="true">arrow_forward</span>
@@ -193,7 +192,7 @@
             <!-- Benefit Title Centered Below Icon (No Small Text) -->
             <h3
               class="mt-3.5 font-headline text-[15px] sm:text-[16px] lg:text-[17px] font-bold text-[#0F172A] leading-snug group-hover:text-[#1E63F3] transition-colors">
-              {{ item.title }}
+              {{ item.titleKey | t }}
             </h3>
 
           </div>
@@ -218,13 +217,13 @@
             {{ candidateCount }}K+
           </div>
           <div class="text-[#526077] font-semibold text-sm sm:text-base mt-2">
-            Ứng viên tin tưởng
+            {{ 'home.aboutSection.stats.candidatesLabel' | t }}
           </div>
 
           <!-- Internal Avatars Stack -->
-          <div class="flex items-center -space-x-2.5 mt-6" aria-label="Hình ảnh các ứng viên tiêu biểu">
+          <div class="flex items-center -space-x-2.5 mt-6" [attr.aria-label]="'home.aboutSection.stats.candidatesAria' | t">
             @for (av of avatars; track av) {
-            <img [src]="av" alt="Ứng viên"
+            <img [src]="av" alt="Avatar"
               class="h-10 w-10 sm:h-11 sm:w-11 rounded-full object-cover border-2 border-white shadow-xs"
               loading="lazy" />
             }
@@ -253,7 +252,7 @@
         <!-- Cyan Circular Progress Ring -->
         <div class="relative flex items-center justify-center w-36 h-36 sm:w-40 sm:h-40 my-2" role="progressbar"
           [attr.aria-valuenow]="satisfactionRate" aria-valuemin="0" aria-valuemax="100"
-          aria-label="Tỷ lệ kết nối hài lòng 98%">
+          [attr.aria-label]="'home.aboutSection.stats.satisfactionAria' | t">
           <svg class="w-full h-full -rotate-90" viewBox="0 0 120 120">
             <!-- Background Track -->
             <circle cx="60" cy="60" r="50" stroke="rgba(255, 255, 255, 0.12)" stroke-width="6" fill="none" />
@@ -277,7 +276,7 @@
         </div>
 
         <div class="text-slate-300 text-sm font-semibold mt-2">
-          Kết nối hài lòng
+          {{ 'home.aboutSection.stats.satisfactionLabel' | t }}
         </div>
 
       </div>
@@ -293,7 +292,7 @@
               {{ partnerCount === 5000 ? '5.000+' : (partnerCount | number) }}
             </div>
             <div class="text-[#526077] font-semibold text-xs sm:text-sm mt-1.5">
-              Doanh nghiệp đối tác
+              {{ 'home.aboutSection.stats.partnersLabel' | t }}
             </div>
           </div>
 
@@ -332,7 +331,7 @@
               24/7
             </div>
             <div class="text-blue-100 font-semibold text-xs sm:text-sm mt-1.5">
-              Hỗ trợ và đồng hành
+              {{ 'home.aboutSection.stats.supportLabel' | t }}
             </div>
           </div>
 

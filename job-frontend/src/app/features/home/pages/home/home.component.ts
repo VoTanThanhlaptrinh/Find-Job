@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, inject, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CallToActionComponent } from '../../../../shared/components/call-to-action/call-to-action.component';
@@ -10,6 +10,8 @@ import { FeaturesSectionComponent } from '../../components/features-section/feat
 import { CategorySectionComponent } from '../../components/category-section/category-section.component';
 import { AboutSectionComponent } from '../../components/about-section/about-section.component';
 import { ContactFormModel, FaqItem, TestimonialItem } from '../../models/home.model';
+import { I18nService } from '../../../../core/i18n/i18n.service';
+import { TRANSLATIONS } from '../../../../core/i18n/translations';
 
 @Component({
   selector: 'app-home',
@@ -30,86 +32,13 @@ import { ContactFormModel, FaqItem, TestimonialItem } from '../../models/home.mo
   styleUrl: './home.component.css',
 })
 export class HomeComponent implements OnInit, OnDestroy {
-  tags = ['Công nghệ', 'Kinh doanh', 'Tư vấn', 'Thiết kế', 'Lập trình'];
-
-  // Dynamic Rotating Phrases (Flip transition every 2 seconds)
-  headlinePhrases: string[] = [
-    'Tiến xa hơn.',
-    'Bứt phá thu nhập.',
-    'Nâng tầm sự nghiệp.',
-    'Chinh phục ước mơ.',
-    'Phát triển tương lai.'
-  ];
-
-  eyebrowPhrases: string[] = [
-    '1.500+ CƠ HỘI MỚI MỖI NGÀY',
-    '5.000+ DOANH NGHIỆP HÀNG ĐẦU',
-    '100.000+ ỨNG VIÊN TIN DÙNG',
-    'KẾT NỐI NHANH TRONG 24H'
-  ];
+  private readonly i18nService = inject(I18nService);
+  private readonly router = inject(Router);
 
   currentHeadlineIndex = 0;
   currentEyebrowIndex = 0;
   isFlipping = false;
   private rotationTimer?: any;
-
-  // Testimonials
-  testimonials: TestimonialItem[] = [
-    {
-      name: 'Trần Minh Đức',
-      role: 'Senior Frontend Engineer',
-      company: 'VNG Corporation',
-      avatar: 'assets/web_css/img/r1.png',
-      rating: 5,
-      content: 'Nền tảng giúp tôi tìm được vị trí Senior ưng ý chỉ sau 1 tuần. Tính năng gợi ý việc làm rất sát với định hướng công nghệ và kỳ vọng đãi ngộ của tôi.',
-      tag: 'Ứng viên tiêu biểu',
-      tagClass: 'bg-blue-100 text-[#1E63F3]'
-    },
-    {
-      name: 'Nguyễn Thu Trang',
-      role: 'Head of Talent Acquisition',
-      company: 'FPT Software',
-      avatar: 'assets/web_css/img/r2.png',
-      rating: 5,
-      content: 'Từ khi áp dụng hệ thống tuyển dụng này, thời gian tìm kiếm ứng viên chất lượng của chúng tôi giảm hơn 40%. Tỷ lệ phản hồi từ ứng viên rất nhanh và chuyên nghiệp.',
-      tag: 'Nhà tuyển dụng',
-      tagClass: 'bg-emerald-100 text-emerald-700'
-    },
-    {
-      name: 'Lê Hoàng Nam',
-      role: 'Product Design Lead',
-      company: 'Techcombank',
-      avatar: 'assets/web_css/img/user.jpg',
-      rating: 5,
-      content: 'Trải nghiệm tạo CV và ứng tuyển cực kỳ mượt mà. Thông tin lương thưởng minh bạch giúp tôi tự tin đàm phán đãi ngộ tốt hơn.',
-      tag: 'Ứng viên tiêu biểu',
-      tagClass: 'bg-blue-100 text-[#1E63F3]'
-    }
-  ];
-
-  // FAQ Items
-  faqItems: FaqItem[] = [
-    {
-      question: 'Tôi có phải trả phí khi tìm việc hoặc tạo CV trên nền tảng không?',
-      answer: 'Hoàn toàn không. Nền tảng miễn phí 100% cho mọi ứng viên khi tạo CV, tìm việc, ứng tuyển và kết nối với các doanh nghiệp.'
-    },
-    {
-      question: 'Hệ thống gợi ý việc làm hoạt động như thế nào?',
-      answer: 'Công nghệ AI phân tích các kỹ năng, kinh nghiệm và mong muốn nghề nghiệp trong hồ sơ của bạn để tự động đề xuất những vị trí tuyển dụng có độ tương thích cao nhất.'
-    },
-    {
-      question: 'Nhà tuyển dụng sẽ liên hệ với tôi qua hình thức nào?',
-      answer: 'Nhà tuyển dụng sẽ liên hệ trực tiếp qua số điện thoại, email hoặc gửi thông báo mời phỏng vấn thông qua hệ thống quản lý ứng tuyển của website.'
-    },
-    {
-      question: 'Doanh nghiệp muốn đăng tin tuyển dụng thì bắt đầu như thế nào?',
-      answer: 'Bạn chỉ cần truy cập vào cổng "Dành cho Doanh nghiệp" ở thanh điều hướng, đăng ký tài khoản nhà tuyển dụng và bắt đầu tạo tin tuyển dụng trong vòng chưa đầy 2 phút.'
-    },
-    {
-      question: 'Thông tin cá nhân của tôi có được bảo mật không?',
-      answer: 'Chúng tôi cam kết bảo mật tuyệt đối dữ liệu cá nhân theo tiêu chuẩn an ninh cao nhất. Bạn hoàn toàn có quyền ẩn hồ sơ hoặc chỉ cho phép các doanh nghiệp được chọn xem thông tin.'
-    }
-  ];
 
   expandedFaqIndex: number | null = 0;
 
@@ -117,22 +46,90 @@ export class HomeComponent implements OnInit, OnDestroy {
     name: '',
     email: '',
     subject: '',
-    message: ''
+    message: '',
   };
   contactSubmitted = false;
 
-  constructor(
-    private router: Router,
-    @Inject(PLATFORM_ID) private platformId: Object
-  ) {}
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+
+  private get currentTranslations(): any {
+    const lang = this.i18nService.currentLanguage;
+    return TRANSLATIONS[lang]?.['home'] || TRANSLATIONS['en']['home'];
+  }
+
+  get headlinePhrases(): string[] {
+    return (
+      this.currentTranslations?.hero?.headlinePhrases || [
+        'Tiến xa hơn.',
+        'Bứt phá thu nhập.',
+        'Nâng tầm sự nghiệp.',
+        'Chinh phục ước mơ.',
+        'Phát triển tương lai.',
+      ]
+    );
+  }
+
+  get eyebrowPhrases(): string[] {
+    return (
+      this.currentTranslations?.hero?.eyebrows || [
+        '1.500+ CƠ HỘI MỚI MỖI NGÀY',
+        '5.000+ DOANH NGHIỆP HÀNG ĐẦU',
+        '100.000+ ỨNG VIÊN TIN DÙNG',
+        'KẾT NỐI NHANH TRONG 24H',
+      ]
+    );
+  }
+
+  get tags(): string[] {
+    return (
+      this.currentTranslations?.hero?.tags || [
+        'Công nghệ',
+        'Kinh doanh',
+        'Tư vấn',
+        'Thiết kế',
+        'Lập trình',
+      ]
+    );
+  }
+
+  get testimonials(): TestimonialItem[] {
+    const reviews = this.currentTranslations?.testimonials?.reviews || [];
+    const avatars = [
+      'assets/web_css/img/r1.png',
+      'assets/web_css/img/r2.png',
+      'assets/web_css/img/user.jpg',
+    ];
+    const tagClasses = [
+      'bg-blue-100 text-[#1E63F3]',
+      'bg-emerald-100 text-emerald-700',
+      'bg-blue-100 text-[#1E63F3]',
+    ];
+
+    return reviews.map((r: any, idx: number) => ({
+      name: r.name,
+      role: r.role,
+      company: r.company,
+      avatar: avatars[idx % avatars.length],
+      rating: 5,
+      content: r.content,
+      tag: r.tag,
+      tagClass: tagClasses[idx % tagClasses.length],
+    }));
+  }
+
+  get faqItems(): FaqItem[] {
+    return this.currentTranslations?.faq?.items || [];
+  }
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       this.rotationTimer = setInterval(() => {
         this.isFlipping = true;
         setTimeout(() => {
-          this.currentHeadlineIndex = (this.currentHeadlineIndex + 1) % this.headlinePhrases.length;
-          this.currentEyebrowIndex = (this.currentEyebrowIndex + 1) % this.eyebrowPhrases.length;
+          const headlines = this.headlinePhrases;
+          const eyebrows = this.eyebrowPhrases;
+          this.currentHeadlineIndex = (this.currentHeadlineIndex + 1) % (headlines.length || 1);
+          this.currentEyebrowIndex = (this.currentEyebrowIndex + 1) % (eyebrows.length || 1);
           this.isFlipping = false;
         }, 300);
       }, 2000);

@@ -23,12 +23,12 @@
     <div class="relative flex-1 px-1 py-1 md:py-0">
       <app-custom-select
         id="landing-search-category"
-        ariaLabel="Chọn danh mục nghề nghiệp"
-        placeholder="Chọn danh mục"
+        [ariaLabel]="'category.search.selectCategoryAria' | t"
+        [placeholder]="'category.search.selectCategory' | t"
         icon="category"
         variant="search-bar"
         [searchable]="true"
-        searchPlaceholder="Tìm danh mục..."
+        [searchPlaceholder]="'category.search.searchCategory' | t"
         [options]="categoryOptions"
         [value]="selectedCategory"
         (valueChange)="onCategorySelect($event)"
@@ -41,12 +41,12 @@
     <div class="relative flex-1 px-1 py-1 md:py-0">
       <app-custom-select
         id="landing-search-area"
-        ariaLabel="Chọn khu vực"
-        placeholder="Khu vực"
+        [ariaLabel]="'category.search.selectLocationAria' | t"
+        [placeholder]="'category.search.selectLocation' | t"
         icon="location_on"
         variant="search-bar"
         [searchable]="true"
-        searchPlaceholder="Tìm địa điểm..."
+        [searchPlaceholder]="'category.search.searchLocation' | t"
         [options]="locationOptions"
         [value]="selectedCity"
         (valueChange)="onCitySelect($event)"
