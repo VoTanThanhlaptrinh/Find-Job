@@ -2,12 +2,14 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, inject, Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SavedJobsService } from '../../../core/services/saved-jobs.service';
+import { I18nService } from '../../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 import { JobCardModel } from '../../models/jobs/job-card.model';
 
 @Component({
   selector: 'app-job-card',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, TranslatePipe],
   templateUrl: './job-card.component.html',
   styleUrl: './job-card.component.css',
 })
@@ -17,6 +19,7 @@ export class JobCardComponent {
   @Input() detailRoute = '/single';
 
   private readonly savedJobsService = inject(SavedJobsService);
+  private readonly i18nService = inject(I18nService);
 
   get isSaved(): boolean {
     if (!this.job || !this.job.id) return false;
@@ -30,15 +33,18 @@ export class JobCardComponent {
 
   get formattedSalary(): string {
     const raw = this.job?.salary;
+    const negotiable = this.i18nService.translate('category.card.negotiableSalary');
+    const millionUnit = this.i18nService.translate('category.card.millionVnd');
+
     if (raw === undefined || raw === null || raw === '') {
-      return 'Thỏa thuận';
+      return negotiable;
     }
 
     if (typeof raw === 'number') {
-      if (raw <= 0) return 'Thỏa thuận';
+      if (raw <= 0) return negotiable;
       if (raw >= 1000000) {
         const million = raw / 1000000;
-        return `${million % 1 === 0 ? million : million.toFixed(1)} triệu đ`;
+        return `${million % 1 === 0 ? million : million.toFixed(1)} ${millionUnit}`;
       }
       return `${raw.toLocaleString('vi-VN')} đ`;
     }
@@ -48,7 +54,7 @@ export class JobCardComponent {
     if (!isNaN(num) && num > 0) {
       if (num >= 1000000) {
         const million = num / 1000000;
-        return `${million % 1 === 0 ? million : million.toFixed(1)} triệu đ`;
+        return `${million % 1 === 0 ? million : million.toFixed(1)} ${millionUnit}`;
       }
       return `${num.toLocaleString('vi-VN')} đ`;
     }
@@ -58,24 +64,13 @@ export class JobCardComponent {
 
   get formattedTime(): string {
     const time = this.job?.time;
-    if (!time) return 'Toàn thời gian';
-    const upper = String(time).toUpperCase();
-    switch (upper) {
-      case 'FULL_TIME':
-        return 'Toàn thời gian';
-      case 'PART_TIME':
-        return 'Bán thời gian';
-      case 'REMOTE':
-        return 'Làm từ xa';
-      case 'HYBRID':
-        return 'Linh hoạt (Hybrid)';
-      case 'INTERN':
-        return 'Thực tập sinh';
-      case 'CONTRACT':
-        return 'Hợp đồng';
-      default:
-        return time;
+    if (!time) {
+      return this.i18nService.translate('category.card.employmentTypes.FULL_TIME');
     }
+    const upper = String(time).toUpperCase();
+    const key = `category.card.employmentTypes.${upper}`;
+    const translated = this.i18nService.translate(key);
+    return translated !== key ? translated : time;
   }
 
   get skillTags(): string[] {

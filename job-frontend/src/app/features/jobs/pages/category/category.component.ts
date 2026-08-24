@@ -17,11 +17,14 @@ import { JobResultHeaderComponent } from '../../components/job-result-header/job
 import { JobPaginationComponent } from '../../components/job-pagination/job-pagination.component';
 import { JobMobileFilterDrawerComponent } from '../../components/job-mobile-filter-drawer/job-mobile-filter-drawer.component';
 
+import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
+
 @Component({
   selector: 'app-category',
   standalone: true,
   imports: [
     CommonModule,
+    TranslatePipe,
     JobSearchBarComponent,
     JobActiveFiltersComponent,
     JobFilterSidebarComponent,

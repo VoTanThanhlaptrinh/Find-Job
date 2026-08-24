@@ -14,6 +14,9 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
+import { I18nService } from '../../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../pipes/translate.pipe';
+
 export interface SelectOption<T = any> {
   value: T;
   label: string;
@@ -25,17 +28,17 @@ export interface SelectOption<T = any> {
 @Component({
   selector: 'app-custom-select',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './custom-select.component.html',
   styleUrl: './custom-select.component.css',
 })
 export class CustomSelectComponent implements OnChanges {
   @Input() options: SelectOption[] = [];
   @Input() value: any = '';
-  @Input() placeholder = 'Chọn...';
+  @Input() placeholder = '';
   @Input() icon = '';
   @Input() searchable = false;
-  @Input() searchPlaceholder = 'Tìm kiếm...';
+  @Input() searchPlaceholder = '';
   @Input() variant: 'search-bar' | 'pill' | 'form' = 'search-bar';
   @Input() prefixLabel = '';
   @Input() disabled = false;
@@ -52,6 +55,7 @@ export class CustomSelectComponent implements OnChanges {
   private readonly elementRef = inject(ElementRef);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly isBrowser = isPlatformBrowser(this.platformId);
+  private readonly i18nService = inject(I18nService);
 
   isOpen = false;
   searchTerm = '';
@@ -63,6 +67,14 @@ export class CustomSelectComponent implements OnChanges {
     }
   }
 
+  get effectivePlaceholder(): string {
+    return this.placeholder || this.i18nService.translate('customSelect.select');
+  }
+
+  get effectiveSearchPlaceholder(): string {
+    return this.searchPlaceholder || this.i18nService.translate('customSelect.search');
+  }
+
   get selectedOption(): SelectOption | undefined {
     return this.options.find((opt) => opt.value === this.value);
   }
@@ -72,7 +84,7 @@ export class CustomSelectComponent implements OnChanges {
     if (selected) {
       return selected.label;
     }
-    return this.placeholder;
+    return this.effectivePlaceholder;
   }
 
   get isPlaceholder(): boolean {

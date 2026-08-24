@@ -10,10 +10,12 @@ import {
   WORKPLACE_OPTIONS,
 } from '../../models/job-filter.model';
 
+import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
+
 @Component({
   selector: 'app-job-mobile-filter-drawer',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   templateUrl: './job-mobile-filter-drawer.component.html',
   styleUrl: './job-mobile-filter-drawer.component.css',
 })

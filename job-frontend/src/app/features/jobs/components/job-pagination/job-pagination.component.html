@@ -1,12 +1,12 @@
 @if (totalItems > 0) {
   <nav
     class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 rounded-2xl bg-white border border-[#DCE5F2] shadow-xs"
-    aria-label="Phân trang công việc"
+    [attr.aria-label]="'category.pagination.ariaLabel' | t"
   >
     <!-- Left: Results summary (Desktop & Mobile) -->
     <div class="text-xs sm:text-sm font-medium text-[#526077] text-center sm:text-left">
-      Hiển thị <span class="font-bold text-[#0F172A]">{{ startIndex }}–{{ endIndex }}</span> trong
-      <span class="font-bold text-[#0F172A]">{{ totalItems }}</span> việc làm
+      {{ 'category.pagination.showing' | t }} <span class="font-bold text-[#0F172A]">{{ startIndex }}–{{ endIndex }}</span> {{ 'category.pagination.in' | t }}
+      <span class="font-bold text-[#0F172A]">{{ totalItems }}</span> {{ 'category.pagination.jobs' | t }}
     </div>
 
     <!-- Right: Desktop Pagination buttons -->
@@ -19,7 +19,7 @@
         class="inline-flex h-9 items-center gap-1 px-3 rounded-xl border border-[#DCE5F2] bg-white text-xs font-bold text-[#0F172A] transition-all hover:bg-slate-50 hover:border-slate-300 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E63F3]"
       >
         <span class="material-symbols-outlined text-[16px]">chevron_left</span>
-        <span>Trước</span>
+        <span>{{ 'category.pagination.previous' | t }}</span>
       </button>
 
       <!-- Page Numbers -->
@@ -52,7 +52,7 @@
         [disabled]="currentPage >= totalPages"
         class="inline-flex h-9 items-center gap-1 px-3 rounded-xl border border-[#DCE5F2] bg-white text-xs font-bold text-[#0F172A] transition-all hover:bg-slate-50 hover:border-slate-300 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E63F3]"
       >
-        <span>Sau</span>
+        <span>{{ 'category.pagination.next' | t }}</span>
         <span class="material-symbols-outlined text-[16px]">chevron_right</span>
       </button>
     </div>
@@ -66,11 +66,11 @@
         class="inline-flex h-9 items-center gap-1 px-3 rounded-xl border border-[#DCE5F2] bg-white text-xs font-bold text-[#0F172A] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
       >
         <span class="material-symbols-outlined text-[16px]">chevron_left</span>
-        <span>Trước</span>
+        <span>{{ 'category.pagination.previous' | t }}</span>
       </button>
 
       <span class="text-xs font-bold text-[#0F172A]">
-        Trang {{ currentPage }}/{{ totalPages }}
+        {{ 'category.pagination.page' | t }} {{ currentPage }}/{{ totalPages }}
       </span>
 
       <button
@@ -79,7 +79,7 @@
         [disabled]="currentPage >= totalPages"
         class="inline-flex h-9 items-center gap-1 px-3 rounded-xl border border-[#DCE5F2] bg-white text-xs font-bold text-[#0F172A] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
       >
-        <span>Sau</span>
+        <span>{{ 'category.pagination.next' | t }}</span>
         <span class="material-symbols-outlined text-[16px]">chevron_right</span>
       </button>
     </div>

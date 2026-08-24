@@ -8,7 +8,7 @@
       (click)="toggleOpen()"
       (keydown)="onTriggerKeyDown($event)"
       [disabled]="disabled"
-      [attr.aria-label]="ariaLabel || placeholder"
+      [attr.aria-label]="ariaLabel || effectivePlaceholder"
       [attr.aria-expanded]="isOpen"
       [attr.aria-haspopup]="'listbox'"
       [attr.aria-controls]="id + '-listbox'"
@@ -38,8 +38,8 @@
           <span
             (click)="clearSelection($event)"
             class="material-symbols-outlined text-[16px] text-slate-400 hover:text-slate-600 p-0.5 rounded-full hover:bg-slate-200 transition-colors"
-            title="Xóa lựa chọn"
-            aria-label="Xóa lựa chọn"
+            [title]="'customSelect.clearSelection' | t"
+            [attr.aria-label]="'customSelect.clearSelection' | t"
           >
             close
           </span>
@@ -105,7 +105,7 @@
       (click)="toggleOpen()"
       (keydown)="onTriggerKeyDown($event)"
       [disabled]="disabled"
-      [attr.aria-label]="ariaLabel || placeholder"
+      [attr.aria-label]="ariaLabel || effectivePlaceholder"
       [attr.aria-expanded]="isOpen"
       [attr.aria-haspopup]="'listbox'"
       [attr.aria-controls]="id + '-listbox'"
@@ -153,15 +153,15 @@
               type="text"
               [(ngModel)]="searchTerm"
               (keydown)="onSearchKeyDown($event)"
-              [placeholder]="searchPlaceholder"
+              [placeholder]="effectiveSearchPlaceholder"
               class="w-full bg-transparent text-xs sm:text-sm font-medium text-[#0F172A] placeholder-slate-400 outline-none border-none p-0 focus:ring-0"
             />
             @if (searchTerm) {
               <button
                 type="button"
                 (click)="searchTerm = ''"
-                class="text-slate-400 hover:text-slate-600 p-0.5 rounded-full shrink-0"
-                aria-label="Xóa tìm kiếm"
+                class="text-slate-400 hover:text-slate-600 p-0.5 rounded-full shrink-0 cursor-pointer"
+                [attr.aria-label]="'customSelect.clearSearch' | t"
               >
                 <span class="material-symbols-outlined text-[14px]">close</span>
               </button>
@@ -175,7 +175,7 @@
         #optionsList
         [id]="id + '-listbox'"
         role="listbox"
-        [attr.aria-label]="ariaLabel || placeholder"
+        [attr.aria-label]="ariaLabel || effectivePlaceholder"
         class="overflow-y-auto py-1 space-y-0.5 flex-1 focus:outline-none"
         tabindex="-1"
       >
@@ -184,13 +184,13 @@
           <li
             role="option"
             [attr.aria-selected]="value === ''"
-            (click)="selectOption({ value: '', label: placeholder })"
+            (click)="selectOption({ value: '', label: effectivePlaceholder })"
             class="flex items-center justify-between px-3 py-2.5 rounded-xl min-h-[42px] text-xs sm:text-sm font-medium text-slate-500 hover:bg-[#F5F8FE] cursor-pointer transition-colors"
             [class.bg-[#EAF2FF]]="value === ''"
             [class.text-[#174FCB]]="value === ''"
             [class.font-bold]="value === ''"
           >
-            <span>{{ placeholder }}</span>
+            <span>{{ effectivePlaceholder }}</span>
             @if (value === '') {
               <span class="material-symbols-outlined text-[18px] text-[#1E63F3]" aria-hidden="true">check</span>
             }
@@ -244,7 +244,7 @@
         @if (filteredOptions.length === 0) {
           <li class="px-4 py-6 text-center text-xs sm:text-sm text-slate-400">
             <span class="material-symbols-outlined text-[24px] text-slate-300 block mb-1">search_off</span>
-            <span>Không tìm thấy kết quả</span>
+            <span>{{ 'customSelect.noResults' | t }}</span>
           </li>
         }
       </ul>

@@ -15,7 +15,7 @@
       <div class="flex items-center justify-between px-5 py-4 border-b border-[#DCE5F2] bg-slate-50/70 shrink-0">
         <div class="flex items-center gap-2">
           <span class="material-symbols-outlined text-[#1E63F3] text-[22px]">tune</span>
-          <h2 class="text-base font-bold text-[#0F172A]">Bộ lọc tìm kiếm</h2>
+          <h2 class="text-base font-bold text-[#0F172A]">{{ 'category.mobileDrawer.title' | t }}</h2>
           @if (activeFiltersCount > 0) {
             <span class="px-2 py-0.5 rounded-full bg-[#1E63F3] text-white text-xs font-bold">
               {{ activeFiltersCount }}
@@ -27,7 +27,7 @@
           type="button"
           (click)="onClose()"
           class="w-9 h-9 rounded-full flex items-center justify-center text-slate-500 hover:text-[#0F172A] hover:bg-slate-200/60 transition cursor-pointer"
-          aria-label="Đóng bộ lọc"
+          [attr.aria-label]="'category.mobileDrawer.closeAria' | t"
         >
           <span class="material-symbols-outlined text-[22px]">close</span>
         </button>
@@ -40,11 +40,11 @@
           <button
             type="button"
             (click)="toggleGroup('category')"
-            class="flex w-full items-center justify-between text-left font-bold text-sm text-[#0F172A]"
+            class="flex w-full items-center justify-between text-left font-bold text-sm text-[#0F172A] cursor-pointer"
           >
             <span class="flex items-center gap-2">
               <span class="material-symbols-outlined text-[#1E63F3] text-[18px]">category</span>
-              <span>Danh mục nghề nghiệp</span>
+              <span>{{ 'category.sidebar.groups.category' | t }}</span>
             </span>
             <span
               class="material-symbols-outlined text-slate-400 text-[18px] transition-transform duration-200"
@@ -73,9 +73,9 @@
                 <button
                   type="button"
                   (click)="showAllCategories = !showAllCategories"
-                  class="mt-1 text-xs font-bold text-[#1E63F3] px-2 py-1"
+                  class="mt-1 text-xs font-bold text-[#1E63F3] px-2 py-1 cursor-pointer"
                 >
-                  {{ showAllCategories ? 'Thu gọn' : 'Xem thêm (' + (categories.length - 5) + ')' }}
+                  {{ showAllCategories ? ('category.sidebar.showLess' | t) : (('category.sidebar.showMore' | t) + ' (' + (categories.length - 5) + ')') }}
                 </button>
               }
             </div>
@@ -87,11 +87,11 @@
           <button
             type="button"
             (click)="toggleGroup('location')"
-            class="flex w-full items-center justify-between text-left font-bold text-sm text-[#0F172A]"
+            class="flex w-full items-center justify-between text-left font-bold text-sm text-[#0F172A] cursor-pointer"
           >
             <span class="flex items-center gap-2">
               <span class="material-symbols-outlined text-[#1E63F3] text-[18px]">location_on</span>
-              <span>Địa điểm làm việc</span>
+              <span>{{ 'category.sidebar.groups.location' | t }}</span>
             </span>
             <span
               class="material-symbols-outlined text-slate-400 text-[18px] transition-transform duration-200"
@@ -125,9 +125,9 @@
                 <button
                   type="button"
                   (click)="showAllLocations = !showAllLocations"
-                  class="mt-1 text-xs font-bold text-[#1E63F3] px-2 py-1"
+                  class="mt-1 text-xs font-bold text-[#1E63F3] px-2 py-1 cursor-pointer"
                 >
-                  {{ showAllLocations ? 'Thu gọn' : 'Xem thêm (' + (addressCount.length - 5) + ')' }}
+                  {{ showAllLocations ? ('category.sidebar.showLess' | t) : (('category.sidebar.showMore' | t) + ' (' + (addressCount.length - 5) + ')') }}
                 </button>
               }
             </div>
@@ -139,11 +139,11 @@
           <button
             type="button"
             (click)="toggleGroup('salary')"
-            class="flex w-full items-center justify-between text-left font-bold text-sm text-[#0F172A]"
+            class="flex w-full items-center justify-between text-left font-bold text-sm text-[#0F172A] cursor-pointer"
           >
             <span class="flex items-center gap-2">
               <span class="material-symbols-outlined text-[#1E63F3] text-[18px]">payments</span>
-              <span>Mức lương</span>
+              <span>{{ 'category.sidebar.groups.salary' | t }}</span>
             </span>
             <span
               class="material-symbols-outlined text-slate-400 text-[18px] transition-transform duration-200"
@@ -166,7 +166,9 @@
                       (change)="onSalarySelect(opt.id)"
                       class="h-4 w-4 shrink-0 border-slate-300 text-[#1E63F3] focus:ring-[#1E63F3] accent-[#1E63F3]"
                     />
-                    <span class="text-sm font-medium text-slate-700 truncate">{{ opt.label }}</span>
+                    <span class="text-sm font-medium text-slate-700 truncate">
+                      {{ opt.labelKey ? (opt.labelKey | t) : opt.label }}
+                    </span>
                   </div>
                 </label>
               }
@@ -179,11 +181,11 @@
           <button
             type="button"
             (click)="toggleGroup('experience')"
-            class="flex w-full items-center justify-between text-left font-bold text-sm text-[#0F172A]"
+            class="flex w-full items-center justify-between text-left font-bold text-sm text-[#0F172A] cursor-pointer"
           >
             <span class="flex items-center gap-2">
               <span class="material-symbols-outlined text-[#1E63F3] text-[18px]">history_edu</span>
-              <span>Kinh nghiệm</span>
+              <span>{{ 'category.sidebar.groups.experience' | t }}</span>
             </span>
             <span
               class="material-symbols-outlined text-slate-400 text-[18px] transition-transform duration-200"
@@ -206,7 +208,9 @@
                       (change)="onExperienceSelect(opt.id)"
                       class="h-4 w-4 shrink-0 border-slate-300 text-[#1E63F3] focus:ring-[#1E63F3] accent-[#1E63F3]"
                     />
-                    <span class="text-sm font-medium text-slate-700 truncate">{{ opt.label }}</span>
+                    <span class="text-sm font-medium text-slate-700 truncate">
+                      {{ opt.labelKey ? (opt.labelKey | t) : opt.label }}
+                    </span>
                   </div>
                 </label>
               }
@@ -219,11 +223,11 @@
           <button
             type="button"
             (click)="toggleGroup('level')"
-            class="flex w-full items-center justify-between text-left font-bold text-sm text-[#0F172A]"
+            class="flex w-full items-center justify-between text-left font-bold text-sm text-[#0F172A] cursor-pointer"
           >
             <span class="flex items-center gap-2">
               <span class="material-symbols-outlined text-[#1E63F3] text-[18px]">workspace_premium</span>
-              <span>Cấp bậc</span>
+              <span>{{ 'category.sidebar.groups.level' | t }}</span>
             </span>
             <span
               class="material-symbols-outlined text-slate-400 text-[18px] transition-transform duration-200"
@@ -246,7 +250,9 @@
                       (change)="onLevelSelect(opt.id)"
                       class="h-4 w-4 shrink-0 border-slate-300 text-[#1E63F3] focus:ring-[#1E63F3] accent-[#1E63F3]"
                     />
-                    <span class="text-sm font-medium text-slate-700 truncate">{{ opt.label }}</span>
+                    <span class="text-sm font-medium text-slate-700 truncate">
+                      {{ opt.labelKey ? (opt.labelKey | t) : opt.label }}
+                    </span>
                   </div>
                 </label>
               }
@@ -259,11 +265,11 @@
           <button
             type="button"
             (click)="toggleGroup('employmentType')"
-            class="flex w-full items-center justify-between text-left font-bold text-sm text-[#0F172A]"
+            class="flex w-full items-center justify-between text-left font-bold text-sm text-[#0F172A] cursor-pointer"
           >
             <span class="flex items-center gap-2">
               <span class="material-symbols-outlined text-[#1E63F3] text-[18px]">badge</span>
-              <span>Hình thức làm việc</span>
+              <span>{{ 'category.sidebar.groups.employmentType' | t }}</span>
             </span>
             <span
               class="material-symbols-outlined text-slate-400 text-[18px] transition-transform duration-200"
@@ -284,7 +290,9 @@
                       (change)="onEmploymentTypeToggle(opt.id, $event)"
                       class="h-4 w-4 shrink-0 rounded border-slate-300 text-[#1E63F3] focus:ring-[#1E63F3] accent-[#1E63F3]"
                     />
-                    <span class="text-sm font-medium text-slate-700 truncate">{{ opt.label }}</span>
+                    <span class="text-sm font-medium text-slate-700 truncate">
+                      {{ opt.labelKey ? (opt.labelKey | t) : opt.label }}
+                    </span>
                   </div>
                 </label>
               }
@@ -297,11 +305,11 @@
           <button
             type="button"
             (click)="toggleGroup('workplace')"
-            class="flex w-full items-center justify-between text-left font-bold text-sm text-[#0F172A]"
+            class="flex w-full items-center justify-between text-left font-bold text-sm text-[#0F172A] cursor-pointer"
           >
             <span class="flex items-center gap-2">
               <span class="material-symbols-outlined text-[#1E63F3] text-[18px]">home_work</span>
-              <span>Nơi làm việc</span>
+              <span>{{ 'category.sidebar.groups.workplace' | t }}</span>
             </span>
             <span
               class="material-symbols-outlined text-slate-400 text-[18px] transition-transform duration-200"
@@ -322,7 +330,9 @@
                       (change)="onWorkplaceToggle(opt.id, $event)"
                       class="h-4 w-4 shrink-0 rounded border-slate-300 text-[#1E63F3] focus:ring-[#1E63F3] accent-[#1E63F3]"
                     />
-                    <span class="text-sm font-medium text-slate-700 truncate">{{ opt.label }}</span>
+                    <span class="text-sm font-medium text-slate-700 truncate">
+                      {{ opt.labelKey ? (opt.labelKey | t) : opt.label }}
+                    </span>
                   </div>
                 </label>
               }
@@ -338,7 +348,7 @@
           (click)="onClearAll()"
           class="flex-1 h-11 inline-flex items-center justify-center rounded-xl border border-[#DCE5F2] bg-slate-50 hover:bg-slate-100 text-xs sm:text-sm font-bold text-slate-700 transition cursor-pointer"
         >
-          Xóa tất cả
+          {{ 'category.mobileDrawer.clearAll' | t }}
         </button>
 
         <button
@@ -346,7 +356,7 @@
           (click)="onApply()"
           class="flex-[2] h-11 inline-flex items-center justify-center rounded-xl bg-[#1E63F3] hover:bg-[#174FCB] text-xs sm:text-sm font-bold text-white shadow-md shadow-[#1E63F3]/25 transition active:scale-95 cursor-pointer"
         >
-          <span>Xem {{ totalJobs }} việc làm</span>
+          <span>{{ 'category.mobileDrawer.viewJobs' | t }} {{ totalJobs }} {{ 'category.mobileDrawer.jobsSuffix' | t }}</span>
         </button>
       </div>
     </div>

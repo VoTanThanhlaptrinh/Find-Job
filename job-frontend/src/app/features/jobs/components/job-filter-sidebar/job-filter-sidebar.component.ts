@@ -11,10 +11,12 @@ import {
   WORKPLACE_OPTIONS,
 } from '../../models/job-filter.model';
 
+import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
+
 @Component({
   selector: 'app-job-filter-sidebar',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './job-filter-sidebar.component.html',
   styleUrl: './job-filter-sidebar.component.css',
 })

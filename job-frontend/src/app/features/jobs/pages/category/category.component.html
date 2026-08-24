@@ -2,10 +2,10 @@
 <section class="page-hero-banner relative min-h-[220px] sm:min-h-[250px] lg:min-h-[270px] flex items-center justify-center pt-28 pb-12 sm:pt-32 sm:pb-14 lg:pt-36 lg:pb-16 font-body">
   <div class="relative z-10 mx-auto w-full max-w-[1440px] px-6 sm:px-10 lg:px-12 text-center">
     <h1 class="font-headline text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white drop-shadow-md">
-      Cơ hội việc làm hàng đầu tại Việt Nam
+      {{ 'category.hero.title' | t }}
     </h1>
     <p class="mt-2.5 text-sm sm:text-base text-white/85 max-w-2xl mx-auto font-normal">
-      Khám phá hàng ngàn công việc chất lượng cao, kết nối trực tiếp với nhà tuyển dụng uy tín
+      {{ 'category.hero.subtitle' | t }}
     </p>
   </div>
 </section>
@@ -96,10 +96,10 @@
               <span class="material-symbols-outlined text-[32px]">error_outline</span>
             </div>
             <h3 class="font-headline text-lg sm:text-xl font-bold text-[#0F172A]">
-              Không thể tải danh sách việc làm
+              {{ 'category.errors.title' | t }}
             </h3>
             <p class="mt-1.5 text-sm text-[#526077] max-w-md mx-auto">
-              Đã xảy ra lỗi khi tải dữ liệu từ máy chủ. Vui lòng kiểm tra kết nối mạng và thử lại.
+              {{ 'category.errors.description' | t }}
             </p>
             <button
               type="button"
@@ -107,7 +107,7 @@
               class="mt-5 inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#1E63F3] hover:bg-[#174FCB] text-white text-sm font-bold shadow-md shadow-[#1E63F3]/25 transition cursor-pointer"
             >
               <span class="material-symbols-outlined text-[18px]">refresh</span>
-              <span>Thử lại</span>
+              <span>{{ 'category.errors.retry' | t }}</span>
             </button>
           </div>
         }
@@ -118,10 +118,10 @@
               <span class="material-symbols-outlined text-[32px]">search_off</span>
             </div>
             <h3 class="font-headline text-lg sm:text-xl font-bold text-[#0F172A]">
-              Không tìm thấy công việc phù hợp
+              {{ 'category.empty.title' | t }}
             </h3>
             <p class="mt-1.5 text-sm text-[#526077] max-w-md mx-auto">
-              Hãy thử thay đổi từ khóa hoặc xóa bớt điều kiện lọc để tìm được nhiều cơ hội hơn.
+              {{ 'category.empty.description' | t }}
             </p>
             @if (totalActiveFiltersCount > 0) {
               <button
@@ -130,7 +130,7 @@
                 class="mt-5 inline-flex items-center gap-2 px-6 py-2.5 rounded-xl border border-[#1E63F3] text-[#1E63F3] hover:bg-[#EAF2FF] text-sm font-bold transition cursor-pointer"
               >
                 <span class="material-symbols-outlined text-[18px]">restart_alt</span>
-                <span>Xóa bộ lọc</span>
+                <span>{{ 'category.empty.clearFilters' | t }}</span>
               </button>
             }
           </div>

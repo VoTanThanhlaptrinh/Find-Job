@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { CategoryService } from '../../../../core/services/category.service';
 import { FilterService } from '../../services/filter.service';
 import { CustomSelectComponent, SelectOption } from '../../../../shared/components/custom-select/custom-select.component';
+import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
 
 @Component({
   selector: 'app-job-search-bar',
   standalone: true,
-  imports: [CommonModule, FormsModule, CustomSelectComponent],
+  imports: [CommonModule, FormsModule, CustomSelectComponent, TranslatePipe],
   templateUrl: './job-search-bar.component.html',
   styleUrl: './job-search-bar.component.css',
 })

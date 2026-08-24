@@ -41,7 +41,7 @@
         <!-- Location -->
         <div class="inline-flex items-center gap-1 shrink-0">
           <span class="material-symbols-outlined text-slate-400 text-[16px] sm:text-[18px]">location_on</span>
-          <span class="truncate max-w-[140px] sm:max-w-[180px]">{{ job.address || 'Toàn quốc' }}</span>
+          <span class="truncate max-w-[140px] sm:max-w-[180px]">{{ job.address || ('category.card.nationwide' | t) }}</span>
         </div>
 
         <span class="text-slate-300 hidden sm:inline">&bull;</span>
@@ -81,8 +81,8 @@
     <button
       type="button"
       (click)="toggleBookmark($event)"
-      [attr.aria-label]="isSaved ? 'Bỏ lưu công việc' : 'Lưu công việc'"
-      [title]="isSaved ? 'Bỏ lưu công việc' : 'Lưu công việc'"
+      [attr.aria-label]="isSaved ? ('category.card.unsaveJob' | t) : ('category.card.saveJob' | t)"
+      [title]="isSaved ? ('category.card.unsaveJob' | t) : ('category.card.saveJob' | t)"
       class="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E63F3]"
       [ngClass]="
         isSaved
