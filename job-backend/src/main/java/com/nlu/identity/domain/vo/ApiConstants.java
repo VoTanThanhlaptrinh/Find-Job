@@ -4,6 +4,7 @@ public class ApiConstants {
 
     // 1. Các API cho phép tất cả mọi người truy cập (Không phân biệt Method)
     public static final String[] PUBLIC_ENDPOINTS = {
+            "/actuator/**",
             "/api/auth/**",     // Bao gồm login, register, refresh-token, google, v.v.
             "/api/home/**",
             "/error",
