@@ -15,7 +15,7 @@ spring:
 app:
   cookie:
     secure: true
-  frontend-url: https://find-job-frontend.vercel.app
+  frontend-url: ${FRONTEND_URL:https://job-frontend-gray.vercel.app}
 
 server:
   port: ${PORT:8080}
