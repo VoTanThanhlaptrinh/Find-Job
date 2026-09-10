@@ -28,17 +28,35 @@ public class JobViewMapper {
         String expiredDate = job.getExpiredDate() == null
                 ? ""
                 : job.getExpiredDate().atOffset(ZoneOffset.UTC).toLocalDate().toString();
+
+        String companyName = job.getRecruitment() != null ? job.getRecruitment().getCompanyName() : null;
+        String companyLogo = job.getLogo() != null && !job.getLogo().isBlank() ? job.getLogo() : null;
+        String companyDescription = job.getRecruitment() != null ? job.getRecruitment().getDescription() : null;
+        String companyWebsite = job.getRecruitment() != null ? job.getRecruitment().getSocialLink() : null;
+        Long companyId = job.getRecruitment() != null ? job.getRecruitment().getId() : null;
+        String categoryName = job.getCategory() != null ? job.getCategory().getName() : null;
+        Integer experienceYears = job.getYearOfExperience() != null ? job.getYearOfExperience() : null;
+        String locationCity = extractCity(job);
+
         return new JobDetailView(
                 job.getId(),
                 job.getTitle(),
                 extractStreet(job),
                 job.getDescription(),
                 job.getSalary(),
-                job.getTime().toString(),
+                job.getTime() != null ? job.getTime().toString() : "",
                 job.getRequireDetails(),
                 job.getSkill(),
                 expiredDate,
-                job.getHeadcount()
+                job.getHeadcount(),
+                companyName,
+                companyLogo,
+                companyDescription,
+                companyWebsite,
+                companyId,
+                categoryName,
+                experienceYears,
+                locationCity
         );
     }
 

@@ -79,7 +79,7 @@ public interface JobRepository extends JpaRepository<Job, Long> {
                                                       SELECT
                                                           r.job_id AS id,
                                                           r.title,
-                                                          a.city AS address,\s
+                                                          a.city AS address,
                                                           r.salary,
                                                           r.time,
                                                           r.final_dist,
