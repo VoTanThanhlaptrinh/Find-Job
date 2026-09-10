@@ -6,9 +6,9 @@ spring:
   rabbitmq:
     host: ${RABBIT_HOST}
     port: ${RABBIT_PORT} # Mặc định là 5671 cho SSL
-    username: ${RABBIT_USER}
-    password: ${RABBIT_PASSWORD}
-    virtual-host: ${RABBIT_USER} # Thay đổi theo vhost của bạn
+    username: ${RABBITMQ_DEFAULT_USER}
+    password: ${RABBITMQ_DEFAULT_PASS}
+    virtual-host: /rabbitmq # Thay đổi theo vhost của bạn
     ssl:
       enabled: true
 
