@@ -25,12 +25,20 @@ export interface JobDetailViewModel {
   title: string;
   address: string;
   description: string;
-  salary: number;
+  salary: number | string;
   time: string;
   requireDetails: string;
   skill: string;
   expiredDate: string;
   headcount: number;
+  companyName?: string;
+  companyLogo?: string;
+  companyDescription?: string;
+  companyWebsite?: string;
+  companyId?: number;
+  categoryName?: string;
+  experienceYears?: number;
+  locationCity?: string;
 }
 
 export interface HirerJobViewModel {
@@ -66,3 +74,6 @@ export type JobExistsApiResponse = ApiResponse<boolean>;
 export type JobSubmitApiResponse = ApiResponse<string | null>;
 export type HirerJobListApiResponse = ApiResponse<PagedPayload<HirerJobPostView>>;
 export type HirerJobCountApiResponse = ApiResponse<number>;
+
+export * from './career-blog.model';
+

@@ -10,6 +10,14 @@ public record JobDetailView(
         String requireDetails,
         String skill,
         String expiredDate,
-        Integer headcount
+        Integer headcount,
+        String companyName,
+        String companyLogo,
+        String companyDescription,
+        String companyWebsite,
+        Long companyId,
+        String categoryName,
+        Integer experienceYears,
+        String locationCity
 ) {
 }
