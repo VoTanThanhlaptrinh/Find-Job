@@ -1,10 +1,12 @@
 package com.nlu.identity.infrastructure.config;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.nlu.identity.domain.vo.ApiConstants;
 import com.nlu.identity.infrastructure.filter.CustomOAuth2SuccessHandler;
 import jakarta.servlet.DispatcherType;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -31,19 +33,22 @@ import com.nlu.shared.infrastructure.filter.RequestLoggingFilter;
 import com.nlu.identity.infrastructure.filter.VerifyRecoveryFilter;
 import com.nlu.identity.application.impl.UserRepositoryDetailsService;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final JwtFilter jwtAuthFilter;
     private final RateLimitFilter rateLimitFilter;
     private final RequestLoggingFilter requestLoggingFilter;
-    private UserRepositoryDetailsService userDetailsService;
-    private VerifyRecoveryFilter verifyRecoveryFilter;
-    private CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
+    private final UserRepositoryDetailsService userDetailsService;
+    private final VerifyRecoveryFilter verifyRecoveryFilter;
+    private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
+
+    @Value("${app.frontend-url:http://localhost:4200}")
+    private String frontendUrl;
 
     @Bean
     SecurityFilterChain restChain(HttpSecurity http) throws Exception {
@@ -80,9 +85,13 @@ public class SecurityConfig {
     UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of("""
-                http://localhost:4200""", """
-                https://find-job-frontend.vercel.app"""));
+        List<String> allowedOrigins = Arrays.stream(frontendUrl.split(","))
+                .map(String::trim)
+                .map(origin -> origin.replaceAll("/+$", ""))
+                .filter(origin -> !origin.isEmpty())
+                .toList();
+
+        config.setAllowedOrigins(allowedOrigins.isEmpty() ? List.of("http://localhost:4200") : allowedOrigins);
         config.setAllowCredentials(true);
         config.setAllowedMethods(List.of("GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"));
         config.setAllowedHeaders(List.of("Content-Type", "Authorization", "X-Correlation-ID", "Cache-Control",
