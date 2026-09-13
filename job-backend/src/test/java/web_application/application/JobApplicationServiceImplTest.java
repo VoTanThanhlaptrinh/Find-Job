@@ -8,7 +8,7 @@ import com.nlu.identity.domain.repository.UserRepository;
 import com.nlu.shared.domain.exception.BadRequestException;
 import com.nlu.applicationProcess.api.dto.req.ApplyCvWithExistingRequest;
 import com.nlu.applicationProcess.api.dto.req.ApplyCvWithUploadRequest;
-import com.nlu.shared.infrastructure.message.MessageProducer;
+import org.springframework.context.ApplicationEventPublisher;
 import com.nlu.recruitment.domain.model.Job;
 import com.nlu.applicationProcess.domain.model.JobApplication;
 import com.nlu.applicationProcess.domain.model.Resume;
@@ -60,7 +60,7 @@ class JobApplicationServiceImplTest {
     private ResumeService resumeService;
 
     @Mock
-    private MessageProducer messageProducer;
+    private ApplicationEventPublisher eventPublisher;
 
     @Mock
     private FileService fileService;

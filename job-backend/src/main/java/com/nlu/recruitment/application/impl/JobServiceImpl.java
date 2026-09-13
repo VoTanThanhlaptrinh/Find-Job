@@ -15,7 +15,8 @@ import com.nlu.shared.domain.exception.BadRequestException;
 import com.nlu.shared.domain.exception.ForbiddenException;
 import com.nlu.shared.domain.exception.ResourceNotFoundException;
 import com.nlu.shared.domain.exception.UnauthorizedException;
-import com.nlu.shared.infrastructure.message.MessageProducer;
+import com.nlu.recruitment.domain.event.JobAnalysisRequestedEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import com.nlu.shared.application.SseEmitterService;
 import com.nlu.shared.application.HtmlParserService;
 import com.nlu.shared.domain.model.SseMessagePayload;
@@ -50,7 +51,7 @@ public class JobServiceImpl implements JobService {
     private static final String MDC_USER_ID = "userId";
     private static final String MDC_JOB_ID = "jobId";
     private final JobViewMapper jobViewMapper;
-    private final MessageProducer producer;
+    private final ApplicationEventPublisher eventPublisher;
     private final SseEmitterService sseEmitterService;
     private final HtmlParserService htmlParserService;
     @Override
@@ -101,7 +102,7 @@ public class JobServiceImpl implements JobService {
 
             if (jobDTO.enableAiAnalysis()) {
                 VectorizeJdRequest request = buildVectorizeRequest(job, user);
-                producer.processJdVectorize(request);
+                eventPublisher.publishEvent(new JobAnalysisRequestedEvent(request));
 
                 sseEmitterService.sendEvent(user.getId(), "job-process",
                     SseMessagePayload.builder()
@@ -251,7 +252,7 @@ public class JobServiceImpl implements JobService {
             }
 
             VectorizeJdRequest request = buildVectorizeRequest(job, user);
-            producer.processJdVectorize(request);
+            eventPublisher.publishEvent(new JobAnalysisRequestedEvent(request));
 
             sseEmitterService.sendEvent(user.getId(), "job-process",
                 SseMessagePayload.builder()

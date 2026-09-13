@@ -11,7 +11,8 @@ import com.nlu.applicationProcess.api.dto.req.CandidateDTO;
 import com.nlu.shared.application.CloudStorageService;
 import com.nlu.shared.domain.exception.BadRequestException;
 import com.nlu.shared.domain.exception.ResourceNotFoundException;
-import com.nlu.shared.infrastructure.message.MessageProducer;
+import com.nlu.applicationProcess.domain.event.ResumeAnalysisRequestedEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import com.nlu.applicationProcess.domain.model.JobApplication;
 import com.nlu.applicationProcess.domain.model.Resume;
 import com.nlu.recruitment.domain.model.Job;
@@ -39,7 +40,7 @@ public class JobApplicationServiceImpl implements JobApplicationService {
     private final ResumeRepository resumeRepository;
     private final JobRepository jobRepository;
     private final UserRepository userRepository;
-    private final MessageProducer messageProducer;
+    private final ApplicationEventPublisher eventPublisher;
     private final FileService fileService;
     private final CloudStorageService cloudStorageService;
 
@@ -151,7 +152,7 @@ public class JobApplicationServiceImpl implements JobApplicationService {
             createAndSaveJobApplication(context.job(), resume, context.currentUser());
 
             // 6. Trigger Asynchronous AI Processing
-            messageProducer.processAI(new ResumeParsingMessage(rawText, context.currentUser().getId(), resume.getId()));
+            eventPublisher.publishEvent(new ResumeAnalysisRequestedEvent(new ResumeParsingMessage(rawText, context.currentUser().getId(), resume.getId())));
 
             log.info("Application completed — user: {} applied to job: {} with new CV: {}. Dispatched AI processing.",
                     context.currentUser().getId(), request.getJobId(), resume.getId());

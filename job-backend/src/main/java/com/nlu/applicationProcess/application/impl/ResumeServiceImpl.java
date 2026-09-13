@@ -13,7 +13,8 @@ import com.nlu.shared.domain.exception.BadRequestException;
 import com.nlu.shared.domain.exception.ForbiddenException;
 import com.nlu.shared.domain.exception.ResourceNotFoundException;
 import com.nlu.shared.domain.exception.UnauthorizedException;
-import com.nlu.shared.infrastructure.message.MessageProducer;
+import com.nlu.applicationProcess.domain.event.ResumeAnalysisRequestedEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import com.nlu.applicationProcess.domain.model.Resume;
 import com.nlu.identity.domain.model.User;
 import com.nlu.applicationProcess.application.ResumeParsingService;
@@ -39,7 +40,7 @@ public class ResumeServiceImpl implements ResumeService {
     private final ResumeRepository resumeRepository;
     private final ResumeQueryDSL resumeQueryDSL;
     private final FileService fileService;
-    private final MessageProducer producer;
+    private final ApplicationEventPublisher eventPublisher;
     private final S3PresignedUrlService s3PresignedUrlService;
     private final SseEmitterService sseEmitterService;
 
@@ -146,7 +147,7 @@ public class ResumeServiceImpl implements ResumeService {
 
         // analyze and vectorize resume
         if (resumeUploadDTO.enableAiAnalysis()) {
-            producer.processAI(new ResumeParsingMessage(rawText, user.getId(), cv.getId()));
+            eventPublisher.publishEvent(new ResumeAnalysisRequestedEvent(new ResumeParsingMessage(rawText, user.getId(), cv.getId())));
             log.info("Resume created — cv: {}, dispatched cloud upload and AI processing for user: {}",
                     cv.getId(), user.getId());
         } else {
@@ -181,8 +182,8 @@ public class ResumeServiceImpl implements ResumeService {
                         .message("AI is analyzing your resume...")
                         .build());
 
-        // Dispatch to RabbitMQ (async)
-        producer.processAI(new ResumeParsingMessage(rawText, user.getId(), cv.getId()));
+        // Dispatch Spring event
+        eventPublisher.publishEvent(new ResumeAnalysisRequestedEvent(new ResumeParsingMessage(rawText, user.getId(), cv.getId())));
         log.info("Deferred AI analysis triggered for CV: {} by user: {}", id, user.getId());
     }
 
