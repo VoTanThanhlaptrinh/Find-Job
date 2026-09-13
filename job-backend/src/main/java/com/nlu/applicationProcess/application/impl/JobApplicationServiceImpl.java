@@ -145,6 +145,8 @@ public class JobApplicationServiceImpl implements JobApplicationService {
             resume.setUser(context.currentUser());
             resume.setKeyCf(key);
             resume.setFileName(originalFilename);
+            resume.setRawText(rawText);
+            resume.startAnalysis();
 
             resumeRepository.save(resume);
             MDC.put(MDC_CV_ID, String.valueOf(resume.getId()));

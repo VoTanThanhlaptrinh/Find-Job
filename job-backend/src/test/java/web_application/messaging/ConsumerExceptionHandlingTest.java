@@ -9,8 +9,10 @@ import com.nlu.recruitment.api.dto.VectorizeJdRequest;
 import com.nlu.recruitment.domain.repository.JobRepository;
 import com.nlu.recruitment.infrastructure.message.JobVectorizationConsumer;
 import com.nlu.shared.api.message.dto.ApiMessage;
+import com.nlu.applicationProcess.domain.model.Resume;
 import com.nlu.shared.application.SseEmitterService;
 import com.nlu.shared.domain.model.SseMessagePayload;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -95,6 +97,9 @@ class ConsumerExceptionHandlingTest {
     @DisplayName("ResumeParsingConsumer sends SSE failed event and rethrows exception on failure")
     void testResumeParsingConsumerRethrowsException() {
         ResumeParsingMessage message = new ResumeParsingMessage("Raw text", 202L, 101L);
+        Resume cv = new Resume();
+        when(resumeRepository.findById(101L)).thenReturn(Optional.of(cv));
+        when(resumeRepository.save(any(Resume.class))).thenAnswer(inv -> inv.getArgument(0));
 
         RuntimeException expectedError = new RuntimeException("AI parsing error");
         when(resumeParsingService.processResume("Raw text")).thenThrow(expectedError);
@@ -118,6 +123,9 @@ class ConsumerExceptionHandlingTest {
     @DisplayName("ResumeParsingConsumer: SSE failure does not mask main processing error")
     void testResumeParsingConsumerSseFailureDoesNotMaskMainError() {
         ResumeParsingMessage message = new ResumeParsingMessage("Raw text", 202L, 101L);
+        Resume cv = new Resume();
+        when(resumeRepository.findById(101L)).thenReturn(Optional.of(cv));
+        when(resumeRepository.save(any(Resume.class))).thenAnswer(inv -> inv.getArgument(0));
 
         RuntimeException mainError = new RuntimeException("Primary AI parsing error");
         when(resumeParsingService.processResume("Raw text")).thenThrow(mainError);

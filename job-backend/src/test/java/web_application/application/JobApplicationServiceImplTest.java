@@ -16,6 +16,7 @@ import com.nlu.identity.domain.model.User;
 import com.nlu.applicationProcess.application.ResumeService;
 import com.nlu.applicationProcess.application.impl.JobApplicationServiceImpl;
 import com.nlu.shared.application.FileService;
+import com.nlu.shared.application.CloudStorageService;
 import com.nlu.shared.utils.MessageUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -64,6 +65,9 @@ class JobApplicationServiceImplTest {
 
     @Mock
     private FileService fileService;
+
+    @Mock
+    private CloudStorageService cloudStorageService;
 
     @InjectMocks
     private JobApplicationServiceImpl applyService;
@@ -140,7 +144,7 @@ class JobApplicationServiceImplTest {
             when(userRepository.findByEmail_Value("user@test.com")).thenReturn(Optional.of(managedUser));
             when(jobApplicationRepository.findByJobAndUser("user@test.com", 800L)).thenReturn(Optional.empty());
             when(jobRepository.findById(800L)).thenReturn(Optional.of(new Job()));
-            when(resumeRepository.countActiveByUserEmail("user@test.com")).thenReturn(5L);
+            when(resumeRepository.countActiveByUserEmail("user@test.com")).thenReturn(10L);
 
             org.junit.jupiter.api.Assertions.assertThrows(BadRequestException.class, () -> {
                 applyService.applyWithUploadCv(request, detachedUser);
