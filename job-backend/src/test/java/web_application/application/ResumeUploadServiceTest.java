@@ -326,7 +326,7 @@ class ResumeUploadServiceTest {
             BadRequestException ex = assertThrows(BadRequestException.class, () ->
                     resumeUploadService.completeUpload(testUploadId, testUser)
             );
-            assertTrue(ex.getMessage().contains("invalid"));
+            assertTrue(ex.getMessage().contains("does not match"));
             assertEquals(ResumeUploadSessionStatus.REJECTED, session.getStatus());
             verify(cloudStorageService).deleteObject(session.getTempKey());
         }
