@@ -4,6 +4,7 @@ import com.nlu.applicationProcess.application.impl.ResumeUploadFinalizer;
 import com.nlu.applicationProcess.application.impl.ResumeUploadSessionCleaner;
 import com.nlu.applicationProcess.domain.model.ResumeUploadSession;
 import com.nlu.applicationProcess.domain.model.ResumeUploadSessionStatus;
+import com.nlu.applicationProcess.domain.repository.ResumeRepository;
 import com.nlu.applicationProcess.domain.repository.ResumeUploadSessionRepository;
 import com.nlu.applicationProcess.infrastructure.job.ResumeUploadCleanupJob;
 import com.nlu.identity.domain.model.User;
@@ -46,6 +47,9 @@ class ResumeUploadCleanupJobTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private ResumeRepository resumeRepository;
 
     @Mock
     private ResumeUploadProperties properties;
@@ -141,12 +145,72 @@ class ResumeUploadCleanupJobTest {
     }
 
     @Test
+    @DisplayName("Cleanup REJECTED khi storage delete thất bại: KHÔNG gọi recordCleanupSuccess, gọi recordCleanupFailure, giữ DB row")
+    void cleanupRejectedSessions_StorageFailure_DoesNotRecordSuccess_RecordsFailure() {
+        UUID id = UUID.randomUUID();
+        ResumeUploadSession session = ResumeUploadSession.builder()
+                .id(id)
+                .tempKey("temp/resumes/1/" + id)
+                .permanentKey("resumes/1/" + id)
+                .status(ResumeUploadSessionStatus.REJECTED)
+                .rejectionCode("METADATA_SIZE_MISMATCH")
+                .build();
+
+        when(sessionRepository.findByStatusAndCleanupCompletedAtIsNull(
+                eq(ResumeUploadSessionStatus.REJECTED),
+                any(Pageable.class)
+        )).thenReturn(List.of(session));
+
+        doThrow(new RuntimeException("S3 500 Internal Error")).when(cloudStorageService).deleteObject(session.getTempKey());
+        StorageObjectMetadata existingMeta = new StorageObjectMetadata(session.getTempKey(), 1024L, "application/pdf", "etag");
+        when(cloudStorageService.headObject(session.getTempKey())).thenReturn(Optional.of(existingMeta));
+
+        cleanupJob.cleanupRejectedSessions();
+
+        // Must NOT record success
+        verify(sessionCleaner, never()).recordCleanupSuccess(id);
+        // Must record failure for retry
+        verify(sessionCleaner).recordCleanupFailure(eq(id), contains("incomplete"));
+        // Must NOT delete REJECTED DB row
+        verify(sessionCleaner, never()).deleteExpiredSession(id);
+    }
+
+    @Test
+    @DisplayName("Cleanup REJECTED bỏ qua xóa permanent key nếu session có resumeId hoặc key đang được Resume tham chiếu")
+    void cleanupRejectedSessions_WhenKeyReferencedByResume_SkipsPermanentDeletion() {
+        UUID id = UUID.randomUUID();
+        ResumeUploadSession session = ResumeUploadSession.builder()
+                .id(id)
+                .tempKey("temp/resumes/1/" + id)
+                .permanentKey("resumes/1/" + id)
+                .status(ResumeUploadSessionStatus.REJECTED)
+                .rejectionCode("METADATA_SIZE_MISMATCH")
+                .build();
+
+        when(sessionRepository.findByStatusAndCleanupCompletedAtIsNull(
+                eq(ResumeUploadSessionStatus.REJECTED),
+                any(Pageable.class)
+        )).thenReturn(List.of(session));
+
+        when(resumeRepository.existsByKeyCf(session.getPermanentKey())).thenReturn(true);
+
+        cleanupJob.cleanupRejectedSessions();
+
+        verify(cloudStorageService).deleteObject(session.getTempKey());
+        // Permanent key must NOT be deleted because it is referenced by a Resume
+        verify(cloudStorageService, never()).deleteObject(session.getPermanentKey());
+        // Both objects considered cleaned (temp deleted, perm skipped because referenced)
+        verify(sessionCleaner).recordCleanupSuccess(id);
+    }
+
+    @Test
     @DisplayName("Stale FINALIZING được recovery: nếu permanent object hợp lệ thì hoàn tất tạo Resume")
     void recoverStuckFinalizingSessions_WhenPermanentObjectValid_RecoversToCompleted() {
         UUID id = UUID.randomUUID();
         ResumeUploadSession session = ResumeUploadSession.builder()
                 .id(id)
                 .userId(100L)
+                .declaredContentType("application/pdf")
                 .declaredSize(2048L)
                 .tempKey("temp/resumes/100/" + id)
                 .permanentKey("resumes/100/" + id)
@@ -179,12 +243,52 @@ class ResumeUploadCleanupJobTest {
     }
 
     @Test
+    @DisplayName("Stale FINALIZING recovery từ chối khi permanent object sai content type (chuyển sang REJECTED)")
+    void recoverStuckFinalizingSessions_WhenContentTypeMismatch_RecoversToRejected() {
+        UUID id = UUID.randomUUID();
+        ResumeUploadSession session = ResumeUploadSession.builder()
+                .id(id)
+                .userId(100L)
+                .declaredContentType("application/pdf")
+                .declaredSize(2048L)
+                .tempKey("temp/resumes/100/" + id)
+                .permanentKey("resumes/100/" + id)
+                .status(ResumeUploadSessionStatus.FINALIZING)
+                .finalizingStartedAt(LocalDateTime.now().minusMinutes(10))
+                .build();
+
+        when(sessionRepository.findByStatusAndFinalizingStartedAtBefore(
+                eq(ResumeUploadSessionStatus.FINALIZING),
+                any(LocalDateTime.class),
+                any(Pageable.class)
+        )).thenReturn(List.of(session));
+
+        // Object has mismatched content-type "image/png"
+        StorageObjectMetadata permMeta = new StorageObjectMetadata(
+                session.getPermanentKey(),
+                2048L,
+                "image/png",
+                "etag123"
+        );
+        when(cloudStorageService.headObject(session.getPermanentKey())).thenReturn(Optional.of(permMeta));
+        when(finalizer.recoverStuckSession(id, false, null)).thenReturn(true);
+
+        cleanupJob.recoverStuckFinalizingSessions();
+
+        // Must recover to REJECTED (permanentObjectValid = false)
+        verify(finalizer).recoverStuckSession(id, false, null);
+        verify(cloudStorageService).deleteObject(session.getTempKey());
+        verify(cloudStorageService).deleteObject(session.getPermanentKey());
+    }
+
+    @Test
     @DisplayName("Stale FINALIZING được recovery: nếu permanent object không tồn tại thì chuyển REJECTED và dọn dẹp orphan")
     void recoverStuckFinalizingSessions_WhenPermanentObjectInvalid_RecoversToRejected() {
         UUID id = UUID.randomUUID();
         ResumeUploadSession session = ResumeUploadSession.builder()
                 .id(id)
                 .userId(100L)
+                .declaredContentType("application/pdf")
                 .declaredSize(2048L)
                 .tempKey("temp/resumes/100/" + id)
                 .permanentKey("resumes/100/" + id)

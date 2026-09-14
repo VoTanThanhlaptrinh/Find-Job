@@ -79,16 +79,11 @@ public class S3PresignedUrlServiceImpl implements S3PresignedUrlService {
     @Override
     public PresignedUploadUrlResponse generateUploadUrl(String key, String contentType, UUID uploadId, int expirationMinutes) {
         try {
-            PutObjectRequest.Builder putRequestBuilder = PutObjectRequest.builder()
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
                     .key(key)
-                    .contentType(contentType);
-
-            if (uploadId != null) {
-                putRequestBuilder.metadata(Map.of("upload-id", uploadId.toString()));
-            }
-
-            PutObjectRequest putObjectRequest = putRequestBuilder.build();
+                    .contentType(contentType)
+                    .build();
 
             PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
                     .signatureDuration(Duration.ofMinutes(expirationMinutes))
@@ -102,7 +97,17 @@ public class S3PresignedUrlServiceImpl implements S3PresignedUrlService {
                     key, uploadId, expirationMinutes);
 
             Map<String, String> requiredHeaders = new LinkedHashMap<>();
-            requiredHeaders.put("Content-Type", contentType);
+            if (presignedRequest.signedHeaders() != null) {
+                presignedRequest.signedHeaders().forEach((headerName, values) -> {
+                    if (!"host".equalsIgnoreCase(headerName)) {
+                        requiredHeaders.put(headerName, String.join(", ", values));
+                    }
+                });
+            }
+
+            if (!requiredHeaders.containsKey("Content-Type") && !requiredHeaders.containsKey("content-type")) {
+                requiredHeaders.put("Content-Type", contentType);
+            }
 
             LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(expirationMinutes);
 

@@ -76,7 +76,7 @@ public class ResumeServiceImpl implements ResumeService {
         if (user == null) {
             throw new UnauthorizedException(MessageUtils.getMessage("message.unauthorized"));
         }
-        if(resumeRepository.countResumesByUser_Id(user.getId()) > 100){
+        if (resumeRepository.countResumesByUser_Id(user.getId()) >= 100) {
             throw new BadRequestException(MessageUtils.getMessage("resume.limit_exceeded"));
         }
         MDC.put(MDC_USER_ID, String.valueOf(user.getId()));

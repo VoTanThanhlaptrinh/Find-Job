@@ -18,6 +18,9 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequ
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -268,6 +271,11 @@ class S3PresignedUrlServiceTest {
                     mock(software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest.class);
             when(presignedPut.url()).thenReturn(new URL("https://bucket.r2.cloudflarestorage.com/temp/resumes/1/abc?sig=xyz"));
 
+            when(presignedPut.signedHeaders()).thenReturn(Map.of(
+                    "host", List.of("bucket.r2.cloudflarestorage.com"),
+                    "content-type", List.of("application/pdf")
+            ));
+
             java.util.UUID uploadId = java.util.UUID.randomUUID();
             when(s3Presigner.presignPutObject(any(software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest.class)))
                     .thenReturn(presignedPut);
@@ -282,7 +290,9 @@ class S3PresignedUrlServiceTest {
             assertNotNull(response);
             assertEquals("https://bucket.r2.cloudflarestorage.com/temp/resumes/1/abc?sig=xyz", response.url());
             assertEquals("PUT", response.method());
-            assertEquals("application/pdf", response.requiredHeaders().get("Content-Type"));
+            assertTrue(response.requiredHeaders().containsKey("content-type") || response.requiredHeaders().containsKey("Content-Type"));
+            assertFalse(response.requiredHeaders().containsKey("host"));
+            assertFalse(response.requiredHeaders().containsKey("Host"));
             assertNotNull(response.expiresAt());
 
             ArgumentCaptor<software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest> captor =
@@ -293,7 +303,35 @@ class S3PresignedUrlServiceTest {
             assertEquals(BUCKET_NAME, captured.putObjectRequest().bucket());
             assertEquals("temp/resumes/1/abc", captured.putObjectRequest().key());
             assertEquals("application/pdf", captured.putObjectRequest().contentType());
-            assertEquals(uploadId.toString(), captured.putObjectRequest().metadata().get("upload-id"));
+            assertTrue(captured.putObjectRequest().metadata() == null || captured.putObjectRequest().metadata().isEmpty() || !captured.putObjectRequest().metadata().containsKey("upload-id"));
+        }
+
+        @Test
+        @DisplayName("Xác nhận tất cả signedHeaders bắt buộc từ S3/R2 đều có trong requiredHeaders ngoại trừ Host")
+        void generateUploadUrl_PreservesAllClientSettableSignedHeaders_AndExcludesHost() throws MalformedURLException {
+            software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest presignedPut =
+                    mock(software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest.class);
+            when(presignedPut.url()).thenReturn(new URL("https://bucket.r2.cloudflarestorage.com/temp/resumes/1/abc?sig=xyz"));
+            when(presignedPut.signedHeaders()).thenReturn(Map.of(
+                    "Host", List.of("bucket.r2.cloudflarestorage.com"),
+                    "content-type", List.of("application/pdf"),
+                    "x-amz-server-side-encryption", List.of("AES256")
+            ));
+
+            when(s3Presigner.presignPutObject(any(software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest.class)))
+                    .thenReturn(presignedPut);
+
+            com.nlu.shared.domain.model.PresignedUploadUrlResponse response = s3PresignedUrlService.generateUploadUrl(
+                    "temp/resumes/1/abc",
+                    "application/pdf",
+                    UUID.randomUUID(),
+                    10
+            );
+
+            assertFalse(response.requiredHeaders().containsKey("Host"));
+            assertFalse(response.requiredHeaders().containsKey("host"));
+            assertTrue(response.requiredHeaders().containsKey("content-type") || response.requiredHeaders().containsKey("Content-Type"));
+            assertEquals("AES256", response.requiredHeaders().get("x-amz-server-side-encryption"));
         }
 
         @Test

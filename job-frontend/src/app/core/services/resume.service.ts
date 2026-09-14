@@ -204,9 +204,23 @@ export class ResumeService {
     }
 
     private uploadIntents = new Map<string, string>();
+    private inFlightIntents = new Set<string>();
 
-    private getOrCreateIdempotencyKey(file: File): string {
-        const fileKey = `${file.name}_${file.size}_${file.lastModified}`;
+    getUploadIntentKey(file: File): string {
+        return `${file.name}_${file.size}_${file.lastModified}`;
+    }
+
+    isUploadInFlight(file: File): boolean {
+        return this.inFlightIntents.has(this.getUploadIntentKey(file));
+    }
+
+    startNewUploadIntent(file: File): void {
+        const fileKey = this.getUploadIntentKey(file);
+        this.uploadIntents.delete(fileKey);
+    }
+
+    getOrCreateIdempotencyKey(file: File): string {
+        const fileKey = this.getUploadIntentKey(file);
         let key = this.uploadIntents.get(fileKey);
         if (!key) {
             key = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : this.generateUUID();
@@ -215,8 +229,8 @@ export class ResumeService {
         return key;
     }
 
-    private clearUploadIntent(file: File): void {
-        const fileKey = `${file.name}_${file.size}_${file.lastModified}`;
+    clearUploadIntent(file: File): void {
+        const fileKey = this.getUploadIntentKey(file);
         this.uploadIntents.delete(fileKey);
     }
 
@@ -228,6 +242,13 @@ export class ResumeService {
     }
 
     uploadResumePresigned(file: File, enableAiAnalysis: boolean = false) {
+        const intentKey = this.getUploadIntentKey(file);
+        if (this.inFlightIntents.has(intentKey)) {
+            // Ignore double-click for in-flight intent, avoiding duplicate optimistic cards
+            return;
+        }
+        this.inFlightIntents.add(intentKey);
+
         this.sseService.clearEvent(this.SSE_EVENT_NAME);
 
         const tempId = --this.counter;
@@ -273,6 +294,7 @@ export class ResumeService {
                             {}
                         ).subscribe({
                             next: (completeResponse) => {
+                                this.inFlightIntents.delete(intentKey);
                                 this.clearUploadIntent(file);
                                 const resumeId = completeResponse.data.id;
 
@@ -289,18 +311,21 @@ export class ResumeService {
                                 }
                             },
                             error: (completeErr) => {
+                                this.inFlightIntents.delete(intentKey);
                                 this.localFileData.update(prev => ({ ...prev, status: 'error' }));
                                 this.notificationService.error(completeErr.error?.message || 'Lỗi khi xác nhận tải CV');
                             }
                         });
                     },
                     error: (storageErr) => {
+                        this.inFlightIntents.delete(intentKey);
                         this.localFileData.update(prev => ({ ...prev, status: 'error' }));
                         this.notificationService.error('Lỗi khi tải file lên kho lưu trữ');
                     }
                 });
             },
             error: (initErr) => {
+                this.inFlightIntents.delete(intentKey);
                 this.localFileData.update(prev => ({ ...prev, status: 'error' }));
                 this.notificationService.error(initErr.error?.message || 'Lỗi khi khởi tạo tải CV');
             }

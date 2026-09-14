@@ -131,10 +131,10 @@ public class ResumeUploadFinalizer {
             throw new BadRequestException("Session is not in FINALIZING state: " + uploadId);
         }
 
-        if (processingToken != null && !Objects.equals(session.getProcessingToken(), processingToken)) {
+        if (processingToken == null || processingToken.isBlank() || !Objects.equals(session.getProcessingToken(), processingToken)) {
             log.warn("Processing token mismatch for session {}. Expected: {}, Provided: {}",
                     uploadId, session.getProcessingToken(), processingToken);
-            throw new BadRequestException("Invalid or expired processing token for upload session: " + uploadId);
+            throw new BadRequestException("Invalid or missing processing token for upload session: " + uploadId);
         }
 
         // Create exactly one Resume entity from the locked session data
@@ -162,36 +162,44 @@ public class ResumeUploadFinalizer {
     /**
      * Marks session as REJECTED under pessimistic write lock.
      * Enforces invariant: resume_id MUST remain null, Resume is NEVER created.
+     * Requires valid non-null processing token and only allows transitions from FINALIZING state.
      */
     @Transactional
     public void markRejected(UUID uploadId, String processingToken, String rejectionCode,
                              String rejectionDetail, Long actualSize, String actualContentType,
                              String actualEtag) {
-        sessionRepository.findByIdForUpdate(uploadId).ifPresent(session -> {
-            if (session.getStatus() == ResumeUploadSessionStatus.COMPLETED) {
-                log.error("CRITICAL: Attempted to reject an already COMPLETED session id: {}. Invariant preserved.", uploadId);
-                return;
-            }
+        ResumeUploadSession session = sessionRepository.findByIdForUpdate(uploadId)
+                .orElseThrow(() -> new ResourceNotFoundException("Upload session not found: " + uploadId));
 
-            if (processingToken != null && session.getProcessingToken() != null &&
-                    !Objects.equals(session.getProcessingToken(), processingToken)) {
-                log.warn("Processing token mismatch when rejecting session id: {}. Skipping.", uploadId);
-                return;
-            }
+        if (session.getStatus() == ResumeUploadSessionStatus.COMPLETED) {
+            log.error("CRITICAL: Attempted to reject an already COMPLETED session id: {}. Invariant preserved.", uploadId);
+            throw new BadRequestException("Cannot reject an already COMPLETED session: " + uploadId);
+        }
 
-            session.setStatus(ResumeUploadSessionStatus.REJECTED);
-            session.setResumeId(null); // Explicit invariant guarantee: REJECTED -> resume_id must be null
-            session.setRejectionCode(rejectionCode);
-            session.setRejectionDetail(rejectionDetail);
-            session.setRejectedAt(LocalDateTime.now());
-            session.setActualSize(actualSize);
-            session.setActualContentType(actualContentType);
-            session.setActualEtag(actualEtag);
-            session.setProcessingToken(null);
-            sessionRepository.save(session);
+        if (session.getStatus() != ResumeUploadSessionStatus.FINALIZING) {
+            log.warn("Cannot reject session {} because it is not in FINALIZING state (current status: {})",
+                    uploadId, session.getStatus());
+            throw new BadRequestException("Only sessions in FINALIZING state can be rejected. Current status: " + session.getStatus());
+        }
 
-            log.info("Marked upload session {} as REJECTED. Code: {}, Detail: {}", uploadId, rejectionCode, rejectionDetail);
-        });
+        if (processingToken == null || processingToken.isBlank() || !Objects.equals(session.getProcessingToken(), processingToken)) {
+            log.warn("Processing token mismatch when rejecting session id: {}. Expected: {}, Provided: {}",
+                    uploadId, session.getProcessingToken(), processingToken);
+            throw new BadRequestException("Invalid or missing processing token for upload session: " + uploadId);
+        }
+
+        session.setStatus(ResumeUploadSessionStatus.REJECTED);
+        session.setResumeId(null); // Explicit invariant guarantee: REJECTED -> resume_id must be null
+        session.setRejectionCode(rejectionCode);
+        session.setRejectionDetail(rejectionDetail);
+        session.setRejectedAt(LocalDateTime.now());
+        session.setActualSize(actualSize);
+        session.setActualContentType(actualContentType);
+        session.setActualEtag(actualEtag);
+        session.setProcessingToken(null);
+        sessionRepository.save(session);
+
+        log.info("Marked upload session {} as REJECTED. Code: {}, Detail: {}", uploadId, rejectionCode, rejectionDetail);
     }
 
     /**

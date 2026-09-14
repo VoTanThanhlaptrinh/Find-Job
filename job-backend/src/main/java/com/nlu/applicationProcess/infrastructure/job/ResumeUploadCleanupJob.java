@@ -9,6 +9,8 @@ import com.nlu.identity.domain.model.User;
 import com.nlu.identity.domain.repository.UserRepository;
 import com.nlu.shared.application.CloudStorageService;
 import com.nlu.shared.domain.model.StorageObjectMetadata;
+import com.nlu.applicationProcess.application.impl.ResumeUploadServiceImpl;
+import com.nlu.applicationProcess.domain.repository.ResumeRepository;
 import com.nlu.shared.infrastructure.config.ResumeUploadProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +33,7 @@ import java.util.Optional;
 public class ResumeUploadCleanupJob {
 
     private final ResumeUploadSessionRepository sessionRepository;
+    private final ResumeRepository resumeRepository;
     private final CloudStorageService cloudStorageService;
     private final ResumeUploadSessionCleaner sessionCleaner;
     private final ResumeUploadFinalizer finalizer;
@@ -124,6 +127,8 @@ public class ResumeUploadCleanupJob {
      * 2. REJECTED:
      * Delete temp object and permanent orphan if any.
      * KEEP database row REJECTED for audit/traceability.
+     * Verifies session has no resumeId and key is not referenced before deleting permanentKey.
+     * Records failure and retries if either deletion fails; only marks success when both are cleaned.
      */
     public void cleanupRejectedSessions() {
         try {
@@ -133,23 +138,49 @@ public class ResumeUploadCleanupJob {
             );
 
             for (ResumeUploadSession session : rejectedSessions) {
+                if (session.getCleanupAttempts() >= 10) {
+                    continue;
+                }
                 try {
-                    deleteObjectSilently(session.getTempKey());
-                    deleteObjectSilently(session.getPermanentKey());
-                    sessionCleaner.recordCleanupSuccess(session.getId());
-                    log.info("Cleaned up storage for REJECTED session {} while preserving DB row for audit", session.getId());
+                    boolean tempCleaned = cleanupSingleKey(session.getTempKey());
+
+                    boolean permCleaned = true;
+                    String permKey = session.getPermanentKey();
+                    if (permKey != null && !permKey.isBlank()) {
+                        if (session.getResumeId() != null) {
+                            log.error("Invariant violation: REJECTED session {} has non-null resumeId {}", session.getId(), session.getResumeId());
+                            permCleaned = false;
+                        } else if (resumeRepository.existsByKeyCf(permKey)) {
+                            log.warn("Permanent key {} is referenced by an existing Resume. Skipping permanent key deletion for session {}.",
+                                    permKey, session.getId());
+                            permCleaned = true;
+                        } else {
+                            permCleaned = cleanupSingleKey(permKey);
+                        }
+                    }
+
+                    if (tempCleaned && permCleaned) {
+                        sessionCleaner.recordCleanupSuccess(session.getId());
+                        log.info("Cleaned up storage for REJECTED session {} while preserving DB row for audit", session.getId());
+                    } else {
+                        String errMsg = String.format("Storage cleanup incomplete for session %s: tempCleaned=%s, permCleaned=%s",
+                                session.getId(), tempCleaned, permCleaned);
+                        sessionCleaner.recordCleanupFailure(session.getId(), errMsg);
+                    }
                 } catch (Exception e) {
-                    log.warn("Error cleaning storage for REJECTED session: {}", session.getId(), e);
+                    log.warn("Error cleaning storage for REJECTED session {}: {}", session.getId(), e.getMessage());
+                    sessionCleaner.recordCleanupFailure(session.getId(), e.getMessage());
                 }
             }
         } catch (Exception e) {
-            log.error("Error cleaning REJECTED sessions", e);
+            log.error("Error cleaning REJECTED sessions batch", e);
         }
     }
 
     /**
      * 3. FINALIZING stuck recovery:
      * Recovers sessions stuck in FINALIZING longer than lease timeout.
+     * Verifies existence, positive size, size match, content type allowlist, and declared content type match.
      */
     public void recoverStuckFinalizingSessions() {
         try {
@@ -164,7 +195,10 @@ public class ResumeUploadCleanupJob {
                 try {
                     Optional<StorageObjectMetadata> permMetaOpt = cloudStorageService.headObject(session.getPermanentKey());
                     boolean permanentValid = permMetaOpt.isPresent() &&
-                            permMetaOpt.get().contentLength() == session.getDeclaredSize();
+                            permMetaOpt.get().contentLength() > 0 &&
+                            permMetaOpt.get().contentLength() == session.getDeclaredSize() &&
+                            ResumeUploadServiceImpl.ALLOWED_CONTENT_TYPES.contains(ResumeUploadServiceImpl.normalizeContentType(permMetaOpt.get().contentType())) &&
+                            ResumeUploadServiceImpl.isMatchingContentType(permMetaOpt.get().contentType(), session.getDeclaredContentType());
 
                     User user = null;
                     if (permanentValid) {
@@ -185,6 +219,26 @@ public class ResumeUploadCleanupJob {
             }
         } catch (Exception e) {
             log.error("Error during stuck FINALIZING sessions recovery", e);
+        }
+    }
+
+    private boolean cleanupSingleKey(String key) {
+        if (key == null || key.isBlank()) {
+            return true;
+        }
+        try {
+            cloudStorageService.deleteObject(key);
+            return true;
+        } catch (Exception deleteEx) {
+            try {
+                if (cloudStorageService.headObject(key).isEmpty()) {
+                    return true;
+                }
+            } catch (Exception headEx) {
+                log.debug("HEAD failed after delete failed for key {}: {}", key, headEx.getMessage());
+            }
+            log.warn("Failed to delete object in storage for key {}: {}", key, deleteEx.getMessage());
+            return false;
         }
     }
 

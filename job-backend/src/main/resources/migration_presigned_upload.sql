@@ -108,6 +108,11 @@ BEGIN
             (status <> 'COMPLETED' AND resume_id IS NULL)
         );
     END IF;
+
+    -- Update status check constraint to include FINALIZING
+    ALTER TABLE resume_upload_session DROP CONSTRAINT IF EXISTS resume_upload_session_status_check;
+    ALTER TABLE resume_upload_session ADD CONSTRAINT resume_upload_session_status_check
+        CHECK (status IN ('PENDING_UPLOAD', 'FINALIZING', 'COMPLETED', 'REJECTED', 'EXPIRED'));
 END $$;
 
 -- ------------------------------------------------------------------------------

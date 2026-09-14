@@ -54,7 +54,7 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
             ".docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     );
 
-    private static final Set<String> ALLOWED_CONTENT_TYPES = Set.of(
+    public static final Set<String> ALLOWED_CONTENT_TYPES = Set.of(
             "application/pdf",
             "application/msword",
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -73,8 +73,9 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
         if (request.size() == null || request.size() <= 0) {
             throw new BadRequestException("File size must be greater than 0");
         }
+
         if (request.size() > properties.getMaxFileSizeBytes()) {
-            throw new BadRequestException("File size exceeds maximum limit of 5 MB");
+            throw new BadRequestException(MessageUtils.getMessage("resume.file_size_exceeded"));
         }
 
         // Validate and sanitize filename
@@ -84,7 +85,7 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
         validateFileTypeAndExtension(sanitizedFileName, request.contentType());
 
         // Check resume quota
-        if (resumeRepository.countResumesByUser_Id(currentUser.getId()) > 100) {
+        if (resumeRepository.countResumesByUser_Id(currentUser.getId()) >= 100) {
             throw new BadRequestException(MessageUtils.getMessage("resume.limit_exceeded"));
         }
 
@@ -182,28 +183,52 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
             throw new ConflictException("Idempotency key has already been used with different request parameters");
         }
 
-        log.info("Idempotent initiate request for session {}. Reusing session.", existingSession.getId());
+        log.info("Idempotent initiate request for session {}. Current status: {}", existingSession.getId(), existingSession.getStatus());
 
-        if (existingSession.getStatus() == ResumeUploadSessionStatus.EXPIRED ||
-                LocalDateTime.now().isAfter(existingSession.getExpiresAt())) {
-            throw new BadRequestException("Upload session has expired: " + existingSession.getId());
+        switch (existingSession.getStatus()) {
+            case PENDING_UPLOAD -> {
+                if (LocalDateTime.now().isAfter(existingSession.getExpiresAt())) {
+                    throw new BadRequestException("Upload session has expired: " + existingSession.getId());
+                }
+                // Generate a fresh presigned upload URL for the same tempKey
+                PresignedUploadUrlResponse presignedResponse = s3PresignedUrlService.generateUploadUrl(
+                        existingSession.getTempKey(),
+                        existingSession.getDeclaredContentType(),
+                        existingSession.getId(),
+                        properties.getUrlExpirationMinutes()
+                );
+                return new ResumeUploadInitiateResponse(
+                        existingSession.getId(),
+                        presignedResponse.url(),
+                        presignedResponse.method(),
+                        presignedResponse.requiredHeaders(),
+                        presignedResponse.expiresAt()
+                );
+            }
+            case FINALIZING -> {
+                throw new ConflictException("Upload session is currently finalizing. Please check status or retry complete.");
+            }
+            case COMPLETED -> {
+                log.info("Upload session {} already COMPLETED. Returning existing resume id: {}",
+                        existingSession.getId(), existingSession.getResumeId());
+                return new ResumeUploadInitiateResponse(
+                        existingSession.getId(),
+                        null,
+                        null,
+                        Map.of(),
+                        existingSession.getExpiresAt()
+                );
+            }
+            case REJECTED -> {
+                String code = existingSession.getRejectionCode() != null ? existingSession.getRejectionCode() : "UPLOAD_REJECTED";
+                String detail = existingSession.getRejectionDetail() != null ? existingSession.getRejectionDetail() : "Upload session was rejected";
+                throw new BadRequestException("Upload session was rejected: " + code + " - " + detail);
+            }
+            case EXPIRED -> {
+                throw new BadRequestException("Upload session has expired: " + existingSession.getId());
+            }
+            default -> throw new BadRequestException("Unknown session status: " + existingSession.getStatus());
         }
-
-        // Generate a fresh presigned upload URL for the same tempKey
-        PresignedUploadUrlResponse presignedResponse = s3PresignedUrlService.generateUploadUrl(
-                existingSession.getTempKey(),
-                existingSession.getDeclaredContentType(),
-                existingSession.getId(),
-                properties.getUrlExpirationMinutes()
-        );
-
-        return new ResumeUploadInitiateResponse(
-                existingSession.getId(),
-                presignedResponse.url(),
-                presignedResponse.method(),
-                presignedResponse.requiredHeaders(),
-                presignedResponse.expiresAt()
-        );
     }
 
     private Optional<ResumeUploadSession> waitForExistingSession(long userId, String idempotencyKey) {
@@ -311,12 +336,21 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
 
             // HEAD permanent object to verify copy success and metadata
             Optional<StorageObjectMetadata> verifiedPermMetaOpt = cloudStorageService.headObject(session.getPermanentKey());
-            if (verifiedPermMetaOpt.isEmpty() || verifiedPermMetaOpt.get().contentLength() != session.getDeclaredSize()) {
+            boolean permValid = verifiedPermMetaOpt.isPresent() &&
+                    verifiedPermMetaOpt.get().contentLength() > 0 &&
+                    verifiedPermMetaOpt.get().contentLength() == session.getDeclaredSize() &&
+                    ALLOWED_CONTENT_TYPES.contains(normalizeContentType(verifiedPermMetaOpt.get().contentType())) &&
+                    isMatchingContentType(verifiedPermMetaOpt.get().contentType(), session.getDeclaredContentType());
+
+            if (!permValid) {
                 log.error("Permanent object verification failed after copy for session {}", uploadId);
                 deleteObjectSilently(session.getPermanentKey());
+                Long actualSize = verifiedPermMetaOpt.map(StorageObjectMetadata::contentLength).orElse(null);
+                String actualType = verifiedPermMetaOpt.map(StorageObjectMetadata::contentType).orElse(null);
+                String actualEtag = verifiedPermMetaOpt.map(StorageObjectMetadata::etag).orElse(null);
                 resumeUploadFinalizer.markRejected(uploadId, processingToken, "PERMANENT_VERIFICATION_FAILED",
-                        "Permanent object verification failed after copy", null, null, null);
-                throw new StorageException("Permanent object size mismatch after copy");
+                        "Permanent object verification failed after copy", actualSize, actualType, actualEtag);
+                throw new StorageException("Permanent object verification failed after copy");
             }
         }
 
@@ -424,14 +458,14 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
         }
     }
 
-    private boolean isMatchingContentType(String actual, String declared) {
+    public static boolean isMatchingContentType(String actual, String declared) {
         if (actual == null || declared == null) {
             return false;
         }
         return normalizeContentType(actual).equalsIgnoreCase(normalizeContentType(declared));
     }
 
-    private String normalizeContentType(String contentType) {
+    public static String normalizeContentType(String contentType) {
         if (contentType == null) {
             return "";
         }

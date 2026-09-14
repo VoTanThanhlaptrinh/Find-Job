@@ -297,6 +297,24 @@ class ResumeUploadFinalizerTest {
             );
             verify(resumeRepository, never()).save(any(Resume.class));
         }
+
+        @Test
+        @DisplayName("Finalizer từ chối khi processing token null hoặc rỗng")
+        void finalizeUpload_RejectsNullToken() {
+            ResumeUploadSession session = ResumeUploadSession.builder()
+                    .id(uploadId)
+                    .userId(42L)
+                    .status(ResumeUploadSessionStatus.FINALIZING)
+                    .processingToken("valid-token")
+                    .build();
+
+            when(sessionRepository.findByIdForUpdate(uploadId)).thenReturn(Optional.of(session));
+
+            assertThrows(BadRequestException.class, () ->
+                    resumeUploadFinalizer.finalizeUpload(uploadId, null, user)
+            );
+            verify(resumeRepository, never()).save(any(Resume.class));
+        }
     }
 
     @Nested
@@ -342,8 +360,8 @@ class ResumeUploadFinalizerTest {
         }
 
         @Test
-        @DisplayName("markRejected không bao giờ ghi đè một session đã COMPLETED")
-        void markRejected_NeverOverwritesCompletedSession() {
+        @DisplayName("markRejected từ chối và bảo toàn session khi đã COMPLETED (ném BadRequestException)")
+        void markRejected_ThrowsBadRequestWhenAlreadyCompleted() {
             ResumeUploadSession session = ResumeUploadSession.builder()
                     .id(uploadId)
                     .userId(42L)
@@ -353,19 +371,125 @@ class ResumeUploadFinalizerTest {
 
             when(sessionRepository.findByIdForUpdate(uploadId)).thenReturn(Optional.of(session));
 
-            resumeUploadFinalizer.markRejected(
-                    uploadId,
-                    "token",
-                    "LATE_ERROR",
-                    "detail",
-                    null, null, null
+            BadRequestException ex = assertThrows(BadRequestException.class, () ->
+                    resumeUploadFinalizer.markRejected(
+                            uploadId,
+                            "token",
+                            "LATE_ERROR",
+                            "detail",
+                            null, null, null
+                    )
             );
 
-            // Must stay COMPLETED with resumeId 1234
+            assertTrue(ex.getMessage().contains("COMPLETED"));
             assertEquals(ResumeUploadSessionStatus.COMPLETED, session.getStatus());
             assertEquals(1234L, session.getResumeId());
             verify(sessionRepository, never()).save(session);
             verify(resumeRepository, never()).save(any(Resume.class));
+        }
+
+        @Test
+        @DisplayName("markRejected từ chối khi session ở trạng thái PENDING_UPLOAD")
+        void markRejected_RejectsPendingUpload() {
+            ResumeUploadSession session = ResumeUploadSession.builder()
+                    .id(uploadId)
+                    .userId(42L)
+                    .status(ResumeUploadSessionStatus.PENDING_UPLOAD)
+                    .processingToken("token")
+                    .build();
+
+            when(sessionRepository.findByIdForUpdate(uploadId)).thenReturn(Optional.of(session));
+
+            BadRequestException ex = assertThrows(BadRequestException.class, () ->
+                    resumeUploadFinalizer.markRejected(
+                            uploadId,
+                            "token",
+                            "ERROR",
+                            "detail",
+                            null, null, null
+                    )
+            );
+
+            assertTrue(ex.getMessage().contains("FINALIZING"));
+            verify(sessionRepository, never()).save(session);
+        }
+
+        @Test
+        @DisplayName("markRejected từ chối khi session ở trạng thái EXPIRED")
+        void markRejected_RejectsExpired() {
+            ResumeUploadSession session = ResumeUploadSession.builder()
+                    .id(uploadId)
+                    .userId(42L)
+                    .status(ResumeUploadSessionStatus.EXPIRED)
+                    .processingToken("token")
+                    .build();
+
+            when(sessionRepository.findByIdForUpdate(uploadId)).thenReturn(Optional.of(session));
+
+            BadRequestException ex = assertThrows(BadRequestException.class, () ->
+                    resumeUploadFinalizer.markRejected(
+                            uploadId,
+                            "token",
+                            "ERROR",
+                            "detail",
+                            null, null, null
+                    )
+            );
+
+            assertTrue(ex.getMessage().contains("FINALIZING"));
+            verify(sessionRepository, never()).save(session);
+        }
+
+        @Test
+        @DisplayName("markRejected từ chối khi processing token null")
+        void markRejected_RejectsNullToken() {
+            ResumeUploadSession session = ResumeUploadSession.builder()
+                    .id(uploadId)
+                    .userId(42L)
+                    .status(ResumeUploadSessionStatus.FINALIZING)
+                    .processingToken("valid-token")
+                    .build();
+
+            when(sessionRepository.findByIdForUpdate(uploadId)).thenReturn(Optional.of(session));
+
+            BadRequestException ex = assertThrows(BadRequestException.class, () ->
+                    resumeUploadFinalizer.markRejected(
+                            uploadId,
+                            null,
+                            "ERROR",
+                            "detail",
+                            null, null, null
+                    )
+            );
+
+            assertTrue(ex.getMessage().contains("token"));
+            verify(sessionRepository, never()).save(session);
+        }
+
+        @Test
+        @DisplayName("markRejected từ chối khi processing token không khớp")
+        void markRejected_RejectsMismatchedToken() {
+            ResumeUploadSession session = ResumeUploadSession.builder()
+                    .id(uploadId)
+                    .userId(42L)
+                    .status(ResumeUploadSessionStatus.FINALIZING)
+                    .processingToken("valid-token")
+                    .build();
+
+            when(sessionRepository.findByIdForUpdate(uploadId)).thenReturn(Optional.of(session));
+
+            BadRequestException ex = assertThrows(BadRequestException.class, () ->
+                    resumeUploadFinalizer.markRejected(
+                            uploadId,
+                            "wrong-token",
+                            "ERROR",
+                            "detail",
+                            null, null, null
+                    )
+            );
+
+            assertTrue(ex.getMessage().contains("token"));
+            verify(sessionRepository, never()).save(session);
         }
     }
 }
