@@ -1,11 +1,15 @@
 package web_application.application;
 
+import com.nlu.applicationProcess.application.impl.ResumeUploadFinalizer;
 import com.nlu.applicationProcess.application.impl.ResumeUploadSessionCleaner;
 import com.nlu.applicationProcess.domain.model.ResumeUploadSession;
 import com.nlu.applicationProcess.domain.model.ResumeUploadSessionStatus;
 import com.nlu.applicationProcess.domain.repository.ResumeUploadSessionRepository;
 import com.nlu.applicationProcess.infrastructure.job.ResumeUploadCleanupJob;
+import com.nlu.identity.domain.model.User;
+import com.nlu.identity.domain.repository.UserRepository;
 import com.nlu.shared.application.CloudStorageService;
+import com.nlu.shared.domain.model.StorageObjectMetadata;
 import com.nlu.shared.infrastructure.config.ResumeUploadProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -37,6 +42,12 @@ class ResumeUploadCleanupJobTest {
     private ResumeUploadSessionCleaner sessionCleaner;
 
     @Mock
+    private ResumeUploadFinalizer finalizer;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
     private ResumeUploadProperties properties;
 
     @InjectMocks
@@ -48,8 +59,8 @@ class ResumeUploadCleanupJobTest {
     }
 
     @Test
-    @DisplayName("Cleanup job tìm các session PENDING_UPLOAD đã hết hạn, đánh dấu EXPIRED và xóa temp best-effort")
-    void cleanupExpiredSessions_Success() {
+    @DisplayName("Cleanup xóa DB row của abandoned session sau khi storage cleanup thành công")
+    void cleanupAbandonedSessions_Success_DeletesDbRow() {
         UUID id1 = UUID.randomUUID();
         ResumeUploadSession session1 = ResumeUploadSession.builder()
                 .id(id1)
@@ -66,15 +77,18 @@ class ResumeUploadCleanupJobTest {
 
         when(sessionCleaner.markExpired(id1)).thenReturn(true);
 
-        cleanupJob.cleanupExpiredSessions();
+        cleanupJob.cleanupAbandonedSessions();
 
         verify(sessionCleaner).markExpired(id1);
         verify(cloudStorageService).deleteObject(session1.getTempKey());
+        // Must delete DB row since storage delete succeeded
+        verify(sessionCleaner).deleteExpiredSession(id1);
+        verify(sessionCleaner, never()).recordCleanupFailure(eq(id1), anyString());
     }
 
     @Test
-    @DisplayName("Cleanup job không đụng tới session COMPLETED và lỗi xóa temp không làm gián đoạn")
-    void cleanupExpiredSessions_StorageFailureHandled() {
+    @DisplayName("Cleanup giữ row khi xóa storage thất bại để cron sau thử lại")
+    void cleanupAbandonedSessions_StorageFailure_PreservesDbRow() {
         UUID id1 = UUID.randomUUID();
         ResumeUploadSession session1 = ResumeUploadSession.builder()
                 .id(id1)
@@ -90,12 +104,107 @@ class ResumeUploadCleanupJobTest {
         )).thenReturn(List.of(session1));
 
         when(sessionCleaner.markExpired(id1)).thenReturn(true);
-        doThrow(new RuntimeException("R2 delete error")).when(cloudStorageService).deleteObject(session1.getTempKey());
+        doThrow(new RuntimeException("R2 network glitch")).when(cloudStorageService).deleteObject(session1.getTempKey());
 
-        // Should not throw exception
-        cleanupJob.cleanupExpiredSessions();
+        cleanupJob.cleanupAbandonedSessions();
 
         verify(sessionCleaner).markExpired(id1);
         verify(cloudStorageService).deleteObject(session1.getTempKey());
+        // Must NOT delete DB row, must record failure attempt
+        verify(sessionCleaner, never()).deleteExpiredSession(id1);
+        verify(sessionCleaner).recordCleanupFailure(eq(id1), contains("glitch"));
+    }
+
+    @Test
+    @DisplayName("Cleanup xóa object nhưng giữ DB row của REJECTED phục vụ truy vết")
+    void cleanupRejectedSessions_DeletesObjects_PreservesDbRow() {
+        UUID id = UUID.randomUUID();
+        ResumeUploadSession session = ResumeUploadSession.builder()
+                .id(id)
+                .tempKey("temp/resumes/1/" + id)
+                .permanentKey("resumes/1/" + id)
+                .status(ResumeUploadSessionStatus.REJECTED)
+                .rejectionCode("METADATA_SIZE_MISMATCH")
+                .build();
+
+        when(sessionRepository.findByStatusAndCleanupCompletedAtIsNull(
+                eq(ResumeUploadSessionStatus.REJECTED),
+                any(Pageable.class)
+        )).thenReturn(List.of(session));
+
+        cleanupJob.cleanupRejectedSessions();
+
+        verify(cloudStorageService).deleteObject(session.getTempKey());
+        verify(cloudStorageService).deleteObject(session.getPermanentKey());
+        verify(sessionCleaner).recordCleanupSuccess(id);
+        verify(sessionCleaner, never()).deleteExpiredSession(id);
+    }
+
+    @Test
+    @DisplayName("Stale FINALIZING được recovery: nếu permanent object hợp lệ thì hoàn tất tạo Resume")
+    void recoverStuckFinalizingSessions_WhenPermanentObjectValid_RecoversToCompleted() {
+        UUID id = UUID.randomUUID();
+        ResumeUploadSession session = ResumeUploadSession.builder()
+                .id(id)
+                .userId(100L)
+                .declaredSize(2048L)
+                .tempKey("temp/resumes/100/" + id)
+                .permanentKey("resumes/100/" + id)
+                .status(ResumeUploadSessionStatus.FINALIZING)
+                .finalizingStartedAt(LocalDateTime.now().minusMinutes(10))
+                .build();
+
+        when(sessionRepository.findByStatusAndFinalizingStartedAtBefore(
+                eq(ResumeUploadSessionStatus.FINALIZING),
+                any(LocalDateTime.class),
+                any(Pageable.class)
+        )).thenReturn(List.of(session));
+
+        StorageObjectMetadata permMeta = new StorageObjectMetadata(
+                session.getPermanentKey(),
+                2048L,
+                "application/pdf",
+                "etag123"
+        );
+        when(cloudStorageService.headObject(session.getPermanentKey())).thenReturn(Optional.of(permMeta));
+
+        User user = new User();
+        user.setId(100L);
+        when(userRepository.findById(100L)).thenReturn(Optional.of(user));
+        when(finalizer.recoverStuckSession(id, true, user)).thenReturn(true);
+
+        cleanupJob.recoverStuckFinalizingSessions();
+
+        verify(finalizer).recoverStuckSession(id, true, user);
+    }
+
+    @Test
+    @DisplayName("Stale FINALIZING được recovery: nếu permanent object không tồn tại thì chuyển REJECTED và dọn dẹp orphan")
+    void recoverStuckFinalizingSessions_WhenPermanentObjectInvalid_RecoversToRejected() {
+        UUID id = UUID.randomUUID();
+        ResumeUploadSession session = ResumeUploadSession.builder()
+                .id(id)
+                .userId(100L)
+                .declaredSize(2048L)
+                .tempKey("temp/resumes/100/" + id)
+                .permanentKey("resumes/100/" + id)
+                .status(ResumeUploadSessionStatus.FINALIZING)
+                .finalizingStartedAt(LocalDateTime.now().minusMinutes(10))
+                .build();
+
+        when(sessionRepository.findByStatusAndFinalizingStartedAtBefore(
+                eq(ResumeUploadSessionStatus.FINALIZING),
+                any(LocalDateTime.class),
+                any(Pageable.class)
+        )).thenReturn(List.of(session));
+
+        when(cloudStorageService.headObject(session.getPermanentKey())).thenReturn(Optional.empty());
+        when(finalizer.recoverStuckSession(id, false, null)).thenReturn(true);
+
+        cleanupJob.recoverStuckFinalizingSessions();
+
+        verify(finalizer).recoverStuckSession(id, false, null);
+        verify(cloudStorageService).deleteObject(session.getTempKey());
+        verify(cloudStorageService).deleteObject(session.getPermanentKey());
     }
 }

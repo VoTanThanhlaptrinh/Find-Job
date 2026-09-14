@@ -1,7 +1,7 @@
 package web_application.application;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nlu.JobPortalWebApplication;
+import com.nlu.applicationProcess.api.ResumeUploadController;
 import com.nlu.applicationProcess.api.dto.req.ResumeUploadInitiateRequest;
 import com.nlu.applicationProcess.api.dto.req.ResumeView;
 import com.nlu.applicationProcess.api.dto.res.ResumeUploadInitiateResponse;
@@ -10,6 +10,7 @@ import com.nlu.applicationProcess.domain.model.ResumeStatus;
 import com.nlu.identity.domain.model.User;
 import com.nlu.identity.domain.vo.EmailAddress;
 import com.nlu.shared.domain.exception.BadRequestException;
+import com.nlu.shared.domain.exception.ConflictException;
 import com.nlu.shared.domain.exception.ForbiddenException;
 import com.nlu.shared.domain.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,18 +38,18 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(classes = JobPortalWebApplication.class)
-@AutoConfigureMockMvc
-class ResumeUploadControllerTest {
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
+import web_application.support.TestSecurityConfig;
+import com.nlu.shared.infrastructure.config.WebConfig;
+import com.nlu.identity.infrastructure.CurrentUserArgumentResolver;
+import com.nlu.shared.domain.exception.GlobalExceptionHandler;
+import com.nlu.shared.utils.MessageUtils;
 
-    static {
-        io.github.cdimascio.dotenv.Dotenv dotenv = io.github.cdimascio.dotenv.Dotenv.configure().ignoreIfMissing().load();
-        dotenv.entries().forEach(entry -> {
-            if (System.getProperty(entry.getKey()) == null) {
-                System.setProperty(entry.getKey(), entry.getValue());
-            }
-        });
-    }
+@WebMvcTest(ResumeUploadController.class)
+@AutoConfigureMockMvc
+@Import({TestSecurityConfig.class, ResumeUploadController.class, WebConfig.class, CurrentUserArgumentResolver.class, GlobalExceptionHandler.class, MessageUtils.class})
+class ResumeUploadControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -82,6 +83,7 @@ class ResumeUploadControllerTest {
         user.setId(id);
         user.setEmail(new EmailAddress(email));
         user.setRole(role);
+        user.setPassword(new com.nlu.identity.domain.vo.Password("password123"));
         return user;
     }
 
@@ -90,9 +92,10 @@ class ResumeUploadControllerTest {
     class InitiateEndpointTests {
 
         @Test
-        @DisplayName("201 Created khi initiate hợp lệ với USER đã đăng nhập")
+        @DisplayName("201 Created khi initiate hợp lệ với Idempotency-Key và USER đã đăng nhập")
         void initiateUpload_Success() throws Exception {
             UUID uploadId = UUID.randomUUID();
+            String idempotencyKey = UUID.randomUUID().toString();
             ResumeUploadInitiateRequest request = new ResumeUploadInitiateRequest("cv.pdf", "application/pdf", 1048576L);
             ResumeUploadInitiateResponse response = new ResumeUploadInitiateResponse(
                     uploadId,
@@ -102,11 +105,12 @@ class ResumeUploadControllerTest {
                     LocalDateTime.now().plusMinutes(10)
             );
 
-            when(resumeUploadService.initiateUpload(any(ResumeUploadInitiateRequest.class), any()))
+            when(resumeUploadService.initiateUpload(eq(idempotencyKey), any(ResumeUploadInitiateRequest.class), any()))
                     .thenReturn(response);
 
             mockMvc.perform(post(BASE_URL + "/initiate")
                             .with(authenticatedUser())
+                            .header("Idempotency-Key", idempotencyKey)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
@@ -117,11 +121,29 @@ class ResumeUploadControllerTest {
         }
 
         @Test
+        @DisplayName("409 Conflict khi idempotency key bị xung đột payload khác nhau")
+        void initiateUpload_Conflict_WhenFingerprintDiffers() throws Exception {
+            String idempotencyKey = UUID.randomUUID().toString();
+            ResumeUploadInitiateRequest request = new ResumeUploadInitiateRequest("cv.pdf", "application/pdf", 1048576L);
+
+            when(resumeUploadService.initiateUpload(eq(idempotencyKey), any(ResumeUploadInitiateRequest.class), any()))
+                    .thenThrow(new ConflictException("Idempotency key has already been used with different request parameters"));
+
+            mockMvc.perform(post(BASE_URL + "/initiate")
+                            .with(authenticatedUser())
+                            .header("Idempotency-Key", idempotencyKey)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isConflict());
+        }
+
+        @Test
         @DisplayName("401 Unauthorized khi chưa đăng nhập")
         void initiateUpload_Unauthorized() throws Exception {
             ResumeUploadInitiateRequest request = new ResumeUploadInitiateRequest("cv.pdf", "application/pdf", 1048576L);
 
             mockMvc.perform(post(BASE_URL + "/initiate")
+                            .header("Idempotency-Key", UUID.randomUUID().toString())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isUnauthorized());
@@ -134,6 +156,7 @@ class ResumeUploadControllerTest {
 
             mockMvc.perform(post(BASE_URL + "/initiate")
                             .with(authenticatedUser())
+                            .header("Idempotency-Key", UUID.randomUUID().toString())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest());

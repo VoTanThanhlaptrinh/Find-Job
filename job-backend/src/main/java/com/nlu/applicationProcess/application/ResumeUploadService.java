@@ -8,6 +8,6 @@ import com.nlu.identity.domain.model.User;
 import java.util.UUID;
 
 public interface ResumeUploadService {
-    ResumeUploadInitiateResponse initiateUpload(ResumeUploadInitiateRequest request, User currentUser);
+    ResumeUploadInitiateResponse initiateUpload(String idempotencyKey, ResumeUploadInitiateRequest request, User currentUser);
     ResumeView completeUpload(UUID uploadId, User currentUser);
 }

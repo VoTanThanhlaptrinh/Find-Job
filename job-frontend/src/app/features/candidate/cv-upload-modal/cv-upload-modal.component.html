@@ -133,7 +133,8 @@
       </button>
       <button
         type="button"
-        class="px-7 py-2.5 rounded-lg bg-blue-600 text-white font-bold text-sm shadow-sm shadow-blue-200 hover:bg-blue-700 active:scale-[0.98] transition-all"
+        [disabled]="isSubmitting"
+        class="px-7 py-2.5 rounded-lg bg-blue-600 text-white font-bold text-sm shadow-sm shadow-blue-200 hover:bg-blue-700 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         (click)="onSubmit()"
       >
         {{ 'cvUploadModal.upload' | t }}

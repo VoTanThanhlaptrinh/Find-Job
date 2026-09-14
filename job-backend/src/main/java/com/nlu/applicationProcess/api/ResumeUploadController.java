@@ -27,10 +27,11 @@ public class ResumeUploadController {
 
     @PostMapping("/initiate")
     public ResponseEntity<ApiResponse<ResumeUploadInitiateResponse>> initiateUpload(
+            @RequestHeader(value = "Idempotency-Key", required = false) String idempotencyKey,
             @Valid @RequestBody ResumeUploadInitiateRequest request,
             @CurrentUser User currentUser) {
 
-        ResumeUploadInitiateResponse response = resumeUploadService.initiateUpload(request, currentUser);
+        ResumeUploadInitiateResponse response = resumeUploadService.initiateUpload(idempotencyKey, request, currentUser);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ApiResponse<>(MessageUtils.getMessage("message.success"), response, HttpStatus.CREATED.value()));
     }

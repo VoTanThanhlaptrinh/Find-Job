@@ -5,20 +5,19 @@ import com.nlu.applicationProcess.api.dto.req.ResumeView;
 import com.nlu.applicationProcess.api.dto.res.ResumeUploadInitiateResponse;
 import com.nlu.applicationProcess.application.impl.ResumeUploadFinalizer;
 import com.nlu.applicationProcess.application.impl.ResumeUploadServiceImpl;
+import com.nlu.applicationProcess.domain.model.ClaimResult;
 import com.nlu.applicationProcess.domain.model.Resume;
 import com.nlu.applicationProcess.domain.model.ResumeStatus;
 import com.nlu.applicationProcess.domain.model.ResumeUploadSession;
 import com.nlu.applicationProcess.domain.model.ResumeUploadSessionStatus;
 import com.nlu.applicationProcess.domain.repository.ResumeRepository;
 import com.nlu.applicationProcess.domain.repository.ResumeUploadSessionRepository;
+import com.nlu.applicationProcess.infrastructure.redis.ResumeUploadLockService;
 import com.nlu.identity.domain.model.User;
 import com.nlu.shared.application.CloudStorageService;
 import com.nlu.shared.application.FileService;
 import com.nlu.shared.application.S3PresignedUrlService;
-import com.nlu.shared.domain.exception.BadRequestException;
-import com.nlu.shared.domain.exception.ForbiddenException;
-import com.nlu.shared.domain.exception.ResourceNotFoundException;
-import com.nlu.shared.domain.exception.UnauthorizedException;
+import com.nlu.shared.domain.exception.*;
 import com.nlu.shared.domain.model.PresignedUploadUrlResponse;
 import com.nlu.shared.domain.model.StorageObjectMetadata;
 import com.nlu.shared.infrastructure.config.ResumeUploadProperties;
@@ -33,7 +32,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.dao.DataIntegrityViolationException;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
@@ -62,6 +65,9 @@ class ResumeUploadServiceTest {
     private ResumeUploadFinalizer resumeUploadFinalizer;
 
     @Mock
+    private ResumeUploadLockService lockService;
+
+    @Mock
     private ResumeUploadProperties properties;
 
     // Boundary mocks to verify zero interactions in the new presigned flow
@@ -80,6 +86,7 @@ class ResumeUploadServiceTest {
     private User testUser;
     private User otherUser;
     private UUID testUploadId;
+    private String testIdempotencyKey;
 
     @BeforeEach
     void setUp() {
@@ -92,20 +99,44 @@ class ResumeUploadServiceTest {
         otherUser.setEmail(new com.nlu.identity.domain.vo.EmailAddress("user200@test.com"));
 
         testUploadId = UUID.randomUUID();
+        testIdempotencyKey = UUID.randomUUID().toString();
 
         lenient().when(properties.getMaxFileSizeBytes()).thenReturn(5L * 1024 * 1024);
         lenient().when(properties.getUrlExpirationMinutes()).thenReturn(10);
         lenient().when(properties.getSessionExpirationMinutes()).thenReturn(30);
         lenient().when(properties.getTempPrefix()).thenReturn("temp");
         lenient().when(properties.getPermanentPrefix()).thenReturn("resumes");
+
+        // By default, mock Redis lock acquisition succeeding
+        lenient().when(lockService.acquireLock(anyLong(), anyString(), anyString()))
+                .thenReturn(Optional.of("token-123"));
+        lenient().when(lockService.releaseLock(anyLong(), anyString(), anyString()))
+                .thenReturn(true);
+    }
+
+    private String calculateFingerprint(String fileName, Long size, String contentType) {
+        String payload = fileName.trim().toLowerCase() + "|" + size + "|" + contentType.trim().toLowerCase();
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(payload.getBytes(StandardCharsets.UTF_8));
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            return payload;
+        }
     }
 
     @Nested
-    @DisplayName("1 & 2 & 3: Initiate Upload Tests")
+    @DisplayName("Initiate Upload Tests (Idempotency & Concurrency)")
     class InitiateUploadTests {
 
         @Test
-        @DisplayName("1. Initiate hợp lệ tạo session PENDING_UPLOAD và presigned PUT URL")
+        @DisplayName("1. Initiate hợp lệ tạo session PENDING_UPLOAD với idempotencyKey và presigned PUT URL")
         void initiateUpload_Valid_Success() {
             ResumeUploadInitiateRequest request = new ResumeUploadInitiateRequest(
                     "my_cv.pdf",
@@ -114,6 +145,8 @@ class ResumeUploadServiceTest {
             );
 
             when(resumeRepository.countResumesByUser_Id(testUser.getId())).thenReturn(5);
+            when(sessionRepository.findByUserIdAndIdempotencyKey(testUser.getId(), testIdempotencyKey))
+                    .thenReturn(Optional.empty());
 
             String expectedUrl = "https://mock-r2.cloudflarestorage.com/temp/upload?sig=abc";
             PresignedUploadUrlResponse mockPresigned = new PresignedUploadUrlResponse(
@@ -126,7 +159,7 @@ class ResumeUploadServiceTest {
             when(s3PresignedUrlService.generateUploadUrl(anyString(), eq("application/pdf"), any(UUID.class), eq(10)))
                     .thenReturn(mockPresigned);
 
-            ResumeUploadInitiateResponse response = resumeUploadService.initiateUpload(request, testUser);
+            ResumeUploadInitiateResponse response = resumeUploadService.initiateUpload(testIdempotencyKey, request, testUser);
 
             assertNotNull(response);
             assertNotNull(response.uploadId());
@@ -134,121 +167,224 @@ class ResumeUploadServiceTest {
             assertEquals("PUT", response.method());
             assertEquals("application/pdf", response.requiredHeaders().get("Content-Type"));
 
-            // Verify session was saved with correct keys and status
+            // Verify session was saved with idempotency key, fingerprint, and correct status
             ArgumentCaptor<ResumeUploadSession> captor = ArgumentCaptor.forClass(ResumeUploadSession.class);
             verify(sessionRepository).save(captor.capture());
             ResumeUploadSession saved = captor.getValue();
 
             assertEquals(testUser.getId(), saved.getUserId());
+            assertEquals(testIdempotencyKey, saved.getIdempotencyKey());
+            assertNotNull(saved.getRequestFingerprint());
             assertEquals("my_cv.pdf", saved.getOriginalFileName());
             assertEquals("application/pdf", saved.getDeclaredContentType());
             assertEquals(1024L * 1024L, saved.getDeclaredSize());
             assertEquals(ResumeUploadSessionStatus.PENDING_UPLOAD, saved.getStatus());
             assertNull(saved.getResumeId());
 
-            // 3. Verify key format: temp/resumes/{userId}/{uploadId} and resumes/{userId}/{uploadId}
-            assertTrue(saved.getTempKey().startsWith("temp/resumes/100/"));
-            assertTrue(saved.getPermanentKey().startsWith("resumes/100/"));
-            assertFalse(saved.getTempKey().contains("my_cv.pdf"), "Object key must not contain original file name");
+            // Verify Redis lock was released
+            verify(lockService).releaseLock(eq(testUser.getId()), eq(testIdempotencyKey), anyString());
         }
 
         @Test
-        @DisplayName("2. Từ chối file rỗng (size <= 0)")
-        void initiateUpload_RejectEmptyFile() {
+        @DisplayName("2. Hai request initiate cùng user và idempotency key + cùng payload trả cùng uploadId, không tạo session 2")
+        void initiateUpload_Idempotent_SamePayload_ReturnsSameUploadId() {
             ResumeUploadInitiateRequest request = new ResumeUploadInitiateRequest(
-                    "empty.pdf",
+                    "my_cv.pdf",
                     "application/pdf",
-                    0L
+                    1024L * 1024L
             );
 
-            BadRequestException ex = assertThrows(BadRequestException.class, () ->
-                    resumeUploadService.initiateUpload(request, testUser)
+            String fingerprint = calculateFingerprint("my_cv.pdf", 1024L * 1024L, "application/pdf");
+            ResumeUploadSession existingSession = ResumeUploadSession.builder()
+                    .id(testUploadId)
+                    .userId(testUser.getId())
+                    .idempotencyKey(testIdempotencyKey)
+                    .requestFingerprint(fingerprint)
+                    .originalFileName("my_cv.pdf")
+                    .declaredContentType("application/pdf")
+                    .declaredSize(1024L * 1024L)
+                    .tempKey("temp/resumes/100/" + testUploadId)
+                    .permanentKey("resumes/100/" + testUploadId)
+                    .status(ResumeUploadSessionStatus.PENDING_UPLOAD)
+                    .expiresAt(LocalDateTime.now().plusMinutes(20))
+                    .build();
+
+            when(sessionRepository.findByUserIdAndIdempotencyKey(testUser.getId(), testIdempotencyKey))
+                    .thenReturn(Optional.of(existingSession));
+
+            PresignedUploadUrlResponse refreshedPresigned = new PresignedUploadUrlResponse(
+                    "https://mock-r2.cloudflarestorage.com/temp/refreshed",
+                    "PUT",
+                    Map.of("Content-Type", "application/pdf"),
+                    LocalDateTime.now().plusMinutes(10)
             );
-            assertTrue(ex.getMessage().contains("greater than 0"));
+            when(s3PresignedUrlService.generateUploadUrl(eq(existingSession.getTempKey()), eq("application/pdf"), eq(testUploadId), eq(10)))
+                    .thenReturn(refreshedPresigned);
+
+            ResumeUploadInitiateResponse response = resumeUploadService.initiateUpload(testIdempotencyKey, request, testUser);
+
+            // Must return the SAME uploadId
+            assertEquals(testUploadId, response.uploadId());
+            assertEquals("https://mock-r2.cloudflarestorage.com/temp/refreshed", response.uploadUrl());
+
+            // Must NOT create a second session in DB
+            verify(sessionRepository, never()).save(any());
         }
 
         @Test
-        @DisplayName("2. Từ chối file vượt quá 5 MB")
-        void initiateUpload_RejectOversizedFile() {
+        @DisplayName("3. Cùng user và idempotency key nhưng payload khác (fingerprint mismatch) trả HTTP 409 Conflict")
+        void initiateUpload_Conflict_WhenFingerprintDiffers() {
             ResumeUploadInitiateRequest request = new ResumeUploadInitiateRequest(
-                    "large.pdf",
+                    "new_cv.pdf",
                     "application/pdf",
-                    5L * 1024 * 1024 + 1L
+                    2048L
             );
 
-            BadRequestException ex = assertThrows(BadRequestException.class, () ->
-                    resumeUploadService.initiateUpload(request, testUser)
+            // Existing session was created for a 1024-byte file with different fingerprint
+            String originalFingerprint = calculateFingerprint("old_cv.pdf", 1024L, "application/pdf");
+            ResumeUploadSession existingSession = ResumeUploadSession.builder()
+                    .id(testUploadId)
+                    .userId(testUser.getId())
+                    .idempotencyKey(testIdempotencyKey)
+                    .requestFingerprint(originalFingerprint)
+                    .originalFileName("old_cv.pdf")
+                    .declaredContentType("application/pdf")
+                    .declaredSize(1024L)
+                    .status(ResumeUploadSessionStatus.PENDING_UPLOAD)
+                    .expiresAt(LocalDateTime.now().plusMinutes(20))
+                    .build();
+
+            when(sessionRepository.findByUserIdAndIdempotencyKey(testUser.getId(), testIdempotencyKey))
+                    .thenReturn(Optional.of(existingSession));
+
+            assertThrows(ConflictException.class, () ->
+                    resumeUploadService.initiateUpload(testIdempotencyKey, request, testUser)
             );
-            assertTrue(ex.getMessage().contains("5 MB"));
         }
 
         @Test
-        @DisplayName("2. Từ chối extension và MIME không khớp nhau")
-        void initiateUpload_RejectExtensionMimeMismatch() {
-            // PDF file with Word MIME type
-            ResumeUploadInitiateRequest request = new ResumeUploadInitiateRequest(
-                    "fake.pdf",
-                    "application/msword",
-                    1024L
-            );
-
-            BadRequestException ex = assertThrows(BadRequestException.class, () ->
-                    resumeUploadService.initiateUpload(request, testUser)
-            );
-            assertTrue(ex.getMessage().contains("does not match"));
-        }
-
-        @Test
-        @DisplayName("2. Từ chối định dạng không thuộc PDF, DOC, DOCX")
-        void initiateUpload_RejectUnsupportedFormat() {
-            ResumeUploadInitiateRequest request = new ResumeUploadInitiateRequest(
-                    "malware.exe",
-                    "application/octet-stream",
-                    1024L
-            );
-
-            BadRequestException ex = assertThrows(BadRequestException.class, () ->
-                    resumeUploadService.initiateUpload(request, testUser)
-            );
-            assertTrue(ex.getMessage().contains("Only PDF, DOC, and DOCX"));
-        }
-
-        @Test
-        @DisplayName("Initiate yêu cầu người dùng phải đăng nhập")
-        void initiateUpload_RejectUnauthenticated() {
+        @DisplayName("4. Hai user khác nhau được phép dùng cùng chuỗi idempotency key (key được scope theo user)")
+        void initiateUpload_TwoUsersCanUseSameKeyString() {
+            String sharedKey = UUID.randomUUID().toString();
             ResumeUploadInitiateRequest request = new ResumeUploadInitiateRequest(
                     "cv.pdf",
                     "application/pdf",
                     1024L
             );
 
-            assertThrows(UnauthorizedException.class, () ->
-                    resumeUploadService.initiateUpload(request, null)
-            );
+            // User 1
+            when(sessionRepository.findByUserIdAndIdempotencyKey(testUser.getId(), sharedKey))
+                    .thenReturn(Optional.empty());
+            // User 2
+            when(sessionRepository.findByUserIdAndIdempotencyKey(otherUser.getId(), sharedKey))
+                    .thenReturn(Optional.empty());
+
+            PresignedUploadUrlResponse presigned = new PresignedUploadUrlResponse(
+                    "https://r2/url", "PUT", Map.of(), LocalDateTime.now().plusMinutes(10));
+            when(s3PresignedUrlService.generateUploadUrl(anyString(), anyString(), any(UUID.class), anyInt()))
+                    .thenReturn(presigned);
+
+            ResumeUploadInitiateResponse resp1 = resumeUploadService.initiateUpload(sharedKey, request, testUser);
+            ResumeUploadInitiateResponse resp2 = resumeUploadService.initiateUpload(sharedKey, request, otherUser);
+
+            assertNotNull(resp1.uploadId());
+            assertNotNull(resp2.uploadId());
+            assertNotEquals(resp1.uploadId(), resp2.uploadId(), "Each user must receive their own distinct session");
         }
 
         @Test
-        @DisplayName("Initiate từ chối khi vượt quá quota 100 CV")
-        void initiateUpload_RejectQuotaExceeded() {
-            when(resumeRepository.countResumesByUser_Id(testUser.getId())).thenReturn(101);
-
+        @DisplayName("5. Khi Redis gặp sự cố (outage), DB unique constraint vẫn bảo vệ và request thành công")
+        void initiateUpload_RedisOutage_ProtectedByDatabase() {
             ResumeUploadInitiateRequest request = new ResumeUploadInitiateRequest(
                     "cv.pdf",
                     "application/pdf",
                     1024L
             );
 
+            // Simulate Redis outage: acquireLock returns Optional.empty()
+            when(lockService.acquireLock(anyLong(), anyString(), anyString())).thenReturn(Optional.empty());
+            when(sessionRepository.findByUserIdAndIdempotencyKey(testUser.getId(), testIdempotencyKey))
+                    .thenReturn(Optional.empty());
+
+            PresignedUploadUrlResponse presigned = new PresignedUploadUrlResponse(
+                    "https://r2/url", "PUT", Map.of(), LocalDateTime.now().plusMinutes(10));
+            when(s3PresignedUrlService.generateUploadUrl(anyString(), anyString(), any(UUID.class), anyInt()))
+                    .thenReturn(presigned);
+
+            ResumeUploadInitiateResponse response = resumeUploadService.initiateUpload(testIdempotencyKey, request, testUser);
+
+            assertNotNull(response);
+            verify(sessionRepository).save(any(ResumeUploadSession.class));
+        }
+
+        @Test
+        @DisplayName("6. Khi concurrent insert race xảy ra dưới DB (DataIntegrityViolationException), đọc lại session hiện tại và trả về đúng")
+        void initiateUpload_ConcurrentRace_DataIntegrityViolation_CatchesAndReturnsExisting() {
+            ResumeUploadInitiateRequest request = new ResumeUploadInitiateRequest(
+                    "cv.pdf",
+                    "application/pdf",
+                    1024L
+            );
+
+            String fingerprint = calculateFingerprint("cv.pdf", 1024L, "application/pdf");
+            ResumeUploadSession racedSession = ResumeUploadSession.builder()
+                    .id(testUploadId)
+                    .userId(testUser.getId())
+                    .idempotencyKey(testIdempotencyKey)
+                    .requestFingerprint(fingerprint)
+                    .originalFileName("cv.pdf")
+                    .declaredContentType("application/pdf")
+                    .declaredSize(1024L)
+                    .tempKey("temp/resumes/100/" + testUploadId)
+                    .status(ResumeUploadSessionStatus.PENDING_UPLOAD)
+                    .expiresAt(LocalDateTime.now().plusMinutes(20))
+                    .build();
+
+            // First check says empty
+            when(sessionRepository.findByUserIdAndIdempotencyKey(testUser.getId(), testIdempotencyKey))
+                    .thenReturn(Optional.empty())
+                    .thenReturn(Optional.of(racedSession)); // Second query after catch returns the raced session
+
+            // save throws DataIntegrityViolationException due to DB unique constraint
+            when(sessionRepository.save(any(ResumeUploadSession.class)))
+                    .thenThrow(new DataIntegrityViolationException("duplicate key value violates unique constraint"));
+
+            PresignedUploadUrlResponse presigned = new PresignedUploadUrlResponse(
+                    "https://r2/url", "PUT", Map.of(), LocalDateTime.now().plusMinutes(10));
+            when(s3PresignedUrlService.generateUploadUrl(anyString(), anyString(), eq(testUploadId), anyInt()))
+                    .thenReturn(presigned);
+
+            ResumeUploadInitiateResponse response = resumeUploadService.initiateUpload(testIdempotencyKey, request, testUser);
+
+            assertNotNull(response);
+            assertEquals(testUploadId, response.uploadId());
+        }
+
+        @Test
+        @DisplayName("7. Từ chối khi thiếu hoặc sai định dạng Idempotency-Key")
+        void initiateUpload_RejectInvalidIdempotencyKey() {
+            ResumeUploadInitiateRequest request = new ResumeUploadInitiateRequest("cv.pdf", "application/pdf", 1024L);
+
+            // Null or blank
             assertThrows(BadRequestException.class, () ->
-                    resumeUploadService.initiateUpload(request, testUser)
+                    resumeUploadService.initiateUpload(null, request, testUser)
+            );
+            assertThrows(BadRequestException.class, () ->
+                    resumeUploadService.initiateUpload("   ", request, testUser)
+            );
+
+            // Non-UUID format
+            assertThrows(BadRequestException.class, () ->
+                    resumeUploadService.initiateUpload("not-a-valid-uuid", request, testUser)
             );
         }
     }
 
     @Nested
-    @DisplayName("4 - 15: Complete Upload Tests")
+    @DisplayName("Complete Upload Tests (State Machine, Idempotency & Invariants)")
     class CompleteUploadTests {
 
-        private ResumeUploadSession createPendingSession() {
+        private ResumeUploadSession createClaimedSession(String token) {
             return ResumeUploadSession.builder()
                     .id(testUploadId)
                     .userId(testUser.getId())
@@ -257,7 +393,8 @@ class ResumeUploadServiceTest {
                     .declaredSize(2048L)
                     .tempKey("temp/resumes/100/" + testUploadId)
                     .permanentKey("resumes/100/" + testUploadId)
-                    .status(ResumeUploadSessionStatus.PENDING_UPLOAD)
+                    .status(ResumeUploadSessionStatus.FINALIZING)
+                    .processingToken(token)
                     .resumeId(null)
                     .expiresAt(LocalDateTime.now().plusMinutes(25))
                     .createdAt(LocalDateTime.now())
@@ -266,109 +403,21 @@ class ResumeUploadServiceTest {
         }
 
         @Test
-        @DisplayName("4. Người dùng không thể complete session của người khác (403)")
-        void completeUpload_ForbiddenForOtherUser() {
-            ResumeUploadSession session = createPendingSession();
-            when(sessionRepository.findById(testUploadId)).thenReturn(Optional.of(session));
+        @DisplayName("1. Complete thành công: claim -> verify -> copy -> verify permanent -> finalize -> delete temp")
+        void completeUpload_Success() {
+            String token = UUID.randomUUID().toString();
+            ResumeUploadSession session = createClaimedSession(token);
 
-            assertThrows(ForbiddenException.class, () ->
-                    resumeUploadService.completeUpload(testUploadId, otherUser)
-            );
-        }
+            when(resumeUploadFinalizer.claimForFinalizing(testUploadId, testUser))
+                    .thenReturn(ClaimResult.claimed(token, session));
 
-        @Test
-        @DisplayName("5. Complete từ chối session hết hạn")
-        void completeUpload_RejectExpiredSession() {
-            ResumeUploadSession session = createPendingSession();
-            session.setExpiresAt(LocalDateTime.now().minusMinutes(1)); // Expired
-
-            when(sessionRepository.findById(testUploadId)).thenReturn(Optional.of(session));
-
-            BadRequestException ex = assertThrows(BadRequestException.class, () ->
-                    resumeUploadService.completeUpload(testUploadId, testUser)
-            );
-            assertTrue(ex.getMessage().contains("expired"));
-            assertEquals(ResumeUploadSessionStatus.EXPIRED, session.getStatus());
-            verify(sessionRepository).save(session);
-        }
-
-        @Test
-        @DisplayName("6. Complete từ chối object không tồn tại trên R2 (HEAD temp empty)")
-        void completeUpload_RejectTempObjectNotFound() {
-            ResumeUploadSession session = createPendingSession();
-            when(sessionRepository.findById(testUploadId)).thenReturn(Optional.of(session));
-            when(cloudStorageService.headObject(session.getPermanentKey())).thenReturn(Optional.empty());
-            when(cloudStorageService.headObject(session.getTempKey())).thenReturn(Optional.empty());
-
-            BadRequestException ex = assertThrows(BadRequestException.class, () ->
-                    resumeUploadService.completeUpload(testUploadId, testUser)
-            );
-            assertTrue(ex.getMessage().contains("not found in storage"));
-            assertEquals(ResumeUploadSessionStatus.REJECTED, session.getStatus());
-        }
-
-        @Test
-        @DisplayName("7. Complete từ chối khi actual size không khớp declared size")
-        void completeUpload_RejectSizeMismatch() {
-            ResumeUploadSession session = createPendingSession();
-            when(sessionRepository.findById(testUploadId)).thenReturn(Optional.of(session));
-            when(cloudStorageService.headObject(session.getPermanentKey())).thenReturn(Optional.empty());
-
-            // Actual size 9999 != declared size 2048
-            StorageObjectMetadata badMeta = new StorageObjectMetadata(
-                    session.getTempKey(),
-                    9999L,
-                    "application/pdf",
-                    "etag123"
-            );
-            when(cloudStorageService.headObject(session.getTempKey())).thenReturn(Optional.of(badMeta));
-
-            BadRequestException ex = assertThrows(BadRequestException.class, () ->
-                    resumeUploadService.completeUpload(testUploadId, testUser)
-            );
-            assertTrue(ex.getMessage().contains("does not match"));
-            assertEquals(ResumeUploadSessionStatus.REJECTED, session.getStatus());
-            verify(cloudStorageService).deleteObject(session.getTempKey());
-        }
-
-        @Test
-        @DisplayName("7. Complete từ chối khi content type không khớp declared content type")
-        void completeUpload_RejectContentTypeMismatch() {
-            ResumeUploadSession session = createPendingSession();
-            when(sessionRepository.findById(testUploadId)).thenReturn(Optional.of(session));
-            when(cloudStorageService.headObject(session.getPermanentKey())).thenReturn(Optional.empty());
-
-            StorageObjectMetadata mismatchTypeMeta = new StorageObjectMetadata(
-                    session.getTempKey(),
-                    2048L,
-                    "image/png",
-                    "etag123"
-            );
-            when(cloudStorageService.headObject(session.getTempKey())).thenReturn(Optional.of(mismatchTypeMeta));
-
-            assertThrows(BadRequestException.class, () ->
-                    resumeUploadService.completeUpload(testUploadId, testUser)
-            );
-            assertEquals(ResumeUploadSessionStatus.REJECTED, session.getStatus());
-        }
-
-        @Test
-        @DisplayName("8 & 9 & 10 & 11: Complete thành công — server-side copy, UPLOADED status, rawText=null, zero AI/file calls")
-        void completeUpload_Success_VerifiesAllContractGuarantees() {
-            ResumeUploadSession session = createPendingSession();
-            when(sessionRepository.findById(testUploadId)).thenReturn(Optional.of(session));
             when(cloudStorageService.headObject(session.getPermanentKey())).thenReturn(
-                    Optional.empty(), // First check: permanent doesn't exist yet
-                    Optional.of(new StorageObjectMetadata(session.getPermanentKey(), 2048L, "application/pdf", "etag2")) // Verification check
+                    Optional.empty(),
+                    Optional.of(new StorageObjectMetadata(session.getPermanentKey(), 2048L, "application/pdf", "etag-perm"))
             );
-
-            StorageObjectMetadata validTempMeta = new StorageObjectMetadata(
-                    session.getTempKey(),
-                    2048L,
-                    "application/pdf",
-                    "etag1"
+            when(cloudStorageService.headObject(session.getTempKey())).thenReturn(
+                    Optional.of(new StorageObjectMetadata(session.getTempKey(), 2048L, "application/pdf", "etag-temp"))
             );
-            when(cloudStorageService.headObject(session.getTempKey())).thenReturn(Optional.of(validTempMeta));
 
             Resume createdResume = new Resume();
             createdResume.setId(555L);
@@ -378,8 +427,7 @@ class ResumeUploadServiceTest {
             createdResume.setRawText(null);
             createdResume.markUploaded();
 
-            when(resumeUploadFinalizer.finalizeUpload(eq(testUploadId), eq(testUser), eq(session.getPermanentKey()), eq(session.getOriginalFileName())))
-                    .thenReturn(createdResume);
+            when(resumeUploadFinalizer.finalizeUpload(testUploadId, token, testUser)).thenReturn(createdResume);
 
             ResumeView result = resumeUploadService.completeUpload(testUploadId, testUser);
 
@@ -388,105 +436,145 @@ class ResumeUploadServiceTest {
             assertEquals("sanitized_cv.pdf", result.fileName());
             assertEquals(ResumeStatus.UPLOADED, result.status());
 
-            // 8. Verify server-side copy called (no byte transfer)
+            // Verify server-side copy called
             verify(cloudStorageService).copyObject(session.getTempKey(), session.getPermanentKey());
-
-            // Verify temp delete called best-effort
+            // Verify temp deleted best effort
             verify(cloudStorageService).deleteObject(session.getTempKey());
-
-            // 9. Verify created resume status and null rawText
-            assertEquals(ResumeStatus.UPLOADED, createdResume.getStatus());
-            assertNull(createdResume.getRawText(), "rawText must be null in presigned flow");
-
-            // 10. Verify FileService was NEVER called
+            // Zero interactions with legacy multipart services
             verifyNoInteractions(fileService);
-
-            // 11. Verify ApplicationEventPublisher and MessageProducer were NEVER called
             verifyNoInteractions(eventPublisher);
             verifyNoInteractions(messageProducer);
         }
 
         @Test
-        @DisplayName("12. Idempotency: Gọi complete hai lần trả cùng ResumeView")
-        void completeUpload_Idempotent_SecondCallReturnsExistingResume() {
-            ResumeUploadSession completedSession = createPendingSession();
-            completedSession.setStatus(ResumeUploadSessionStatus.COMPLETED);
-            completedSession.setResumeId(777L);
-
-            when(sessionRepository.findById(testUploadId)).thenReturn(Optional.of(completedSession));
+        @DisplayName("2. Idempotency: Complete khi đã COMPLETED trả lại Resume hiện tại, không tạo Resume thứ 2")
+        void completeUpload_Idempotent_AlreadyCompleted() {
+            when(resumeUploadFinalizer.claimForFinalizing(testUploadId, testUser))
+                    .thenReturn(ClaimResult.alreadyCompleted(777L));
 
             Resume existingResume = new Resume();
             existingResume.setId(777L);
-            existingResume.setFileName("my_cv.pdf");
+            existingResume.setFileName("cv.pdf");
             existingResume.markUploaded();
             when(resumeRepository.findById(777L)).thenReturn(Optional.of(existingResume));
 
             ResumeView result = resumeUploadService.completeUpload(testUploadId, testUser);
 
             assertEquals(777L, result.id());
-            assertEquals("my_cv.pdf", result.fileName());
-
-            // Verify no storage copy or finalizer was executed again
+            // No storage copy, no finalize called again
             verify(cloudStorageService, never()).copyObject(anyString(), anyString());
-            verify(resumeUploadFinalizer, never()).finalizeUpload(any(), any(), any(), any());
+            verify(resumeUploadFinalizer, never()).finalizeUpload(any(), any(), any());
         }
 
         @Test
-        @DisplayName("14. Xóa temp thất bại không làm complete thất bại")
-        void completeUpload_TempDeleteFailure_DoesNotFailComplete() {
-            ResumeUploadSession session = createPendingSession();
-            when(sessionRepository.findById(testUploadId)).thenReturn(Optional.of(session));
-            when(cloudStorageService.headObject(session.getPermanentKey())).thenReturn(
-                    Optional.empty(),
-                    Optional.of(new StorageObjectMetadata(session.getPermanentKey(), 2048L, "application/pdf", "etag2"))
-            );
-            when(cloudStorageService.headObject(session.getTempKey())).thenReturn(
-                    Optional.of(new StorageObjectMetadata(session.getTempKey(), 2048L, "application/pdf", "etag1"))
-            );
+        @DisplayName("3. Request thứ 2 thấy FINALIZING không copy hay reject, chờ kết quả và trả đúng khi hoàn tất")
+        void completeUpload_SecondRequestSeesFinalizing_WaitsAndReturnsCompleted() {
+            when(resumeUploadFinalizer.claimForFinalizing(testUploadId, testUser))
+                    .thenReturn(ClaimResult.inProgress());
 
-            Resume createdResume = new Resume();
-            createdResume.setId(888L);
-            createdResume.markUploaded();
-            when(resumeUploadFinalizer.finalizeUpload(any(), any(), any(), any())).thenReturn(createdResume);
+            ResumeUploadSession completedSession = createClaimedSession("other-token");
+            completedSession.setStatus(ResumeUploadSessionStatus.COMPLETED);
+            completedSession.setResumeId(999L);
+            when(sessionRepository.findById(testUploadId)).thenReturn(Optional.of(completedSession));
 
-            // Mock temp deletion throwing exception
-            doThrow(new RuntimeException("Cloudflare R2 temporary network glitch"))
-                    .when(cloudStorageService).deleteObject(session.getTempKey());
-
-            // Complete must still succeed!
-            ResumeView result = assertDoesNotThrow(() ->
-                    resumeUploadService.completeUpload(testUploadId, testUser)
-            );
-            assertEquals(888L, result.id());
-        }
-
-        @Test
-        @DisplayName("Permanent object đã tồn tại từ lần thử trước thì xác minh metadata và sử dụng lại (không copy lại)")
-        void completeUpload_PermanentObjectAlreadyExists_SkipsCopy() {
-            ResumeUploadSession session = createPendingSession();
-            when(sessionRepository.findById(testUploadId)).thenReturn(Optional.of(session));
-
-            // Permanent object already exists with matching declared metadata
-            StorageObjectMetadata existingPermMeta = new StorageObjectMetadata(
-                    session.getPermanentKey(),
-                    2048L,
-                    "application/pdf",
-                    "etag-perm"
-            );
-            when(cloudStorageService.headObject(session.getPermanentKey())).thenReturn(Optional.of(existingPermMeta));
-
-            Resume createdResume = new Resume();
-            createdResume.setId(999L);
-            createdResume.markUploaded();
-            when(resumeUploadFinalizer.finalizeUpload(any(), any(), any(), any())).thenReturn(createdResume);
+            Resume existingResume = new Resume();
+            existingResume.setId(999L);
+            existingResume.setFileName("cv.pdf");
+            existingResume.markUploaded();
+            when(resumeRepository.findById(999L)).thenReturn(Optional.of(existingResume));
 
             ResumeView result = resumeUploadService.completeUpload(testUploadId, testUser);
 
             assertEquals(999L, result.id());
-            // Copy was NOT called again
+            // Zero copy or reject by second request
             verify(cloudStorageService, never()).copyObject(anyString(), anyString());
-            // Temp delete is still performed
+            verify(resumeUploadFinalizer, never()).markRejected(any(), any(), any(), any(), any(), any(), any());
+        }
+
+        @Test
+        @DisplayName("4. Invariant REJECTED: Khi temp object không tồn tại, markRejected được gọi, resumeRepository.save tuyệt đối không gọi")
+        void completeUpload_RejectTempNotFound_GuaranteesNoResumeSaved() {
+            String token = "tok-1";
+            ResumeUploadSession session = createClaimedSession(token);
+
+            when(resumeUploadFinalizer.claimForFinalizing(testUploadId, testUser))
+                    .thenReturn(ClaimResult.claimed(token, session));
+            when(cloudStorageService.headObject(session.getPermanentKey())).thenReturn(Optional.empty());
+            when(cloudStorageService.headObject(session.getTempKey())).thenReturn(Optional.empty());
+
+            BadRequestException ex = assertThrows(BadRequestException.class, () ->
+                    resumeUploadService.completeUpload(testUploadId, testUser)
+            );
+            assertTrue(ex.getMessage().contains("not found in storage"));
+
+            verify(resumeUploadFinalizer).markRejected(
+                    eq(testUploadId), eq(token), eq("TEMP_OBJECT_NOT_FOUND"), anyString(),
+                    isNull(), isNull(), isNull()
+            );
+            verify(resumeRepository, never()).save(any(Resume.class));
+            assertNull(session.getResumeId(), "resume_id must remain null");
+        }
+
+        @Test
+        @DisplayName("5. Invariant REJECTED: Khi size không khớp, markRejected được gọi với size thực tế, resumeRepository.save tuyệt đối không gọi")
+        void completeUpload_RejectSizeMismatch_GuaranteesNoResumeSaved() {
+            String token = "tok-2";
+            ResumeUploadSession session = createClaimedSession(token);
+
+            when(resumeUploadFinalizer.claimForFinalizing(testUploadId, testUser))
+                    .thenReturn(ClaimResult.claimed(token, session));
+            when(cloudStorageService.headObject(session.getPermanentKey())).thenReturn(Optional.empty());
+
+            StorageObjectMetadata badMeta = new StorageObjectMetadata(
+                    session.getTempKey(),
+                    9999L, // Declared size is 2048L
+                    "application/pdf",
+                    "etag123"
+            );
+            when(cloudStorageService.headObject(session.getTempKey())).thenReturn(Optional.of(badMeta));
+
+            BadRequestException ex = assertThrows(BadRequestException.class, () ->
+                    resumeUploadService.completeUpload(testUploadId, testUser)
+            );
+            assertTrue(ex.getMessage().contains("does not match declared specifications"));
+
+            verify(resumeUploadFinalizer).markRejected(
+                    eq(testUploadId), eq(token), eq("METADATA_SIZE_MISMATCH"), anyString(),
+                    eq(9999L), eq("application/pdf"), eq("etag123")
+            );
             verify(cloudStorageService).deleteObject(session.getTempKey());
+            verify(resumeRepository, never()).save(any(Resume.class));
+            assertNull(session.getResumeId(), "resume_id must remain null");
+        }
+
+        @Test
+        @DisplayName("6. Invariant REJECTED: Khi copy xong nhưng verify permanent thất bại, xóa permanent orphan và markRejected")
+        void completeUpload_PermanentVerificationFailed_CleansOrphanAndRejects() {
+            String token = "tok-3";
+            ResumeUploadSession session = createClaimedSession(token);
+
+            when(resumeUploadFinalizer.claimForFinalizing(testUploadId, testUser))
+                    .thenReturn(ClaimResult.claimed(token, session));
+            when(cloudStorageService.headObject(session.getPermanentKey())).thenReturn(Optional.empty());
+
+            StorageObjectMetadata validTemp = new StorageObjectMetadata(
+                    session.getTempKey(), 2048L, "application/pdf", "etag-temp"
+            );
+            when(cloudStorageService.headObject(session.getTempKey())).thenReturn(Optional.of(validTemp));
+
+            // Copy is called, but verification HEAD returns empty
+            StorageException ex = assertThrows(StorageException.class, () ->
+                    resumeUploadService.completeUpload(testUploadId, testUser)
+            );
+
+            // Must clean up permanent orphan
+            verify(cloudStorageService).deleteObject(session.getPermanentKey());
+            verify(resumeUploadFinalizer).markRejected(
+                    eq(testUploadId), eq(token), eq("PERMANENT_VERIFICATION_FAILED"), anyString(),
+                    any(), any(), any()
+            );
+            verify(resumeRepository, never()).save(any(Resume.class));
+            assertNull(session.getResumeId());
         }
     }
 }

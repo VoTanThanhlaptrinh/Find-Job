@@ -22,11 +22,28 @@ public interface ResumeUploadSessionRepository extends JpaRepository<ResumeUploa
     @Query("SELECT s FROM ResumeUploadSession s WHERE s.id = :id")
     Optional<ResumeUploadSession> findByIdForUpdate(@Param("id") UUID id);
 
+    Optional<ResumeUploadSession> findByUserIdAndIdempotencyKey(long userId, String idempotencyKey);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT s FROM ResumeUploadSession s WHERE s.userId = :userId AND s.idempotencyKey = :idempotencyKey")
+    Optional<ResumeUploadSession> findByUserIdAndIdempotencyKeyForUpdate(@Param("userId") long userId, @Param("idempotencyKey") String idempotencyKey);
+
     Optional<ResumeUploadSession> findByResumeId(Long resumeId);
 
     List<ResumeUploadSession> findByStatusAndExpiresAtBefore(
             ResumeUploadSessionStatus status,
             LocalDateTime expiresAt,
+            Pageable pageable
+    );
+
+    List<ResumeUploadSession> findByStatusAndFinalizingStartedAtBefore(
+            ResumeUploadSessionStatus status,
+            LocalDateTime threshold,
+            Pageable pageable
+    );
+
+    List<ResumeUploadSession> findByStatusAndCleanupCompletedAtIsNull(
+            ResumeUploadSessionStatus status,
             Pageable pageable
     );
 }

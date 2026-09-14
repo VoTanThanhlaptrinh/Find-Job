@@ -202,4 +202,108 @@ export class ResumeService {
             }
         });
     }
+
+    private uploadIntents = new Map<string, string>();
+
+    private getOrCreateIdempotencyKey(file: File): string {
+        const fileKey = `${file.name}_${file.size}_${file.lastModified}`;
+        let key = this.uploadIntents.get(fileKey);
+        if (!key) {
+            key = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : this.generateUUID();
+            this.uploadIntents.set(fileKey, key);
+        }
+        return key;
+    }
+
+    private clearUploadIntent(file: File): void {
+        const fileKey = `${file.name}_${file.size}_${file.lastModified}`;
+        this.uploadIntents.delete(fileKey);
+    }
+
+    private generateUUID(): string {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
+
+    uploadResumePresigned(file: File, enableAiAnalysis: boolean = false) {
+        this.sseService.clearEvent(this.SSE_EVENT_NAME);
+
+        const tempId = --this.counter;
+        const newResume: ResumeReviewInput = {
+            id: tempId,
+            fileName: file.name,
+            createDate: new Date().toISOString(),
+            isAnalyzed: false,
+            isNewlyUploaded: true
+        };
+
+        this.resumes.update(resumes => [newResume, ...resumes]);
+        this.localFileData.set({ name: file.name, status: 'uploading', id: tempId, isManualAnalyze: false });
+
+        const idempotencyKey = this.getOrCreateIdempotencyKey(file);
+
+        // 1. Initiate presigned upload with Idempotency-Key
+        const initiatePayload = {
+            fileName: file.name,
+            contentType: file.type || 'application/pdf',
+            size: file.size
+        };
+
+        const headers = { 'Idempotency-Key': idempotencyKey };
+
+        this.http.post<ApiResponse<{ uploadId: string; uploadUrl: string; httpMethod: string; requiredHeaders: Record<string, string>; expiresAt: string }>>(
+            `${this.url}/user/resume-uploads/initiate`,
+            initiatePayload,
+            { headers }
+        ).subscribe({
+            next: (initResponse) => {
+                const uploadData = initResponse.data;
+                const uploadId = uploadData.uploadId;
+
+                // 2. PUT file directly to S3/R2 presigned URL
+                this.http.put(uploadData.uploadUrl, file, {
+                    headers: uploadData.requiredHeaders || {}
+                }).subscribe({
+                    next: () => {
+                        // 3. Complete upload
+                        this.http.post<ApiResponse<{ id: number; fileName: string; createdAt: string; status: string }>>(
+                            `${this.url}/user/resume-uploads/${uploadId}/complete`,
+                            {}
+                        ).subscribe({
+                            next: (completeResponse) => {
+                                this.clearUploadIntent(file);
+                                const resumeId = completeResponse.data.id;
+
+                                this.resumes.update(list => list.map(r => r.id === tempId ? { ...r, id: resumeId } : r));
+
+                                this.localFileData.update(prev => ({
+                                    ...prev,
+                                    id: resumeId,
+                                    status: enableAiAnalysis ? 'analyzing' : 'uploaded'
+                                }));
+
+                                if (enableAiAnalysis) {
+                                    this.analyzeResume(resumeId);
+                                }
+                            },
+                            error: (completeErr) => {
+                                this.localFileData.update(prev => ({ ...prev, status: 'error' }));
+                                this.notificationService.error(completeErr.error?.message || 'Lỗi khi xác nhận tải CV');
+                            }
+                        });
+                    },
+                    error: (storageErr) => {
+                        this.localFileData.update(prev => ({ ...prev, status: 'error' }));
+                        this.notificationService.error('Lỗi khi tải file lên kho lưu trữ');
+                    }
+                });
+            },
+            error: (initErr) => {
+                this.localFileData.update(prev => ({ ...prev, status: 'error' }));
+                this.notificationService.error(initErr.error?.message || 'Lỗi khi khởi tạo tải CV');
+            }
+        });
+    }
 }
