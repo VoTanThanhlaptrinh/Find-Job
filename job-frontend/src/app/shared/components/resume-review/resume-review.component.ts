@@ -125,6 +125,12 @@ export class ResumeReviewComponent implements OnDestroy {
   readonly viewLabel = computed(() => this.i18n.translate('cvList.view'));
 
   // Menu is controlled via direct click bindings in the template
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (this.isMenuOpen && !this.elementRef.nativeElement.contains(event.target as Node)) {
+      this.closeMenu();
+    }
+  }
 
   closeMenu(): void {
     this.isMenuOpen = false;

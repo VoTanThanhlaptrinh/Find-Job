@@ -1,15 +1,21 @@
-<article class="rounded-2xl border border-slate-200 bg-white p-2 shadow-sm">
-  <div>
-    <div class="flex items-start gap-2">
-      <div class="skeleton-shimmer h-10 w-10 rounded-xl bg-slate-200"></div>
-      <div class="flex-1 space-y-2">
-        <div class="skeleton-shimmer h-5 w-2/3 rounded bg-slate-200"></div>
-        <div class="skeleton-shimmer h-4 w-1/2 rounded bg-slate-200"></div>
+<article class="rounded-2xl border border-[#DCE5F2] bg-white p-4 sm:p-5 shadow-xs flex items-start sm:items-center justify-between gap-3 sm:gap-4">
+  <div class="flex items-start sm:items-center gap-3.5 sm:gap-4 flex-1 min-w-0">
+    <!-- Icon shimmer placeholder -->
+    <div class="skeleton-shimmer w-14 h-14 sm:w-[68px] sm:h-[68px] rounded-xl bg-slate-100 shrink-0"></div>
+    
+    <!-- Text shimmer placeholders -->
+    <div class="flex-1 min-w-0 space-y-2.5">
+      <div class="skeleton-shimmer h-5 w-3/5 sm:w-2/5 rounded-md bg-slate-200"></div>
+      <div class="flex flex-wrap items-center gap-2.5">
+        <div class="skeleton-shimmer h-4 w-20 rounded bg-slate-100"></div>
+        <span class="text-slate-200 hidden sm:inline">&bull;</span>
+        <div class="skeleton-shimmer h-4 w-14 rounded bg-slate-100"></div>
+        <span class="text-slate-200 hidden sm:inline">&bull;</span>
+        <div class="skeleton-shimmer h-5 w-24 rounded-md bg-slate-100"></div>
       </div>
     </div>
-    <div class="mt-4 flex gap-2">
-      <div class="skeleton-shimmer h-9 w-9 rounded-lg bg-slate-200"></div>
-      <div class="skeleton-shimmer h-9 w-9 rounded-lg bg-slate-200"></div>
-    </div>
   </div>
+
+  <!-- Action button shimmer placeholder -->
+  <div class="skeleton-shimmer w-10 h-10 rounded-xl bg-slate-100 shrink-0 self-start sm:self-center"></div>
 </article>
