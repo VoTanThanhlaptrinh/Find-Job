@@ -17,9 +17,23 @@ export class JobCardComponent {
   @Input({ required: true }) job!: JobCardModel;
   @Input() image = 'assets/web_css/img/post.png';
   @Input() detailRoute = '/single';
+  @Input() isApplied = false;
+  @Input() appliedDate?: string;
 
   private readonly savedJobsService = inject(SavedJobsService);
   private readonly i18nService = inject(I18nService);
+
+  get formattedAppliedDate(): string {
+    const rawDate = this.appliedDate || this.job?.postedAt;
+    if (!rawDate) return '';
+    const date = new Date(rawDate);
+    if (isNaN(date.getTime())) return rawDate;
+    return new Intl.DateTimeFormat('vi-VN', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    }).format(date);
+  }
 
   get isSaved(): boolean {
     if (!this.job || !this.job.id) return false;

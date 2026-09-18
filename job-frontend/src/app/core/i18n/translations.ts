@@ -852,6 +852,20 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       aiAnalysisHint: 'AI phân tích sâu 100+ kỹ năng từ CV của bạn',
       selectOtherResume: 'Chọn CV khác'
     },
+    historyApply: {
+      title: 'Danh sách công việc đã ứng tuyển',
+      subtitle: 'Theo dõi các công việc bạn đã gửi hồ sơ ứng tuyển.',
+      totalJobs: 'Tổng công việc',
+      mainLocation: 'Địa điểm chính',
+      jobType: 'Loại hình',
+      appliedBadge: 'Đã ứng tuyển',
+      appliedAt: 'Ứng tuyển ngày',
+      emptyTitle: 'Chưa có công việc nào',
+      emptyDescription: 'Bạn chưa ứng tuyển công việc nào. Hãy khám phá và tìm kiếm các cơ hội phù hợp ngay!',
+      exploreJobs: 'Khám phá việc làm',
+      loadMore: 'Tải thêm',
+      loadingJobs: 'Đang tải danh sách công việc...'
+    },
     changePassword: {
       title: 'Đổi mật khẩu',
       subtitle: 'Cập nhật mật khẩu để bảo vệ tài khoản của bạn.',
@@ -1801,6 +1815,20 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       selectCvPrompt: 'Select CV for matching...',
       aiAnalysisHint: 'AI analyzes 100+ skills from your CV',
       selectOtherResume: 'Select other CV'
+    },
+    historyApply: {
+      title: 'Applied jobs list',
+      subtitle: 'Track the jobs you have submitted applications for.',
+      totalJobs: 'Total Jobs',
+      mainLocation: 'Main Location',
+      jobType: 'Job Type',
+      appliedBadge: 'Applied',
+      appliedAt: 'Applied on',
+      emptyTitle: 'No applied jobs yet',
+      emptyDescription: 'You haven\'t applied for any jobs yet. Explore and find the best opportunities today!',
+      exploreJobs: 'Explore jobs',
+      loadMore: 'Load more',
+      loadingJobs: 'Loading applied jobs...'
     },
     changePassword: {
       title: 'Change Password',
