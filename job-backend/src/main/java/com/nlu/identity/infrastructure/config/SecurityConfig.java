@@ -65,15 +65,14 @@ public class SecurityConfig {
                         // 3. Các endpoint Yêu cầu đăng nhập nói chung đưa xuống DƯỚI
                         .requestMatchers(ApiConstants.AUTHENTICATED_ENDPOINTS).authenticated()
 
-                        .anyRequest().authenticated()
-                )
+                        .anyRequest().authenticated())
                 .addFilterBefore(requestLoggingFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(verifyRecoveryFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(o -> o
-                        .successHandler(customOAuth2SuccessHandler)
-                ).exceptionHandling(exceptions -> exceptions
+                        .successHandler(customOAuth2SuccessHandler))
+                .exceptionHandling(exceptions -> exceptions
                         .defaultAuthenticationEntryPointFor(
                                 new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
                                 new AntPathRequestMatcher("/api/**")))
@@ -95,8 +94,9 @@ public class SecurityConfig {
         config.setAllowCredentials(true);
         config.setAllowedMethods(List.of("GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"));
         config.setAllowedHeaders(List.of("Content-Type", "Authorization", "X-Correlation-ID", "Cache-Control",
-                "Accept"));
-        config.setExposedHeaders(List.of("Set-Cookie", "X-Correlation-ID", "X-RateLimit-Limit", "X-RateLimit-Remaining", "X-RateLimit-Reset", "Retry-After"));
+                "Accept", "idempotency-key"));
+        config.setExposedHeaders(List.of("Set-Cookie", "X-Correlation-ID", "X-RateLimit-Limit", "X-RateLimit-Remaining",
+                "X-RateLimit-Reset", "Retry-After"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
@@ -111,7 +111,6 @@ public class SecurityConfig {
         return authenticationProvider;
     }
 
-
     @Bean
     PasswordEncoder encode() {
         return new BCryptPasswordEncoder();
@@ -122,5 +121,3 @@ public class SecurityConfig {
         return new DefaultHttpFirewall();
     }
 }
-
-

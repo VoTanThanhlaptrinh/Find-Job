@@ -89,22 +89,47 @@
 
       <!-- Auth Buttons Area -->
       @if (isLoggedIn) {
-      <button matButton [matMenuTriggerFor]="menu"
-        class="ml-2 xl:ml-3 flex items-center gap-1.5 xl:gap-2 rounded-xl border border-white/15 bg-white/10 hover:bg-white/15 px-3.5 xl:px-4 py-2 text-sm font-semibold text-white shrink-0 whitespace-nowrap transition cursor-pointer">
-        <span class="material-symbols-outlined text-[18px]">account_circle</span>
-        <span>{{ 'header.account' | t }}</span>
-        <span class="material-symbols-outlined text-[16px]">expand_more</span>
+      <button
+        type="button"
+        cdkOverlayOrigin
+        #accountTrigger="cdkOverlayOrigin"
+        (click)="toggleAccountMenu()"
+        class="ml-2 xl:ml-3 flex min-h-[44px] h-[44px] items-center gap-2 rounded-[8px] border border-white/20 bg-white/10 hover:bg-white/20 active:bg-white/25 px-3 text-sm font-semibold text-white shrink-0 whitespace-nowrap transition-colors duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40">
+        <span class="material-symbols-outlined text-[20px] text-white">account_circle</span>
+        <span class="text-white">{{ 'header.account' | t }}</span>
+        <span class="material-symbols-outlined text-[18px] text-white transition-transform duration-200"
+          [class.rotate-180]="isAccountMenuOpen">
+          expand_more
+        </span>
       </button>
-      <mat-menu #menu="matMenu" class="rounded-2xl shadow-xl">
-        <button mat-menu-item (click)="goInfor()">
-          <span class="material-symbols-outlined mr-2 text-[18px] align-middle text-[#1E63F3]">person</span>
-          <span class="font-medium text-slate-800">{{ 'header.accountInfo' | t }}</span>
-        </button>
-        <button mat-menu-item (click)="logout()">
-          <span class="material-symbols-outlined mr-2 text-[18px] align-middle text-rose-600">logout</span>
-          <span class="font-medium text-rose-600">{{ 'header.logout' | t }}</span>
-        </button>
-      </mat-menu>
+
+      <ng-template
+        cdkConnectedOverlay
+        [cdkConnectedOverlayOrigin]="accountTrigger"
+        [cdkConnectedOverlayOpen]="isAccountMenuOpen"
+        [cdkConnectedOverlayPositions]="accountMenuPositions"
+        [cdkConnectedOverlayHasBackdrop]="true"
+        [cdkConnectedOverlayBackdropClass]="'cdk-overlay-transparent-backdrop'"
+        (backdropClick)="closeAccountMenu()"
+        (overlayOutsideClick)="closeAccountMenu()"
+        (detach)="closeAccountMenu()">
+        <div class="w-[220px] bg-white rounded-[10px] border border-[#E5E7EB] shadow-lg py-1.5 focus:outline-none overflow-hidden z-[100]">
+          <button
+            type="button"
+            (click)="onAccountInfoClick()"
+            class="w-full min-h-[44px] px-[14px] py-[10px] flex items-center gap-2.5 text-left text-sm font-medium text-[#344054] hover:bg-[#F2F4F7] transition-colors cursor-pointer">
+            <span class="material-symbols-outlined text-[20px] text-[#344054] shrink-0">person</span>
+            <span class="truncate">{{ 'header.accountInfo' | t }}</span>
+          </button>
+          <button
+            type="button"
+            (click)="onLogoutClick()"
+            class="w-full min-h-[44px] px-[14px] py-[10px] flex items-center gap-2.5 text-left text-sm font-medium text-[#DC2626] hover:bg-[#F2F4F7] transition-colors cursor-pointer">
+            <span class="material-symbols-outlined text-[20px] text-[#DC2626] shrink-0">logout</span>
+            <span class="truncate">{{ 'header.logout' | t }}</span>
+          </button>
+        </div>
+      </ng-template>
       } @else {
       <div class="ml-2 xl:ml-3 flex items-center gap-2">
         <button
