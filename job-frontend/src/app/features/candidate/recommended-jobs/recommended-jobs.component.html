@@ -110,9 +110,9 @@
 
     <!-- Loading Skeleton -->
     @if (isJobLoading) {
-      <div class="space-y-3.5 mb-12">
+      <div class="flex flex-col gap-4 mb-12">
         @for (row of skeletonRows; track row) {
-          <app-skeleton-cv-card></app-skeleton-cv-card>
+          <app-skeleton-cv-card class="block w-full"></app-skeleton-cv-card>
         }
       </div>
     }

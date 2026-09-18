@@ -83,9 +83,9 @@
 
     <!-- Skeleton Loading -->
     @if (isLoading && skeleton) {
-      <div class="space-y-3.5 mb-8">
+      <div class="flex flex-col gap-4 mb-8">
         @for (row of skeletonRows; track row) {
-          <app-skeleton-job-card></app-skeleton-job-card>
+          <app-skeleton-job-card class="block w-full"></app-skeleton-job-card>
         }
       </div>
     }
