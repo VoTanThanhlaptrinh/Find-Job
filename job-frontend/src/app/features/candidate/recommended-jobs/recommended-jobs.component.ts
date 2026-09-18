@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, inject, OnInit, signal, untracked } from '@angular/core';
+import { Component, effect, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { OverlayModule, ConnectedPosition } from '@angular/cdk/overlay';
 import { JobMatchCardComponent } from '../../../shared/components/job-match-card/job-match-card.component';
 import { SkeletonCvCardComponent } from '../../../shared/components/skeleton-cv-card/skeleton-cv-card.component';
 import { ResumeService } from '../../../core/services/resume.service';
@@ -11,7 +12,7 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 @Component({
   selector: 'app-recommended-jobs',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, JobMatchCardComponent, SkeletonCvCardComponent, TranslatePipe],
+  imports: [CommonModule, FormsModule, RouterLink, OverlayModule, JobMatchCardComponent, SkeletonCvCardComponent, TranslatePipe],
   templateUrl: './recommended-jobs.component.html',
   styleUrl: './recommended-jobs.component.css'
 })
@@ -27,6 +28,23 @@ export class RecommendedJobsComponent implements OnInit {
   isJobLoading = false;
   readonly selectedResumeId = signal<number | null>(null);
   readonly isDropdownOpen = signal(false);
+
+  readonly dropdownPositions: ConnectedPosition[] = [
+    {
+      originX: 'start',
+      originY: 'bottom',
+      overlayX: 'start',
+      overlayY: 'top',
+      offsetY: 6
+    },
+    {
+      originX: 'start',
+      originY: 'top',
+      overlayX: 'start',
+      overlayY: 'bottom',
+      offsetY: -6
+    }
+  ];
 
   selectedResume: any = null;
   suggestionCount = 0;
@@ -63,8 +81,12 @@ export class RecommendedJobsComponent implements OnInit {
     this.isDropdownOpen.update(v => !v);
   }
 
+  closeDropdown(): void {
+    this.isDropdownOpen.set(false);
+  }
+
   selectResume(resumeId: number): void {
     this.onResumeChange(resumeId);
-    this.isDropdownOpen.set(false);
+    this.closeDropdown();
   }
 }

@@ -847,6 +847,8 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       salary: 'Lương',
       aiMatching: 'AI MATCHING',
       basedOnResume: 'Dựa theo hồ sơ',
+      cvUsedForMatching: 'CV used for matching',
+      selectCvPrompt: 'Chọn CV để so khớp...',
       aiAnalysisHint: 'AI phân tích sâu 100+ kỹ năng từ CV của bạn',
       selectOtherResume: 'Chọn CV khác'
     },
@@ -1795,6 +1797,8 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
       salary: 'Salary',
       aiMatching: 'AI MATCHING',
       basedOnResume: 'Based on resume',
+      cvUsedForMatching: 'CV used for matching',
+      selectCvPrompt: 'Select CV for matching...',
       aiAnalysisHint: 'AI analyzes 100+ skills from your CV',
       selectOtherResume: 'Select other CV'
     },

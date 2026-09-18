@@ -1,172 +1,209 @@
-<div role="main" class="max-w-6xl mx-auto px-4 pt-4 pb-8 md:pb-16 bg-surface text-on-surface antialiased min-h-screen">
-  <!-- Visual Polish: Enhanced Background shapes -->
-  <div class="fixed top-0 left-0 w-full h-full -z-10 opacity-40 pointer-events-none overflow-hidden">
-    <div class="absolute top-[5%] left-[-10%] w-150 h-150 bg-primary/10 blur-[120px] rounded-full"></div>
-    <div class="absolute bottom-[-10%] right-[-5%] w-125 h-125 bg-tertiary-container/15 blur-[100px] rounded-full">
-    </div>
-    <div class="absolute top-[40%] right-[10%] w-150 h-150 bg-secondary-container/10 blur-[80px] rounded-full"></div>
-  </div>
-
-  <!-- Header Section: Refined and Sleek -->
-  <div role="banner"
-    class="bg-white rounded-2xl border border-outline-variant p-8 md:p-10 mb-10 relative z-20 shadow-sm">
-    <div class="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full -mr-32 -mt-32 blur-[100px]"></div>
-    <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
-      <div class="space-y-3">
-        <div
-          class="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-bold tracking-tight">
-          <span class="material-symbols-outlined text-base">auto_awesome</span>
-          {{ 'recommendedJobs.aiMatching' | t }}
-        </div>
-        <h1 class="text-3xl md:text-4xl font-extrabold text-on-surface tracking-tight">
-          {{ 'recommendedJobs.title' | t }}
-        </h1>
-        <p class="text-on-surface-variant text-lg">{{ 'recommendedJobs.helperText' | t }}</p>
-      </div>
-      <!-- Custom Dropdown Component -->
-      <div class="relative flex w-full lg:w-96">
-        <!-- Button triggering dropdown -->
-        <button type="button" (click)="toggleDropdown()"
-          class="w-full flex items-center justify-between px-4 py-3.5 text-left border border-outline-variant rounded-full! bg-slate-400 transition-all focus:outline-none focus:ring-2 focus:ring-primary/20"
-          [disabled]="isResumeLoading || resumes.length === 0"
-          [ngClass]="{'opacity-60 cursor-not-allowed': isResumeLoading || resumes.length === 0}">
-          <span class="block truncate font-medium"
-            [ngClass]="{'text-on-surface': selectedResume, 'text-on-surface-variant': !selectedResume}">
-            @if (isResumeLoading) {
-            {{ 'recommendedJobs.selectLoadingLabel' | t }}
-            } @else if (resumes.length === 0) {
-            {{ 'recommendedJobs.selectEmptyLabel' | t }}
-            } @else if (selectedResume) {
-            {{ selectedResume?.fileName }}
-            } @else {
-            Chọn CV để phân tích...
-            }
-          </span>
-          <span class="material-symbols-outlined text-on-surface-variant transition-transform"
-            [class.rotate-180]="isDropdownOpen()">expand_more</span>
-        </button>
-
-        <!-- Overlay to close dropdown -->
-        @if (isDropdownOpen()) {
-        <div class="fixed inset-0 z-40" (click)="isDropdownOpen.set(false)"></div>
-        }
-
-        <!-- Dropdown Menu -->
-        @if (isDropdownOpen()) {
-        <div
-          class="absolute top-full left-0 z-50 w-full mt-2 bg-slate-600 border border-slate-700 rounded-2xl shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2">
-          <ul class="max-h-64 overflow-y-auto py-1.5 custom-scrollbar">
-            @for (resume of resumes; track resume.id) {
-            <li>
-              <button type="button" (click)="selectResume(resume.id)"
-                class="w-full text-left px-5 py-3.5 text-sm font-semibold transition-all" [ngClass]="{
-                      'bg-blue-600 text-white': selectedResumeId() === resume.id,
-                      'text-slate-200 hover:bg-slate-500 hover:text-white': selectedResumeId() !== resume.id
-                    }">
-                <div class="flex items-center justify-between gap-3">
-                  <span class="truncate">{{ resume.fileName }}</span>
-                  @if (selectedResumeId() === resume.id) {
-                  <span class="material-symbols-outlined text-lg font-bold shrink-0">check</span>
-                  }
-                </div>
-              </button>
-            </li>
-            }
-          </ul>
-        </div>
-        }
-      </div>
-    </div>
-  </div>
-
-  @if (isJobLoading) {
-  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-16">
-    @for (row of skeletonRows; track row) {
-    <app-skeleton-cv-card></app-skeleton-cv-card>
-    }
-  </div>
-  }
-
-  <!-- Recommended Jobs List -->
-  @if (!isResumeLoading && !isJobLoading && suggestedJobs.length > 0) {
-  <div class="space-y-4 mb-16">
-    @for (job of suggestedJobs; track job.id) {
-    <app-job-match-card [job]="job"></app-job-match-card>
-    }
-  </div>
-  }
-
-  <!-- Empty State: No Matches Found -->
-  @if (
-  !isResumeLoading &&
-  !isJobLoading &&
-  resumes.length > 0 &&
-  suggestedJobs.length === 0 &&
-  selectedResumeId() !== null
-  ) {
-  <div class="mt-12">
-    <div class="bg-white rounded-3xl border-2 border-dashed border-outline-variant/60 p-12 md:p-20 text-center">
-      <div
-        class="w-24 h-24 bg-surface-container-low rounded-full flex items-center justify-center mx-auto mb-8 relative">
-        <span class="material-symbols-outlined text-5xl text-outline-variant">search_off</span>
-        <div
-          class="absolute -top-1 -right-1 w-6 h-6 bg-error text-white rounded-full flex items-center justify-center border-2 border-white">
-          <span class="material-symbols-outlined text-xs font-bold">priority_high</span>
-        </div>
-      </div>
-      <h2 class="text-3xl font-extrabold text-on-surface mb-3 tracking-tight">
-        {{ 'recommendedJobs.emptyJobTitle' | t }}
-      </h2>
-      <p class="text-on-surface-variant max-w-lg mx-auto mb-10 text-lg leading-relaxed">
-        {{ 'recommendedJobs.emptyJobDescription' | t }}
-      </p>
-      <button (click)="selectedResumeId.set(null)"
-        class="inline-flex items-center gap-3 px-8 py-4 bg-primary text-on-primary rounded-2xl font-bold shadow-xl shadow-primary/30 hover:scale-105 transition-all active:scale-95 group">
-        <span class="material-symbols-outlined group-hover:rotate-12 transition-transform">edit_note</span>
-        {{ 'recommendedJobs.selectOtherResume' | t }}
-      </button>
-    </div>
-  </div>
-  }
-
-  <!-- Empty State: No Resumes -->
-  @if (!isResumeLoading && resumes.length === 0) {
-  <div class="mt-12">
+<div role="main" class="w-full min-h-full bg-[#F8FAFC] antialiased text-[#101828]">
+  <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <!-- Header Section: Refined and Sleek -->
     <div
-      class="grid grid-cols-1 lg:grid-cols-2 gap-12 bg-white rounded-3xl border border-outline-variant p-8 md:p-12 items-center shadow-sm">
-      <div class="space-y-6">
-        <div class="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-2">
-          <span class="material-symbols-outlined text-4xl text-primary">upload_file</span>
-        </div>
-        <h2 class="text-3xl md:text-4xl font-extrabold text-on-surface leading-tight tracking-tight">
-          {{ 'recommendedJobs.emptyResumeTitle' | t }}
-        </h2>
-        <p class="text-on-surface-variant text-lg leading-relaxed max-w-md">
-          {{ 'recommendedJobs.emptyResumeDescription' | t }}
-        </p>
-        <div class="pt-4">
-          <a routerLink="/infor/cv"
-            class="inline-flex items-center gap-3 px-10 py-5 bg-primary text-on-primary rounded-2xl font-extrabold shadow-2xl shadow-primary/40 hover:shadow-primary/50 transition-all hover:-translate-y-1 active:translate-y-0">
-            <span class="material-symbols-outlined text-2xl">add_circle</span>
-            {{ 'recommendedJobs.emptyResumeAction' | t }}
-          </a>
-        </div>
-      </div>
-      <div class="relative group h-80 md:h-112.5 rounded-2xl overflow-hidden shadow-2xl">
-        <img
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuBH1iJKYuMddEamtOXXkNm4p5_kT1tLhbjEkdpaqiJR5gvyk50hzU8S0HWI7mq7_69gUo7SAkZxNYmuagghZufkIUXgE-1VsnLl-kJUVlTNLXTma-qgY7XpAW-Nz3kjt7zsbsMgghCXZbQpO2CQiSbTy2HH_F4sFmOoR7wBUeLkK3Lg7aHjdMoT1gYeJj19GZ2623FE3KRa7KG0SuTpcuqDQVFYN-w_73aP-tK_cxkoFwN3tpYjjWu3Ubi5JXIlxIXsBBCSmOVx8Kg"
-          alt="Resume Upload Illustration"
-          class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
-        <div class="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent"></div>
-        <div
-          class="absolute bottom-6 left-6 right-6 p-4 backdrop-blur-md bg-white/10 rounded-xl border border-white/20">
-          <p class="text-white text-sm font-semibold flex items-center gap-2">
-            <span class="material-symbols-outlined text-primary-container">verified</span>
-            {{ 'recommendedJobs.aiAnalysisHint' | t }}
+      role="banner"
+      class="bg-white rounded-[14px] border border-[#E2E8F0] p-6 sm:p-7 mb-4 sm:mb-5 shadow-xs relative z-20 transition-all"
+    >
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <!-- Left: Badge + Title + Description -->
+        <div class="space-y-1">
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-[#EFF6FF] text-[#2563EB] rounded-full text-xs font-bold tracking-tight mb-1">
+            <span class="material-symbols-outlined text-[18px]">auto_awesome</span>
+            <span>{{ 'recommendedJobs.aiMatching' | t }}</span>
+          </div>
+          <h1 class="text-[30px] sm:text-[32px] font-bold text-[#101828] leading-tight tracking-tight">
+            {{ 'recommendedJobs.title' | t }}
+          </h1>
+          <p class="text-[15px] sm:text-[16px] text-[#667085] mt-1 font-normal">
+            {{ 'recommendedJobs.helperText' | t }}
           </p>
         </div>
+
+        <!-- Right: Modern CV Selector Dropdown -->
+        <div class="w-full lg:w-[380px] xl:w-[400px] shrink-0">
+          <label class="block text-xs sm:text-[13px] font-semibold text-[#475467] mb-1.5 uppercase tracking-wide">
+            {{ 'recommendedJobs.cvUsedForMatching' | t }}
+          </label>
+
+          <!-- Dropdown Trigger Button -->
+          <button
+            type="button"
+            cdkOverlayOrigin
+            #cvTrigger="cdkOverlayOrigin"
+            (click)="toggleDropdown()"
+            [disabled]="isResumeLoading || resumes.length === 0"
+            class="w-full h-[48px] min-h-[48px] px-3.5 sm:px-4 flex items-center justify-between gap-2.5 bg-white border border-[#CBD5E1] rounded-[10px] shadow-xs text-left cursor-pointer transition-all duration-200 hover:border-[#94A3B8] focus:outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:opacity-60 disabled:cursor-not-allowed"
+            [class.border-[#2563EB]]="isDropdownOpen()"
+            [class.ring-2]="isDropdownOpen()"
+            [class.ring-[#2563EB]/20]="isDropdownOpen()"
+          >
+            <!-- Left: Document Icon + File Name -->
+            <div class="flex items-center gap-2.5 min-w-0 flex-1">
+              <span class="material-symbols-outlined text-[20px] text-[#2563EB] shrink-0">description</span>
+              <span
+                class="truncate min-w-0 flex-1 text-[14px] sm:text-[15px] font-medium"
+                [ngClass]="selectedResume ? 'text-[#334155]' : 'text-[#64748B]'"
+              >
+                @if (isResumeLoading) {
+                  {{ 'recommendedJobs.selectLoadingLabel' | t }}
+                } @else if (resumes.length === 0) {
+                  {{ 'recommendedJobs.selectEmptyLabel' | t }}
+                } @else if (selectedResume) {
+                  {{ selectedResume.fileName }}
+                } @else {
+                  {{ 'recommendedJobs.selectCvPrompt' | t }}
+                }
+              </span>
+            </div>
+
+            <!-- Right: Arrow Icon -->
+            <span
+              class="material-symbols-outlined text-[20px] text-[#64748B] shrink-0 transition-transform duration-200"
+              [class.rotate-180]="isDropdownOpen()"
+            >
+              expand_more
+            </span>
+          </button>
+
+          <!-- CDK Overlay Dropdown Menu -->
+          <ng-template
+            cdkConnectedOverlay
+            [cdkConnectedOverlayOrigin]="cvTrigger"
+            [cdkConnectedOverlayOpen]="isDropdownOpen()"
+            [cdkConnectedOverlayPositions]="dropdownPositions"
+            [cdkConnectedOverlayWidth]="cvTrigger.elementRef.nativeElement.offsetWidth"
+            [cdkConnectedOverlayHasBackdrop]="true"
+            [cdkConnectedOverlayBackdropClass]="'cdk-overlay-transparent-backdrop'"
+            (backdropClick)="closeDropdown()"
+            (overlayOutsideClick)="closeDropdown()"
+            (detach)="closeDropdown()"
+          >
+            <div
+              class="bg-white rounded-[10px] border border-[#E2E8F0] shadow-lg overflow-hidden py-1.5 z-[100] max-h-64 overflow-y-auto"
+            >
+              <ul class="divide-y divide-slate-100/60">
+                @for (resume of resumes; track resume.id) {
+                  <li>
+                    <button
+                      type="button"
+                      (click)="selectResume(resume.id)"
+                      class="w-full min-h-[44px] px-[14px] py-2.5 flex items-center justify-between gap-3 text-left text-sm font-medium transition-colors cursor-pointer"
+                      [ngClass]="{
+                        'bg-[#EFF6FF] text-[#2563EB] font-semibold': selectedResumeId() === resume.id,
+                        'text-[#334155] hover:bg-[#F8FAFC]': selectedResumeId() !== resume.id
+                      }"
+                    >
+                      <span class="truncate min-w-0">{{ resume.fileName }}</span>
+                      @if (selectedResumeId() === resume.id) {
+                        <span class="material-symbols-outlined text-[18px] text-[#2563EB] shrink-0 font-bold">check</span>
+                      }
+                    </button>
+                  </li>
+                }
+              </ul>
+            </div>
+          </ng-template>
+        </div>
       </div>
     </div>
+
+    <!-- Loading Skeleton -->
+    @if (isJobLoading) {
+      <div class="space-y-3.5 mb-12">
+        @for (row of skeletonRows; track row) {
+          <app-skeleton-cv-card></app-skeleton-cv-card>
+        }
+      </div>
+    }
+
+    <!-- Recommended Jobs List (Existing job-match-card component directly reused) -->
+    @if (!isResumeLoading && !isJobLoading && suggestedJobs.length > 0) {
+      <div class="space-y-3.5 mb-12">
+        @for (job of suggestedJobs; track job.id) {
+          <app-job-match-card [job]="job"></app-job-match-card>
+        }
+      </div>
+    }
+
+    <!-- Empty State: No Matches Found -->
+    @if (
+      !isResumeLoading &&
+      !isJobLoading &&
+      resumes.length > 0 &&
+      suggestedJobs.length === 0 &&
+      selectedResumeId() !== null
+    ) {
+      <div class="mt-8 mb-12">
+        <div class="bg-white rounded-[14px] border border-dashed border-[#CBD5E1] p-10 sm:p-14 text-center shadow-xs">
+          <div
+            class="w-16 h-16 bg-blue-50 text-[#2563EB] rounded-2xl flex items-center justify-center mx-auto mb-4 border border-blue-100/60"
+          >
+            <span class="material-symbols-outlined text-[32px]">search_off</span>
+          </div>
+          <h2 class="text-xl sm:text-2xl font-bold text-[#101828] mb-2 tracking-tight">
+            {{ 'recommendedJobs.emptyJobTitle' | t }}
+          </h2>
+          <p class="text-[14px] sm:text-[15px] text-[#667085] max-w-lg mx-auto mb-6 leading-relaxed">
+            {{ 'recommendedJobs.emptyJobDescription' | t }}
+          </p>
+          <button
+            type="button"
+            (click)="selectedResumeId.set(null)"
+            class="inline-flex items-center gap-2 h-[44px] px-5 bg-[#2563EB] hover:bg-[#1d4ed8] text-white rounded-[10px] text-sm font-semibold transition-colors duration-200 cursor-pointer shadow-xs active:scale-[0.99]"
+          >
+            <span class="material-symbols-outlined text-[18px]">edit_note</span>
+            <span>{{ 'recommendedJobs.selectOtherResume' | t }}</span>
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- Empty State: No Resumes -->
+    @if (!isResumeLoading && resumes.length === 0) {
+      <div class="mt-8 mb-12">
+        <div
+          class="bg-white rounded-[14px] border border-[#E2E8F0] p-8 sm:p-12 shadow-xs grid grid-cols-1 lg:grid-cols-2 gap-8 items-center"
+        >
+          <div class="space-y-4">
+            <div class="w-14 h-14 bg-blue-50 text-[#2563EB] rounded-xl flex items-center justify-center border border-blue-100/60">
+              <span class="material-symbols-outlined text-[30px]">upload_file</span>
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-bold text-[#101828] leading-tight tracking-tight">
+              {{ 'recommendedJobs.emptyResumeTitle' | t }}
+            </h2>
+            <p class="text-[15px] text-[#667085] leading-relaxed max-w-md">
+              {{ 'recommendedJobs.emptyResumeDescription' | t }}
+            </p>
+            <div class="pt-2">
+              <a
+                routerLink="/infor/cv"
+                class="inline-flex items-center gap-2 h-[44px] px-6 bg-[#2563EB] hover:bg-[#1d4ed8] text-white rounded-[10px] font-semibold text-sm transition-colors duration-200 shadow-xs cursor-pointer active:scale-[0.99]"
+              >
+                <span class="material-symbols-outlined text-[20px]">add_circle</span>
+                <span>{{ 'recommendedJobs.emptyResumeAction' | t }}</span>
+              </a>
+            </div>
+          </div>
+          <div class="relative rounded-xl overflow-hidden shadow-md h-64 sm:h-80">
+            <img
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBH1iJKYuMddEamtOXXkNm4p5_kT1tLhbjEkdpaqiJR5gvyk50hzU8S0HWI7mq7_69gUo7SAkZxNYmuagghZufkIUXgE-1VsnLl-kJUVlTNLXTma-qgY7XpAW-Nz3kjt7zsbsMgghCXZbQpO2CQiSbTy2HH_F4sFmOoR7wBUeLkK3Lg7aHjdMoT1gYeJj19GZ2623FE3KRa7KG0SuTpcuqDQVFYN-w_73aP-tK_cxkoFwN3tpYjjWu3Ubi5JXIlxIXsBBCSmOVx8Kg"
+              alt="Resume Upload Illustration"
+              class="w-full h-full object-cover"
+              loading="lazy"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+            <div
+              class="absolute bottom-4 left-4 right-4 p-3.5 backdrop-blur-md bg-white/10 rounded-lg border border-white/20"
+            >
+              <p class="text-white text-xs sm:text-sm font-semibold flex items-center gap-2">
+                <span class="material-symbols-outlined text-blue-300 text-[18px]">verified</span>
+                <span>{{ 'recommendedJobs.aiAnalysisHint' | t }}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
   </div>
-  }
 </div>
