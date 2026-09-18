@@ -10,11 +10,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -42,11 +37,40 @@ public class Resume extends BaseEntity {
     @Column(columnDefinition = "text")
 	private String rawText;
 
-	@Column(nullable = false, columnDefinition = "boolean default false")
-	private boolean isAnalyzed = false;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "resume_status", nullable = false)
+	private ResumeStatus status = ResumeStatus.UPLOADED;
 
-    public void markAnalyzed() {
-		this.isAnalyzed = true;
+	public void markUploaded() {
+		this.status = ResumeStatus.UPLOADED;
+	}
+
+	public void startAnalysis() {
+		if (this.status == ResumeStatus.READY) {
+			throw new IllegalStateException("Resume is already analyzed and ready");
+		}
+		if (this.status == ResumeStatus.ANALYZING) {
+			throw new IllegalStateException("Resume is currently being analyzed");
+		}
+		this.status = ResumeStatus.ANALYZING;
+	}
+
+	public void markReady() {
+		if (this.status != ResumeStatus.ANALYZING) {
+			throw new IllegalStateException("Cannot mark ready from status: " + this.status);
+		}
+		this.status = ResumeStatus.READY;
+	}
+
+	public void markAnalysisFailed() {
+		if (this.status != ResumeStatus.ANALYZING) {
+			throw new IllegalStateException("Cannot mark analysis failed from status: " + this.status);
+		}
+		this.status = ResumeStatus.ANALYSIS_FAILED;
+	}
+
+	public boolean isAnalyzed() {
+		return this.status == ResumeStatus.READY;
 	}
 
 	public void setUser(User user) {

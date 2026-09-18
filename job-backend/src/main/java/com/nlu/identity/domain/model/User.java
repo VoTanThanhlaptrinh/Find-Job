@@ -79,8 +79,7 @@ public class User extends BaseEntity implements UserDetails, Principal {
 
 	@Override
 	public String getPassword() {
-		// TODO Auto-generated method stub
-		return password.getValue();
+		return password != null ? password.getValue() : null;
 	}
 
 	@Override

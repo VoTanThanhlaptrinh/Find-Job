@@ -10,6 +10,7 @@ import { AuthService } from '../../services/auth.service';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { NavigationEnd, Router, RouterModule } from "@angular/router";
+import { OverlayModule, ConnectedPosition } from '@angular/cdk/overlay';
 import { I18nService } from '../../i18n/i18n.service';
 import { AppLanguage } from '../../i18n/translations';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
@@ -29,6 +30,7 @@ import { filter } from 'rxjs';
     RouterModule,
     TranslatePipe,
     MobileNavComponent,
+    OverlayModule,
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
@@ -37,6 +39,24 @@ import { filter } from 'rxjs';
 export class HeaderComponent implements OnInit {
   isScrolled = false;
   activeNav: 'home' | 'jobs' | 'blog' | 'about' | 'contact' = 'home';
+  isAccountMenuOpen = false;
+
+  readonly accountMenuPositions: ConnectedPosition[] = [
+    {
+      originX: 'end',
+      originY: 'bottom',
+      overlayX: 'end',
+      overlayY: 'top',
+      offsetY: 8,
+    },
+    {
+      originX: 'end',
+      originY: 'top',
+      overlayX: 'end',
+      overlayY: 'bottom',
+      offsetY: -8,
+    },
+  ];
 
   constructor(
     private auth: AuthService,
@@ -61,6 +81,7 @@ export class HeaderComponent implements OnInit {
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: any) => {
+        this.closeAccountMenu();
         this.updateActiveNavFromRoute(event.urlAfterRedirects || event.url);
       });
 
@@ -150,6 +171,24 @@ export class HeaderComponent implements OnInit {
       panelClass: 'auth-modal-panel',
       data: { initialTab: tab }
     });
+  }
+
+  toggleAccountMenu(): void {
+    this.isAccountMenuOpen = !this.isAccountMenuOpen;
+  }
+
+  closeAccountMenu(): void {
+    this.isAccountMenuOpen = false;
+  }
+
+  onAccountInfoClick(): void {
+    this.closeAccountMenu();
+    this.goInfor();
+  }
+
+  onLogoutClick(): void {
+    this.closeAccountMenu();
+    this.logout();
   }
 
   logout(): void {

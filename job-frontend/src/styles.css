@@ -1,7 +1,13 @@
 @import "tailwindcss";
 @import "ngx-toastr/toastr";
+@import "@angular/cdk/overlay-prebuilt.css";
+
+.cdk-overlay-container {
+  z-index: 1000 !important;
+}
 
 :root {
+  --header-height: 84px;
   --color-primary: #1E63F3;
   --color-primary-hover: #174FCB;
   --color-primary-light: #EAF2FF;

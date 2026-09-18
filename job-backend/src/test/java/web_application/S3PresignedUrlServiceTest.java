@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -17,6 +18,9 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequ
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -50,9 +54,16 @@ class S3PresignedUrlServiceTest {
     private static final int EXPIRATION_MINUTES = 30;
 
     @BeforeEach
-    void setUp() throws MalformedURLException {
+    void setUp() {
         ReflectionTestUtils.setField(s3PresignedUrlService, "bucketName", BUCKET_NAME);
-        when(presignedGetObjectRequest.url()).thenReturn(new URL(TEST_PRESIGNED_URL));
+    }
+
+    private void mockPresignedUrl() {
+        try {
+            when(presignedGetObjectRequest.url()).thenReturn(new URL(TEST_PRESIGNED_URL));
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Nested
@@ -62,6 +73,7 @@ class S3PresignedUrlServiceTest {
         @Test
         @DisplayName("S01: Tạo view URL thành công")
         void generateViewUrl_Success() {
+            mockPresignedUrl();
             when(s3Presigner.presignGetObject(any(GetObjectPresignRequest.class)))
                     .thenReturn(presignedGetObjectRequest);
 
@@ -88,6 +100,7 @@ class S3PresignedUrlServiceTest {
         @Test
         @DisplayName("Tạo URL với key rỗng vẫn gọi S3Presigner")
         void generateViewUrl_WithEmptyKey() {
+            mockPresignedUrl();
             when(s3Presigner.presignGetObject(any(GetObjectPresignRequest.class)))
                     .thenReturn(presignedGetObjectRequest);
 
@@ -105,6 +118,7 @@ class S3PresignedUrlServiceTest {
         @Test
         @DisplayName("S02: Tạo download URL thành công")
         void generateDownloadUrl_Success() {
+            mockPresignedUrl();
             when(s3Presigner.presignGetObject(any(GetObjectPresignRequest.class)))
                     .thenReturn(presignedGetObjectRequest);
 
@@ -118,6 +132,7 @@ class S3PresignedUrlServiceTest {
         @Test
         @DisplayName("S04: Tạo URL với filename chứa ký tự đặc biệt")
         void generateDownloadUrl_WithSpecialCharacters() {
+            mockPresignedUrl();
             String specialFileName = "CV Nguyễn Văn A (2024).pdf";
             when(s3Presigner.presignGetObject(any(GetObjectPresignRequest.class)))
                     .thenReturn(presignedGetObjectRequest);
@@ -131,6 +146,7 @@ class S3PresignedUrlServiceTest {
         @Test
         @DisplayName("Tạo URL với filename chứa khoảng trắng")
         void generateDownloadUrl_WithSpaces() {
+            mockPresignedUrl();
             String fileNameWithSpaces = "my resume document.pdf";
             when(s3Presigner.presignGetObject(any(GetObjectPresignRequest.class)))
                     .thenReturn(presignedGetObjectRequest);
@@ -162,6 +178,7 @@ class S3PresignedUrlServiceTest {
         @Test
         @DisplayName("Verify presign request được gọi với đúng expiration time")
         void verifyExpirationTimeIsUsed() {
+            mockPresignedUrl();
             when(s3Presigner.presignGetObject(any(GetObjectPresignRequest.class)))
                     .thenAnswer(invocation -> {
                         GetObjectPresignRequest request = invocation.getArgument(0);
@@ -177,6 +194,7 @@ class S3PresignedUrlServiceTest {
         @Test
         @DisplayName("Tạo URL với expiration time khác nhau")
         void generateUrl_WithDifferentExpirationTimes() {
+            mockPresignedUrl();
             when(s3Presigner.presignGetObject(any(GetObjectPresignRequest.class)))
                     .thenReturn(presignedGetObjectRequest);
 
@@ -199,6 +217,7 @@ class S3PresignedUrlServiceTest {
         @Test
         @DisplayName("Tạo URL với key chứa đường dẫn (path)")
         void generateUrl_WithPathInKey() {
+            mockPresignedUrl();
             String keyWithPath = "users/123/resumes/resume.pdf";
             when(s3Presigner.presignGetObject(any(GetObjectPresignRequest.class)))
                     .thenReturn(presignedGetObjectRequest);
@@ -212,6 +231,7 @@ class S3PresignedUrlServiceTest {
         @Test
         @DisplayName("Tạo URL với filename null")
         void generateDownloadUrl_WithNullFilename() {
+            mockPresignedUrl();
             when(s3Presigner.presignGetObject(any(GetObjectPresignRequest.class)))
                     .thenReturn(presignedGetObjectRequest);
 
@@ -223,6 +243,7 @@ class S3PresignedUrlServiceTest {
         @Test
         @DisplayName("Tạo URL với different file extensions")
         void generateUrl_WithDifferentFileExtensions() {
+            mockPresignedUrl();
             when(s3Presigner.presignGetObject(any(GetObjectPresignRequest.class)))
                     .thenReturn(presignedGetObjectRequest);
 
@@ -238,4 +259,91 @@ class S3PresignedUrlServiceTest {
             verify(s3Presigner, times(3)).presignGetObject(any(GetObjectPresignRequest.class));
         }
     }
+
+    @Nested
+    @DisplayName("generateUploadUrl Tests")
+    class GenerateUploadUrlTests {
+
+        @Test
+        @DisplayName("Tạo presigned upload URL thành công cho HTTP PUT với đúng bucket, key, content type và metadata")
+        void generateUploadUrl_Success() throws MalformedURLException {
+            software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest presignedPut =
+                    mock(software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest.class);
+            when(presignedPut.url()).thenReturn(new URL("https://bucket.r2.cloudflarestorage.com/temp/resumes/1/abc?sig=xyz"));
+
+            when(presignedPut.signedHeaders()).thenReturn(Map.of(
+                    "host", List.of("bucket.r2.cloudflarestorage.com"),
+                    "content-type", List.of("application/pdf")
+            ));
+
+            java.util.UUID uploadId = java.util.UUID.randomUUID();
+            when(s3Presigner.presignPutObject(any(software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest.class)))
+                    .thenReturn(presignedPut);
+
+            com.nlu.shared.domain.model.PresignedUploadUrlResponse response = s3PresignedUrlService.generateUploadUrl(
+                    "temp/resumes/1/abc",
+                    "application/pdf",
+                    uploadId,
+                    10
+            );
+
+            assertNotNull(response);
+            assertEquals("https://bucket.r2.cloudflarestorage.com/temp/resumes/1/abc?sig=xyz", response.url());
+            assertEquals("PUT", response.method());
+            assertTrue(response.requiredHeaders().containsKey("content-type") || response.requiredHeaders().containsKey("Content-Type"));
+            assertFalse(response.requiredHeaders().containsKey("host"));
+            assertFalse(response.requiredHeaders().containsKey("Host"));
+            assertNotNull(response.expiresAt());
+
+            ArgumentCaptor<software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest> captor =
+                    ArgumentCaptor.forClass(software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest.class);
+            verify(s3Presigner).presignPutObject(captor.capture());
+            software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest captured = captor.getValue();
+            assertEquals(Duration.ofMinutes(10), captured.signatureDuration());
+            assertEquals(BUCKET_NAME, captured.putObjectRequest().bucket());
+            assertEquals("temp/resumes/1/abc", captured.putObjectRequest().key());
+            assertEquals("application/pdf", captured.putObjectRequest().contentType());
+            assertTrue(captured.putObjectRequest().metadata() == null || captured.putObjectRequest().metadata().isEmpty() || !captured.putObjectRequest().metadata().containsKey("upload-id"));
+        }
+
+        @Test
+        @DisplayName("Xác nhận tất cả signedHeaders bắt buộc từ S3/R2 đều có trong requiredHeaders ngoại trừ Host")
+        void generateUploadUrl_PreservesAllClientSettableSignedHeaders_AndExcludesHost() throws MalformedURLException {
+            software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest presignedPut =
+                    mock(software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest.class);
+            when(presignedPut.url()).thenReturn(new URL("https://bucket.r2.cloudflarestorage.com/temp/resumes/1/abc?sig=xyz"));
+            when(presignedPut.signedHeaders()).thenReturn(Map.of(
+                    "Host", List.of("bucket.r2.cloudflarestorage.com"),
+                    "content-type", List.of("application/pdf"),
+                    "x-amz-server-side-encryption", List.of("AES256")
+            ));
+
+            when(s3Presigner.presignPutObject(any(software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest.class)))
+                    .thenReturn(presignedPut);
+
+            com.nlu.shared.domain.model.PresignedUploadUrlResponse response = s3PresignedUrlService.generateUploadUrl(
+                    "temp/resumes/1/abc",
+                    "application/pdf",
+                    UUID.randomUUID(),
+                    10
+            );
+
+            assertFalse(response.requiredHeaders().containsKey("Host"));
+            assertFalse(response.requiredHeaders().containsKey("host"));
+            assertTrue(response.requiredHeaders().containsKey("content-type") || response.requiredHeaders().containsKey("Content-Type"));
+            assertEquals("AES256", response.requiredHeaders().get("x-amz-server-side-encryption"));
+        }
+
+        @Test
+        @DisplayName("Throw RuntimeException khi presignPutObject gặp lỗi")
+        void generateUploadUrl_ThrowsException_WhenPresignerFails() {
+            when(s3Presigner.presignPutObject(any(software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest.class)))
+                    .thenThrow(new RuntimeException("R2 sign error"));
+
+            assertThrows(RuntimeException.class, () ->
+                    s3PresignedUrlService.generateUploadUrl("temp/key", "application/pdf", java.util.UUID.randomUUID(), 10)
+            );
+        }
+    }
 }
+

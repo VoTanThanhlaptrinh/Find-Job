@@ -1,87 +1,137 @@
-<section
-  class="flex flex-col gap-y-2 max-w-6xl w-full mx-auto px-4 md:px-0 pt-4 pb-8"
->
-  <header>
-    <h2 class="text-xl font-bold text-slate-900 sm:text-2xl">
-      Danh sách các job đã ứng tuyển
-    </h2>
-  </header>
+<div role="main" class="w-full min-h-full bg-[#F8FAFC] antialiased text-[#101828]">
+  <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <!-- Header Section -->
+    <header class="mb-6">
+      <h1 class="text-[30px] sm:text-[32px] font-bold text-[#101828] leading-tight tracking-tight">
+        {{ 'historyApply.title' | t }}
+      </h1>
+      <p class="text-[15px] sm:text-[16px] text-[#667085] mt-1 font-normal">
+        {{ 'historyApply.subtitle' | t }}
+      </p>
+    </header>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-    <article class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm h-24 max-h-24 flex items-center gap-4 transition-all hover:shadow-md">
-      <span class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600 shrink-0 border border-blue-100">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="h-6 w-6" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75h19.5M3.75 18.75V7.5a1.5 1.5 0 0 1 1.5-1.5h13.5a1.5 1.5 0 0 1 1.5 1.5v11.25" />
-          <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 10.5h7.5M8.25 13.5h4.5" />
-        </svg>
-      </span>
-      <div class="flex flex-col min-w-0">
-        <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Tổng công việc</p>
-        <p class="text-xl font-bold text-slate-900 truncate">
-          {{ totalAppliedJobs }}
-        </p>
-      </div>
-    </article>
-
-    <article class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm h-24 max-h-24 flex items-center gap-4 transition-all hover:shadow-md">
-      <span class="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 shrink-0 border border-emerald-100">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="h-6 w-6" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
-        </svg>
-      </span>
-      <div class="flex flex-col min-w-0">
-        <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Địa điểm chính</p>
-        <p class="text-lg font-bold text-slate-900 truncate" [title]="mostCommonLocation">
-          {{ mostCommonLocation }}
-        </p>
-      </div>
-    </article>
-
-    <article class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm h-24 max-h-24 flex items-center gap-4 transition-all hover:shadow-md">
-      <span class="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-50 text-amber-600 shrink-0 border border-amber-100">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="h-6 w-6" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z" />
-        </svg>
-      </span>
-      <div class="flex flex-col min-w-0">
-        <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Loại hình</p>
-        <p class="text-lg font-bold text-slate-900 truncate" [title]="mostCommonJobType">
-          {{ mostCommonJobType }}
-        </p>
-      </div>
-    </article>
-  </div>
-
-  @if (isLoading && !skeleton) {
-    <app-loading message="Đang tải danh sách công việc..."></app-loading>
-  }
-
-  @if (isLoading && skeleton) {
-    <div class="flex flex-col h-110 max-h-110 gap-y-2 overflow-y-auto">
-      @for (row of skeletonRows; track row) {
-        <app-skeleton-job-card></app-skeleton-job-card>
-      }
-    </div>
-  }
-
-  @if (!isLoading) {
-    <div class="flex flex-col h-110 max-h-110 gap-y-2 overflow-y-auto">
-      @for (job of appliedJobs; track job.id) {
-        <app-job-card [job]="job" detailRoute="/single"></app-job-card>
-      }
-    </div>
-
-    @if (hasMoreAppliedJobs) {
-      <div class="mt-2 flex justify-center">
-        <button
-          type="button"
-          class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-          (click)="loadMoreAppliedJobs()"
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <!-- Total Jobs -->
+      <article
+        class="bg-white border border-[#E2E8F0] rounded-[12px] p-5 shadow-xs flex items-center gap-4 transition-all duration-200 hover:border-slate-300 min-h-[92px]"
+      >
+        <div
+          class="w-12 h-12 min-w-[48px] min-h-[48px] rounded-[10px] bg-blue-50 text-[#2563EB] border border-blue-100/60 flex items-center justify-center shrink-0"
         >
-          Tải thêm
-        </button>
+          <span class="material-symbols-outlined text-[24px]">work</span>
+        </div>
+        <div class="flex flex-col min-w-0 flex-1">
+          <p class="text-[12px] sm:text-[13px] font-semibold uppercase tracking-wider text-[#64748B] mb-0.5">
+            {{ 'historyApply.totalJobs' | t }}
+          </p>
+          <p class="text-[22px] sm:text-[24px] font-bold text-[#0F172A] leading-tight truncate">
+            {{ totalAppliedJobs }}
+          </p>
+        </div>
+      </article>
+
+      <!-- Main Location -->
+      <article
+        class="bg-white border border-[#E2E8F0] rounded-[12px] p-5 shadow-xs flex items-center gap-4 transition-all duration-200 hover:border-slate-300 min-h-[92px]"
+      >
+        <div
+          class="w-12 h-12 min-w-[48px] min-h-[48px] rounded-[10px] bg-emerald-50 text-emerald-600 border border-emerald-100/60 flex items-center justify-center shrink-0"
+        >
+          <span class="material-symbols-outlined text-[24px]">location_on</span>
+        </div>
+        <div class="flex flex-col min-w-0 flex-1">
+          <p class="text-[12px] sm:text-[13px] font-semibold uppercase tracking-wider text-[#64748B] mb-0.5">
+            {{ 'historyApply.mainLocation' | t }}
+          </p>
+          <p
+            class="text-[22px] sm:text-[24px] font-bold text-[#0F172A] leading-tight truncate"
+            [title]="mostCommonLocation"
+          >
+            {{ mostCommonLocation }}
+          </p>
+        </div>
+      </article>
+
+      <!-- Job Type -->
+      <article
+        class="bg-white border border-[#E2E8F0] rounded-[12px] p-5 shadow-xs flex items-center gap-4 transition-all duration-200 hover:border-slate-300 min-h-[92px]"
+      >
+        <div
+          class="w-12 h-12 min-w-[48px] min-h-[48px] rounded-[10px] bg-amber-50 text-amber-600 border border-amber-100/60 flex items-center justify-center shrink-0"
+        >
+          <span class="material-symbols-outlined text-[24px]">schedule</span>
+        </div>
+        <div class="flex flex-col min-w-0 flex-1">
+          <p class="text-[12px] sm:text-[13px] font-semibold uppercase tracking-wider text-[#64748B] mb-0.5">
+            {{ 'historyApply.jobType' | t }}
+          </p>
+          <p
+            class="text-[22px] sm:text-[24px] font-bold text-[#0F172A] leading-tight truncate"
+            [title]="mostCommonJobType"
+          >
+            {{ mostCommonJobType }}
+          </p>
+        </div>
+      </article>
+    </div>
+
+    <!-- Loading Component -->
+    @if (isLoading && !skeleton) {
+      <app-loading></app-loading>
+    }
+
+    <!-- Skeleton Loading -->
+    @if (isLoading && skeleton) {
+      <div class="flex flex-col gap-4 mb-8">
+        @for (row of skeletonRows; track row) {
+          <app-skeleton-job-card class="block w-full"></app-skeleton-job-card>
+        }
       </div>
     }
-  }
-</section>
+
+    <!-- Job Cards List or Empty State -->
+    @if (!isLoading) {
+      @if (appliedJobs.length === 0) {
+        <div class="bg-white rounded-[14px] border border-dashed border-[#CBD5E1] p-10 sm:p-14 text-center shadow-xs">
+          <div
+            class="w-16 h-16 bg-blue-50 text-[#2563EB] rounded-2xl flex items-center justify-center mx-auto mb-4 border border-blue-100/60"
+          >
+            <span class="material-symbols-outlined text-[32px]">work_history</span>
+          </div>
+          <h2 class="text-xl sm:text-2xl font-bold text-[#101828] mb-2 tracking-tight">
+            {{ 'historyApply.emptyTitle' | t }}
+          </h2>
+          <p class="text-[14px] sm:text-[15px] text-[#667085] max-w-md mx-auto mb-6 leading-relaxed">
+            {{ 'historyApply.emptyDescription' | t }}
+          </p>
+          <a
+            routerLink="/category"
+            class="inline-flex items-center gap-2 h-[44px] px-6 bg-[#2563EB] hover:bg-[#1d4ed8] text-white rounded-[10px] text-sm font-semibold transition-colors duration-200 cursor-pointer shadow-xs active:scale-[0.99]"
+          >
+            <span class="material-symbols-outlined text-[18px]">search</span>
+            <span>{{ 'historyApply.exploreJobs' | t }}</span>
+          </a>
+        </div>
+      } @else {
+        <div class="space-y-3.5 mb-8">
+          @for (job of appliedJobs; track job.id) {
+            <app-job-card [job]="job" [isApplied]="true" detailRoute="/single"></app-job-card>
+          }
+        </div>
+
+        @if (hasMoreAppliedJobs) {
+          <div class="pt-2 flex justify-center">
+            <button
+              type="button"
+              class="h-[42px] px-6 rounded-[10px] border border-[#CBD5E1] bg-white text-sm font-semibold text-[#334155] hover:bg-slate-50 hover:border-[#94A3B8] transition-colors duration-200 cursor-pointer shadow-xs active:scale-[0.99]"
+              (click)="loadMoreAppliedJobs()"
+            >
+              {{ 'historyApply.loadMore' | t }}
+            </button>
+          </div>
+        }
+      }
+    }
+  </div>
+</div>

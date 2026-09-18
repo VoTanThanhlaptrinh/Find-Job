@@ -6,17 +6,17 @@ import com.nlu.applicationProcess.api.dto.client.ResumeParsingMessage;
 import com.nlu.applicationProcess.api.dto.req.ResumeDetailDTO;
 import com.nlu.applicationProcess.api.dto.req.ResumeUploadDTO;
 import com.nlu.applicationProcess.api.dto.req.ResumeUrlDTO;
-import com.nlu.shared.api.message.dto.CloudUploadMessage;
 import com.nlu.applicationProcess.api.dto.req.ResumeView;
 import com.nlu.shared.application.CloudStorageService;
 import com.nlu.shared.domain.exception.BadRequestException;
 import com.nlu.shared.domain.exception.ForbiddenException;
 import com.nlu.shared.domain.exception.ResourceNotFoundException;
 import com.nlu.shared.domain.exception.UnauthorizedException;
-import com.nlu.shared.infrastructure.message.MessageProducer;
+import com.nlu.applicationProcess.domain.event.ResumeAnalysisRequestedEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import com.nlu.applicationProcess.domain.model.Resume;
+import com.nlu.applicationProcess.domain.model.ResumeStatus;
 import com.nlu.identity.domain.model.User;
-import com.nlu.applicationProcess.application.ResumeParsingService;
 import com.nlu.applicationProcess.application.ResumeService;
 import com.nlu.shared.application.FileService;
 import com.nlu.shared.application.S3PresignedUrlService;
@@ -39,7 +39,7 @@ public class ResumeServiceImpl implements ResumeService {
     private final ResumeRepository resumeRepository;
     private final ResumeQueryDSL resumeQueryDSL;
     private final FileService fileService;
-    private final MessageProducer producer;
+    private final ApplicationEventPublisher eventPublisher;
     private final S3PresignedUrlService s3PresignedUrlService;
     private final SseEmitterService sseEmitterService;
 
@@ -67,7 +67,7 @@ public class ResumeServiceImpl implements ResumeService {
     @Override
     public ResumeDetailDTO getResumeDetail(long id, User user) {
         Resume cv = findResumeAndAssertOwner(id, user, "resume.access.forbidden");
-        return new ResumeDetailDTO(cv.getId(), cv.getFileName(), cv.getCreatedAt());
+        return new ResumeDetailDTO(cv.getId(), cv.getFileName(), cv.getCreatedAt(), cv.getStatus());
     }
 
     @Override
@@ -76,7 +76,7 @@ public class ResumeServiceImpl implements ResumeService {
         if (user == null) {
             throw new UnauthorizedException(MessageUtils.getMessage("message.unauthorized"));
         }
-        if(resumeRepository.countResumesByUser_Id(user.getId()) > 100){
+        if (resumeRepository.countResumesByUser_Id(user.getId()) >= 100) {
             throw new BadRequestException(MessageUtils.getMessage("resume.limit_exceeded"));
         }
         MDC.put(MDC_USER_ID, String.valueOf(user.getId()));
@@ -93,7 +93,7 @@ public class ResumeServiceImpl implements ResumeService {
 
         //extract data
         byte[] data;
-        String rawText;
+        String rawText = null;
         try {
             data = fileService.toByteArray(resumeUploadDTO.getFile().getInputStream());
             if (data.length == 0) {
@@ -101,14 +101,16 @@ public class ResumeServiceImpl implements ResumeService {
                 throw new BadRequestException(MessageUtils.getMessage("resume.text.empty"));
             }
 
-            rawText = fileService.extractTextFromFile(resumeUploadDTO.getFile().getInputStream());
-            rawText = fileService.cleanText(rawText);
+            if (resumeUploadDTO.enableAiAnalysis()) {
+                rawText = fileService.extractTextFromFile(resumeUploadDTO.getFile().getInputStream());
+                rawText = fileService.cleanText(rawText);
 
-            if (rawText == null || rawText.isEmpty()) {
-                log.warn("Text extraction yielded empty result for user: {}", user.getId());
-                throw new BadRequestException(MessageUtils.getMessage("resume.text.empty"));
+                if (rawText == null || rawText.isEmpty()) {
+                    log.warn("Text extraction yielded empty result for user: {}", user.getId());
+                    throw new BadRequestException(MessageUtils.getMessage("resume.text.empty"));
+                }
+                log.info("raw text extracted successfully");
             }
-            log.info("raw text extracted successfully");
         } catch (BadRequestException e) {
             throw e;
         } catch (Exception e) {
@@ -116,7 +118,10 @@ public class ResumeServiceImpl implements ResumeService {
             throw new BadRequestException(MessageUtils.getMessage("resume.text.empty"));
         }
 
-        cv.setRawText(rawText);
+        if (resumeUploadDTO.enableAiAnalysis()) {
+            cv.setRawText(rawText);
+            cv.startAnalysis();
+        }
 
         // upload to cloud
         try {
@@ -146,14 +151,14 @@ public class ResumeServiceImpl implements ResumeService {
 
         // analyze and vectorize resume
         if (resumeUploadDTO.enableAiAnalysis()) {
-            producer.processAI(new ResumeParsingMessage(rawText, user.getId(), cv.getId()));
+            eventPublisher.publishEvent(new ResumeAnalysisRequestedEvent(new ResumeParsingMessage(rawText, user.getId(), cv.getId())));
             log.info("Resume created — cv: {}, dispatched cloud upload and AI processing for user: {}",
                     cv.getId(), user.getId());
         } else {
             log.info("Resume created — cv: {}, skipped AI processing (user opted out) for user: {}",
                     cv.getId(), user.getId());
         }
-        return new ResumeView(cv.getId(), cv.getFileName(), cv.getCreatedAt(), cv.isAnalyzed());
+        return new ResumeView(cv.getId(), cv.getFileName(), cv.getCreatedAt(), cv.getStatus());
     }
 
     @Override
@@ -164,8 +169,11 @@ public class ResumeServiceImpl implements ResumeService {
         }
         Resume cv = findResumeAndAssertOwner(id, user, "resume.access.forbidden");
 
-        if (cv.isAnalyzed()) {
+        if (cv.getStatus() == ResumeStatus.READY) {
             throw new BadRequestException(MessageUtils.getMessage("resume.already_analyzed"));
+        }
+        if (cv.getStatus() == ResumeStatus.ANALYZING) {
+            throw new BadRequestException("Resume is currently being analyzed");
         }
 
         String rawText = cv.getRawText();
@@ -173,16 +181,23 @@ public class ResumeServiceImpl implements ResumeService {
             throw new BadRequestException(MessageUtils.getMessage("resume.text.empty"));
         }
 
-        // Send SSE "analyzing" event
-        sseEmitterService.sendEvent(user.getId(), "resume-process",
-                SseMessagePayload.builder()
-                        .id(cv.getId())
-                        .status("analyzing")
-                        .message("AI is analyzing your resume...")
-                        .build());
+        cv.startAnalysis();
+        resumeRepository.save(cv);
 
-        // Dispatch to RabbitMQ (async)
-        producer.processAI(new ResumeParsingMessage(rawText, user.getId(), cv.getId()));
+        // Send SSE "analyzing" event
+        try {
+            sseEmitterService.sendEvent(user.getId(), "resume-process",
+                    SseMessagePayload.builder()
+                            .id(cv.getId())
+                            .status("analyzing")
+                            .message("AI is analyzing your resume...")
+                            .build());
+        } catch (Exception e) {
+            log.warn("Failed to send SSE analyzing event for CV: {}, user: {}", id, user.getId(), e);
+        }
+
+        // Dispatch Spring event
+        eventPublisher.publishEvent(new ResumeAnalysisRequestedEvent(new ResumeParsingMessage(rawText, user.getId(), cv.getId())));
         log.info("Deferred AI analysis triggered for CV: {} by user: {}", id, user.getId());
     }
 
