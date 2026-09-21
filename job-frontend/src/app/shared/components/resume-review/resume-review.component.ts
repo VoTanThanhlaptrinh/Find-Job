@@ -34,11 +34,11 @@ export class ResumeReviewComponent implements OnDestroy {
 
   constructor() {
     effect(() => {
-      if (this.isUploading() || this.isParsing() || this.isVectorizing()) {
+      if (this.isUploading() || this.isAnalyzing() || this.isParsing() || this.isVectorizing()) {
         this.startFakeProgress();
       } else {
         this.stopFakeProgress();
-        if (this.isUploaded() || this.resume.isAnalyzed) {
+        if (this.isUploaded() || this.isAnalyzed()) {
           this.uploadProgress.set(100);
         }
       }
@@ -54,6 +54,7 @@ export class ResumeReviewComponent implements OnDestroy {
     this.uploadProgress.set(0);
     this.progressInterval = setInterval(() => {
       this.uploadProgress.update(prev => {
+        if (this.isAnalyzing() && prev >= 40) return 40;
         if (this.isParsing() && prev >= 70) return 70; // Cap at 70% during parsing
         if (this.isVectorizing()) {
            if (prev < 70) return 70; // Jump to 70
@@ -88,7 +89,17 @@ export class ResumeReviewComponent implements OnDestroy {
 
   readonly isAnalyzing = computed(() => {
     const file = this.resumeService.uploadingFile$();
+    return file !== null && file.id === this.resume.id && file.status === 'analyzing';
+  });
+
+  readonly isProcessing = computed(() => {
+    const file = this.resumeService.uploadingFile$();
     return file !== null && file.id === this.resume.id && (file.status === 'analyzing' || file.status === 'parsing' || file.status === 'vectorizing');
+  });
+
+  readonly isAnalyzed = computed(() => {
+    const file = this.resumeService.uploadingFile$();
+    return this.resume?.isAnalyzed || (file !== null && file.id === this.resume.id && file.status === 'analyzed');
   });
 
   readonly isParsing = computed(() => {

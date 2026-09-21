@@ -12,6 +12,7 @@ import { NO_AUTH } from '../interceptors/logger.interceptor';
 
 import { FileMessage, SseMessagePayload } from '../../shared/models/sse/sse.model';
 import { SseService } from './sse.service';
+import { I18nService } from '../i18n/i18n.service';
 
 export type ResumeContext = 'user' | 'hirer';
 
@@ -27,6 +28,7 @@ export class ResumeService {
     readonly localFileData = signal<Partial<FileMessage> & { pendingResume?: ResumeReviewInput, isManualAnalyze?: boolean }>({});
     private counter = -10;
     private sseService = inject(SseService);
+    private i18n = inject(I18nService);
     readonly resumes$ = computed(() => this.resumes());
     readonly analyzedResumes$ = computed(() => this.analyzedResumes());
     readonly isLoadingResumes$ = computed(() => this.isLoadingResumes());
@@ -69,6 +71,12 @@ export class ResumeService {
                 this.resumes.update(list =>
                     list.map(r => r.id === event.id ? { ...r, isAnalyzed: true } : r)
                 );
+                const successMsg = this.i18n.translate('cvList.analyzedSuccess') || event.message || 'Phân tích CV thành công!';
+                this.notificationService.success(successMsg);
+            }
+            if (event && event.status === 'failed') {
+                const failMsg = event.message || this.i18n.translate('cvList.badge.failed') || 'Phân tích CV thất bại!';
+                this.notificationService.error(failMsg);
             }
         });
 
@@ -291,7 +299,7 @@ export class ResumeService {
     }
 
     private generateUUID(): string {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
             const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
             return v.toString(16);
         });

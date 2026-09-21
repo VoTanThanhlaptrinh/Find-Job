@@ -48,9 +48,16 @@ public class FileServiceImpl implements FileService {
     @Override
     public String extractTextFromFileOcr(MultipartFile file) {
         try {
-            byte[] fileBytes = file.getBytes();
-            String fileName = file.getOriginalFilename();
+            return extractTextFromFileOcr(file.getBytes(), file.getOriginalFilename());
+        } catch (IOException e) {
+            log.error("Error reading bytes from multipart file: ", e);
+            return "";
+        }
+    }
 
+    @Override
+    public String extractTextFromFileOcr(byte[] fileBytes, String fileName) {
+        try {
             // Tạo resource từ byte array
             ByteArrayResource fileResource = new ByteArrayResource(fileBytes) {
                 @Override

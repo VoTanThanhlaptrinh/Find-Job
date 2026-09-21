@@ -30,5 +30,13 @@ public interface CloudStorageService {
      * @param key Key của object cần xóa
      */
     void deleteObject(String key);
+
+    /**
+     * Tải nội dung object từ S3/R2 dưới dạng mảng byte.
+     *
+     * @param key Key của object cần tải
+     * @return mảng byte của file
+     */
+    byte[] getObjectBytes(String key);
 }
 

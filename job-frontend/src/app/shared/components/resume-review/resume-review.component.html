@@ -78,7 +78,7 @@
             <span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
             <span>{{ 'cvList.uploadSuccess' | t }}</span>
           </div>
-        } @else if (resume.isAnalyzed) {
+        } @else if (isAnalyzed()) {
           <div class="inline-flex items-center gap-1 font-semibold text-xs text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-200/70 shrink-0">
             <span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
             <span>
@@ -87,6 +87,11 @@
                 ({{ executionTime() }}s)
               }
             </span>
+          </div>
+        } @else if (isAnalyzing()) {
+          <div class="inline-flex items-center gap-1 font-semibold text-xs text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-md border border-indigo-200/70 shrink-0">
+            <span class="material-symbols-outlined text-[15px] animate-spin">sync</span>
+            <span>{{ 'cvList.analyzing' | t }} {{ uploadProgress() }}%</span>
           </div>
         } @else if (isParsing()) {
           <div class="inline-flex items-center gap-1 font-semibold text-xs text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-md border border-indigo-200/70 shrink-0">
@@ -122,7 +127,7 @@
   <div class="relative shrink-0 flex items-center justify-end self-start sm:self-center">
     <button
       type="button"
-      [disabled]="isUploading() || isAnalyzing()"
+      [disabled]="isUploading() || isProcessing()"
       (click)="isMenuOpen = !isMenuOpen; $event.stopPropagation()"
       class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 hover:text-[#2563EB] hover:bg-[#EAF2FF] bg-slate-50 border border-slate-200/80 transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] disabled:opacity-40 disabled:pointer-events-none active:scale-95"
       aria-label="Options"
@@ -136,7 +141,7 @@
         class="resume-options-menu absolute right-0 top-full mt-2 w-52 bg-white rounded-xl shadow-xl border border-slate-200/90 py-1.5 z-50 overflow-hidden divide-y divide-slate-100"
       >
         <div class="py-1">
-          @if (!resume.isAnalyzed && !isAnalyzing() && !isFailed()) {
+          @if (!isAnalyzed() && !isProcessing() && !isFailed()) {
             <button
               type="button"
               (click)="onAnalyzeResume(); closeMenu()"

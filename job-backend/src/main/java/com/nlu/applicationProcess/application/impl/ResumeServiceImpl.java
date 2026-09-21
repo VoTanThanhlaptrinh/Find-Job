@@ -30,6 +30,7 @@ import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
 
 @Slf4j
@@ -178,7 +179,28 @@ public class ResumeServiceImpl implements ResumeService {
 
         String rawText = cv.getRawText();
         if (rawText == null || rawText.isBlank()) {
-            throw new BadRequestException(MessageUtils.getMessage("resume.text.empty"));
+            try {
+                byte[] fileBytes = cloudStorageService.getObjectBytes(cv.getKeyCf());
+                rawText = fileService.extractTextFromFile(new ByteArrayInputStream(fileBytes));
+                if (rawText == null || rawText.isBlank()) {
+                    rawText = fileService.extractTextFromFileOcr(fileBytes, cv.getFileName());
+                }
+                rawText = fileService.cleanText(rawText);
+            } catch (Exception e) {
+                log.warn("Failed to extract text from file or OCR for resume: {}", cv.getId(), e);
+            }
+
+            if (rawText == null || rawText.isBlank()) {
+                throw new BadRequestException(MessageUtils.getMessage("resume.text.empty"));
+            }
+
+            cv.setRawText(rawText);
+            try {
+                resumeRepository.save(cv);
+            } catch (Exception e) {
+                log.error("Failed to update rawText for resume: {}", cv.getId(), e);
+                throw new RuntimeException("Failed to update rawText for resume", e);
+            }
         }
 
         cv.startAnalysis();

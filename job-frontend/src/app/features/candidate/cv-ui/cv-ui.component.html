@@ -40,17 +40,17 @@
       </div>
     </div>
 
-    @if (isLoading && !skeleton) {
+    @if (isLoading() && !skeleton) {
       <app-loading></app-loading>
     }
 
     <!-- CV List or Skeleton -->
     <div class="flex flex-col gap-4">
-      @if (isLoading && skeleton) {
+      @if (isLoading() && skeleton) {
         @for (row of skeletonRows; track row) {
           <app-skeleton-cv-card class="block w-full"></app-skeleton-cv-card>
         }
-      } @else if (!isLoading && resumes.length === 0 && !uploadingFile) {
+      } @else if (!isLoading() && resumes().length === 0 && !uploadingFile()) {
         <div class="bg-white rounded-2xl border border-dashed border-slate-300 p-10 sm:p-14 text-center shadow-xs">
           <div class="w-16 h-16 bg-blue-50 text-[#2563EB] rounded-2xl flex items-center justify-center mx-auto mb-4 border border-blue-100/60">
             <span class="material-symbols-outlined text-[32px]">folder_open</span>
@@ -67,7 +67,7 @@
           </button>
         </div>
       } @else {
-        @for (resume of resumes; track resume.id) {
+        @for (resume of resumes(); track resume.id) {
           <app-resume-review [resume]="resume"></app-resume-review>
         }
       }

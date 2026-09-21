@@ -104,6 +104,7 @@ public class ResumeParsingConsumer {
             if (executionTime != null) {
                 builder.executionTime(executionTime);
             }
+            log.info("Sending SSE resume-process event: userId={}, cvId={}, status={}, executionTime={}", userId, cvId, status, executionTime);
             sseEmitterService.sendEvent(userId, "resume-process", builder.build());
         } catch (Exception sseEx) {
             log.warn("Failed to send SSE event ({}) for cv: {}", status, cvId, sseEx);
