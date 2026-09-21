@@ -30,7 +30,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
@@ -48,8 +47,6 @@ class RabbitTopologyAndConfigurationTest {
     @Test
     @DisplayName("Verify v2 queues and exchanges are durable, and cloudUploadQueue is unchanged")
     void testTopologyDurability() {
-        Method[] methods = RabbitMQConfig.class.getDeclaredMethods();
-
         // 1. Mail queue & exchange
         Queue mailQueue = (Queue) invokeMethod("mailQueue");
         assertEquals("mailQueue.v2", mailQueue.getName());

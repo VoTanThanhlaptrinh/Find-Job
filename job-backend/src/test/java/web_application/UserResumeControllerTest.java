@@ -1,6 +1,5 @@
 package web_application;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nlu.JobPortalWebApplication;
 import com.nlu.applicationProcess.api.dto.req.ResumeUrlDTO;
 import com.nlu.shared.domain.model.ApiResponse;
@@ -40,9 +39,6 @@ class UserResumeControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @MockBean
     private ResumeService resumeService;
 
@@ -50,7 +46,6 @@ class UserResumeControllerTest {
     private static final long VALID_RESUME_ID = 1L;
     private static final long INVALID_RESUME_ID = 999L;
     private static final String TEST_USER_EMAIL = "user@test.com";
-    private static final String OTHER_USER_EMAIL = "other@test.com";
     private static final String TEST_PRESIGNED_URL = "https://bucket.r2.cloudflarestorage.com/resume.pdf?signature=abc123";
     private static final String TEST_FILE_NAME = "resume.pdf";
 
@@ -74,7 +69,6 @@ class UserResumeControllerTest {
         @DisplayName("U01: Xem resume thành công khi đã đăng nhập và là chủ sở hữu")
         @WithMockUser(username = TEST_USER_EMAIL, roles = "USER")
         void getResumeViewUrl_Success() throws Exception {
-            ApiResponse<ResumeUrlDTO> response = new ApiResponse<>("success", validResumeUrlDTO, HttpStatus.OK.value());
             when(resumeService.getResumeViewUrl(eq(VALID_RESUME_ID), any())).thenReturn(validResumeUrlDTO);
 
             mockMvc.perform(get(BASE_URL + "/" + VALID_RESUME_ID + "/view")
@@ -202,7 +196,6 @@ class UserResumeControllerTest {
         @DisplayName("Response JSON format đúng chuẩn")
         @WithMockUser(username = TEST_USER_EMAIL, roles = "USER")
         void responseFormat_CorrectStructure() throws Exception {
-            ApiResponse<ResumeUrlDTO> response = new ApiResponse<>("success", validResumeUrlDTO, HttpStatus.OK.value());
             when(resumeService.getResumeViewUrl(eq(VALID_RESUME_ID), any())).thenReturn(validResumeUrlDTO);
 
             mockMvc.perform(get(BASE_URL + "/" + VALID_RESUME_ID + "/view")

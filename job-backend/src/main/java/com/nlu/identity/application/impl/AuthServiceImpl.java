@@ -34,7 +34,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -61,7 +60,6 @@ public class AuthServiceImpl implements AuthService {
     private final RefreshTokenService refreshTokenService;
     private final SpamService spamService;
     private final JwtService jwtService;
-    private final Environment environment;
     private final RegistrationFormMapper mapper;
     @Value("${app.frontend-url}")
     private String url;
@@ -408,15 +406,5 @@ public class AuthServiceImpl implements AuthService {
     private String createLink(User user) {
         String token = jwtService.generateToken(user.getUsername() + "|activate");
         return url + "/activate?token=" + token;
-    }
-
-    private boolean isDevProfile() {
-        String[] activeProfiles = environment.getActiveProfiles();
-        for (String profile : activeProfiles) {
-            if ("dev".equalsIgnoreCase(profile)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

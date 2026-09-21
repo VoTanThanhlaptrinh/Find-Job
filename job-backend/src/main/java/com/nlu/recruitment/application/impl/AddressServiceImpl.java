@@ -10,7 +10,6 @@ import com.nlu.recruitment.domain.repository.AddressRepository;
 import com.nlu.recruitment.domain.repository.RecruitmentRepository;
 import com.nlu.shared.domain.exception.ForbiddenException;
 import com.nlu.shared.domain.exception.ResourceNotFoundException;
-import com.nlu.shared.utils.MessageUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

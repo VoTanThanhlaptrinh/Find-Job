@@ -1,8 +1,6 @@
 package com.nlu.content.domain.model;
 
 
-import java.time.LocalDateTime;
-
 import com.nlu.identity.domain.model.User;
 import com.nlu.shared.domain.exception.BadRequestException;
 import com.nlu.shared.domain.model.BaseEntity;
@@ -11,8 +9,6 @@ import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 @Getter
 @Entity

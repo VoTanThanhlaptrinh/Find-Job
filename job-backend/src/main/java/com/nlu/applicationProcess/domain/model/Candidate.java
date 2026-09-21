@@ -2,7 +2,6 @@ package com.nlu.applicationProcess.domain.model;
 
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import com.nlu.identity.domain.model.User;
 import com.nlu.identity.domain.vo.EmailAddress;
@@ -14,7 +13,6 @@ import jakarta.persistence.*;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
 
 import org.hibernate.annotations.SQLRestriction;
 

@@ -1,6 +1,5 @@
 package com.nlu.applicationProcess.application.impl;
 
-import com.nlu.applicationProcess.domain.model.ResumeUploadSession;
 import com.nlu.applicationProcess.domain.model.ResumeUploadSessionStatus;
 import com.nlu.applicationProcess.domain.repository.ResumeUploadSessionRepository;
 import lombok.RequiredArgsConstructor;

@@ -2,7 +2,7 @@ package com.nlu.identity.application.impl;
 
 
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,9 +12,9 @@ import com.nlu.identity.domain.repository.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class UserRepositoryDetailsService implements UserDetailsService {
-	@Autowired
-	private UserRepository repository;
+	private final UserRepository repository;
 
 	@Override
 	@Transactional

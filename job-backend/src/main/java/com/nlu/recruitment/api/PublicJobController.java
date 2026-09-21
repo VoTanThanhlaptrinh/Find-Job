@@ -8,7 +8,6 @@ import com.nlu.recruitment.api.dto.JobCardView;
 import com.nlu.recruitment.api.dto.JobMatchView;
 import com.nlu.recruitment.api.dto.JobDetailView;
 import com.nlu.recruitment.api.dto.JobFilterDto;
-import com.nlu.recruitment.infrastructure.cache.CategoryCacheService;
 import com.nlu.recruitment.application.JobQueryService;
 import com.nlu.recruitment.application.JobService;
 import com.nlu.shared.utils.MessageUtils;
@@ -30,7 +29,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class PublicJobController {
     private final JobService jobService;
     private final JobQueryService jobQueryService;
-    private final CategoryCacheService categoryCacheService;
 
     @GetMapping("/newest")
     public ResponseEntity<ApiResponse<Page<JobCardView>>> getListJobNewest(

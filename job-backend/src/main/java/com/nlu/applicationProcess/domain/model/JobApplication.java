@@ -9,12 +9,7 @@ import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
 import org.hibernate.annotations.SQLRestriction;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter

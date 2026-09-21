@@ -1,7 +1,6 @@
 package com.nlu.identity.api;
 
 import com.nlu.identity.api.dto.LoginDTO;
-import com.nlu.identity.api.dto.RegistrationForm;
 import com.nlu.shared.domain.model.ApiResponse;
 import com.nlu.identity.application.AuthService;
 import com.nlu.shared.utils.MessageUtils;

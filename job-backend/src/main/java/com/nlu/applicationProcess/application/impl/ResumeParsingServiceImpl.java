@@ -18,8 +18,6 @@ import org.springframework.stereotype.Service;
 public class ResumeParsingServiceImpl implements ResumeParsingService {
     private ChatModel model;
     private ResumeParserAgent parserAgent;
-    private static final int MAX_RETRIES = 1;
-    private static final int PASS_THRESHOLD = 80;
     @Value("${application.service.impl.deepseek.api-key}")
     private String apiKey;
 
