@@ -1,5 +1,6 @@
 package com.nlu.shared.infrastructure.filter;
 
+import com.nlu.shared.utils.IpUtils;
 import com.nlu.shared.utils.PayloadMaskingUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -112,7 +113,7 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
             effectiveResponse.setHeader(CORRELATION_HEADER, traceId);
 
             // ── 5. Log incoming request summary ─────────────────────────────
-            String clientIp = resolveClientIp(wrappedRequest);
+            String clientIp = IpUtils.getClientIp(wrappedRequest);
             String userAgent = wrappedRequest.getHeader("User-Agent");
 
             log.info("► [{}  {}] from {} | User-Agent: {}",
@@ -194,17 +195,7 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
         log.debug("  Body: {}", PayloadMaskingUtil.maskSensitiveData(body));
     }
 
-    private String resolveClientIp(HttpServletRequest request) {
-        String ip = request.getHeader("X-Forwarded-For");
-        if (ip != null && !ip.isBlank()) {
-            return ip.split(",")[0].trim();
-        }
-        ip = request.getHeader("X-Real-IP");
-        if (ip != null && !ip.isBlank()) {
-            return ip.trim();
-        }
-        return request.getRemoteAddr();
-    }
+
 
     private boolean isLoggableContentType(String contentType) {
         String lower = contentType.toLowerCase();

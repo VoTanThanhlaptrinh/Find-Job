@@ -25,6 +25,7 @@ import com.nlu.identity.application.RefreshTokenService;
 import com.nlu.shared.application.ReferenceService;
 import com.nlu.shared.application.SpamService;
 import com.nlu.shared.application.VerificationService;
+import com.nlu.shared.utils.IpUtils;
 import com.nlu.shared.utils.MessageUtils;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,7 +45,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -176,7 +176,7 @@ public class AuthServiceImpl implements AuthService {
             HttpServletRequest request,
             HttpServletResponse response,
             String expectedRole) {
-        String ip = getClientIP(request);
+        String ip = IpUtils.getClientIp(request);
         if (spamService.checkIpSpamLogin(ip)) {
             log.warn("Login rate-limited for IP: {}", ip);
             throw new AppException(spamService.getMessageLoginSpam(ip), HttpStatus.TOO_MANY_REQUESTS);
@@ -276,7 +276,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void sendCodeForgotPassword(HttpServletRequest request, String email) {
-        String ip = getClientIP(request);
+        String ip = IpUtils.getClientIp(request);
         if (email == null || email.isEmpty()) {
             throw new BadRequestException("auth.email.empty");
         }
@@ -418,13 +418,5 @@ public class AuthServiceImpl implements AuthService {
             }
         }
         return false;
-    }
-
-    private String getClientIP(HttpServletRequest request) {
-        String xfHeader = request.getHeader("X-Forwarded-For");
-        if (xfHeader == null || xfHeader.isEmpty() || !xfHeader.contains(request.getRemoteAddr())) {
-            return request.getRemoteAddr();
-        }
-        return xfHeader.split(",")[0];
     }
 }
