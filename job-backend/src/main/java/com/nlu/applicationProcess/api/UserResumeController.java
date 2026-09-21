@@ -66,18 +66,6 @@ public class UserResumeController {
         return ResponseEntity.ok().body(new ApiResponse<>(MessageUtils.getMessage("message.success"), res, HttpStatus.OK.value()));
     }
 
-    @PostMapping(consumes = "multipart/form-data")
-    public ResponseEntity<ApiResponse<ResumeView>> uploadResume(@Valid @ModelAttribute ResumeUploadDTO resumeUploadDTO,
-                                                            BindingResult bindingResult,
-                                                            @CurrentUser User currentUser) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, HttpStatus.BAD_REQUEST.value()));
-        }
-        var res = resumeService.createResume(resumeUploadDTO, currentUser);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(MessageUtils.getMessage("message.success"), res, HttpStatus.CREATED.value()));
-    }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<String>> deleteResume(@PathVariable("id") long id, @CurrentUser User currentUser) {
         resumeService.deleteResume(id, currentUser);

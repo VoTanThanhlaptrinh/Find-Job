@@ -51,17 +51,16 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
     private static final Map<String, String> ALLOWED_EXTENSIONS_TO_MIME = Map.of(
             ".pdf", "application/pdf",
             ".doc", "application/msword",
-            ".docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    );
+            ".docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
 
     public static final Set<String> ALLOWED_CONTENT_TYPES = Set.of(
             "application/pdf",
             "application/msword",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    );
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
 
     @Override
-    public ResumeUploadInitiateResponse initiateUpload(String idempotencyKey, ResumeUploadInitiateRequest request, User currentUser) {
+    public ResumeUploadInitiateResponse initiateUpload(String idempotencyKey, ResumeUploadInitiateRequest request,
+            User currentUser) {
         if (currentUser == null) {
             throw new UnauthorizedException(MessageUtils.getMessage("message.unauthorized"));
         }
@@ -95,14 +94,6 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
         // Try Redis lock for short-term double click prevention
         String lockToken = UUID.randomUUID().toString();
         Optional<String> acquiredLockOpt = lockService.acquireLock(currentUser.getId(), trimmedKey, lockToken);
-
-        if (acquiredLockOpt.isEmpty()) {
-            // Lock held by another thread or Redis unavailable. Check DB for existing session.
-            Optional<ResumeUploadSession> existingSession = waitForExistingSession(currentUser.getId(), trimmedKey);
-            if (existingSession.isPresent()) {
-                return handleExistingSession(existingSession.get(), fingerprint);
-            }
-        }
 
         try {
             // Check if session already exists in DB
@@ -147,7 +138,8 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
                 // Concurrency fallback when Redis lock was bypassed or unavailable
                 log.info("Concurrent insert race detected for user {} and key {}. Reading existing record.",
                         currentUser.getId(), trimmedKey);
-                ResumeUploadSession racedSession = sessionRepository.findByUserIdAndIdempotencyKey(currentUser.getId(), trimmedKey)
+                ResumeUploadSession racedSession = sessionRepository
+                        .findByUserIdAndIdempotencyKey(currentUser.getId(), trimmedKey)
                         .orElseThrow(() -> dive);
                 return handleExistingSession(racedSession, fingerprint);
             }
@@ -157,16 +149,14 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
                     tempKey,
                     session.getDeclaredContentType(),
                     uploadId,
-                    properties.getUrlExpirationMinutes()
-            );
+                    properties.getUrlExpirationMinutes());
 
             return new ResumeUploadInitiateResponse(
                     uploadId,
                     presignedResponse.url(),
                     presignedResponse.method(),
                     presignedResponse.requiredHeaders(),
-                    presignedResponse.expiresAt()
-            );
+                    presignedResponse.expiresAt());
         } finally {
             if (acquiredLockOpt.isPresent()) {
                 lockService.releaseLock(currentUser.getId(), trimmedKey, lockToken);
@@ -174,7 +164,8 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
         }
     }
 
-    private ResumeUploadInitiateResponse handleExistingSession(ResumeUploadSession existingSession, String requestFingerprint) {
+    private ResumeUploadInitiateResponse handleExistingSession(ResumeUploadSession existingSession,
+            String requestFingerprint) {
         // Enforce fingerprint match
         if (!Objects.equals(existingSession.getRequestFingerprint(), requestFingerprint)) {
             log.warn("Idempotency conflict for user {} and key {}. Stored fingerprint: {}, Request: {}",
@@ -183,7 +174,8 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
             throw new ConflictException("Idempotency key has already been used with different request parameters");
         }
 
-        log.info("Idempotent initiate request for session {}. Current status: {}", existingSession.getId(), existingSession.getStatus());
+        log.info("Idempotent initiate request for session {}. Current status: {}", existingSession.getId(),
+                existingSession.getStatus());
 
         switch (existingSession.getStatus()) {
             case PENDING_UPLOAD -> {
@@ -195,18 +187,17 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
                         existingSession.getTempKey(),
                         existingSession.getDeclaredContentType(),
                         existingSession.getId(),
-                        properties.getUrlExpirationMinutes()
-                );
+                        properties.getUrlExpirationMinutes());
                 return new ResumeUploadInitiateResponse(
                         existingSession.getId(),
                         presignedResponse.url(),
                         presignedResponse.method(),
                         presignedResponse.requiredHeaders(),
-                        presignedResponse.expiresAt()
-                );
+                        presignedResponse.expiresAt());
             }
             case FINALIZING -> {
-                throw new ConflictException("Upload session is currently finalizing. Please check status or retry complete.");
+                throw new ConflictException(
+                        "Upload session is currently finalizing. Please check status or retry complete.");
             }
             case COMPLETED -> {
                 log.info("Upload session {} already COMPLETED. Returning existing resume id: {}",
@@ -216,12 +207,13 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
                         null,
                         null,
                         Map.of(),
-                        existingSession.getExpiresAt()
-                );
+                        existingSession.getExpiresAt());
             }
             case REJECTED -> {
-                String code = existingSession.getRejectionCode() != null ? existingSession.getRejectionCode() : "UPLOAD_REJECTED";
-                String detail = existingSession.getRejectionDetail() != null ? existingSession.getRejectionDetail() : "Upload session was rejected";
+                String code = existingSession.getRejectionCode() != null ? existingSession.getRejectionCode()
+                        : "UPLOAD_REJECTED";
+                String detail = existingSession.getRejectionDetail() != null ? existingSession.getRejectionDetail()
+                        : "Upload session was rejected";
                 throw new BadRequestException("Upload session was rejected: " + code + " - " + detail);
             }
             case EXPIRED -> {
@@ -229,22 +221,6 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
             }
             default -> throw new BadRequestException("Unknown session status: " + existingSession.getStatus());
         }
-    }
-
-    private Optional<ResumeUploadSession> waitForExistingSession(long userId, String idempotencyKey) {
-        for (int i = 0; i < 10; i++) {
-            Optional<ResumeUploadSession> session = sessionRepository.findByUserIdAndIdempotencyKey(userId, idempotencyKey);
-            if (session.isPresent()) {
-                return session;
-            }
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                break;
-            }
-        }
-        return Optional.empty();
     }
 
     @Override
@@ -260,7 +236,8 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
             log.info("Session {} is already COMPLETED. Returning existing resume id: {}",
                     uploadId, claimResult.existingResumeId());
             Resume resume = resumeRepository.findById(claimResult.existingResumeId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Associated resume not found: " + claimResult.existingResumeId()));
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Associated resume not found: " + claimResult.existingResumeId()));
             return new ResumeView(resume.getId(), resume.getFileName(), resume.getCreatedAt(), resume.getStatus());
         }
 
@@ -276,8 +253,10 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
                 Optional<ResumeUploadSession> pollOpt = sessionRepository.findById(uploadId);
                 if (pollOpt.isPresent() && pollOpt.get().getStatus() == ResumeUploadSessionStatus.COMPLETED) {
                     Resume resume = resumeRepository.findById(pollOpt.get().getResumeId())
-                            .orElseThrow(() -> new ResourceNotFoundException("Associated resume not found: " + pollOpt.get().getResumeId()));
-                    return new ResumeView(resume.getId(), resume.getFileName(), resume.getCreatedAt(), resume.getStatus());
+                            .orElseThrow(() -> new ResourceNotFoundException(
+                                    "Associated resume not found: " + pollOpt.get().getResumeId()));
+                    return new ResumeView(resume.getId(), resume.getFileName(), resume.getCreatedAt(),
+                            resume.getStatus());
                 }
             }
             throw new ConflictException("Upload finalization is in progress. Please retry shortly.");
@@ -293,7 +272,8 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
             StorageObjectMetadata permMeta = permMetaOpt.get();
             if (permMeta.contentLength() == session.getDeclaredSize() &&
                     isMatchingContentType(permMeta.contentType(), session.getDeclaredContentType())) {
-                log.info("Permanent object already exists with valid metadata for uploadId: {}. Skipping copy.", uploadId);
+                log.info("Permanent object already exists with valid metadata for uploadId: {}. Skipping copy.",
+                        uploadId);
                 alreadyCopied = true;
             }
         }
@@ -318,7 +298,8 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
                     isMatchingContentType(tempMeta.contentType(), session.getDeclaredContentType());
 
             if (!isValidMetadata) {
-                log.warn("Invalid metadata for temp object in session {}: size={}, declaredSize={}, type={}, declaredType={}",
+                log.warn(
+                        "Invalid metadata for temp object in session {}: size={}, declaredSize={}, type={}, declaredType={}",
                         uploadId, tempMeta.contentLength(), session.getDeclaredSize(),
                         tempMeta.contentType(), session.getDeclaredContentType());
                 String code = (tempMeta.contentLength() != session.getDeclaredSize())
@@ -335,7 +316,8 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
             cloudStorageService.copyObject(session.getTempKey(), session.getPermanentKey());
 
             // HEAD permanent object to verify copy success and metadata
-            Optional<StorageObjectMetadata> verifiedPermMetaOpt = cloudStorageService.headObject(session.getPermanentKey());
+            Optional<StorageObjectMetadata> verifiedPermMetaOpt = cloudStorageService
+                    .headObject(session.getPermanentKey());
             boolean permValid = verifiedPermMetaOpt.isPresent() &&
                     verifiedPermMetaOpt.get().contentLength() > 0 &&
                     verifiedPermMetaOpt.get().contentLength() == session.getDeclaredSize() &&
@@ -358,8 +340,7 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
         Resume finalizedResume = resumeUploadFinalizer.finalizeUpload(
                 uploadId,
                 processingToken,
-                currentUser
-        );
+                currentUser);
 
         // Delete temp best-effort after transaction commits
         deleteTempSilently(session.getTempKey());
@@ -368,8 +349,7 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
                 finalizedResume.getId(),
                 finalizedResume.getFileName(),
                 finalizedResume.getCreatedAt(),
-                finalizedResume.getStatus()
-        );
+                finalizedResume.getStatus());
     }
 
     private void deleteTempSilently(String tempKey) {
@@ -454,7 +434,8 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
 
         String expectedMime = ALLOWED_EXTENSIONS_TO_MIME.get(matchingExt);
         if (!expectedMime.equalsIgnoreCase(normalizedContentType)) {
-            throw new BadRequestException("File extension '" + matchingExt + "' does not match Content-Type '" + contentType + "'");
+            throw new BadRequestException(
+                    "File extension '" + matchingExt + "' does not match Content-Type '" + contentType + "'");
         }
     }
 

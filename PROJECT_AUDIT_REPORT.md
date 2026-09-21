@@ -14,25 +14,25 @@
 |  [X]  |  3  | `activeAccount()` không lưu trạng thái active     | 🐛 Logic               |   **HIGH**   | `AuthServiceImpl.java`                              |
 |  [X]  |  4  | Search job thiếu lọc `recordStatus` và địa chỉ    | 🐛 Logic + ⚡ Perf     |   **HIGH**   | `JobQuery.java`                                     |
 |  [X]  |  5  | Log Authority mức INFO trên mỗi request           | ⚡ Bottleneck          |   **HIGH**   | `JwtFilter.java`                                    |
-|  [ ]  |  6  | Vòng lặp `Thread.sleep()` chặn worker thread      | ⚡ Bottleneck          |   **HIGH**   | `ResumeUploadServiceImpl.java`                      |
-|  [ ]  |  7  | `RateLimitFilter` gọi Redis lặp lại nhiều lần     | ⚡ Bottleneck          |   **HIGH**   | `RateLimitFilter.java`, `RateLimitServiceImpl.java` |
+|  [X]  |  6  | Vòng lặp `Thread.sleep()` chặn worker thread      | ⚡ Bottleneck          |   **HIGH**   | `ResumeUploadServiceImpl.java`                      |
+|  [X]  |  7  | `RateLimitFilter` gọi Redis lặp lại nhiều lần     | ⚡ Bottleneck          |   **HIGH**   | `RateLimitFilter.java`, `RateLimitServiceImpl.java` |
 |  [X]  |  8  | Nuốt ngoại lệ trong `bulkJobAction`               | 🐛 Logic               |   **HIGH**   | `AdminJobServiceImpl.java`                          |
 |  [X]  |  9  | `getClientIP()` nhận diện sai trên proxy/CDN      | 🐛 Logic               |  **MEDIUM**  | `AuthServiceImpl.java`                              |
-|  [10]  | 10  | Hardcode URL `localhost:4200` trong email OAuth2  | 🐛 Logic               |  **MEDIUM**  | `AccountServiceImpl.java`                           |
+| [10]  | 10  | Hardcode URL `localhost:4200` trong email OAuth2  | 🐛 Logic               |  **MEDIUM**  | `AccountServiceImpl.java`                           |
 |  [X]  | 11  | `checkExistJob()` tải cả entity graph             | ⚡ Perf                |  **MEDIUM**  | `JobServiceImpl.java`                               |
 |  [ ]  | 12  | Đọc lặp `InputStream` của file resume             | ⚡ Perf                |  **MEDIUM**  | `ResumeServiceImpl.java`                            |
 |  [ ]  | 13  | Admin Dashboard chứa fake data và query N+1       | 🗑️ Thừa + ⚡ Perf      |  **MEDIUM**  | `AdminDashboardServiceImpl.java`                    |
 |  [ ]  | 14  | SSE Emitter lưu in-memory không scale ngang       | ⚡ Bottleneck          |  **MEDIUM**  | `SseEmitterServiceImpl.java`                        |
-|  [ ]  | 15  | `cloudUploadQueue` cấu hình non-durable           | ⚡ Reliability         |  **MEDIUM**  | `RabbitMQConfig.java`                               |
+|  [X]  | 15  | `cloudUploadQueue` cấu hình non-durable           | ⚡ Reliability         |  **MEDIUM**  | `RabbitMQConfig.java`                               |
 |  [ ]  | 16  | `getBlogs()` trả entity thô và không lọc status   | 🐛 Logic + 🔒 Security |  **MEDIUM**  | `BlogServiceImpl.java`                              |
-|  [ ]  | 17  | `VerifyRecoveryFilter` thiếu `final` ở dependency | 🐛 Logic               |  **MEDIUM**  | `VerifyRecoveryFilter.java`                         |
+|  [X]  | 17  | `VerifyRecoveryFilter` thiếu `final` ở dependency | 🐛 Logic               |  **MEDIUM**  | `VerifyRecoveryFilter.java`                         |
 |  [X]  | 18  | Dead code `getInvalidRequestRoleMessage()`        | 🗑️ Code thừa           |   **LOW**    | `AuthServiceImpl.java`                              |
 |  [X]  | 19  | Unused injection `DefaultRepositoryTagsProvider`  | 🗑️ Code thừa           |   **LOW**    | `JobServiceImpl.java`                               |
 |  [ ]  | 20  | Chuỗi gọi method thừa `gerenateToken`             | 🗑️ Code thừa           |   **LOW**    | `JwtServiceImpl.java`                               |
 |  [ ]  | 21  | Lỗi chính tả và thiếu xóa key spam email          | 🐛 Logic               |   **LOW**    | `SpamServiceImpl.java`                              |
 |  [X]  | 22  | Sử dụng `e.printStackTrace()` thay vì Logger      | 🗑️ Code thừa           |   **LOW**    | `RefreshTokenServiceImpl.java`                      |
 |  [X]  | 23  | Sử dụng `System.err.println()` thay vì Logger     | 🗑️ Code thừa           |   **LOW**    | `JobServiceImpl.java`                               |
-|  [ ]  | 24  | Frontend `login()` thiếu xử lý lỗi                | 🐛 Logic               |   **LOW**    | `auth.service.ts`                                   |
+|  [X]  | 24  | Frontend `login()` thiếu xử lý lỗi                | 🐛 Logic               |   **LOW**    | `auth.service.ts`                                   |
 |  [X]  | 25  | Duplicate hàm `getLoginUrl()` ở 3 file            | 🗑️ Code thừa           |   **LOW**    | `auth.service.ts`, `error.interceptor.ts`,...       |
 
 ---

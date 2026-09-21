@@ -63,7 +63,7 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public Boolean checkExistJob(Long id) {
-        return jobRepository.getReferenceById(id) != null;
+        return jobRepository.existsById(id);
     }
 
     @Override
