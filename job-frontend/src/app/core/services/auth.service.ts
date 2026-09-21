@@ -70,7 +70,7 @@ export class AuthService {
   }
 
   login(body: any) {
-    this.http
+    return this.http
       .post<ApiResponse<string>>(`${this.url}/auth/login`, body, {
         withCredentials: true,
       })
@@ -79,9 +79,12 @@ export class AuthService {
         map((res) => {
           this.tokenService.setToken(res.data);
           this.setLoggedIn(true);
+        }),
+        catchError((err) => {
+          const msg = err?.error?.message || 'Login failed';
+          return throwError(() => msg);
         })
-      )
-      .subscribe();
+      );
   }
 
   hirerLogin(body: any) {

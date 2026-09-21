@@ -7,7 +7,6 @@ import com.nlu.recruitment.domain.model.Category;
 import com.nlu.recruitment.domain.repository.CategoryRepository;
 import com.nlu.shared.domain.exception.BadRequestException;
 import com.nlu.shared.domain.model.EntityStatus;
-import com.nlu.shared.utils.MessageUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

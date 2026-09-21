@@ -248,7 +248,6 @@ public class MasterDataSeeder implements CommandLineRunner {
             for (int j = 0; j < 2; j++) {
                 int addressIndex = (i * 2 + j) % ADDRESS_SEEDS.size();
                 AddressSeed template = ADDRESS_SEEDS.get(addressIndex);
-                LocalDateTime createdAt = LocalDateTime.now().minusDays(20L + addressIndex);
 
                 Address address = new Address();
                 address.setLocationName(template.locationName());
@@ -384,6 +383,7 @@ public class MasterDataSeeder implements CommandLineRunner {
      */
     private final ExecutorService executor = Executors.newFixedThreadPool(2);
 
+    @SuppressWarnings("unused")
     private void vectorizeJobs(List<Job> jobs) {
         log.info("Bắt đầu vectorize {} công việc...", jobs.size());
 

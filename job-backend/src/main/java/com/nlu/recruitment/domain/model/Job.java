@@ -20,9 +20,6 @@ import org.hibernate.annotations.SQLRestriction;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-
 @Entity
 @Getter
 @Table(name = "job")

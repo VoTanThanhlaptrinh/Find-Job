@@ -2,6 +2,7 @@ package com.nlu.shared.application.impl;
 
 import com.nlu.shared.application.SpamService;
 import com.nlu.shared.utils.MessageUtils;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,16 +37,18 @@ public class SpamServiceImpl implements SpamService {
         int attempts = getAttempts(key);
 
         if (attempts >= maxAttempts * 2) {
-            blockIP.opsForValue().set(blockKey, MessageUtils.getMessage("spam.blocked.long", Locale.ENGLISH), Duration.ofSeconds(timeoutSecond));
+            blockIP.opsForValue().set(blockKey, MessageUtils.getMessage("spam.blocked.long", Locale.ENGLISH),
+                    Duration.ofSeconds(timeoutSecond));
             return;
         }
 
         if (attempts >= maxAttempts) {
-            blockIP.opsForValue().set(blockKey, MessageUtils.getMessage("spam.blocked.short", Locale.ENGLISH), Duration.ofSeconds(timeoutFirst));
+            blockIP.opsForValue().set(blockKey, MessageUtils.getMessage("spam.blocked.short", Locale.ENGLISH),
+                    Duration.ofSeconds(timeoutFirst));
             return;
         }
 
-       spamIp.opsForValue().set(key, attempts + 1, Duration.ofSeconds(timeoutFirst));
+        spamIp.opsForValue().set(key, attempts + 1, Duration.ofSeconds(timeoutFirst));
     }
 
     @Override
@@ -55,10 +58,11 @@ public class SpamServiceImpl implements SpamService {
 
     @Override
     public void deleteIpSpamLogin(String ip) {
-        String blockKey = String.format("block_ip_login_%s", ip);
-        if (blockIP.hasKey(blockKey)) {
-            spamIp.delete(String.format("ip_spam_login_%s", ip));
+        if (ip == null || ip.isEmpty()) {
+            return;
         }
+        spamIp.delete(Objects.requireNonNull(String.format("ip_spam_login_%s", ip)));
+        blockIP.delete(Objects.requireNonNull(String.format("block_ip_login_%s", ip)));
     }
 
     @Override
@@ -70,12 +74,14 @@ public class SpamServiceImpl implements SpamService {
         log.info("Email spam attempts for {}: {}", ip, attempts);
 
         if (attempts >= maxAttempts * 2) {
-            blockIP.opsForValue().set(blockKey, MessageUtils.getMessage("spam.blocked.long", Locale.ENGLISH), Duration.ofSeconds(timeoutSecond));
+            blockIP.opsForValue().set(blockKey, MessageUtils.getMessage("spam.blocked.long", Locale.ENGLISH),
+                    Duration.ofSeconds(timeoutSecond));
             return;
         }
 
         if (attempts >= maxAttempts) {
-            blockIP.opsForValue().set(blockKey, MessageUtils.getMessage("spam.blocked.short", Locale.ENGLISH), Duration.ofSeconds(timeoutFirst));
+            blockIP.opsForValue().set(blockKey, MessageUtils.getMessage("spam.blocked.short", Locale.ENGLISH),
+                    Duration.ofSeconds(timeoutFirst));
             return;
         }
 
@@ -89,7 +95,10 @@ public class SpamServiceImpl implements SpamService {
 
     @Override
     public void deleteInSpamEmail(String ip) {
-        spamIp.delete(String.format("ip_spam_email_%s", ip));
+        if (ip == null || ip.isEmpty()) {
+            return;
+        }
+        spamIp.delete(Objects.requireNonNull(String.format("ip_spam_email_%s", ip)));
     }
 
     @Override

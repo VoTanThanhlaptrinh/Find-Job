@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nlu.shared.application.FileService;
 import lombok.extern.slf4j.Slf4j;
 
-import org.apache.coyote.BadRequestException;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;

@@ -3,7 +3,6 @@ package com.nlu.applicationProcess.infrastructure.query;
 import com.nlu.applicationProcess.api.dto.req.ResumeView;
 import com.nlu.applicationProcess.domain.model.QResume;
 import com.nlu.applicationProcess.domain.model.ResumeStatus;
-import com.nlu.shared.domain.model.EntityStatus;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +13,6 @@ import java.util.List;
 @Repository
 @RequiredArgsConstructor
 public class ResumeQueryDSL {
-    private static final String ACTIVE_STATUS = EntityStatus.ACTIVE.name();
     private final JPAQueryFactory queryFactory;
 
     public List<ResumeView> getListResumeOfUser(String email) {

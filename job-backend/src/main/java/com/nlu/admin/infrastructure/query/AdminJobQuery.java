@@ -1,7 +1,6 @@
 package com.nlu.admin.infrastructure.query;
 
 import com.nlu.admin.api.dto.job.AdminJobListItem;
-import com.nlu.applicationProcess.domain.model.QJobApplication;
 import com.nlu.recruitment.domain.model.QAddress;
 import com.nlu.recruitment.domain.model.QJob;
 import com.nlu.recruitment.domain.model.QRecruitment;
@@ -27,7 +26,6 @@ public class AdminJobQuery {
         QJob job = QJob.job;
         QRecruitment hirer = QRecruitment.recruitment;
         QAddress address = QAddress.address;
-        QJobApplication apply = QJobApplication.jobApplication;
 
         BooleanBuilder where = new BooleanBuilder();
         where.and(job.recordStatus.ne(EntityStatus.DELETED));

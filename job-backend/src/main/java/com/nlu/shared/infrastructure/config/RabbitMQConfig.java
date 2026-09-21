@@ -94,7 +94,7 @@ public class RabbitMQConfig {
 	/* Config for Cloud upload message queue (unchanged) */
 	@Bean
 	Queue cloudUploadQueue() {
-		return new Queue(CLOUD_UPLOAD_QUEUE, false);
+		return new Queue(CLOUD_UPLOAD_QUEUE, true);
 	}
 
 	@Bean

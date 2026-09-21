@@ -32,56 +32,57 @@ public class UserResumeController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<ResumeView>>> getListResumeOfUser(@CurrentUser User currentUser) {
-        if(currentUser == null){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(MessageUtils.getMessage("message.unauthorized"), null, HttpStatus.BAD_REQUEST.value()));
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(
+                    MessageUtils.getMessage("message.unauthorized"), null, HttpStatus.BAD_REQUEST.value()));
         }
         List<ResumeView> resumes = resumeService.getListResumeOfUser(currentUser);
-        return ResponseEntity.ok().body(new ApiResponse<>(MessageUtils.getMessage("message.success"),resumes, HttpStatus.OK.value()));
+        return ResponseEntity.ok()
+                .body(new ApiResponse<>(MessageUtils.getMessage("message.success"), resumes, HttpStatus.OK.value()));
     }
 
     @GetMapping("/analyzed")
     public ResponseEntity<ApiResponse<List<ResumeView>>> getAnalyzedResumes(@CurrentUser User currentUser) {
-        if(currentUser == null){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(MessageUtils.getMessage("message.unauthorized"), null, HttpStatus.BAD_REQUEST.value()));
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(
+                    MessageUtils.getMessage("message.unauthorized"), null, HttpStatus.BAD_REQUEST.value()));
         }
         List<ResumeView> resumes = resumeService.getAnalyzedResumesOfUser(currentUser);
-        return ResponseEntity.ok().body(new ApiResponse<>(MessageUtils.getMessage("message.success"), resumes, HttpStatus.OK.value()));
+        return ResponseEntity.ok()
+                .body(new ApiResponse<>(MessageUtils.getMessage("message.success"), resumes, HttpStatus.OK.value()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<ResumeDetailDTO>> getResumeDetail(@PathVariable long id, @CurrentUser User currentUser) {
+    public ResponseEntity<ApiResponse<ResumeDetailDTO>> getResumeDetail(@PathVariable long id,
+            @CurrentUser User currentUser) {
         ResumeDetailDTO res = resumeService.getResumeDetail(id, currentUser);
-        return ResponseEntity.ok().body(new ApiResponse<>(MessageUtils.getMessage("message.success"), res, HttpStatus.OK.value()));
+        return ResponseEntity.ok()
+                .body(new ApiResponse<>(MessageUtils.getMessage("message.success"), res, HttpStatus.OK.value()));
     }
 
     @GetMapping("/{id}/view")
-    public ResponseEntity<ApiResponse<ResumeUrlDTO>> getResumeViewUrl(@PathVariable long id, @CurrentUser User currentUser) {
+    public ResponseEntity<ApiResponse<ResumeUrlDTO>> getResumeViewUrl(@PathVariable long id,
+            @CurrentUser User currentUser) {
 
         ResumeUrlDTO res = resumeService.getResumeViewUrl(id, currentUser);
-        return ResponseEntity.ok().body(new ApiResponse<>(MessageUtils.getMessage("message.success"), res, HttpStatus.OK.value()));
-    }
-    @GetMapping("/{id}/download")
-    public ResponseEntity<ApiResponse<ResumeUrlDTO>> getResumeDownloadUrl(@PathVariable long id, @CurrentUser User currentUser) {
-        ResumeUrlDTO res = resumeService.getResumeDownloadUrl(id, currentUser);
-        return ResponseEntity.ok().body(new ApiResponse<>(MessageUtils.getMessage("message.success"), res, HttpStatus.OK.value()));
+        return ResponseEntity.ok()
+                .body(new ApiResponse<>(MessageUtils.getMessage("message.success"), res, HttpStatus.OK.value()));
     }
 
-    @PostMapping(consumes = "multipart/form-data")
-    public ResponseEntity<ApiResponse<ResumeView>> uploadResume(@Valid @ModelAttribute ResumeUploadDTO resumeUploadDTO,
-                                                            BindingResult bindingResult,
-                                                            @CurrentUser User currentUser) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ApiResponse<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), null, HttpStatus.BAD_REQUEST.value()));
-        }
-        var res = resumeService.createResume(resumeUploadDTO, currentUser);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(MessageUtils.getMessage("message.success"), res, HttpStatus.CREATED.value()));
+    @GetMapping("/{id}/download")
+    public ResponseEntity<ApiResponse<ResumeUrlDTO>> getResumeDownloadUrl(@PathVariable long id,
+            @CurrentUser User currentUser) {
+        ResumeUrlDTO res = resumeService.getResumeDownloadUrl(id, currentUser);
+        return ResponseEntity.ok()
+                .body(new ApiResponse<>(MessageUtils.getMessage("message.success"), res, HttpStatus.OK.value()));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<String>> deleteResume(@PathVariable("id") long id, @CurrentUser User currentUser) {
+    public ResponseEntity<ApiResponse<String>> deleteResume(@PathVariable("id") long id,
+            @CurrentUser User currentUser) {
         resumeService.deleteResume(id, currentUser);
-        return ResponseEntity.ok().body(new ApiResponse<>(MessageUtils.getMessage("message.success"), null, HttpStatus.OK.value()));
+        return ResponseEntity.ok()
+                .body(new ApiResponse<>(MessageUtils.getMessage("message.success"), null, HttpStatus.OK.value()));
     }
 
     @PostMapping("/{id}/analyze")

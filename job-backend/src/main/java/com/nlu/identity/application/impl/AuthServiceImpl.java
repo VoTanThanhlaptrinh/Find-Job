@@ -25,6 +25,7 @@ import com.nlu.identity.application.RefreshTokenService;
 import com.nlu.shared.application.ReferenceService;
 import com.nlu.shared.application.SpamService;
 import com.nlu.shared.application.VerificationService;
+import com.nlu.shared.utils.IpUtils;
 import com.nlu.shared.utils.MessageUtils;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,7 +34,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -44,7 +44,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -61,7 +60,6 @@ public class AuthServiceImpl implements AuthService {
     private final RefreshTokenService refreshTokenService;
     private final SpamService spamService;
     private final JwtService jwtService;
-    private final Environment environment;
     private final RegistrationFormMapper mapper;
     @Value("${app.frontend-url}")
     private String url;
@@ -176,7 +174,7 @@ public class AuthServiceImpl implements AuthService {
             HttpServletRequest request,
             HttpServletResponse response,
             String expectedRole) {
-        String ip = getClientIP(request);
+        String ip = IpUtils.getClientIp(request);
         if (spamService.checkIpSpamLogin(ip)) {
             log.warn("Login rate-limited for IP: {}", ip);
             throw new AppException(spamService.getMessageLoginSpam(ip), HttpStatus.TOO_MANY_REQUESTS);
@@ -276,7 +274,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void sendCodeForgotPassword(HttpServletRequest request, String email) {
-        String ip = getClientIP(request);
+        String ip = IpUtils.getClientIp(request);
         if (email == null || email.isEmpty()) {
             throw new BadRequestException("auth.email.empty");
         }
@@ -408,23 +406,5 @@ public class AuthServiceImpl implements AuthService {
     private String createLink(User user) {
         String token = jwtService.generateToken(user.getUsername() + "|activate");
         return url + "/activate?token=" + token;
-    }
-
-    private boolean isDevProfile() {
-        String[] activeProfiles = environment.getActiveProfiles();
-        for (String profile : activeProfiles) {
-            if ("dev".equalsIgnoreCase(profile)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private String getClientIP(HttpServletRequest request) {
-        String xfHeader = request.getHeader("X-Forwarded-For");
-        if (xfHeader == null || xfHeader.isEmpty() || !xfHeader.contains(request.getRemoteAddr())) {
-            return request.getRemoteAddr();
-        }
-        return xfHeader.split(",")[0];
     }
 }

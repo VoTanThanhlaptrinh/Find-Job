@@ -1,7 +1,6 @@
 package com.nlu.recruitment.domain.model;
 
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import com.nlu.identity.domain.model.User;

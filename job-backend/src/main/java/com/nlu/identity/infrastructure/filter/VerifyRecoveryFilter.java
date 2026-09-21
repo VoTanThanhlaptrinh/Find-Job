@@ -2,7 +2,6 @@ package com.nlu.identity.infrastructure.filter;
 
 import java.io.IOException;
 
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,13 +14,16 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.nlu.shared.application.VerificationService;
 
 import lombok.extern.slf4j.Slf4j;
+
 @Component
 @Slf4j
 @RequiredArgsConstructor
 public class VerifyRecoveryFilter extends OncePerRequestFilter {
-	private VerificationService verifyService;
+	private final VerificationService verifyService;
+
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response,@NonNull FilterChain filterChain)
+	protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response,
+			@NonNull FilterChain filterChain)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		String token = request.getParameter("token");
@@ -32,11 +34,11 @@ public class VerifyRecoveryFilter extends OncePerRequestFilter {
 		}
 		filterChain.doFilter(request, response);
 	}
-	// phương thức này giúp chỉ tính trên url bắt đầu bằng recovery còn lại không liên quan.
+
+	// phương thức này giúp chỉ tính trên url bắt đầu bằng recovery còn lại không
+	// liên quan.
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-	    return !request.getServletPath().startsWith("/recovery");
+		return !request.getServletPath().startsWith("/recovery");
 	}
 }
-
-

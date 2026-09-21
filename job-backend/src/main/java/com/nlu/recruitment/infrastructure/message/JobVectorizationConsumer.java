@@ -38,7 +38,7 @@ public class JobVectorizationConsumer {
             }
 
             // SSE event thông báo hoàn tất
-            if (userId != null) {
+            if (userId != null && jobId != null) {
                 sseEmitterService.sendEvent(userId, "job-process",
                     SseMessagePayload.builder()
                         .id(jobId)

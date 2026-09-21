@@ -2,7 +2,6 @@ package com.nlu.admin.infrastructure.query;
 
 import com.nlu.admin.api.dto.seeker.JobSeekerListItem;
 import com.nlu.applicationProcess.domain.model.QCandidate;
-import com.nlu.identity.domain.model.QUser;
 import com.nlu.shared.domain.model.EntityStatus;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -24,7 +23,6 @@ public class CandidateQuery {
 
     public Page<JobSeekerListItem> findJobSeekers(String search, String resumeStatus, Pageable pageable) {
         QCandidate candidate = QCandidate.candidate;
-        QUser user = QUser.user;
 
         BooleanBuilder where = new BooleanBuilder();
         where.and(candidate.recordStatus.ne(EntityStatus.DELETED));
