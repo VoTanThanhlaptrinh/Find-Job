@@ -41,7 +41,8 @@ public class AdminJobServiceImpl implements AdminJobService {
     }
 
     @Override
-    public PageResponse<AdminJobListItem> getJobs(int page, int pageSize, String search, String category, String status) {
+    public PageResponse<AdminJobListItem> getJobs(int page, int pageSize, String search, String category,
+            String status) {
         Pageable pageable = PageRequest.of(page - 1, pageSize);
         Page<AdminJobListItem> jobs = adminJobQuery.findJobs(search, category, status, pageable);
         return PageResponse.<AdminJobListItem>builder()
@@ -71,10 +72,7 @@ public class AdminJobServiceImpl implements AdminJobService {
     @Override
     public void bulkJobAction(BulkActionRequest request) {
         for (String jobId : request.getJobIds()) {
-            try {
-                updateJobStatus(Long.parseLong(jobId), request.getAction());
-            } catch (Exception ignored) {
-            }
+            updateJobStatus(Long.parseLong(jobId), request.getAction());
         }
     }
 }

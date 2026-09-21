@@ -2,6 +2,8 @@ package com.nlu.identity.infrastructure.filter;
 
 import java.io.IOException;
 import com.nlu.identity.domain.vo.ApiConstants;
+import com.nlu.shared.domain.exception.UnauthorizedException;
+
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -56,31 +58,33 @@ public class JwtFilter extends OncePerRequestFilter {
 
 	@Override
 	protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
-                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
+			@NonNull FilterChain filterChain) throws ServletException, IOException {
 		String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 		String jwt;
 		String userEmail;
-        UserDetails userDetails;
+		UserDetails userDetails;
 		if (authHeader == null || authHeader.trim().isEmpty() || !authHeader.startsWith("Bearer ")) {
 			filterChain.doFilter(request, response);
 			return;
 		}
 		jwt = authHeader.substring(7);
+		userEmail = jwtService.extractUsername(jwt);
+		if (userEmail == null || userEmail.isEmpty()) {
+			filterChain.doFilter(request, response);
+			throw new UnauthorizedException("Không tìm thấy tài khoản phù hợp");
+		}
 		try {
-			userEmail = jwtService.extractUsername(jwt);
-			if (userEmail != null) {
-				userDetails = userDetailsService.loadUserByUsername(userEmail);
-                if (jwtService.isTokenValid(jwt, userDetails)) {
-					userDetails.getAuthorities().forEach(a -> log.info(a.getAuthority()));
-                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.getAuthorities());
-                    usernamePasswordAuthenticationToken
-                            .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-                }
+			userDetails = userDetailsService.loadUserByUsername(userEmail);
+			if (jwtService.isTokenValid(jwt, userDetails)) {
+				userDetails.getAuthorities().forEach(a -> log.info(a.getAuthority()));
+				UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+						userDetails, null, userDetails.getAuthorities());
+				usernamePasswordAuthenticationToken
+						.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+				SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 			}
-		}catch (ExpiredJwtException e) {
-            log.error(e.getMessage());
+		} catch (ExpiredJwtException e) {
+			log.error(e.getMessage());
 			response.setContentType("application/json");
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			response.getWriter().write("{\"message\":\"Expired JWT token\"}");
@@ -88,7 +92,7 @@ public class JwtFilter extends OncePerRequestFilter {
 			response.setHeader("Connection", "close");
 			return;
 		} catch (JwtException e) {
-            log.error(e.getMessage());
+			log.error(e.getMessage());
 			response.setContentType("application/json");
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			response.getWriter().write("{\"message\":\"Invalid JWT token\"}");
@@ -99,5 +103,3 @@ public class JwtFilter extends OncePerRequestFilter {
 		filterChain.doFilter(request, response);
 	}
 }
-
-

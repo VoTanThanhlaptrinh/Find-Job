@@ -1,6 +1,5 @@
 package com.nlu.recruitment.application;
 
-import com.nlu.recruitment.api.dto.JobCardView;
 import com.nlu.recruitment.api.dto.JobDto;
 import com.nlu.recruitment.api.dto.JobMatchView;
 import com.nlu.recruitment.api.dto.JobDetailView;

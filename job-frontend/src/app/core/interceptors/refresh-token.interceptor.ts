@@ -38,21 +38,9 @@ function extractTokenFromResponse(response: unknown): string | null {
 export const refreshTokenInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const tokenService = inject(TokenService);
-  const router = inject(Router);
   const isRefreshRequest = req.url.includes('/auth/refreshToken');
   const isNoAuthRequest = req.context.get(NO_AUTH) || req.url.includes('cloudflarestorage.com');
   const platformId = inject(PLATFORM_ID);
-
-  const getLoginUrl = () => {
-    const url = router.url;
-    if (url.includes('/recruiter')) {
-      return '/recruiter/login';
-    } else if (url.includes('/admin')) {
-      return '/admin/login';
-    } else {
-      return '/login';
-    }
-  };
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
@@ -70,7 +58,7 @@ export const refreshTokenInterceptor: HttpInterceptorFn = (req, next) => {
           map((response) => extractTokenFromResponse(response)),
           catchError((refreshError: HttpErrorResponse) => {
             // Only catch errors from the refresh token request itself
-            authService.logout(getLoginUrl());
+            authService.logout(authService.getLoginUrl());
             return throwError(() => refreshError);
           }),
           finalize(() => {
@@ -83,7 +71,7 @@ export const refreshTokenInterceptor: HttpInterceptorFn = (req, next) => {
       return refreshRequest$.pipe(
         switchMap((nextToken) => {
           if (!nextToken) {
-            authService.logout(getLoginUrl());
+            authService.logout(authService.getLoginUrl());
             return throwError(() => error);
           }
 

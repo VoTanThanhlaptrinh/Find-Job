@@ -17,7 +17,7 @@ public class VerificationServiceImpl implements VerificationService {
 	@Override
 	public boolean containsKey(String key) {
 		// TODO Auto-generated method stub
-		return redisTemplate.opsForValue().get("recovery:" + key) != null;
+		return redisTemplate.opsForValue().get(key) != null;
 	}
 
 	@Override

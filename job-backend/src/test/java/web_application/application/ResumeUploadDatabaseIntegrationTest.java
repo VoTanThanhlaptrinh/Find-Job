@@ -30,11 +30,13 @@ class ResumeUploadDatabaseIntegrationTest {
         Dotenv dotenv = null;
         try {
             dotenv = Dotenv.configure().directory(".").ignoreIfMissing().load();
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         if (dotenv == null || dotenv.entries().isEmpty()) {
             try {
                 dotenv = Dotenv.configure().directory("d:/web-project/job-backend").ignoreIfMissing().load();
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
         if (dotenv != null) {
             dotenv.entries().forEach(entry -> {
@@ -58,13 +60,17 @@ class ResumeUploadDatabaseIntegrationTest {
     void initSchemaOnce() {
         if (!schemaInitialized) {
             try {
-                jdbcTemplate.execute("ALTER TABLE resume_upload_session DROP CONSTRAINT IF EXISTS resume_upload_session_status_check;");
-                jdbcTemplate.execute("ALTER TABLE resume_upload_session ADD CONSTRAINT resume_upload_session_status_check " +
-                        "CHECK (status IN ('PENDING_UPLOAD', 'FINALIZING', 'COMPLETED', 'REJECTED', 'EXPIRED'));");
+                jdbcTemplate.execute(
+                        "ALTER TABLE resume_upload_session DROP CONSTRAINT IF EXISTS resume_upload_session_status_check;");
+                jdbcTemplate.execute(
+                        "ALTER TABLE resume_upload_session ADD CONSTRAINT resume_upload_session_status_check " +
+                                "CHECK (status IN ('PENDING_UPLOAD', 'FINALIZING', 'COMPLETED', 'REJECTED', 'EXPIRED'));");
 
-                jdbcTemplate.execute("ALTER TABLE resume_upload_session DROP CONSTRAINT IF EXISTS chk_resume_upload_session_status_resume_id;");
-                jdbcTemplate.execute("ALTER TABLE resume_upload_session ADD CONSTRAINT chk_resume_upload_session_status_resume_id " +
-                        "CHECK ((status = 'COMPLETED' AND resume_id IS NOT NULL) OR (status <> 'COMPLETED' AND resume_id IS NULL));");
+                jdbcTemplate.execute(
+                        "ALTER TABLE resume_upload_session DROP CONSTRAINT IF EXISTS chk_resume_upload_session_status_resume_id;");
+                jdbcTemplate.execute(
+                        "ALTER TABLE resume_upload_session ADD CONSTRAINT chk_resume_upload_session_status_resume_id " +
+                                "CHECK ((status = 'COMPLETED' AND resume_id IS NOT NULL) OR (status <> 'COMPLETED' AND resume_id IS NULL));");
             } catch (Exception e) {
                 System.err.println("Warning initializing DB constraints in test: " + e.getMessage());
             }

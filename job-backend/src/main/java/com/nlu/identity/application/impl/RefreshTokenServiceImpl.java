@@ -51,7 +51,6 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 			return valid;
 		} catch (Exception e) {
 			log.warn("Refresh token validation failed — token expired or malformed");
-			e.printStackTrace();
 			return false;
 		}
 	}

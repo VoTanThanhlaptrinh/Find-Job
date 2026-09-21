@@ -16,22 +16,11 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const isLogoutRequest = req.url.includes('/auth/logout');
   const isExcluded = req.url.includes('cloudflarestorage.com') || req.context.get(NO_AUTH);
 
-  const getLoginUrl = () => {
-    const url = router.url;
-    if (url.includes('/recruiter')) {
-      return '/recruiter/login';
-    } else if (url.includes('/admin')) {
-      return '/admin/login';
-    } else {
-      return '/login';
-    }
-  };
-
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       if (error.status === 403 && !iRefreshsRequest && !isLogoutRequest && !isForceLoggingOut && !isExcluded) {
         isForceLoggingOut = true;
-        authService.logout(getLoginUrl());
+        authService.logout(authService.getLoginUrl());
         setTimeout(() => {
           isForceLoggingOut = false;
         }, 0);

@@ -147,7 +147,8 @@ public class AuthServiceImpl implements AuthService {
                 log.warn("Account activation failed — expired token for user: {}", user.getId());
                 throw new BadRequestException("auth.token.expired");
             }
-
+            user.setActive(true);
+            userRepository.save(user);
             log.info("Account activated successfully for user: {}", user.getId());
         } finally {
             MDC.remove(MDC_USER_ID);
@@ -394,12 +395,6 @@ public class AuthServiceImpl implements AuthService {
                     user.getId(), expectedRole, user.getRole());
             throw new ForbiddenException(getAccountRoleMismatchMessage(expectedRole));
         }
-    }
-
-    private String getInvalidRequestRoleMessage(String expectedRole) {
-        return RoleConstants.ROLE_HIRER.equals(RoleConstants.normalizeRole(expectedRole))
-                ? "auth.login.hirer.role_invalid"
-                : "auth.login.user.role_invalid";
     }
 
     private String getAccountRoleMismatchMessage(String expectedRole) {

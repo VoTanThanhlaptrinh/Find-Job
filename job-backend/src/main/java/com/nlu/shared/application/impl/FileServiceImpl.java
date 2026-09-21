@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nlu.shared.application.FileService;
 import lombok.extern.slf4j.Slf4j;
+
+import org.apache.coyote.BadRequestException;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
@@ -40,7 +42,7 @@ public class FileServiceImpl implements FileService {
             // Tika sẽ tự nhận diện đây là PDF hay DOCX và trả về text
             return tika.parseToString(inputStream);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Không thể trích xuất được text từ file này");
             return "";
         }
     }
@@ -76,7 +78,8 @@ public class FileServiceImpl implements FileService {
             bodyBuilder.part("OCREngine", "2");
 
             // Gọi OCR.space API
-            String response = restClient.post().uri(OCR_API_URL).header("apikey", ocrApiKey).contentType(MediaType.MULTIPART_FORM_DATA).body(bodyBuilder.build()).retrieve().body(String.class);
+            String response = restClient.post().uri(OCR_API_URL).header("apikey", ocrApiKey)
+                    .contentType(MediaType.MULTIPART_FORM_DATA).body(bodyBuilder.build()).retrieve().body(String.class);
 
             return parseOcrResponse(response);
 
@@ -91,7 +94,8 @@ public class FileServiceImpl implements FileService {
             JsonNode root = objectMapper.readTree(response);
             // Kiểm tra lỗi từ OCR.space
             if (root.has("IsErroredOnProcessing") && root.get("IsErroredOnProcessing").asBoolean()) {
-                String errorMessage = root.has("ErrorMessage") ? root.get("ErrorMessage").toString() : "Unknown OCR error";
+                String errorMessage = root.has("ErrorMessage") ? root.get("ErrorMessage").toString()
+                        : "Unknown OCR error";
                 log.error("OCR.space returned error: {}", errorMessage);
                 return "";
             }
