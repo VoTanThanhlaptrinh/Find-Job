@@ -46,12 +46,11 @@ export const appConfig: ApplicationConfig = {
       const authService = inject(AuthService);
       const platformId = inject(PLATFORM_ID);
 
-      if (!isPlatformBrowser(platformId)) {
+      if (isPlatformBrowser(platformId)) {
+        authService.refreshToken().subscribe();
+      } else {
         authService.markAuthReady();
-        return;
       }
-
-      return authService.refreshToken();
     }),
     provideAnimations(),
     provideQuillConfig({

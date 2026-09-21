@@ -12,8 +12,8 @@ export class LayoutVisibilityService {
 
   private readonly hiddenHeaderPrefixes = ['/recruiter', '/admin'];
   private readonly hiddenFooterPrefixes = ['/recruiter', '/admin', '/infor'];
-  private readonly headerSignal =  signal<boolean>(false);
-  private readonly footerSignal = signal<boolean>(false);
+  private readonly headerSignal = signal<boolean>(true);
+  private readonly footerSignal = signal<boolean>(true);
   headerComputed = computed(() => this.headerSignal());
   footerComputed = computed(() => this.footerSignal());
 
