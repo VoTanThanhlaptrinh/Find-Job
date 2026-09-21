@@ -5,7 +5,7 @@ A full-stack recruitment platform built with `job-frontend` and `job-backend`, c
 ## Live Demo
 
 - Frontend-Seeker: [https://find-job-frontend.vercel.app/](https://job-frontend-gray.vercel.app/)
-- Frontend-Recruiter: [https://find-job-frontend.vercel.app/](https://job-frontend-gray.vercel.app/)recruiter/login
+- Frontend-Recruiter: [https://find-job-frontend.vercel.app/recruiter/login](https://job-frontend-gray.vercel.app/recruiter/login)
 - Backend API: https://find-job-ctkj.onrender.com
 - Note: replace both links above with your real deployed URLs so HR can access the project directly.
 - Colab: https://drive.google.com/drive/folders/1TL2tvUoYDmMGSPcXMpOKi2H0OXFOIFiP?usp=sharing
