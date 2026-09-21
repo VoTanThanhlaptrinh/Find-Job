@@ -1,6 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { signal } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
 import { CvUiComponent } from './cv-ui.component';
+import { SseService } from '../../../core/services/sse.service';
 
 describe('CvUiComponent', () => {
   let component: CvUiComponent;
@@ -8,7 +12,22 @@ describe('CvUiComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CvUiComponent]
+      imports: [CvUiComponent],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        {
+          provide: ToastrService,
+          useValue: jasmine.createSpyObj('ToastrService', ['success', 'error', 'info', 'warning', 'clear'])
+        },
+        {
+          provide: SseService,
+          useValue: {
+            fromEvent: jasmine.createSpy('fromEvent').and.returnValue(signal(null)),
+            clearEvent: jasmine.createSpy('clearEvent')
+          }
+        }
+      ]
     })
     .compileComponents();
 

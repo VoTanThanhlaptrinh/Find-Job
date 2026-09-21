@@ -18,11 +18,11 @@ const cspHeader = [
   "default-src 'self'",
   "base-uri 'self'",
   "object-src 'none'",
-  "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
+  "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdn.tailwindcss.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com",
-  "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:",
+  "font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com data:",
   "img-src 'self' data: blob: https:",
-  "connect-src 'self' http://localhost:8080 https://find-job-ctkj.onrender.com",
+  "connect-src 'self' http://localhost:8080 https://find-job-ctkj.onrender.com https://job-portal-resume.9d00de951bfd9979b31532e1d1033be2.r2.cloudflarestorage.com",
   "frame-src 'self' https://accounts.google.com",
   "frame-ancestors 'self'",
   "worker-src 'self' blob:",
@@ -32,18 +32,6 @@ app.use((_, res, next) => {
   res.setHeader('Content-Security-Policy', cspHeader);
   next();
 });
-
-/**
- * Example Express Rest API endpoints can be defined here.
- * Uncomment and define endpoints as necessary.
- *
- * Example:
- * ```ts
- * app.get('/api/**', (req, res) => {
- *   // Handle API request
- * });
- * ```
- */
 
 /**
  * Serve static files from /browser

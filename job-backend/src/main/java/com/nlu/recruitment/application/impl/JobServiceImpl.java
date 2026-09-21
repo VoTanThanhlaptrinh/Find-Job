@@ -15,7 +15,8 @@ import com.nlu.shared.domain.exception.BadRequestException;
 import com.nlu.shared.domain.exception.ForbiddenException;
 import com.nlu.shared.domain.exception.ResourceNotFoundException;
 import com.nlu.shared.domain.exception.UnauthorizedException;
-import com.nlu.shared.infrastructure.message.MessageProducer;
+import com.nlu.recruitment.domain.event.JobAnalysisRequestedEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import com.nlu.shared.application.SseEmitterService;
 import com.nlu.shared.application.HtmlParserService;
 import com.nlu.shared.domain.model.SseMessagePayload;
@@ -31,7 +32,6 @@ import jakarta.persistence.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
-import org.springframework.boot.actuate.metrics.data.DefaultRepositoryTagsProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -45,14 +45,14 @@ public class JobServiceImpl implements JobService {
     private final RecruitmentRepository recruitmentRepository;
     private final AddressRepository addressRepository;
     private final CategoryRepository categoryRepository;
-    private final DefaultRepositoryTagsProvider repositoryTagsProvider;
     private final JobMapper jobMapper;
     private static final String MDC_USER_ID = "userId";
     private static final String MDC_JOB_ID = "jobId";
     private final JobViewMapper jobViewMapper;
-    private final MessageProducer producer;
+    private final ApplicationEventPublisher eventPublisher;
     private final SseEmitterService sseEmitterService;
     private final HtmlParserService htmlParserService;
+
     @Override
     public JobDetailView getJobDetailById(Long id) {
         // Read-only — no logging needed.
@@ -63,7 +63,7 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public Boolean checkExistJob(Long id) {
-        return jobRepository.findById(id).isPresent();
+        return jobRepository.getReferenceById(id) != null;
     }
 
     @Override
@@ -101,14 +101,14 @@ public class JobServiceImpl implements JobService {
 
             if (jobDTO.enableAiAnalysis()) {
                 VectorizeJdRequest request = buildVectorizeRequest(job, user);
-                producer.processJdVectorize(request);
+                eventPublisher.publishEvent(new JobAnalysisRequestedEvent(request));
 
                 sseEmitterService.sendEvent(user.getId(), "job-process",
-                    SseMessagePayload.builder()
-                        .id(job.getId())
-                        .status("analyzing")
-                        .message("AI is analyzing your job description...")
-                        .build());
+                        SseMessagePayload.builder()
+                                .id(job.getId())
+                                .status("analyzing")
+                                .message("AI is analyzing your job description...")
+                                .build());
                 log.info("JD vectorize dispatched for job: {}", job.getId());
             } else {
                 log.info("JD vectorize skipped (user opted out) for job: {}", job.getId());
@@ -150,7 +150,7 @@ public class JobServiceImpl implements JobService {
             Category category = categoryRepository.findById(jobDTO.getCategoryId())
                     .orElseThrow(() -> new ResourceNotFoundException("category.not_found"));
 
-            jobMapper.updateJob(jobDTO,job);
+            jobMapper.updateJob(jobDTO, job);
             job.setAddress(address);
             job.setRecruitment(recruitment);
             job.setCategory(category);
@@ -201,14 +201,14 @@ public class JobServiceImpl implements JobService {
                 try {
                     employmentType = EmploymentType.valueOf(timeStr.trim().toUpperCase());
                 } catch (IllegalArgumentException e) {
-                    System.err.println("Unrecognized EmploymentType in DB: " + timeStr);
+                    log.error("Unrecognized EmploymentType in DB: " + timeStr);
                 }
             }
-            
+
             Double finalDist = t.get("final_dist", Double.class);
             Double skillDist = t.get("skill_dist", Double.class);
             Double expDist = t.get("exp_dist", Double.class);
-            
+
             Double totalMatch = finalDist != null ? Math.round((1.0 - finalDist) * 1000.0) / 10.0 : null;
             Double skillMatch = skillDist != null ? Math.round((1.0 - skillDist) * 1000.0) / 10.0 : null;
             Double expMatch = expDist != null ? Math.round((1.0 - expDist) * 1000.0) / 10.0 : null;
@@ -221,8 +221,7 @@ public class JobServiceImpl implements JobService {
                     employmentType,
                     totalMatch,
                     skillMatch,
-                    expMatch
-            );
+                    expMatch);
         }).toList();
     }
 
@@ -237,10 +236,10 @@ public class JobServiceImpl implements JobService {
             MDC.put(MDC_JOB_ID, String.valueOf(id));
 
             Job job = jobRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("job.not_found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("job.not_found"));
 
             Recruitment recruitment = recruitmentRepository.findRecruitmentByUser(user)
-                .orElseThrow(() -> new ForbiddenException("message.forbidden"));
+                    .orElseThrow(() -> new ForbiddenException("message.forbidden"));
 
             if (!job.isOwnedBy(recruitment)) {
                 throw new ForbiddenException("job.edit.forbidden");
@@ -251,14 +250,14 @@ public class JobServiceImpl implements JobService {
             }
 
             VectorizeJdRequest request = buildVectorizeRequest(job, user);
-            producer.processJdVectorize(request);
+            eventPublisher.publishEvent(new JobAnalysisRequestedEvent(request));
 
             sseEmitterService.sendEvent(user.getId(), "job-process",
-                SseMessagePayload.builder()
-                    .id(job.getId())
-                    .status("analyzing")
-                    .message("AI is analyzing your job description...")
-                    .build());
+                    SseMessagePayload.builder()
+                            .id(job.getId())
+                            .status("analyzing")
+                            .message("AI is analyzing your job description...")
+                            .build());
 
             log.info("Deferred JD vectorize triggered for job: {} by user: {}", id, user.getId());
         } finally {
@@ -288,7 +287,8 @@ public class JobServiceImpl implements JobService {
             sb.append(htmlParserService.parseHtml(job.getSkill()));
         }
         if (job.getMoreDetail() != null && !job.getMoreDetail().isBlank()) {
-            if (sb.length() > 0) sb.append("\n");
+            if (sb.length() > 0)
+                sb.append("\n");
             sb.append(htmlParserService.parseHtml(job.getMoreDetail()));
         }
         return sb.toString();
@@ -300,7 +300,8 @@ public class JobServiceImpl implements JobService {
             sb.append(htmlParserService.parseHtml(job.getDescription()));
         }
         if (job.getRequireDetails() != null && !job.getRequireDetails().isBlank()) {
-            if (sb.length() > 0) sb.append("\n");
+            if (sb.length() > 0)
+                sb.append("\n");
             sb.append(htmlParserService.parseHtml(job.getRequireDetails()));
         }
         return sb.toString();

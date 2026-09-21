@@ -14,6 +14,7 @@ import {
 } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { TokenService } from '../services/token.service';
+import { NO_AUTH } from './logger.interceptor';
 
 let refreshRequest$: Observable<string | null> | null = null;
 
@@ -37,24 +38,13 @@ function extractTokenFromResponse(response: unknown): string | null {
 export const refreshTokenInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const tokenService = inject(TokenService);
-  const router = inject(Router);
   const isRefreshRequest = req.url.includes('/auth/refreshToken');
+  const isNoAuthRequest = req.context.get(NO_AUTH) || req.url.includes('cloudflarestorage.com');
   const platformId = inject(PLATFORM_ID);
-
-  const getLoginUrl = () => {
-    const url = router.url;
-    if (url.includes('/recruiter')) {
-      return '/recruiter/login';
-    } else if (url.includes('/admin')) {
-      return '/admin/login';
-    } else {
-      return '/login';
-    }
-  };
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status !== 401 || isRefreshRequest) {
+      if (error.status !== 401 || isRefreshRequest || isNoAuthRequest) {
         return throwError(() => error);
       }
 
@@ -68,7 +58,7 @@ export const refreshTokenInterceptor: HttpInterceptorFn = (req, next) => {
           map((response) => extractTokenFromResponse(response)),
           catchError((refreshError: HttpErrorResponse) => {
             // Only catch errors from the refresh token request itself
-            authService.logout(getLoginUrl());
+            authService.logout(authService.getLoginUrl());
             return throwError(() => refreshError);
           }),
           finalize(() => {
@@ -81,7 +71,7 @@ export const refreshTokenInterceptor: HttpInterceptorFn = (req, next) => {
       return refreshRequest$.pipe(
         switchMap((nextToken) => {
           if (!nextToken) {
-            authService.logout(getLoginUrl());
+            authService.logout(authService.getLoginUrl());
             return throwError(() => error);
           }
 

@@ -8,6 +8,7 @@ import java.io.InputStream;
 public interface FileService {
      String extractTextFromFile(InputStream inputStream);
      String extractTextFromFileOcr(MultipartFile file);
+     String extractTextFromFileOcr(byte[] fileBytes, String fileName);
      String cleanText(String rawText);
      byte[] toByteArray(InputStream inputStream) throws IOException;
 }

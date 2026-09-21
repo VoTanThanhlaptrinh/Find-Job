@@ -59,6 +59,24 @@
           <span class="material-symbols-outlined text-[15px]">payments</span>
           <span>{{ formattedSalary }}</span>
         </div>
+
+        <!-- Applied Status Badge -->
+        @if (isApplied) {
+          <span class="text-slate-300 hidden sm:inline">&bull;</span>
+          <div class="inline-flex items-center gap-1 font-semibold text-xs text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-200/60 shrink-0">
+            <span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+            <span>{{ 'historyApply.appliedBadge' | t }}</span>
+          </div>
+        }
+
+        <!-- Applied Date (if available) -->
+        @if (isApplied && formattedAppliedDate) {
+          <span class="text-slate-300 hidden sm:inline">&bull;</span>
+          <div class="inline-flex items-center gap-1 text-xs text-[#64748B] shrink-0">
+            <span class="material-symbols-outlined text-slate-400 text-[16px]">event_available</span>
+            <span>{{ 'historyApply.appliedAt' | t }} {{ formattedAppliedDate }}</span>
+          </div>
+        }
       </div>
 
       <!-- Skill Tags (Shown ONLY if skills exist) -->
@@ -83,11 +101,11 @@
       (click)="toggleBookmark($event)"
       [attr.aria-label]="isSaved ? ('category.card.unsaveJob' | t) : ('category.card.saveJob' | t)"
       [title]="isSaved ? ('category.card.unsaveJob' | t) : ('category.card.saveJob' | t)"
-      class="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E63F3]"
+      class="w-10 h-10 min-w-[40px] min-h-[40px] rounded-lg sm:rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1E63F3]"
       [ngClass]="
         isSaved
-          ? 'bg-[#EAF2FF] text-[#1E63F3] border border-[#BFDBFE] shadow-sm'
-          : 'text-slate-400 hover:text-[#1E63F3] hover:bg-[#EAF2FF]/70 bg-slate-50/80 border border-slate-100'
+          ? 'bg-[#EAF2FF] text-[#1E63F3] border border-[#BFDBFE] shadow-sm hover:bg-[#dbeafe]'
+          : 'text-slate-400 hover:text-[#1E63F3] hover:bg-slate-100 bg-slate-50/80 border border-slate-100'
       "
     >
       <span

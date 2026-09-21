@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { NavigationEnd, Router, RouterModule } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import {
   catchError,
   finalize,
@@ -44,7 +44,7 @@ export class AuthService {
     private http: HttpClient,
     private router: Router,
     private tokenService: TokenService,
-    private utilities: UtilitiesService
+    private utilities: UtilitiesService,
   ) {
     this.url = this.utilities.getURLDev();
     this.checkPageAccess();
@@ -227,6 +227,16 @@ export class AuthService {
   isLogin(): boolean {
     return this.loggedIn();
   }
+  getLoginUrl(): string {
+    const url = this.router.url;
+    if (url.includes('/recruiter')) {
+      return '/recruiter/login';
+    } else if (url.includes('/admin')) {
+      return '/admin/login';
+    } else {
+      return '/login';
+    }
+  };
 
   private resolveLoginRoute(url: string): string {
     const path = this.normalizePath(url);

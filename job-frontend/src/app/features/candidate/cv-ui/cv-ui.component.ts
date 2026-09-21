@@ -19,51 +19,43 @@ import { FileMessage } from '../../../shared/models/sse/sse.model';
 export class CvUiComponent implements OnInit {
   private readonly resumeService = inject(ResumeService);
 
-  resumes: ResumeReviewInput[] = [];
-  isLoading = false;
+  readonly resumes = this.resumeService.resumes$;
+  readonly uploadingFile = this.resumeService.uploadingFile$;
+  readonly isLoading = this.resumeService.isLoadingResumes$;
   isUploadModalOpen = false;
-  uploadingFile: (FileMessage & { isManualAnalyze?: boolean }) | null = null;
   readonly skeleton = true;
   readonly skeletonRows = [1, 2, 3];
-
-  constructor() {
-    effect(() => {
-      this.resumes = this.resumeService.resumes$();
-      this.uploadingFile = this.resumeService.uploadingFile$();
-      this.isLoading = this.resumeService.isLoadingResumes$();
-    });
-  }
 
   ngOnInit(): void {
     this.loadResumes();
   }
 
   private loadResumes(): void {
-    this.isLoading = true;
     this.resumeService.getUserResumes();
   }
 
   get totalResumes(): number {
-    return this.resumes.length;
+    return this.resumes().length;
   }
 
   get pdfCount(): number {
-    return this.resumes.filter(resume => resume.fileName.toLowerCase().endsWith('.pdf')).length;
+    return this.resumes().filter(resume => resume.fileName.toLowerCase().endsWith('.pdf')).length;
   }
 
   get docCount(): number {
-    return this.resumes.filter(resume => {
+    return this.resumes().filter(resume => {
       const lowerFileName = resume.fileName.toLowerCase();
       return lowerFileName.endsWith('.doc') || lowerFileName.endsWith('.docx');
     }).length;
   }
 
   get latestCvDateLabel(): string {
-    if (this.resumes.length === 0) {
+    const list = this.resumes();
+    if (list.length === 0) {
       return '--';
     }
 
-    const latestResume = [...this.resumes].sort((a, b) => {
+    const latestResume = [...list].sort((a, b) => {
       return new Date(b.createDate).getTime() - new Date(a.createDate).getTime();
     })[0];
 

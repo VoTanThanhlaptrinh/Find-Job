@@ -29,6 +29,8 @@ public interface ResumeRepository extends JpaRepository<Resume, Long> {
     long countOwnedByUser(long resumeId, String email);
 
     int countResumesByUser_Id(long id);
+
+    boolean existsByKeyCf(String keyCf);
 }
 
 

@@ -2,6 +2,7 @@ package com.nlu.applicationProcess.infrastructure.query;
 
 import com.nlu.applicationProcess.api.dto.req.ResumeView;
 import com.nlu.applicationProcess.domain.model.QResume;
+import com.nlu.applicationProcess.domain.model.ResumeStatus;
 import com.nlu.shared.domain.model.EntityStatus;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -18,14 +19,18 @@ public class ResumeQueryDSL {
 
     public List<ResumeView> getListResumeOfUser(String email) {
         QResume resume = QResume.resume;
-        return queryFactory.select(Projections.constructor(ResumeView.class, resume.id, resume.fileName, resume.createdAt, resume.isAnalyzed)).from(resume).where(resume.user.email.value.eq(email)).orderBy(resume.createdAt.desc()).fetch();
+        return queryFactory.select(Projections.constructor(ResumeView.class, resume.id, resume.fileName, resume.createdAt, resume.status))
+                .from(resume)
+                .where(resume.user.email.value.eq(email))
+                .orderBy(resume.createdAt.desc())
+                .fetch();
     }
 
     public List<ResumeView> getAnalyzedResumesOfUser(String email) {
         QResume resume = QResume.resume;
-        return queryFactory.select(Projections.constructor(ResumeView.class, resume.id, resume.fileName, resume.createdAt, resume.isAnalyzed))
+        return queryFactory.select(Projections.constructor(ResumeView.class, resume.id, resume.fileName, resume.createdAt, resume.status))
                 .from(resume)
-                .where(resume.user.email.value.eq(email).and(resume.isAnalyzed.isTrue()))
+                .where(resume.user.email.value.eq(email).and(resume.status.eq(ResumeStatus.READY)))
                 .orderBy(resume.createdAt.desc())
                 .fetch();
     }

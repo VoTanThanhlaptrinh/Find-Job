@@ -21,6 +21,7 @@ export class CvUploadModalComponent implements OnChanges {
   selectedFile: File | null = null;
   errorMessage = '';
   enableAiAnalysis = false;
+  isSubmitting = false;
   readonly maxFileSize = 5 * 1024 * 1024;
   readonly acceptedExtensions = '.pdf,.doc,.docx';
 
@@ -45,11 +46,15 @@ export class CvUploadModalComponent implements OnChanges {
   }
 
   onSubmit(): void {
+    if (this.isSubmitting) {
+      return;
+    }
     if (!this.selectedFile) {
       this.errorMessage = this.i18n.translate('cvUploadModal.selectFileHint');
       return;
     }
 
+    this.isSubmitting = true;
     this.submitRequested.emit({ file: this.selectedFile, enableAiAnalysis: this.enableAiAnalysis });
   }
 
@@ -143,6 +148,7 @@ export class CvUploadModalComponent implements OnChanges {
     this.selectedFile = null;
     this.errorMessage = '';
     this.enableAiAnalysis = false;
+    this.isSubmitting = false;
 
     if (this.cvUploadInput) {
       this.cvUploadInput.nativeElement.value = '';

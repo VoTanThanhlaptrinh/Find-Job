@@ -305,7 +305,7 @@ public class MasterDataSeeder implements CommandLineRunner {
             File file = new File(filePath);
 
             if (!file.exists()) {
-                System.err.println("File không tồn tại!");
+                log.error("File không tồn tại!");
                 return new ArrayList<>();
             }
 
@@ -313,7 +313,7 @@ public class MasterDataSeeder implements CommandLineRunner {
             return objectMapper.readValue(file, new TypeReference<List<JobJsonDto>>() {});
 
         } catch (IOException e) {
-            System.err.println("Lỗi khi convert danh sách JSON: " + e.getMessage());
+            log.error("Lỗi khi convert danh sách JSON: " + e.getMessage());
             return new ArrayList<>();
         }
     }

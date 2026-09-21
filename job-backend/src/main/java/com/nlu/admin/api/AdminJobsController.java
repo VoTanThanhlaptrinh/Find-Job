@@ -24,10 +24,9 @@ public class AdminJobsController {
     @GetMapping("/metrics")
     public ResponseEntity<ApiResponse<JobMetricsResponse>> getMetrics() {
         return ResponseEntity.ok(new ApiResponse<>(
-                MessageUtils.getMessage("message.success"), 
-                adminService.getJobMetrics(), 
-                HttpStatus.OK.value()
-        ));
+                MessageUtils.getMessage("message.success"),
+                adminService.getJobMetrics(),
+                HttpStatus.OK.value()));
     }
 
     @GetMapping
@@ -38,41 +37,41 @@ public class AdminJobsController {
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String status) {
         return ResponseEntity.ok(new ApiResponse<>(
-                MessageUtils.getMessage("message.success"), 
-                adminService.getJobs(page, pageSize, search, category, status), 
-                HttpStatus.OK.value()
-        ));
+                MessageUtils.getMessage("message.success"),
+                adminService.getJobs(page, pageSize, search, category, status),
+                HttpStatus.OK.value()));
     }
 
     @PostMapping
     public ResponseEntity<ApiResponse<Map<String, Object>>> createJob(@RequestBody AdminJobRequest request) {
         adminService.createJob(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(
-                MessageUtils.getMessage("message.success"), 
-                Map.of("id", "job_new", "created", true), 
-                HttpStatus.CREATED.value()
-        ));
+                MessageUtils.getMessage("message.success"),
+                Map.of("id", "job_new", "created", true),
+                HttpStatus.CREATED.value()));
     }
 
     @PatchMapping("/{id}/status")
     public ResponseEntity<ApiResponse<Map<String, Object>>> updateStatus(
-            @PathVariable long id, 
+            @PathVariable long id,
             @RequestBody Map<String, String> body) {
         adminService.updateJobStatus(id, body.get("status"));
         return ResponseEntity.ok(new ApiResponse<>(
-                MessageUtils.getMessage("message.success"), 
-                Map.of("id", String.valueOf(id), "status", body.get("status")), 
-                HttpStatus.OK.value()
-        ));
+                MessageUtils.getMessage("message.success"),
+                Map.of("id", String.valueOf(id), "status", body.get("status")),
+                HttpStatus.OK.value()));
     }
 
     @PostMapping("/bulk-action")
     public ResponseEntity<ApiResponse<Map<String, Object>>> bulkAction(@RequestBody BulkActionRequest request) {
-        adminService.bulkJobAction(request);
+        try {
+            adminService.bulkJobAction(request);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
         return ResponseEntity.ok(new ApiResponse<>(
-                MessageUtils.getMessage("message.success"), 
-                Map.of("processed", request.getJobIds().size(), "failed", 0), 
-                HttpStatus.OK.value()
-        ));
+                MessageUtils.getMessage("message.success"),
+                Map.of("processed", request.getJobIds().size(), "failed", 0),
+                HttpStatus.OK.value()));
     }
 }

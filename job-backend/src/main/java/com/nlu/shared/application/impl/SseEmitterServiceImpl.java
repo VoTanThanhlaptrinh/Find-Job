@@ -87,7 +87,7 @@ public class SseEmitterServiceImpl implements SseEmitterService {
     public <T> void sendEvent(long userId, String eventName, SseMessagePayload<T> payload) {
         SseEmitter emitter = emitters.get(userId);
         if (emitter == null) {
-            log.debug("No active SSE connection for userId={}, event '{}' dropped", userId, eventName);
+            log.warn("No active SSE connection for userId={}, event '{}' dropped", userId, eventName);
             return;
         }
 
@@ -95,7 +95,7 @@ public class SseEmitterServiceImpl implements SseEmitterService {
             emitter.send(SseEmitter.event()
                     .name(eventName)
                     .data(payload, MediaType.APPLICATION_JSON));
-            log.debug("SSE event '{}' sent to userId={}", eventName, userId);
+            log.info("SSE event '{}' sent to userId={}", eventName, userId);
         } catch (IOException e) {
             log.warn("Failed to send SSE event '{}' to userId={}", eventName, userId);
             emitters.remove(userId, emitter);

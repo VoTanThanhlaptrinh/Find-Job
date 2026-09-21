@@ -8,7 +8,7 @@ import com.nlu.identity.domain.repository.UserRepository;
 import com.nlu.shared.domain.exception.BadRequestException;
 import com.nlu.applicationProcess.api.dto.req.ApplyCvWithExistingRequest;
 import com.nlu.applicationProcess.api.dto.req.ApplyCvWithUploadRequest;
-import com.nlu.shared.infrastructure.message.MessageProducer;
+import org.springframework.context.ApplicationEventPublisher;
 import com.nlu.recruitment.domain.model.Job;
 import com.nlu.applicationProcess.domain.model.JobApplication;
 import com.nlu.applicationProcess.domain.model.Resume;
@@ -16,6 +16,7 @@ import com.nlu.identity.domain.model.User;
 import com.nlu.applicationProcess.application.ResumeService;
 import com.nlu.applicationProcess.application.impl.JobApplicationServiceImpl;
 import com.nlu.shared.application.FileService;
+import com.nlu.shared.application.CloudStorageService;
 import com.nlu.shared.utils.MessageUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -60,10 +61,13 @@ class JobApplicationServiceImplTest {
     private ResumeService resumeService;
 
     @Mock
-    private MessageProducer messageProducer;
+    private ApplicationEventPublisher eventPublisher;
 
     @Mock
     private FileService fileService;
+
+    @Mock
+    private CloudStorageService cloudStorageService;
 
     @InjectMocks
     private JobApplicationServiceImpl applyService;
@@ -140,7 +144,7 @@ class JobApplicationServiceImplTest {
             when(userRepository.findByEmail_Value("user@test.com")).thenReturn(Optional.of(managedUser));
             when(jobApplicationRepository.findByJobAndUser("user@test.com", 800L)).thenReturn(Optional.empty());
             when(jobRepository.findById(800L)).thenReturn(Optional.of(new Job()));
-            when(resumeRepository.countActiveByUserEmail("user@test.com")).thenReturn(5L);
+            when(resumeRepository.countActiveByUserEmail("user@test.com")).thenReturn(10L);
 
             org.junit.jupiter.api.Assertions.assertThrows(BadRequestException.class, () -> {
                 applyService.applyWithUploadCv(request, detachedUser);
