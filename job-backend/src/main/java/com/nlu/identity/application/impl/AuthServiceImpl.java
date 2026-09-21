@@ -63,6 +63,8 @@ public class AuthServiceImpl implements AuthService {
     private final JwtService jwtService;
     private final Environment environment;
     private final RegistrationFormMapper mapper;
+    @Value("${app.frontend-url}")
+    private String url;
     private static final String MDC_USER_ID = "userId";
 
     @Value("${app.cookie.secure}")
@@ -171,9 +173,9 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private String loginByRole(LoginDTO loginDTO,
-                               HttpServletRequest request,
-                               HttpServletResponse response,
-                               String expectedRole) {
+            HttpServletRequest request,
+            HttpServletResponse response,
+            String expectedRole) {
         String ip = getClientIP(request);
         if (spamService.checkIpSpamLogin(ip)) {
             log.warn("Login rate-limited for IP: {}", ip);
@@ -369,7 +371,7 @@ public class AuthServiceImpl implements AuthService {
     private String registerByRole(RegistrationForm registrationForm, String role) {
         log.info("Registration started for role: {}", role);
 
-        User user = mapper.toUser(registrationForm,encoder, role);
+        User user = mapper.toUser(registrationForm, encoder, role);
         userRepository.saveAndFlush(user);
 
         try {
@@ -405,10 +407,7 @@ public class AuthServiceImpl implements AuthService {
 
     private String createLink(User user) {
         String token = jwtService.generateToken(user.getUsername() + "|activate");
-        String baseUrl = isDevProfile() 
-                ? "http://localhost:4200" 
-                : "https://find-job-frontend.vercel.app";
-        return baseUrl + "/activate?token=" + token;
+        return url + "/activate?token=" + token;
     }
 
     private boolean isDevProfile() {

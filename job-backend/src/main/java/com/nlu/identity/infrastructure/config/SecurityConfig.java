@@ -47,7 +47,7 @@ public class SecurityConfig {
     private final VerifyRecoveryFilter verifyRecoveryFilter;
     private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
 
-    @Value("${app.frontend-url:http://localhost:4200}")
+    @Value("${app.frontend-url}")
     private String frontendUrl;
 
     @Bean
@@ -90,7 +90,7 @@ public class SecurityConfig {
                 .filter(origin -> !origin.isEmpty())
                 .toList();
 
-        config.setAllowedOrigins(allowedOrigins.isEmpty() ? List.of("http://localhost:4200") : allowedOrigins);
+        config.setAllowedOrigins(allowedOrigins.isEmpty() ? List.of(frontendUrl) : allowedOrigins);
         config.setAllowCredentials(true);
         config.setAllowedMethods(List.of("GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"));
         config.setAllowedHeaders(List.of("Content-Type", "Authorization", "X-Correlation-ID", "Cache-Control",

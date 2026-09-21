@@ -31,6 +31,8 @@ public class AccountServiceImpl implements AccountService {
     private final MessageProducer mailProducer;
     private final UserMapper userMapper;
 
+    @Value("${app.frontend-url}")
+    private String url;
     private static final String MDC_USER_ID = "userId";
 
     @Value("${application.service.impl.subject-oauth2}")
@@ -87,10 +89,11 @@ public class AccountServiceImpl implements AccountService {
             MDC.put(MDC_USER_ID, String.valueOf(user.getId()));
 
             if (user.isOauth2Enabled() && (user.getPassword() == null || user.getPassword().isEmpty())) {
-                log.info("OAuth2 user detected without password — initiating password setup for user: {}", user.getId());
+                log.info("OAuth2 user detected without password — initiating password setup for user: {}",
+                        user.getId());
 
                 String random = UUID.randomUUID().toString();
-                String link = String.format("http://localhost:4200/reset-pass/%s", random);
+                String link = String.format("%s/reset-pass/%s", url, random);
 
                 String text = String.format(textOauth, user.getEmail(), link);
                 MailMessage mailMessage = new MailMessage(user.getEmail(), subjectOauth, text);

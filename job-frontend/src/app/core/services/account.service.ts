@@ -20,7 +20,7 @@ export class AccountService {
   }
 
   activate(token: string): Observable<any> {
-    return this.http.get(`${this.url}/account/activate/${token}`).pipe(take(1));
+    return this.http.get(`${this.url}/auth/activate/${token}`).pipe(take(1));
   }
 
   getGoogleLoginUrl(): Observable<any> {
@@ -42,7 +42,7 @@ export class AccountService {
   }
 
   sendLink(email: string): Observable<any> {
-    const url = `${this.url}/account/sendLink/${email}`;
+    const url = `${this.url}/auth/activation-links/${email}`;
     return this.http.get(url).pipe(take(1));
   }
 
