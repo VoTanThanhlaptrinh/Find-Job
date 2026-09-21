@@ -154,6 +154,49 @@ describe('ResumeService Presigned Upload & Double-click', () => {
 
     // Next time after successful completion, a new intent key is generated
     const newKey = service.getOrCreateIdempotencyKey(file);
-    expect(newKey).not.toBe(firstKey);
+    expect(newKey).not.toBe(firstKey!);
+  });
+
+  it('should execute 3-step presigned upload when calling postResume directly', () => {
+    const file = new File(['sample content'], 'my-resume.pdf', { type: 'application/pdf', lastModified: 1700000003000 });
+
+    service.postResume(file, false);
+
+    // Step 1: Initiate
+    const initReq = httpMock.expectOne(req => req.url.endsWith('/user/resume-uploads/initiate'));
+    expect(initReq.request.method).toBe('POST');
+    expect(initReq.request.body).toEqual({
+      fileName: 'my-resume.pdf',
+      contentType: 'application/pdf',
+      size: file.size
+    });
+
+    initReq.flush({
+      status: 200,
+      message: 'Success',
+      data: {
+        uploadId: 'post-up-1',
+        uploadUrl: 'https://s3.example.com/post-put-1',
+        httpMethod: 'PUT',
+        requiredHeaders: { 'Content-Type': 'application/pdf' },
+        expiresAt: new Date(Date.now() + 600000).toISOString()
+      }
+    });
+
+    // Step 2: S3 PUT
+    const putReq = httpMock.expectOne('https://s3.example.com/post-put-1');
+    expect(putReq.request.method).toBe('PUT');
+    putReq.flush({}, { status: 200, statusText: 'OK' });
+
+    // Step 3: Complete
+    const completeReq = httpMock.expectOne(req => req.url.endsWith('/user/resume-uploads/post-up-1/complete'));
+    expect(completeReq.request.method).toBe('POST');
+    completeReq.flush({
+      status: 200,
+      message: 'OK',
+      data: { id: 789, fileName: 'my-resume.pdf', createdAt: new Date().toISOString(), status: 'COMPLETED' }
+    });
+
+    expect(service.resumes$()[0].id).toBe(789);
   });
 });

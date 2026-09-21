@@ -4,6 +4,7 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { NotifyMessageService } from '../services/notify-message.service';
 import { AuthService } from '../services/auth.service';
+import { NO_AUTH } from './logger.interceptor';
 
 let isForceLoggingOut = false;
 
@@ -13,6 +14,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const iRefreshsRequest = req.url.includes('/auth/refreshToken');
   const isLogoutRequest = req.url.includes('/auth/logout');
+  const isExcluded = req.url.includes('cloudflarestorage.com') || req.context.get(NO_AUTH);
 
   const getLoginUrl = () => {
     const url = router.url;
@@ -27,7 +29,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status === 403 && !iRefreshsRequest && !isLogoutRequest && !isForceLoggingOut) {
+      if (error.status === 403 && !iRefreshsRequest && !isLogoutRequest && !isForceLoggingOut && !isExcluded) {
         isForceLoggingOut = true;
         authService.logout(getLoginUrl());
         setTimeout(() => {

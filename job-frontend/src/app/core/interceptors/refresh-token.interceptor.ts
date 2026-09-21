@@ -14,6 +14,7 @@ import {
 } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { TokenService } from '../services/token.service';
+import { NO_AUTH } from './logger.interceptor';
 
 let refreshRequest$: Observable<string | null> | null = null;
 
@@ -39,6 +40,7 @@ export const refreshTokenInterceptor: HttpInterceptorFn = (req, next) => {
   const tokenService = inject(TokenService);
   const router = inject(Router);
   const isRefreshRequest = req.url.includes('/auth/refreshToken');
+  const isNoAuthRequest = req.context.get(NO_AUTH) || req.url.includes('cloudflarestorage.com');
   const platformId = inject(PLATFORM_ID);
 
   const getLoginUrl = () => {
@@ -54,7 +56,7 @@ export const refreshTokenInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status !== 401 || isRefreshRequest) {
+      if (error.status !== 401 || isRefreshRequest || isNoAuthRequest) {
         return throwError(() => error);
       }
 

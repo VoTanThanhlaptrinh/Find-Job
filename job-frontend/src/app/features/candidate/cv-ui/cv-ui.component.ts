@@ -84,7 +84,7 @@ export class CvUiComponent implements OnInit {
   }
 
   submitUploadCv(data: { file: File; enableAiAnalysis: boolean }): void {
-    this.resumeService.uploadResumePresigned(data.file, data.enableAiAnalysis);
+    this.resumeService.postResume(data.file, data.enableAiAnalysis);
     this.closeUploadModal();
   }
 }
