@@ -3,19 +3,15 @@ import {
   ElementRef,
   forwardRef,
   Input,
-  OnInit,
   ViewChild
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { MarkdownComponent } from 'ngx-markdown';
-
-export type MarkdownViewMode = 'split' | 'write' | 'preview';
 
 @Component({
   selector: 'app-markdown-editor',
   standalone: true,
-  imports: [CommonModule, FormsModule, MarkdownComponent],
+  imports: [CommonModule, FormsModule],
   templateUrl: './markdown-editor.component.html',
   styleUrl: './markdown-editor.component.css',
   providers: [
@@ -26,33 +22,28 @@ export type MarkdownViewMode = 'split' | 'write' | 'preview';
     }
   ]
 })
-export class MarkdownEditorComponent implements OnInit, ControlValueAccessor {
+export class MarkdownEditorComponent implements ControlValueAccessor {
   @ViewChild('editorTextarea') textareaRef?: ElementRef<HTMLTextAreaElement>;
 
   @Input() placeholder = 'Nhập nội dung định dạng Markdown tại đây...';
-  @Input() minHeight = '380px';
-  @Input() maxHeight = '650px';
+  @Input() maxLength?: number;
   @Input() showToolbar = true;
   @Input() showFooter = true;
-  @Input() initialViewMode: MarkdownViewMode = 'split';
 
   value = '';
   disabled = false;
-  viewMode: MarkdownViewMode = 'split';
   isFullscreen = false;
 
   private onChange: (val: string) => void = () => {};
   private onTouched: () => void = () => {};
 
-  ngOnInit(): void {
-    if (this.initialViewMode) {
-      this.viewMode = this.initialViewMode;
-    }
-  }
-
   // ControlValueAccessor implementations
   writeValue(value: any): void {
-    this.value = value ?? '';
+    let normalizedValue = value ?? '';
+    if (this.maxLength && normalizedValue.length > this.maxLength) {
+      normalizedValue = normalizedValue.substring(0, this.maxLength);
+    }
+    this.value = normalizedValue;
   }
 
   registerOnChange(fn: any): void {
@@ -68,20 +59,38 @@ export class MarkdownEditorComponent implements OnInit, ControlValueAccessor {
   }
 
   onContentChange(val: string): void {
+    if (this.maxLength && val && val.length > this.maxLength) {
+      val = val.substring(0, this.maxLength);
+    }
     this.value = val;
     this.onChange(this.value);
     this.onTouched();
   }
 
-  setViewMode(mode: MarkdownViewMode): void {
-    this.viewMode = mode;
-    if (mode !== 'preview') {
-      setTimeout(() => this.focusTextarea(), 50);
-    }
-  }
-
   toggleFullscreen(): void {
     this.isFullscreen = !this.isFullscreen;
+  }
+
+  // Public utility methods to retrieve or control content outside
+  public getContent(): string {
+    return this.value;
+  }
+
+  public getWordCount(): number {
+    return this.wordCount;
+  }
+
+  public getCharCount(): number {
+    return this.charCount;
+  }
+
+  public focus(): void {
+    this.focusTextarea();
+  }
+
+  public clear(): void {
+    this.value = '';
+    this.onContentChange('');
   }
 
   // Keyboard Shortcuts Handler
@@ -121,7 +130,16 @@ export class MarkdownEditorComponent implements OnInit, ControlValueAccessor {
     const text = textarea.value;
     const selectedText = text.substring(start, end) || defaultText;
 
-    const replacement = `${prefix}${selectedText}${suffix}`;
+    let replacement = `${prefix}${selectedText}${suffix}`;
+    if (this.maxLength) {
+      const netLengthAfter = text.length - (end - start) + replacement.length;
+      if (netLengthAfter > this.maxLength) {
+        const allowedLength = Math.max(0, this.maxLength - (text.length - (end - start)));
+        replacement = replacement.substring(0, allowedLength);
+      }
+    }
+    if (!replacement) return;
+
     this.value = text.substring(0, start) + replacement + text.substring(end);
     this.onContentChange(this.value);
 
@@ -148,10 +166,18 @@ export class MarkdownEditorComponent implements OnInit, ControlValueAccessor {
     const actualLineEnd = lineEnd === -1 ? text.length : lineEnd;
 
     const selectedLines = text.substring(lineStart, actualLineEnd);
-    const updatedLines = selectedLines
+    let updatedLines = selectedLines
       .split('\n')
       .map(line => `${prefix}${line}`)
       .join('\n');
+
+    if (this.maxLength) {
+      const netLengthAfter = text.length - (actualLineEnd - lineStart) + updatedLines.length;
+      if (netLengthAfter > this.maxLength) {
+        const allowedLength = Math.max(0, this.maxLength - (text.length - (actualLineEnd - lineStart)));
+        updatedLines = updatedLines.substring(0, allowedLength);
+      }
+    }
 
     this.value = text.substring(0, lineStart) + updatedLines + text.substring(actualLineEnd);
     this.onContentChange(this.value);
@@ -197,6 +223,15 @@ export class MarkdownEditorComponent implements OnInit, ControlValueAccessor {
     const end = textarea.selectionEnd;
     const text = textarea.value;
 
+    if (this.maxLength) {
+      const netLengthAfter = text.length - (end - start) + insertText.length;
+      if (netLengthAfter > this.maxLength) {
+        const allowedLength = Math.max(0, this.maxLength - (text.length - (end - start)));
+        insertText = insertText.substring(0, allowedLength);
+      }
+    }
+    if (!insertText) return;
+
     this.value = text.substring(0, start) + insertText + text.substring(end);
     this.onContentChange(this.value);
 
@@ -223,6 +258,14 @@ export class MarkdownEditorComponent implements OnInit, ControlValueAccessor {
 
   get charCount(): number {
     return this.value ? this.value.length : 0;
+  }
+
+  get isAtLimit(): boolean {
+    return !!(this.maxLength && this.charCount >= this.maxLength);
+  }
+
+  get isNearLimit(): boolean {
+    return !!(this.maxLength && this.charCount >= this.maxLength * 0.9);
   }
 
   get readingTimeMinutes(): number {

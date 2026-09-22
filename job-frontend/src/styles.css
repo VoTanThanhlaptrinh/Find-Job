@@ -303,3 +303,109 @@ body {
   background: #334155;
   background-image: linear-gradient(to right, #334155 0%, #475569 20%, #334155 40%, #334155 100%);
 }
+
+/* ==========================================================================
+   Markdown Code Block & Clipboard Button Styling
+   ========================================================================== */
+
+/* Khối bao ngoài code block do ngx-markdown tạo ra */
+.markdown-viewer-root div:has(> pre) {
+  position: relative !important;
+  margin-top: 1.5rem !important;
+  margin-bottom: 1.5rem !important;
+  border-radius: 0.875rem !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.25), 0 2px 6px -1px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Thẻ <pre> bên trong */
+.markdown-viewer-root div:has(> pre) > pre,
+.markdown-viewer-root pre {
+  margin: 0 !important;
+  padding-top: 2.75rem !important;
+  padding-bottom: 1.25rem !important;
+  padding-left: 1.25rem !important;
+  padding-right: 1.25rem !important;
+  border-radius: 0.875rem !important;
+  background-color: #1a1e29 !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace !important;
+  font-size: 0.875rem !important;
+  line-height: 1.6 !important;
+  position: relative !important;
+}
+
+/* Nhãn hiển thị tên ngôn ngữ lập trình ở góc trên bên trái */
+.markdown-viewer-root pre[data-language]::before {
+  content: attr(data-language);
+  position: absolute;
+  top: 0.65rem;
+  left: 1.1rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #94a3b8;
+  background-color: rgba(255, 255, 255, 0.06);
+  padding: 0.2rem 0.55rem;
+  border-radius: 0.375rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+  user-select: none;
+  z-index: 10;
+}
+
+/* Thanh công cụ sao chép ở góc trên bên phải */
+.markdown-clipboard-toolbar {
+  position: absolute !important;
+  top: 0.65rem !important;
+  right: 0.85rem !important;
+  z-index: 20 !important;
+  opacity: 0.85;
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+
+.markdown-viewer-root div:has(> pre):hover .markdown-clipboard-toolbar,
+.markdown-clipboard-toolbar:hover {
+  opacity: 1 !important;
+}
+
+/* Nút sao chép mã nguồn */
+.markdown-clipboard-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+  padding: 0.25rem 0.65rem !important;
+  font-size: 0.725rem !important;
+  font-weight: 600 !important;
+  font-family: inherit !important;
+  color: #cbd5e1 !important;
+  background-color: rgba(30, 41, 59, 0.85) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 0.5rem !important;
+  cursor: pointer !important;
+  transition: all 180ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+  backdrop-filter: blur(8px) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25) !important;
+  user-select: none !important;
+}
+
+.markdown-clipboard-button:hover {
+  background-color: #334155 !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+.markdown-clipboard-button:active {
+  transform: translateY(0);
+}
+
+.markdown-clipboard-button.copied {
+  background-color: #059669 !important;
+  color: #ffffff !important;
+  border-color: #10b981 !important;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.4) !important;
+}
+
