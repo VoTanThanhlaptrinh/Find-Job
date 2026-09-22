@@ -1,0 +1,237 @@
+<!-- Banner Area -->
+<section
+  class="page-hero-banner relative min-h-[240px] sm:min-h-[260px] flex items-center justify-center pt-32 pb-12 sm:pt-36 sm:pb-14 font-body">
+  <div class="relative z-10 mx-auto w-full max-w-[1440px] px-6 sm:px-10 lg:px-12 text-center">
+    <h1 class="font-headline text-3xl sm:text-4xl font-extrabold tracking-tight text-white drop-shadow-md">
+      Tạo bài viết mới
+    </h1>
+    <nav class="mt-3 flex items-center justify-center gap-2 text-sm text-white/80" aria-label="Breadcrumb">
+      <a [routerLink]="['/']" class="hover:text-white transition-colors">Home</a>
+      <span class="material-symbols-outlined text-[16px] text-white/50" aria-hidden="true">chevron_right</span>
+      <a [routerLink]="['/blogHome']" class="hover:text-white transition-colors">Blog</a>
+      <span class="material-symbols-outlined text-[16px] text-white/50" aria-hidden="true">chevron_right</span>
+      <span class="text-[#38BDF8] font-semibold">Tạo bài viết</span>
+    </nav>
+  </div>
+</section>
+
+<!-- Blog Creation Form Area -->
+<section class="bg-slate-50 py-10 sm:py-14 font-body">
+  <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+    <!-- Card container -->
+    <div class="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-10 shadow-sm">
+      <!-- Header of the card with Mode Switcher -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-6 mb-8 gap-4">
+        <div class="flex items-center gap-3">
+          <div
+            class="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 shadow-sm shadow-blue-500/10">
+            <span class="material-symbols-outlined text-[24px]">
+              {{ activeTab === 'edit' ? 'edit_note' : 'preview' }}
+            </span>
+          </div>
+          <div>
+            <h2 class="font-headline text-xl font-bold text-slate-900">
+              {{ activeTab === 'edit' ? 'Nội dung' : 'Xem trước' }}
+            </h2>
+            <p class="text-xs text-slate-400 font-medium mt-0.5">
+              {{ activeTab === 'edit' ? 'Điền thông tin chi tiết bài chia sẻ của bạn' : 'Xem trước bài viết trước khi
+              xuất bản' }}
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <!-- Segmented Tab: Soạn thảo vs Xem trước -->
+          <div class="flex items-center rounded-xl bg-slate-100 p-1 text-xs font-bold text-slate-600">
+            <button type="button" (click)="setActiveTab('edit')"
+              class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition cursor-pointer"
+              [class.bg-white]="activeTab === 'edit'" [class.text-blue-600]="activeTab === 'edit'"
+              [class.shadow-xs]="activeTab === 'edit'">
+              <span class="material-symbols-outlined text-[16px]">edit</span>
+              <span>Soạn thảo</span>
+            </button>
+            <button type="button" (click)="setActiveTab('preview')"
+              class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition cursor-pointer"
+              [class.bg-white]="activeTab === 'preview'" [class.text-blue-600]="activeTab === 'preview'"
+              [class.shadow-xs]="activeTab === 'preview'">
+              <span class="material-symbols-outlined text-[16px]">visibility</span>
+              <span>Xem trước</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 1: CREATION FORM (SOẠN THẢO) -->
+      @if (activeTab === 'edit') {
+      <form [formGroup]="blogForm" (ngSubmit)="onSubmit()" class="space-y-6">
+        <!-- Phần 1: Tiêu đề bài viết -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <label for="title" class="text-sm font-bold text-slate-800">
+              1. Tiêu đề bài viết <span class="text-rose-500">*</span>
+            </label>
+            <span class="text-xs text-slate-400 font-medium">
+              {{ blogForm.get('title')?.value?.length || 0 }}/255
+            </span>
+          </div>
+          <input id="title" type="text" formControlName="title" maxlength="255"
+            placeholder="Ví dụ: 7 kỹ năng mềm nhà tuyển dụng săn đón trong năm 2026..."
+            class="w-full rounded-2xl border border-slate-200 bg-slate-50/70 px-4 py-3 text-sm sm:text-base font-medium text-slate-900 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10"
+            [class.border-rose-400]="isFieldInvalid('title')" />
+          @if (isFieldInvalid('title')) {
+          <p class="text-xs font-semibold text-rose-500 flex items-center gap-1 mt-1">
+            <span class="material-symbols-outlined text-[14px]">error</span>
+            <span>Tiêu đề bài viết là bắt buộc (tối đa 255 ký tự).</span>
+          </p>
+          }
+        </div>
+
+        <!-- Phần 2: Tóm tắt ngắn -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <label for="description" class="text-sm font-bold text-slate-800">
+              2. Tóm tắt ngắn <span class="text-rose-500">*</span>
+            </label>
+            <span class="text-xs text-slate-400 font-medium">
+              {{ blogForm.get('description')?.value?.length || 0 }}/500
+            </span>
+          </div>
+          <textarea id="description" rows="3" formControlName="description" maxlength="500"
+            placeholder="Đoạn tóm lược ngắn gọn xuất hiện trên danh sách bài viết để thu hút người đọc..."
+            class="w-full rounded-2xl border border-slate-200 bg-slate-50/70 px-4 py-3 text-sm font-medium text-slate-900 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 leading-relaxed resize-none"
+            [class.border-rose-400]="isFieldInvalid('description')"></textarea>
+          @if (isFieldInvalid('description')) {
+          <p class="text-xs font-semibold text-rose-500 flex items-center gap-1 mt-1">
+            <span class="material-symbols-outlined text-[14px]">error</span>
+            <span>Mô tả tóm tắt là bắt buộc.</span>
+          </p>
+          }
+        </div>
+
+        <!-- Phần 3: Nội dung chi tiết bài viết (Markdown thuần nhập liệu) -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <label for="content" class="text-sm font-bold text-slate-800">
+              3. Nội dung chi tiết bài viết (Markdown) <span class="text-rose-500">*</span>
+            </label>
+            <span class="text-xs text-slate-400 font-medium">
+              {{ countWords(blogForm.get('content')?.value) }} từ
+            </span>
+          </div>
+          <!-- Độ dài chiều cao do div cha quy định, giới hạn tối đa 10000 ký tự -->
+          <div class="h-[520px] w-full">
+            <app-markdown-editor formControlName="content" [maxLength]="10000"
+              placeholder="Viết nội dung bài chia sẻ chi tiết bằng cú pháp Markdown tại đây... Sử dụng thanh công cụ để định dạng in đậm, tiêu đề, danh sách, khối code và bảng biểu."></app-markdown-editor>
+          </div>
+          @if (isFieldInvalid('content')) {
+          <p class="text-xs font-semibold text-rose-500 flex items-center gap-1 mt-1">
+            <span class="material-symbols-outlined text-[14px]">error</span>
+            <span>Nội dung bài viết không được để trống.</span>
+          </p>
+          }
+        </div>
+
+        <!-- Form Action Buttons -->
+        <div
+          class="flex flex-col-reverse sm:flex-row items-center justify-between gap-3 pt-6 border-t border-slate-100">
+          <button type="button" (click)="setActiveTab('preview')"
+            class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-bold text-slate-700 shadow-2xs hover:bg-slate-50 transition cursor-pointer">
+            <span class="material-symbols-outlined text-[18px] text-blue-600">visibility</span>
+            <span>Xem trước</span>
+          </button>
+
+          <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+            <button type="button" [routerLink]="['/blogHome']"
+              class="w-full sm:w-auto rounded-xl border border-slate-200 bg-white px-6 py-2.5 text-sm font-bold text-slate-600 shadow-sm hover:bg-slate-50 transition cursor-pointer">
+              Hủy bỏ
+            </button>
+
+            <button type="submit" [disabled]="isSubmitting"
+              class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-7 py-2.5 text-sm font-bold text-white shadow-md shadow-blue-500/20 hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg hover:shadow-blue-500/30 transition active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer">
+              @if (isSubmitting) {
+              <span class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
+              <span>Đang xuất bản...</span>
+              } @else {
+              <span class="material-symbols-outlined text-[18px]">send</span>
+              <span>Xuất bản bài viết</span>
+              }
+            </button>
+          </div>
+        </div>
+      </form>
+      }
+
+      <!-- TAB 2: FULL 3-PART PREVIEW (XEM TRƯỚC TOÀN BỘ 3 PHẦN CỦA BÀI VIẾT) -->
+      @if (activeTab === 'preview') {
+      <div class="space-y-8 animate-in fade-in duration-200">
+        <!-- Article Preview Container -->
+        <article class="rounded-2xl border border-slate-200 bg-white p-6 sm:p-10 shadow-xs">
+          <!-- Cover image placeholder -->
+          <div class="aspect-video w-full overflow-hidden rounded-2xl bg-slate-100 mb-8 border border-slate-100">
+            <img class="h-full w-full object-cover" src="assets/web_css/img/blog/p1.jpg" alt="Cover preview" />
+          </div>
+
+          <!-- PHẦN 1: Tiêu đề bài viết -->
+          <h1
+            class="font-headline text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 leading-tight">
+            {{ blogForm.value.title || 'Chưa nhập tiêu đề bài viết' }}
+          </h1>
+
+          <!-- Meta info bar -->
+          <div
+            class="mt-4 flex flex-wrap items-center gap-4 text-xs font-medium text-slate-500 pb-6 border-b border-slate-100">
+            <span class="flex items-center gap-1.5 text-blue-600 font-semibold">
+              <span class="material-symbols-outlined text-[16px]">person</span>
+              <span>Tác giả: Bạn (Bản xem trước)</span>
+            </span>
+            <span>•</span>
+            <span class="flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[16px]">schedule</span>
+              <span>~{{ estimatedReadingMinutes }} phút đọc</span>
+            </span>
+            <span>•</span>
+            <span class="flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[16px]">text_snippet</span>
+              <span>{{ countWords(blogForm.value.content) }} từ</span>
+            </span>
+          </div>
+
+          <!-- PHẦN 2: Tóm tắt ngắn (Description Callout) -->
+          @if (blogForm.value.description) {
+          <div
+            class="mt-6 rounded-2xl border-l-4 border-blue-600 bg-blue-50/70 p-5 text-slate-700 font-medium text-base leading-relaxed">
+            {{ blogForm.value.description }}
+          </div>
+          }
+
+          <!-- PHẦN 3: Nội dung chi tiết (Được xuất ra và hiển thị qua MarkdownViewerComponent) -->
+          <div class="mt-8 border-t border-slate-100 pt-8">
+            <app-markdown-viewer [data]="blogForm.value.content || ''"
+              emptyText="Chưa có nội dung Markdown để hiển thị."></app-markdown-viewer>
+          </div>
+        </article>
+
+        <!-- Preview Action Bar -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-slate-100">
+          <button type="button" (click)="setActiveTab('edit')"
+            class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-6 py-2.5 text-sm font-bold text-slate-700 shadow-2xs hover:bg-slate-50 transition cursor-pointer">
+            <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+            <span>Quay lại chỉnh sửa</span>
+          </button>
+
+          <button type="button" (click)="onSubmit()" [disabled]="isSubmitting"
+            class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-7 py-2.5 text-sm font-bold text-white shadow-md shadow-blue-500/20 hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg hover:shadow-blue-500/30 transition active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer">
+            @if (isSubmitting) {
+            <span class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
+            <span>Đang xuất bản...</span>
+            } @else {
+            <span class="material-symbols-outlined text-[18px]">send</span>
+            <span>Xuất bản bài viết này</span>
+            }
+          </button>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+</section>

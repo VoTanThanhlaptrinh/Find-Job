@@ -4,11 +4,13 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { effect } from '@angular/core';
-import { take } from 'rxjs';
 import { UserService } from '../../../core/services/user.service';
 import { NotifyMessageService } from '../../../core/services/notify-message.service';
 import { I18nService } from '../../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
+import { SavedJobsService } from '../../../core/services/saved-jobs.service';
+import { ProfileSavedJobsComponent } from './components/profile-saved-jobs/profile-saved-jobs.component';
+import { ProfileMyBlogComponent } from './components/profile-my-blog/profile-my-blog.component';
 
 interface UserUi {
   fullName: string;
@@ -28,15 +30,25 @@ interface UserUi {
     MatDatepickerToggle,
     MatDatepicker,
     MatDatepickerInput,
-    TranslatePipe
+    TranslatePipe,
+    ProfileSavedJobsComponent,
+    ProfileMyBlogComponent
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })
 export class ProfileComponent implements OnInit {
+  activeTab: 'info' | 'saved-jobs' | 'my-blog' = 'info';
+
   private readonly userService = inject(UserService);
   private readonly toastr = inject(NotifyMessageService);
   private readonly i18n = inject(I18nService);
+  private readonly savedJobsService = inject(SavedJobsService);
+
+  get savedJobCount(): number {
+    return this.savedJobsService.savedJobIds().size;
+  }
+  blogTotalElements = 0;
 
   readonly formGroup = new FormGroup({
     fullName: new FormControl('', Validators.required),
@@ -71,6 +83,14 @@ export class ProfileComponent implements OnInit {
     this.userService.getDetails();
   }
 
+  setActiveTab(tab: 'info' | 'saved-jobs' | 'my-blog'): void {
+    this.activeTab = tab;
+  }
+
+  onTotalBlogsChange(count: number): void {
+    this.blogTotalElements = count;
+  }
+
   onSubmit(): void {
     if (this.formGroup.invalid) {
       this.formGroup.markAllAsTouched();
@@ -78,7 +98,7 @@ export class ProfileComponent implements OnInit {
     }
 
     this.userService.updateInfo(this.formGroup.value).subscribe({
-      next: (res) => {
+      next: () => {
         this.toastr.showMessage(this.i18n.translate('profile.success'), '', 'success');
       },
       error: (err) => {

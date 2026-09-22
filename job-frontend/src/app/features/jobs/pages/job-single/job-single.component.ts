@@ -176,7 +176,7 @@ export class JobSingleComponent implements OnInit {
             category: item.categoryName || this.getDefaultCategory(idx),
             description: item.description || '',
             image: item.image || this.getDefaultBlogImage(idx),
-            date: this.formatBlogDate(item.create_date || item.createdAt),
+            date: this.formatBlogDate(item.createDate || item.create_date || item.createdAt),
             readTime: '5 phút đọc',
           }));
         } else {

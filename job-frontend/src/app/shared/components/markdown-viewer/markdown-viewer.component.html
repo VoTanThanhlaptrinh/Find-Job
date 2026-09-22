@@ -1,0 +1,17 @@
+<div class="markdown-viewer-root w-full">
+  @if (data && data.trim().length > 0) {
+    <article [class]="proseClass">
+      <markdown
+        clipboard
+        [clipboardButtonComponent]="clipboardButtonComponent"
+        [data]="data"
+        (ready)="onMarkdownReady()"
+      ></markdown>
+    </article>
+  } @else {
+    <div class="flex min-h-[140px] flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 p-6 text-center text-slate-400">
+      <span class="material-symbols-outlined text-3xl mb-1 text-slate-300">description</span>
+      <p class="text-sm font-medium">{{ emptyText }}</p>
+    </div>
+  }
+</div>

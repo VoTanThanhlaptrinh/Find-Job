@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './features/home/pages/home/home.component';
+import { userLoginGuard } from './core/guards/user-login.guard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -36,6 +37,12 @@ export const routes: Routes = [
   { path: 'contact', redirectTo: '', pathMatch: 'full' },
   { path: 'blogHome', loadComponent: () => import('./features/blog/pages/blog-home/blog-home.component').then(c => c.BlogHomeComponent) },
   { path: 'blogSingle/:id', loadComponent: () => import('./features/blog/pages/blog-single/blog-single.component').then(c => c.BlogSingleComponent) },
+  {
+    path: 'blog-creation',
+    canActivate: [userLoginGuard],
+    loadComponent: () => import('./features/blog/pages/blog-creation/blog-creation.component').then(c => c.BlogCreationComponent)
+  },
+  { path: 'blogCreation', redirectTo: 'blog-creation', pathMatch: 'full' },
 
   // Job Details & Applications
   { path: 'single/:id', loadComponent: () => import('./features/jobs/pages/job-single/job-single.component').then(c => c.JobSingleComponent) },

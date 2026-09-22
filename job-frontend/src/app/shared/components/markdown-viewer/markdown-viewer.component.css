@@ -1,0 +1,43 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+:host ::ng-deep .prose pre {
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+  border-radius: 0.875rem;
+  padding: 1.25rem;
+  background-color: #1e293b !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+:host ::ng-deep .prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+}
+
+:host ::ng-deep .prose th,
+:host ::ng-deep .prose td {
+  border: 1px solid #e2e8f0;
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+:host ::ng-deep .prose th {
+  background-color: #f8fafc;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+:host ::ng-deep .prose blockquote {
+  border-left: 4px solid #3b82f6;
+  padding-left: 1.25rem;
+  color: #475569;
+  font-style: italic;
+  background: #f8fafc;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-radius: 0 0.5rem 0.5rem 0;
+}

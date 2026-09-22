@@ -1,12 +1,10 @@
 package com.nlu.content.domain.model;
 
-
-
-
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import com.nlu.content.domain.vo.BlogStatus;
 import com.nlu.identity.domain.model.User;
 import com.nlu.shared.domain.exception.BadRequestException;
 import com.nlu.shared.domain.model.BaseEntity;
@@ -23,15 +21,21 @@ import org.hibernate.annotations.SQLRestriction;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @SQLRestriction("record_status <> 'DELETED'")
+@Table(indexes = {
+		@Index(name = "idx_title_likes_date", columnList = "title, amountLike, createdAt")
+})
 public class Blog extends BaseEntity {
+
 	@Id
 	@Setter
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonIgnore
 	@JoinColumn(nullable = false)
 	private User author;
+
 	private String title;
 	@Column(columnDefinition = "TEXT")
 	private String description;
@@ -39,6 +43,10 @@ public class Blog extends BaseEntity {
 	private String content;
 	@Setter
 	private int amountLike;
+
+	@Setter
+	@Enumerated(EnumType.STRING)
+	private BlogStatus status = BlogStatus.DRAFT;
 
 	@OneToMany(fetch = FetchType.LAZY)
 	@JsonIgnore
@@ -48,7 +56,7 @@ public class Blog extends BaseEntity {
 	@OneToMany(fetch = FetchType.LAZY)
 	@JsonIgnore
 	@Column(nullable = true)
-	private List<Comment> likes;
+	private List<Like> likes;
 
 	public String getTime() {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
@@ -57,7 +65,7 @@ public class Blog extends BaseEntity {
 	}
 
 	public void setAuthor(User user) {
-		if(user == null){
+		if (user == null) {
 			throw new BadRequestException("user is null");
 		}
 		this.author = user;
@@ -84,5 +92,3 @@ public class Blog extends BaseEntity {
 		this.content = content;
 	}
 }
-
-

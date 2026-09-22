@@ -32,8 +32,16 @@
               "src/assets/web_css/css/main.css",
               "node_modules/keen-slider/keen-slider.min.css"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/clipboard/dist/clipboard.min.js"
+            ],
+            "allowedCommonJsDependencies": [
+              "prismjs",
+              "dompurify",
+              "clipboard"
+            ]
           },
+
           "configurations": {
             "production": {
               "fileReplacements": [
