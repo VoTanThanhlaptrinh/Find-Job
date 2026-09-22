@@ -1,8 +1,5 @@
 package com.nlu.content.domain.model;
 
-
-
-
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -25,7 +22,7 @@ import org.hibernate.annotations.SQLRestriction;
 @EqualsAndHashCode(callSuper = true)
 @SQLRestriction("record_status <> 'DELETED'")
 @Table(indexes = {
-    @Index(name = "idx_title_likes_date", columnList = "title, amountlike, createdAt")
+		@Index(name = "idx_title_likes_date", columnList = "title, amountLike, createdAt")
 })
 public class Blog extends BaseEntity {
 
@@ -38,7 +35,7 @@ public class Blog extends BaseEntity {
 	@JsonIgnore
 	@JoinColumn(nullable = false)
 	private User author;
-	
+
 	private String title;
 	@Column(columnDefinition = "TEXT")
 	private String description;
@@ -68,7 +65,7 @@ public class Blog extends BaseEntity {
 	}
 
 	public void setAuthor(User user) {
-		if(user == null){
+		if (user == null) {
 			throw new BadRequestException("user is null");
 		}
 		this.author = user;
@@ -95,5 +92,3 @@ public class Blog extends BaseEntity {
 		this.content = content;
 	}
 }
-
-

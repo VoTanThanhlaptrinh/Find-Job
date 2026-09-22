@@ -33,28 +33,44 @@
               {{ this.blog.title }}
             </h1>
 
-            <div class="mt-6 space-y-6 text-base leading-relaxed text-slate-700">
-              <p>{{ this.blog.content }}</p>
+            @if (this.blog.description) {
+              <div class="mt-5 rounded-2xl border-l-4 border-blue-600 bg-blue-50/60 p-5 text-slate-700 font-medium text-base leading-relaxed">
+                {{ this.blog.description }}
+              </div>
+            }
 
-              <blockquote class="my-6 rounded-2xl border-l-4 border-blue-600 bg-blue-50/50 p-6 italic text-slate-700">
-                “Recently, the US Federal government banned online casinos from operating in America by
-                making it illegal to transfer money to them through any US bank or payment system. As a
-                result of this law, most of the popular online casino networks left the United States.”
-              </blockquote>
+            <div class="mt-6 space-y-6 text-base leading-relaxed text-slate-700 whitespace-pre-line">
+              <p>{{ this.blog.content }}</p>
             </div>
 
             <!-- Meta info -->
-            <div class="mt-8 flex items-center justify-between border-t border-slate-100 pt-6 text-sm text-slate-500">
+            <div class="mt-8 flex flex-wrap items-center justify-between border-t border-slate-100 pt-6 text-sm text-slate-500 gap-4">
               <div class="flex items-center gap-4">
-                <span class="flex items-center gap-1.5 font-semibold text-slate-700">
-                  <span class="material-symbols-outlined text-[20px] text-rose-500">favorite</span>
-                  <span>120 Likes</span>
-                </span>
-                <span class="flex items-center gap-1.5 font-semibold text-slate-700">
-                  <span class="material-symbols-outlined text-[20px] text-blue-500">chat_bubble</span>
-                  <span>06 Comments</span>
-                </span>
+                <button
+                  type="button"
+                  (click)="toggleLike()"
+                  [disabled]="likeLoading"
+                  class="flex items-center gap-1.5 font-semibold transition-colors group px-3 py-1.5 rounded-full hover:bg-rose-50"
+                  [class.text-rose-600]="isLiked"
+                  [class.text-slate-700]="!isLiked"
+                >
+                  <span class="material-symbols-outlined text-[20px] text-rose-500 group-hover:scale-110 transition-transform">favorite</span>
+                  <span>{{ this.blog.amountLike || 0 }} Thích</span>
+                </button>
+                @if (this.blog.createDate) {
+                  <span class="flex items-center gap-1.5 text-xs text-slate-400">
+                    <span class="material-symbols-outlined text-[16px]">calendar_today</span>
+                    <span>{{ this.blog.createDate }}</span>
+                  </span>
+                }
               </div>
+
+              @if (this.blog.authorName) {
+                <div class="flex items-center gap-2 text-xs font-medium text-slate-600">
+                  <span class="material-symbols-outlined text-[18px] text-blue-500">person</span>
+                  <span>Tác giả: <strong class="text-slate-900">{{ this.blog.authorName }}</strong></span>
+                </div>
+              }
             </div>
           </article>
 
@@ -164,7 +180,7 @@
           <div class="mx-auto h-20 w-20 overflow-hidden rounded-full border-2 border-blue-500 p-0.5 shadow-md">
             <img src="assets/web_css/img/blog/user2.jpg" alt="Author" class="h-full w-full rounded-full object-cover" />
           </div>
-          <h3 class="mt-4 font-headline text-lg font-bold text-slate-900">Adele Gonzalez</h3>
+          <h3 class="mt-4 font-headline text-lg font-bold text-slate-900">{{ this.blog?.authorName || 'Ban Biên Tập' }}</h3>
           <p class="mt-2 text-xs leading-relaxed text-slate-500">
             Tác giả chuyên sâu về xu hướng nhân sự, công nghệ và phát triển nghề nghiệp.
           </p>
