@@ -48,16 +48,16 @@ public class SseEmitterServiceImpl implements SseEmitterService {
 
         // Callback cleanup — tự động xóa khỏi map khi kết nối kết thúc
         emitter.onCompletion(() -> {
-            emitters.remove(userId, emitter); // chỉ xóa nếu vẫn là emitter này
+            removeEmitter(userId);
             log.debug("SSE completed for userId={}", userId);
         });
         emitter.onTimeout(() -> {
-            emitters.remove(userId, emitter);
+            removeEmitter(userId);
             log.info("SSE timed out for userId={}", userId);
             emitter.complete();
         });
         emitter.onError(ex -> {
-            emitters.remove(userId, emitter);
+            removeEmitter(userId);
             log.warn("SSE error for userId={}: {}", userId, ex.getMessage());
         });
 
@@ -79,9 +79,11 @@ public class SseEmitterServiceImpl implements SseEmitterService {
         return emitter;
     }
 
-    /* ================================================================
-     *  GỬI EVENT
-     * ================================================================ */
+    /*
+     * ================================================================
+     * GỬI EVENT
+     * ================================================================
+     */
 
     @Override
     public <T> void sendEvent(long userId, String eventName, SseMessagePayload<T> payload) {
@@ -103,9 +105,11 @@ public class SseEmitterServiceImpl implements SseEmitterService {
         }
     }
 
-    /* ================================================================
-     *  XÓA EMITTER
-     * ================================================================ */
+    /*
+     * ================================================================
+     * XÓA EMITTER
+     * ================================================================
+     */
 
     @Override
     public void removeEmitter(long userId) {
@@ -116,9 +120,11 @@ public class SseEmitterServiceImpl implements SseEmitterService {
         }
     }
 
-    /* ================================================================
-     *  HEARTBEAT — Giữ kết nối sống, phát hiện dead connections
-     * ================================================================ */
+    /*
+     * ================================================================
+     * HEARTBEAT — Giữ kết nối sống, phát hiện dead connections
+     * ================================================================
+     */
 
     @Scheduled(fixedRate = 30_000) // Mỗi 30 giây
     public void heartbeat() {

@@ -6,7 +6,7 @@ public interface SpamService {
     void deleteIpSpamLogin(String ip);
     void addIpSpamEmail(String ip);
     boolean checkIpSpamEmail(String ip);
-    void deleteInSpamEmail(String ip);
+    void deleteIpSpamEmail(String ip);
     String getMessageLoginSpam(String ip);
     String getMessageEmailSpam(String ip);
 }

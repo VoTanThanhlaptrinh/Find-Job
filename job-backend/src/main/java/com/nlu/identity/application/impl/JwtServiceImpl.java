@@ -39,7 +39,7 @@ public class JwtServiceImpl implements JwtService {
 					.map(GrantedAuthority::getAuthority)
 					.collect(Collectors.toList());
 			claims.put("roles", roles);
-			return gerenateToken(claims, userDetails.getUsername());
+			return generateToken(claims, userDetails.getUsername(),jwtExpiration);
 		}catch (Exception e){
 			throw new RuntimeException(e);
 		}
@@ -90,7 +90,7 @@ public class JwtServiceImpl implements JwtService {
 	private String helpGenerateRefreshToken(String username, String familyId, long expirationMillis){
 		HashMap<String, Object> claims = new HashMap<>();
 		claims.put("familyId", familyId);
-		String token = gerenateToken(claims, username, expirationMillis);
+		String token = generateToken(claims, username, expirationMillis);
 		jwtFamilyService.saveFamilyJti(familyId,extractJTI(token));
 		return token;
 	}
@@ -110,11 +110,7 @@ public class JwtServiceImpl implements JwtService {
 		return Jwts.parser().verifyWith(getSignInKey()).build().parseSignedClaims(token).getPayload();
 	}
 
-	private String gerenateToken(HashMap<String, Object> claims, String username) {
-		return gerenateToken(claims, username, jwtExpiration);
-	}
-
-	private String gerenateToken(HashMap<String, Object> claims, String username, long expirationMillis) {
+	private String generateToken(HashMap<String, Object> claims, String username, long expirationMillis) {
 		return buildToken(claims, username, expirationMillis);
 	}
 

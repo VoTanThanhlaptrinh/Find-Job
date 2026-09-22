@@ -94,11 +94,12 @@ public class SpamServiceImpl implements SpamService {
     }
 
     @Override
-    public void deleteInSpamEmail(String ip) {
+    public void deleteIpSpamEmail(String ip) {
         if (ip == null || ip.isEmpty()) {
             return;
         }
         spamIp.delete(Objects.requireNonNull(String.format("ip_spam_email_%s", ip)));
+        blockIP.delete(Objects.requireNonNull(String.format("block_ip_email_%s", ip)));
     }
 
     @Override
