@@ -15,7 +15,7 @@ spring:
 app:
   cookie:
     secure: true
-  frontend-url: ${FRONTEND_URL:https://www.job-listing.world/}
+  frontend-url: ${FRONTEND_URL:https://www.job-listing.world}
 
 server:
   port: ${PORT:8080}

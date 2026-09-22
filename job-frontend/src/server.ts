@@ -22,7 +22,7 @@ const cspHeader = [
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com",
   "font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com data:",
   "img-src 'self' data: blob: https:",
-  "connect-src 'self' http://localhost:8080 https://find-job-ctkj.onrender.com https://job-portal-resume.9d00de951bfd9979b31532e1d1033be2.r2.cloudflarestorage.com",
+  "connect-src 'self' http://localhost:8080 https://find-job-ctkj.onrender.com https://job-portal-resume.9d00de951bfd9979b31532e1d1033be2.r2.cloudflarestorage.com https://api.job-listing.world",
   "frame-src 'self' https://accounts.google.com",
   "frame-ancestors 'self'",
   "worker-src 'self' blob:",
