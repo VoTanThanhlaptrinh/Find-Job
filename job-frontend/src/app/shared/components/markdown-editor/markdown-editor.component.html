@@ -1,0 +1,345 @@
+<!-- Markdown Editor Container -->
+<div
+  class="md-editor-container flex flex-col rounded-2xl border border-slate-200 bg-white shadow-xs transition-all duration-200"
+  [class.md-editor-fullscreen]="isFullscreen"
+>
+  <!-- Toolbar Header -->
+  @if (showToolbar) {
+    <header class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 bg-slate-50/75 px-3 py-2">
+      <!-- Formatting Buttons Group -->
+      <div class="flex flex-wrap items-center gap-1">
+        <!-- Text Styling Group -->
+        <div class="flex items-center gap-0.5 rounded-lg border border-slate-200/80 bg-white p-0.5 shadow-2xs">
+          <button
+            type="button"
+            (click)="insertFormat('**', '**', 'văn bản in đậm')"
+            [disabled]="disabled || viewMode === 'preview'"
+            class="toolbar-btn"
+            title="In đậm (Ctrl+B)"
+            aria-label="In đậm"
+          >
+            <span class="material-symbols-outlined text-[18px]">format_bold</span>
+          </button>
+          <button
+            type="button"
+            (click)="insertFormat('*', '*', 'văn bản in nghiêng')"
+            [disabled]="disabled || viewMode === 'preview'"
+            class="toolbar-btn"
+            title="In nghiêng (Ctrl+I)"
+            aria-label="In nghiêng"
+          >
+            <span class="material-symbols-outlined text-[18px]">format_italic</span>
+          </button>
+          <button
+            type="button"
+            (click)="insertFormat('~~', '~~', 'văn bản gạch ngang')"
+            [disabled]="disabled || viewMode === 'preview'"
+            class="toolbar-btn"
+            title="Gạch ngang"
+            aria-label="Gạch ngang"
+          >
+            <span class="material-symbols-outlined text-[18px]">strikethrough_s</span>
+          </button>
+        </div>
+
+        <!-- Headings Group -->
+        <div class="flex items-center gap-0.5 rounded-lg border border-slate-200/80 bg-white p-0.5 shadow-2xs">
+          <button
+            type="button"
+            (click)="insertHeading(1)"
+            [disabled]="disabled || viewMode === 'preview'"
+            class="toolbar-btn font-bold text-xs"
+            title="Tiêu đề H1"
+          >
+            H1
+          </button>
+          <button
+            type="button"
+            (click)="insertHeading(2)"
+            [disabled]="disabled || viewMode === 'preview'"
+            class="toolbar-btn font-bold text-xs"
+            title="Tiêu đề H2"
+          >
+            H2
+          </button>
+          <button
+            type="button"
+            (click)="insertHeading(3)"
+            [disabled]="disabled || viewMode === 'preview'"
+            class="toolbar-btn font-bold text-xs"
+            title="Tiêu đề H3"
+          >
+            H3
+          </button>
+        </div>
+
+        <!-- Lists Group -->
+        <div class="flex items-center gap-0.5 rounded-lg border border-slate-200/80 bg-white p-0.5 shadow-2xs">
+          <button
+            type="button"
+            (click)="insertLinePrefix('- ')"
+            [disabled]="disabled || viewMode === 'preview'"
+            class="toolbar-btn"
+            title="Danh sách gạch đầu dòng"
+            aria-label="Danh sách gạch đầu dòng"
+          >
+            <span class="material-symbols-outlined text-[18px]">format_list_bulleted</span>
+          </button>
+          <button
+            type="button"
+            (click)="insertLinePrefix('1. ')"
+            [disabled]="disabled || viewMode === 'preview'"
+            class="toolbar-btn"
+            title="Danh sách đánh số"
+            aria-label="Danh sách đánh số"
+          >
+            <span class="material-symbols-outlined text-[18px]">format_list_numbered</span>
+          </button>
+          <button
+            type="button"
+            (click)="insertLinePrefix('- [ ] ')"
+            [disabled]="disabled || viewMode === 'preview'"
+            class="toolbar-btn"
+            title="Danh sách công việc (Task checklist)"
+            aria-label="Danh sách công việc"
+          >
+            <span class="material-symbols-outlined text-[18px]">check_box</span>
+          </button>
+        </div>
+
+        <!-- Blocks & Inserts Group -->
+        <div class="flex items-center gap-0.5 rounded-lg border border-slate-200/80 bg-white p-0.5 shadow-2xs">
+          <button
+            type="button"
+            (click)="insertLinePrefix('> ')"
+            [disabled]="disabled || viewMode === 'preview'"
+            class="toolbar-btn"
+            title="Khối trích dẫn (Quote)"
+            aria-label="Trích dẫn"
+          >
+            <span class="material-symbols-outlined text-[18px]">format_quote</span>
+          </button>
+          <button
+            type="button"
+            (click)="insertFormat('`', '`', 'mã inline')"
+            [disabled]="disabled || viewMode === 'preview'"
+            class="toolbar-btn"
+            title="Mã nội dòng (Inline code)"
+            aria-label="Mã nội dòng"
+          >
+            <span class="material-symbols-outlined text-[18px]">code</span>
+          </button>
+          <button
+            type="button"
+            (click)="insertCodeBlock()"
+            [disabled]="disabled || viewMode === 'preview'"
+            class="toolbar-btn"
+            title="Khối mã nguồn đa dòng (Code block)"
+            aria-label="Khối mã nguồn"
+          >
+            <span class="material-symbols-outlined text-[18px]">data_object</span>
+          </button>
+          <button
+            type="button"
+            (click)="insertLink()"
+            [disabled]="disabled || viewMode === 'preview'"
+            class="toolbar-btn"
+            title="Chèn liên kết (Ctrl+K)"
+            aria-label="Chèn liên kết"
+          >
+            <span class="material-symbols-outlined text-[18px]">link</span>
+          </button>
+          <button
+            type="button"
+            (click)="insertImage()"
+            [disabled]="disabled || viewMode === 'preview'"
+            class="toolbar-btn"
+            title="Chèn hình ảnh"
+            aria-label="Chèn hình ảnh"
+          >
+            <span class="material-symbols-outlined text-[18px]">image</span>
+          </button>
+          <button
+            type="button"
+            (click)="insertTable()"
+            [disabled]="disabled || viewMode === 'preview'"
+            class="toolbar-btn"
+            title="Chèn bảng biểu mẫu (Markdown Table)"
+            aria-label="Chèn bảng biểu"
+          >
+            <span class="material-symbols-outlined text-[18px]">table</span>
+          </button>
+          <button
+            type="button"
+            (click)="insertHorizontalRule()"
+            [disabled]="disabled || viewMode === 'preview'"
+            class="toolbar-btn"
+            title="Đường kẻ phân cách (---)"
+            aria-label="Đường kẻ ngang"
+          >
+            <span class="material-symbols-outlined text-[18px]">horizontal_rule</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- View Modes & Fullscreen Control -->
+      <div class="flex items-center gap-2">
+        <!-- View Mode Segmented Switcher -->
+        <div class="flex items-center rounded-xl bg-slate-200/70 p-1 text-xs font-semibold text-slate-600">
+          <button
+            type="button"
+            (click)="setViewMode('write')"
+            class="view-mode-pill"
+            [class.view-mode-pill-active]="viewMode === 'write'"
+            title="Chỉ soạn thảo"
+          >
+            <span class="material-symbols-outlined text-[16px]">edit_note</span>
+            <span class="hidden sm:inline">Viết</span>
+          </button>
+          <button
+            type="button"
+            (click)="setViewMode('split')"
+            class="view-mode-pill"
+            [class.view-mode-pill-active]="viewMode === 'split'"
+            title="Chia đôi màn hình: vừa gõ vừa xem trước"
+          >
+            <span class="material-symbols-outlined text-[16px]">vertical_split</span>
+            <span class="hidden sm:inline">Song song</span>
+          </button>
+          <button
+            type="button"
+            (click)="setViewMode('preview')"
+            class="view-mode-pill"
+            [class.view-mode-pill-active]="viewMode === 'preview'"
+            title="Chỉ xem trước kết quả"
+          >
+            <span class="material-symbols-outlined text-[16px]">visibility</span>
+            <span class="hidden sm:inline">Xem trước</span>
+          </button>
+        </div>
+
+        <!-- Fullscreen Toggle -->
+        <button
+          type="button"
+          (click)="toggleFullscreen()"
+          class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-2xs hover:bg-slate-100 hover:text-slate-900 transition-colors"
+          [title]="isFullscreen ? 'Thu nhỏ' : 'Toàn màn hình'"
+          aria-label="Toàn màn hình"
+        >
+          <span class="material-symbols-outlined text-[18px]">
+            {{ isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}
+          </span>
+        </button>
+      </div>
+    </header>
+  }
+
+  <!-- Main Content Area -->
+  <main
+    class="relative flex-1 overflow-hidden"
+    [style.minHeight]="isFullscreen ? '0' : minHeight"
+    [style.maxHeight]="isFullscreen ? 'none' : maxHeight"
+  >
+    <!-- View Mode: WRITE ONLY -->
+    @if (viewMode === 'write') {
+      <div class="h-full w-full">
+        <textarea
+          #editorTextarea
+          [ngModel]="value"
+          (ngModelChange)="onContentChange($event)"
+          (keydown)="onKeyDown($event)"
+          [disabled]="disabled"
+          [placeholder]="placeholder"
+          class="h-full w-full resize-none border-0 bg-transparent p-4 sm:p-6 font-mono text-sm sm:text-base leading-relaxed text-slate-800 placeholder-slate-400 outline-none focus:ring-0"
+          spellcheck="false"
+        ></textarea>
+      </div>
+    }
+
+    <!-- View Mode: PREVIEW ONLY -->
+    @if (viewMode === 'preview') {
+      <div class="h-full w-full overflow-y-auto p-5 sm:p-8 bg-white">
+        @if (value && value.trim().length > 0) {
+          <div class="prose prose-slate lg:prose-lg max-w-none">
+            <markdown [data]="value"></markdown>
+          </div>
+        } @else {
+          <div class="flex h-full min-h-[220px] flex-col items-center justify-center text-center text-slate-400">
+            <span class="material-symbols-outlined text-4xl mb-2 text-slate-300">visibility_off</span>
+            <p class="text-sm font-medium">Chưa có nội dung để xem trước.</p>
+            <p class="text-xs text-slate-400 mt-1">Chuyển sang chế độ "Viết" hoặc "Song song" để bắt đầu soạn thảo Markdown.</p>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- View Mode: SPLIT VIEW (Dual Pane) -->
+    @if (viewMode === 'split') {
+      <div class="grid h-full w-full grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-200">
+        <!-- Left Pane: Editor Textarea -->
+        <div class="relative h-full overflow-hidden bg-slate-50/20">
+          <div class="absolute top-2 right-3 z-10 select-none rounded-md bg-slate-200/80 px-2 py-0.5 text-[11px] font-bold text-slate-500 uppercase tracking-wider backdrop-blur-xs">
+            Markdown
+          </div>
+          <textarea
+            #editorTextarea
+            [ngModel]="value"
+            (ngModelChange)="onContentChange($event)"
+            (keydown)="onKeyDown($event)"
+            [disabled]="disabled"
+            [placeholder]="placeholder"
+            class="h-full w-full resize-none border-0 bg-transparent p-4 sm:p-6 font-mono text-sm sm:text-base leading-relaxed text-slate-800 placeholder-slate-400 outline-none focus:ring-0"
+            spellcheck="false"
+          ></textarea>
+        </div>
+
+        <!-- Right Pane: Live HTML Preview -->
+        <div class="h-full overflow-y-auto p-4 sm:p-6 bg-white relative">
+          <div class="sticky top-0 right-0 float-right z-10 select-none rounded-md bg-blue-50 px-2 py-0.5 text-[11px] font-bold text-blue-600 uppercase tracking-wider border border-blue-100">
+            Xem trước
+          </div>
+          @if (value && value.trim().length > 0) {
+            <div class="prose prose-slate max-w-none">
+              <markdown [data]="value"></markdown>
+            </div>
+          } @else {
+            <div class="flex h-full min-h-[220px] flex-col items-center justify-center text-center text-slate-400">
+              <span class="material-symbols-outlined text-4xl mb-2 text-slate-300">preview</span>
+              <p class="text-sm font-medium">Bản xem trước thời gian thực</p>
+              <p class="text-xs text-slate-400 mt-1 max-w-xs">Nội dung bạn gõ ở cột bên trái sẽ lập tức hiển thị định dạng đẹp mắt tại đây.</p>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </main>
+
+  <!-- Footer Statistics & Help Tips -->
+  @if (showFooter) {
+    <footer class="flex flex-wrap items-center justify-between border-t border-slate-200/90 bg-slate-50/60 px-4 py-2 text-xs font-medium text-slate-500">
+      <div class="flex items-center gap-4">
+        <span class="flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[15px] text-slate-400">text_snippet</span>
+          <span><strong>{{ wordCount }}</strong> từ</span>
+        </span>
+        <span class="hidden sm:inline text-slate-300">•</span>
+        <span class="flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[15px] text-slate-400">pin</span>
+          <span><strong>{{ charCount }}</strong> ký tự</span>
+        </span>
+        <span class="hidden sm:inline text-slate-300">•</span>
+        <span class="hidden sm:flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[15px] text-slate-400">schedule</span>
+          <span>~{{ readingTimeMinutes }} phút đọc</span>
+        </span>
+      </div>
+
+      <div class="flex items-center gap-2 text-slate-400">
+        <span class="flex items-center gap-1 text-[11px]">
+          <span class="material-symbols-outlined text-[14px] text-emerald-500">check_circle</span>
+          <span class="hidden sm:inline">Hỗ trợ cú pháp GitHub Flavored Markdown (GFM)</span>
+        </span>
+      </div>
+    </footer>
+  }
+</div>
