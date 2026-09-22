@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @import "ngx-toastr/toastr";
 @import "@angular/cdk/overlay-prebuilt.css";
+@import "prismjs/themes/prism-tomorrow.min.css";
+@import "prismjs/plugins/line-numbers/prism-line-numbers.min.css";
+
 
 .cdk-overlay-container {
   z-index: 1000 !important;

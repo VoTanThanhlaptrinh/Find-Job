@@ -13,13 +13,47 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { JwtModule } from '@auth0/angular-jwt';
 import { provideToastr } from 'ngx-toastr';
 import { AuthService } from './core/services/auth.service';
+import { provideMarkdown, CLIPBOARD_OPTIONS, ClipboardButtonComponent, SANITIZE } from 'ngx-markdown';
+import DOMPurify from 'dompurify';
+
+// Import Prism languages for syntax highlighting
+import 'prismjs';
+import 'prismjs/components/prism-typescript';
+import 'prismjs/components/prism-javascript';
+import 'prismjs/components/prism-json';
+import 'prismjs/components/prism-bash';
+import 'prismjs/components/prism-markdown';
+import 'prismjs/components/prism-css';
+import 'prismjs/components/prism-scss';
+import 'prismjs/components/prism-sql';
+
+export function sanitizeHtml(html: string): string {
+  if (typeof window !== 'undefined') {
+    const purify = (DOMPurify as any).default || DOMPurify;
+    return typeof purify.sanitize === 'function' ? purify.sanitize(html) : purify(window).sanitize(html);
+  }
+  return html;
+}
 
 export function initializeApp(authService: AuthService) {
   return () => authService.refreshToken();
 }
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideMarkdown({
+      clipboardOptions: {
+        provide: CLIPBOARD_OPTIONS,
+        useValue: {
+          buttonComponent: ClipboardButtonComponent,
+        },
+      },
+      sanitize: {
+        provide: SANITIZE,
+        useValue: sanitizeHtml,
+      },
+    }),
     provideZoneChangeDetection({ eventCoalescing: true }),
+
     provideRouter(
       routes,
       withInMemoryScrolling({
