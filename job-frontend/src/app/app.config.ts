@@ -2,7 +2,6 @@ import { isPlatformBrowser } from '@angular/common';
 import { ApplicationConfig, importProvidersFrom, inject, PLATFORM_ID, provideAppInitializer, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { routes } from './app.routes';
-import { provideClientHydration } from '@angular/platform-browser';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { loggerInterceptor } from './core/interceptors/logger.interceptor';
@@ -28,7 +27,6 @@ export const appConfig: ApplicationConfig = {
         anchorScrolling: 'enabled'
       })
     ),
-    provideClientHydration(),
     provideHttpClient(
       withFetch(),
       withInterceptors([loggerInterceptor, errorInterceptor, refreshTokenInterceptor])

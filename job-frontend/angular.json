@@ -32,12 +32,7 @@
               "src/assets/web_css/css/main.css",
               "node_modules/keen-slider/keen-slider.min.css"
             ],
-            "scripts": [],
-            "server": "src/main.server.ts",
-            "outputMode": "server",
-            "ssr": {
-              "entry": "src/server.ts"
-            }
+            "scripts": []
           },
           "configurations": {
             "production": {
