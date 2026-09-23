@@ -310,7 +310,7 @@
 
         <!-- User Info -->
         <div class="mt-6 pt-5 border-t border-slate-100 flex items-center gap-3.5">
-          <img [src]="item.avatar" [alt]="item.name" class="h-11 w-11 rounded-full object-cover border border-slate-200 shadow-xs" />
+          <img [src]="item.avatar" [alt]="item.name" loading="lazy" decoding="async" class="h-11 w-11 rounded-full object-cover border border-slate-200 shadow-xs" />
           <div>
             <h4 class="font-headline text-sm font-bold text-slate-900">{{ item.name }}</h4>
             <p class="text-xs text-slate-500 font-medium">{{ item.role }} • <span class="text-[#1E63F3] font-semibold">{{ item.company }}</span></p>
@@ -344,7 +344,7 @@
       <!-- Article 1 -->
       <article class="group rounded-3xl border border-slate-200/80 bg-slate-50/50 p-5 transition-all duration-300 hover:bg-white hover:shadow-xl hover:-translate-y-1">
         <div class="overflow-hidden rounded-2xl aspect-[16/10] bg-slate-100">
-          <img src="assets/web_css/img/blog1.jpg" alt="Resume writing" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+          <img src="assets/web_css/img/blog1.jpg" alt="Resume writing" loading="lazy" decoding="async" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
         </div>
         <div class="mt-5">
           <span class="text-xs font-bold uppercase tracking-wider text-[#1E63F3]">{{ 'home.blog.articles.0.category' | t }}</span>
@@ -362,7 +362,7 @@
       <!-- Article 2 -->
       <article class="group rounded-3xl border border-slate-200/80 bg-slate-50/50 p-5 transition-all duration-300 hover:bg-white hover:shadow-xl hover:-translate-y-1">
         <div class="overflow-hidden rounded-2xl aspect-[16/10] bg-slate-100">
-          <img src="assets/web_css/img/blog1.jpg" alt="Job search tips" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+          <img src="assets/web_css/img/blog1.jpg" alt="Job search tips" loading="lazy" decoding="async" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
         </div>
         <div class="mt-5">
           <span class="text-xs font-bold uppercase tracking-wider text-[#1E63F3]">{{ 'home.blog.articles.1.category' | t }}</span>
@@ -380,7 +380,7 @@
       <!-- Article 3 -->
       <article class="group rounded-3xl border border-slate-200/80 bg-slate-50/50 p-5 transition-all duration-300 hover:bg-white hover:shadow-xl hover:-translate-y-1">
         <div class="overflow-hidden rounded-2xl aspect-[16/10] bg-slate-100">
-          <img src="assets/web_css/img/blog1.jpg" alt="Career trends" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+          <img src="assets/web_css/img/blog1.jpg" alt="Career trends" loading="lazy" decoding="async" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
         </div>
         <div class="mt-5">
           <span class="text-xs font-bold uppercase tracking-wider text-[#1E63F3]">{{ 'home.blog.articles.2.category' | t }}</span>

@@ -12,7 +12,6 @@ import {
 import { RouterModule } from '@angular/router';
 import Swiper from 'swiper';
 import { Autoplay, Keyboard, Navigation, Pagination } from 'swiper/modules';
-
 import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
 
 export interface FeatureTab {
@@ -64,7 +63,7 @@ export class FeaturesSectionComponent implements AfterViewInit, OnDestroy {
       type: 'search',
       bgGradient: 'from-blue-50/90 via-indigo-50/40 to-slate-50',
       borderColor: 'border-blue-100',
-      imageUrl: 'assets/images/tim-kiem-thong-minh.png',
+      imageUrl: 'assets/images/tim-kiem-thong-minh.webp',
       badgeKey: 'home.features.slides.search.badge',
       badgeIcon: 'auto_awesome',
     },
@@ -77,7 +76,7 @@ export class FeaturesSectionComponent implements AfterViewInit, OnDestroy {
       type: 'consulting',
       bgGradient: 'from-indigo-50/90 via-blue-50/50 to-teal-50/40',
       borderColor: 'border-indigo-100',
-      imageUrl: 'assets/images/tu-van-nghe-nghiep.png',
+      imageUrl: 'assets/images/tu-van-nghe-nghiep.webp',
       badgeKey: 'home.features.slides.consulting.badge',
       badgeIcon: 'psychology',
     },
@@ -90,7 +89,7 @@ export class FeaturesSectionComponent implements AfterViewInit, OnDestroy {
       type: 'apply',
       bgGradient: 'from-emerald-50/90 via-teal-50/50 to-slate-50',
       borderColor: 'border-emerald-100',
-      imageUrl: 'assets/images/ung-tuyen-nhanh.png',
+      imageUrl: 'assets/images/ung-tuyen-nhanh.webp',
       badgeKey: 'home.features.slides.apply.badge',
       badgeIcon: 'touch_app',
     },
@@ -103,7 +102,7 @@ export class FeaturesSectionComponent implements AfterViewInit, OnDestroy {
       type: 'track',
       bgGradient: 'from-amber-50/90 via-orange-50/40 to-slate-50',
       borderColor: 'border-amber-100',
-      imageUrl: 'assets/images/theo-doi-ung-tuyen.png',
+      imageUrl: 'assets/images/theo-doi-ung-tuyen.webp',
       badgeKey: 'home.features.slides.track.badge',
       badgeIcon: 'notifications_active',
     },
@@ -112,7 +111,7 @@ export class FeaturesSectionComponent implements AfterViewInit, OnDestroy {
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngAfterViewInit(): void {
     if (isPlatformBrowser(this.platformId) && this.swiperRef) {
@@ -139,10 +138,10 @@ export class FeaturesSectionComponent implements AfterViewInit, OnDestroy {
       autoplay: prefersReducedMotion
         ? false
         : {
-            delay: 5500,
-            disableOnInteraction: false,
-            pauseOnMouseEnter: true,
-          },
+          delay: 5500,
+          disableOnInteraction: false,
+          pauseOnMouseEnter: true,
+        },
       navigation: {
         prevEl: '.feature-swiper-prev',
         nextEl: '.feature-swiper-next',

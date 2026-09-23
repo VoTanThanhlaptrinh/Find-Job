@@ -67,9 +67,7 @@
                 "styles": true,
                 "fonts": false
               },
-              "allowedCommonJsDependencies": [
-                "quill-delta"
-              ],
+              "allowedCommonJsDependencies": [],
               "outputHashing": "all"
             },
             "development": {
