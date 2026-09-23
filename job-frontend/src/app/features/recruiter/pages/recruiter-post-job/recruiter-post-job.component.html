@@ -1,13 +1,17 @@
 <main class="bg-re-background text-re-on-surface min-h-full pb-16 relative pt-8 px-4 sm:px-6">
   <div class="max-w-5xl mx-auto relative space-y-8">
     <!-- Atmospheric subtle glow -->
-    <div class="absolute -top-24 -left-24 w-96 h-96 bg-blue-500/10 blur-[120px] -z-10 rounded-full pointer-events-none"></div>
-    <div class="absolute top-1/2 -right-24 w-80 h-80 bg-indigo-500/10 blur-[100px] -z-10 rounded-full pointer-events-none"></div>
+    <div class="absolute -top-24 -left-24 w-96 h-96 bg-blue-500/10 blur-[120px] -z-10 rounded-full pointer-events-none">
+    </div>
+    <div
+      class="absolute top-1/2 -right-24 w-80 h-80 bg-indigo-500/10 blur-[100px] -z-10 rounded-full pointer-events-none">
+    </div>
 
     <form [formGroup]="postJobFG" class="space-y-8">
       <!-- Unified Card Container: Basic Info + Detailed Description -->
-      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-10 shadow-sm border border-slate-100 dark:border-slate-800 space-y-10">
-        
+      <div
+        class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-10 shadow-sm border border-slate-100 dark:border-slate-800 space-y-10">
+
         <!-- Section 1: Basic Information -->
         <section>
           <div class="flex items-center gap-3 mb-8">
@@ -19,7 +23,8 @@
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <!-- Job Title -->
             <div class="lg:col-span-2">
-              <label class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 px-1">
+              <label
+                class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 px-1">
                 {{ 'recruiterPostJob.jobTitle' | t }} <span class="text-rose-500">*</span>
               </label>
               <input formControlName="jobName"
@@ -33,34 +38,76 @@
                 [class.focus:ring-rose-500/20]="isFieldInvalid('jobName')"
                 [placeholder]="'recruiterPostJob.jobTitlePlaceholder' | t" type="text" />
               @if (isFieldInvalid('jobName')) {
-                <p class="text-xs font-semibold text-rose-500 flex items-center gap-1 mt-1.5">
-                  <span class="material-symbols-outlined text-[14px]">error</span>
-                  <span>{{ getFieldError('jobName') }}</span>
-                </p>
+              <p class="text-xs font-semibold text-rose-500 flex items-center gap-1 mt-1.5">
+                <span class="material-symbols-outlined text-[14px]">error</span>
+                <span>{{ getFieldError('jobName') }}</span>
+              </p>
               }
             </div>
 
             <!-- Job Type -->
-            <div>
-              <label class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 px-1">
+            <div class="jobtype-dropdown-container">
+              <label
+                class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 px-1">
                 {{ 'recruiterPostJob.jobType' | t }} <span class="text-rose-500">*</span>
               </label>
               <div class="relative">
-                <select title="select" formControlName="jobType"
-                  class="w-full bg-white dark:bg-slate-900 border rounded-xl px-4 py-3.5 pr-10 shadow-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 transition-all appearance-none cursor-pointer text-sm font-medium"
+                <button
+                  type="button"
+                  (click)="toggleJobTypeDropdown()"
+                  class="w-full bg-white dark:bg-slate-900 border rounded-xl px-4 py-3.5 shadow-xs text-left focus:outline-none focus:ring-2 transition-all cursor-pointer text-sm font-medium flex items-center justify-between"
                   [class.border-slate-200]="!isFieldInvalid('jobType')"
                   [class.dark:border-slate-700]="!isFieldInvalid('jobType')"
                   [class.focus:border-blue-500]="!isFieldInvalid('jobType')"
                   [class.focus:ring-blue-500/20]="!isFieldInvalid('jobType')"
                   [class.border-rose-400]="isFieldInvalid('jobType')"
                   [class.focus:border-rose-500]="isFieldInvalid('jobType')"
-                  [class.focus:ring-rose-500/20]="isFieldInvalid('jobType')">
-                  <option value="FULL_TIME">{{ 'recruiterPostJob.jobTypeOptions.fullTime' | t }}</option>
-                  <option value="PART_TIME">{{ 'recruiterPostJob.jobTypeOptions.partTime' | t }}</option>
-                  <option value="HYBRID">{{ 'recruiterPostJob.jobTypeOptions.hybrid' | t }}</option>
-                  <option value="REMOTE">{{ 'recruiterPostJob.jobTypeOptions.remote' | t }}</option>
-                </select>
-                <span class="material-symbols-outlined absolute right-3.5 top-3.5 text-slate-400 pointer-events-none text-[20px]">expand_more</span>
+                  [class.focus:ring-rose-500/20]="isFieldInvalid('jobType')"
+                  [class.ring-2]="isJobTypeDropdownOpen()"
+                  [class.ring-blue-500/20]="isJobTypeDropdownOpen() && !isFieldInvalid('jobType')"
+                  [class.border-blue-500]="isJobTypeDropdownOpen() && !isFieldInvalid('jobType')">
+                  <div class="flex items-center gap-2.5 truncate">
+                    @if (selectedJobTypeOption()?.icon) {
+                      <span class="material-symbols-outlined text-[18px] text-blue-600 dark:text-blue-400 shrink-0">
+                        {{ selectedJobTypeOption()?.icon }}
+                      </span>
+                    }
+                    <span class="text-slate-900 dark:text-white font-medium truncate">
+                      {{ selectedJobTypeOption()?.labelKey ? (selectedJobTypeOption()!.labelKey | t) : ('recruiterPostJob.jobType' | t) }}
+                    </span>
+                  </div>
+                  <span
+                    class="material-symbols-outlined text-slate-400 pointer-events-none transition-transform duration-200 text-[20px]"
+                    [class.rotate-180]="isJobTypeDropdownOpen()">
+                    expand_more
+                  </span>
+                </button>
+
+                @if (isJobTypeDropdownOpen()) {
+                  <ul class="absolute z-20 w-full mt-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl shadow-blue-900/10 overflow-hidden left-0 py-1 animate-panel-pop">
+                    @for (item of jobTypeOptions; track item.value) {
+                      <li
+                        class="px-4 py-2.5 hover:bg-blue-50/70 dark:hover:bg-slate-700/60 cursor-pointer text-slate-700 dark:text-slate-200 text-sm font-medium border-b border-slate-50 dark:border-slate-700/40 last:border-0 transition-colors flex items-center justify-between"
+                        [class.bg-blue-50]="postJobFG.get('jobType')?.value === item.value"
+                        [class.dark:bg-slate-700]="postJobFG.get('jobType')?.value === item.value"
+                        [class.text-blue-600]="postJobFG.get('jobType')?.value === item.value"
+                        [class.dark:text-blue-400]="postJobFG.get('jobType')?.value === item.value"
+                        (click)="selectJobType(item.value)">
+                        <div class="flex items-center gap-2.5">
+                          <span class="material-symbols-outlined text-[18px] text-slate-400"
+                            [class.text-blue-600]="postJobFG.get('jobType')?.value === item.value"
+                            [class.dark:text-blue-400]="postJobFG.get('jobType')?.value === item.value">
+                            {{ item.icon }}
+                          </span>
+                          <span>{{ item.labelKey | t }}</span>
+                        </div>
+                        @if (postJobFG.get('jobType')?.value === item.value) {
+                          <span class="material-symbols-outlined text-blue-600 dark:text-blue-400 text-[18px]">check</span>
+                        }
+                      </li>
+                    }
+                  </ul>
+                }
               </div>
               @if (isFieldInvalid('jobType')) {
                 <p class="text-xs font-semibold text-rose-500 flex items-center gap-1 mt-1.5">
@@ -71,13 +118,16 @@
             </div>
 
             <!-- Category -->
-            <div class="relative">
-              <label class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 px-1">
+            <div class="category-dropdown-container">
+              <label
+                class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 px-1">
                 {{ 'recruiterPostJob.category' | t }} <span class="text-rose-500">*</span>
               </label>
               <div class="relative">
-                <input type="text" 
-                  class="w-full bg-white dark:bg-slate-900 border rounded-xl px-4 py-3.5 pr-10 shadow-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 transition-all cursor-text text-sm font-medium"
+                <button
+                  type="button"
+                  (click)="toggleCategoryDropdown()"
+                  class="w-full bg-white dark:bg-slate-900 border rounded-xl px-4 py-3.5 shadow-xs text-left focus:outline-none focus:ring-2 transition-all cursor-pointer text-sm font-medium flex items-center justify-between"
                   [class.border-slate-200]="!isFieldInvalid('categoryId')"
                   [class.dark:border-slate-700]="!isFieldInvalid('categoryId')"
                   [class.focus:border-blue-500]="!isFieldInvalid('categoryId')"
@@ -85,34 +135,83 @@
                   [class.border-rose-400]="isFieldInvalid('categoryId')"
                   [class.focus:border-rose-500]="isFieldInvalid('categoryId')"
                   [class.focus:ring-rose-500/20]="isFieldInvalid('categoryId')"
-                  [placeholder]="selectedCategoryName() || ('recruiterPostJob.categoryPlaceholder' | t)"
-                  [value]="selectedCategoryName() ? '' : categorySearchTerm()"
-                  (input)="onCategorySearch($event)"
-                  (focus)="isCategoryDropdownOpen.set(true)"
-                  (blur)="closeCategoryDropdown()" />
-                       
-                <span class="material-symbols-outlined absolute right-3.5 top-3.5 text-slate-400 pointer-events-none transition-transform text-[20px]"
-                  [class.rotate-180]="isCategoryDropdownOpen()">
-                  expand_more
-                </span>
+                  [class.ring-2]="isCategoryDropdownOpen()"
+                  [class.ring-blue-500/20]="isCategoryDropdownOpen() && !isFieldInvalid('categoryId')"
+                  [class.border-blue-500]="isCategoryDropdownOpen() && !isFieldInvalid('categoryId')">
+                  
+                  <span class="truncate"
+                    [class.text-slate-900]="selectedCategoryDisplay()"
+                    [class.dark:text-white]="selectedCategoryDisplay()"
+                    [class.text-slate-400]="!selectedCategoryDisplay()"
+                    [class.dark:text-slate-500]="!selectedCategoryDisplay()">
+                    {{ selectedCategoryDisplay() || ('recruiterPostJob.categoryPlaceholder' | t) }}
+                  </span>
+
+                  <div class="flex items-center gap-1 shrink-0">
+                    @if (selectedCategoryDisplay()) {
+                      <span
+                        (click)="clearCategory($event)"
+                        class="material-symbols-outlined text-[16px] text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                        [title]="'customSelect.clearSelection' | t">
+                        close
+                      </span>
+                    }
+                    <span
+                      class="material-symbols-outlined text-slate-400 pointer-events-none transition-transform duration-200 text-[20px]"
+                      [class.rotate-180]="isCategoryDropdownOpen()">
+                      expand_more
+                    </span>
+                  </div>
+                </button>
 
                 @if (isCategoryDropdownOpen()) {
-                <ul class="absolute z-20 w-full mt-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl shadow-blue-900/10 max-h-60 overflow-y-auto left-0 overflow-x-hidden py-1">
-                  @for (cat of filteredCategories(); track cat.id) {
-                  <li class="px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-700/60 cursor-pointer text-slate-700 dark:text-slate-200 text-sm font-medium border-b border-slate-100 dark:border-slate-700/40 last:border-0 transition-colors flex items-center justify-between"
-                      (mousedown)="selectCategory(cat)">
-                    <span>{{ cat.name }}</span>
-                    @if (postJobFG.get('categoryId')?.value === cat.id) {
-                      <span class="material-symbols-outlined text-blue-600 text-sm">check</span>
-                    }
-                  </li>
-                  }
-                  @if (filteredCategories().length === 0) {
-                  <li class="px-4 py-3 text-slate-400 text-sm italic text-center">
-                    {{ 'recruiterPostJob.categoryEmpty' | t }}
-                  </li>
-                  }
-                </ul>
+                  <div
+                    class="absolute z-20 w-full mt-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl shadow-blue-900/10 max-h-64 overflow-hidden left-0 flex flex-col py-1 animate-panel-pop">
+                    <!-- Pinned search box inside dropdown -->
+                    <div class="p-2 border-b border-slate-100 dark:border-slate-700/60 sticky top-0 bg-white dark:bg-slate-800 z-10">
+                      <div class="relative flex items-center">
+                        <span class="material-symbols-outlined absolute left-2.5 text-slate-400 text-[18px]">search</span>
+                        <input
+                          id="categorySearchInput"
+                          type="text"
+                          [value]="categorySearchTerm()"
+                          (input)="onCategorySearch($event)"
+                          [placeholder]="'customSelect.search' | t"
+                          class="w-full bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-lg pl-8 pr-7 py-1.5 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                        @if (categorySearchTerm()) {
+                          <button
+                            type="button"
+                            (click)="clearCategorySearch($event)"
+                            class="absolute right-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5 cursor-pointer">
+                            <span class="material-symbols-outlined text-[14px]">close</span>
+                          </button>
+                        }
+                      </div>
+                    </div>
+
+                    <!-- Options list -->
+                    <ul class="overflow-y-auto max-h-48 py-1">
+                      @for (cat of filteredCategories(); track cat.id) {
+                        <li
+                          class="px-4 py-2.5 hover:bg-blue-50/70 dark:hover:bg-slate-700/60 cursor-pointer text-slate-700 dark:text-slate-200 text-sm font-medium border-b border-slate-50 dark:border-slate-700/40 last:border-0 transition-colors flex items-center justify-between"
+                          [class.bg-blue-50]="selectedCategoryId() === cat.id"
+                          [class.dark:bg-slate-700]="selectedCategoryId() === cat.id"
+                          [class.text-blue-600]="selectedCategoryId() === cat.id"
+                          [class.dark:text-blue-400]="selectedCategoryId() === cat.id"
+                          (click)="selectCategory(cat, $event)">
+                          <span>{{ cat.name }}</span>
+                          @if (selectedCategoryId() === cat.id) {
+                            <span class="material-symbols-outlined text-blue-600 dark:text-blue-400 text-[18px]">check</span>
+                          }
+                        </li>
+                      }
+                      @if (filteredCategories().length === 0) {
+                        <li class="px-4 py-4 text-slate-400 dark:text-slate-500 text-xs italic text-center">
+                          {{ 'recruiterPostJob.categoryEmpty' | t }}
+                        </li>
+                      }
+                    </ul>
+                  </div>
                 }
               </div>
               @if (isFieldInvalid('categoryId')) {
@@ -125,7 +224,8 @@
 
             <!-- Salary -->
             <div>
-              <label class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 px-1">
+              <label
+                class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 px-1">
                 {{ 'recruiterPostJob.salary' | t }} <span class="text-rose-500">*</span>
               </label>
               <input formControlName="salary"
@@ -139,16 +239,17 @@
                 [class.focus:ring-rose-500/20]="isFieldInvalid('salary')"
                 [placeholder]="'recruiterPostJob.salaryPlaceholder' | t" type="text" />
               @if (isFieldInvalid('salary')) {
-                <p class="text-xs font-semibold text-rose-500 flex items-center gap-1 mt-1.5">
-                  <span class="material-symbols-outlined text-[14px]">error</span>
-                  <span>{{ getFieldError('salary') }}</span>
-                </p>
+              <p class="text-xs font-semibold text-rose-500 flex items-center gap-1 mt-1.5">
+                <span class="material-symbols-outlined text-[14px]">error</span>
+                <span>{{ getFieldError('salary') }}</span>
+              </p>
               }
             </div>
 
             <!-- Headcount -->
             <div>
-              <label class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 px-1">
+              <label
+                class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 px-1">
                 {{ 'recruiterPostJob.headcount' | t }} <span class="text-rose-500">*</span>
               </label>
               <input formControlName="headCount"
@@ -162,16 +263,17 @@
                 [class.focus:ring-rose-500/20]="isFieldInvalid('headCount')"
                 [placeholder]="'recruiterPostJob.headcountPlaceholder' | t" type="number" min="1" />
               @if (isFieldInvalid('headCount')) {
-                <p class="text-xs font-semibold text-rose-500 flex items-center gap-1 mt-1.5">
-                  <span class="material-symbols-outlined text-[14px]">error</span>
-                  <span>{{ getFieldError('headCount') }}</span>
-                </p>
+              <p class="text-xs font-semibold text-rose-500 flex items-center gap-1 mt-1.5">
+                <span class="material-symbols-outlined text-[14px]">error</span>
+                <span>{{ getFieldError('headCount') }}</span>
+              </p>
               }
             </div>
 
             <!-- Deadline CV -->
             <div>
-              <label class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 px-1">
+              <label
+                class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 px-1">
                 {{ 'recruiterPostJob.expiredDate' | t }} <span class="text-rose-500">*</span>
               </label>
               <input title="input" formControlName="deadlineCV"
@@ -182,40 +284,92 @@
                 [class.focus:ring-blue-500/20]="!isFieldInvalid('deadlineCV')"
                 [class.border-rose-400]="isFieldInvalid('deadlineCV')"
                 [class.focus:border-rose-500]="isFieldInvalid('deadlineCV')"
-                [class.focus:ring-rose-500/20]="isFieldInvalid('deadlineCV')"
-                type="date" />
+                [class.focus:ring-rose-500/20]="isFieldInvalid('deadlineCV')" type="date" />
               @if (isFieldInvalid('deadlineCV')) {
-                <p class="text-xs font-semibold text-rose-500 flex items-center gap-1 mt-1.5">
-                  <span class="material-symbols-outlined text-[14px]">error</span>
-                  <span>{{ getFieldError('deadlineCV') }}</span>
-                </p>
+              <p class="text-xs font-semibold text-rose-500 flex items-center gap-1 mt-1.5">
+                <span class="material-symbols-outlined text-[14px]">error</span>
+                <span>{{ getFieldError('deadlineCV') }}</span>
+              </p>
               }
             </div>
 
             <!-- Address Location -->
-            <div class="lg:col-span-3">
-              <label class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 px-1">
+            <div class="lg:col-span-3 location-dropdown-container">
+              <label
+                class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 px-1">
                 {{ 'recruiterPostJob.address' | t }} <span class="text-rose-500">*</span>
               </label>
               <div class="relative">
-                <span
-                  class="material-symbols-outlined absolute left-4 top-3.5 text-slate-400 pointer-events-none text-[20px]">location_on</span>
-                <select title="address" formControlName="location"
-                  class="w-full bg-white dark:bg-slate-900 border rounded-xl pl-12 pr-10 py-3.5 shadow-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 transition-all appearance-none cursor-pointer text-sm font-medium"
+                <button
+                  type="button"
+                  (click)="toggleLocationDropdown()"
+                  class="w-full bg-white dark:bg-slate-900 border rounded-xl pl-11 pr-10 py-3.5 shadow-xs text-left focus:outline-none focus:ring-2 transition-all cursor-pointer text-sm font-medium flex items-center justify-between"
                   [class.border-slate-200]="!isFieldInvalid('location')"
                   [class.dark:border-slate-700]="!isFieldInvalid('location')"
                   [class.focus:border-blue-500]="!isFieldInvalid('location')"
                   [class.focus:ring-blue-500/20]="!isFieldInvalid('location')"
                   [class.border-rose-400]="isFieldInvalid('location')"
                   [class.focus:border-rose-500]="isFieldInvalid('location')"
-                  [class.focus:ring-rose-500/20]="isFieldInvalid('location')">
-                  <option value="" disabled selected>{{ 'recruiterPostJob.addressPlaceholder' | t }}</option>
-                  @for (addr of companyAddresses; track addr.id) {
-                  <option [value]="addr.id">{{ addr.city }} - {{ addr.street }}</option>
-                  }
-                </select>
-                <span
-                  class="material-symbols-outlined absolute right-3.5 top-3.5 text-slate-400 pointer-events-none text-[20px]">expand_more</span>
+                  [class.focus:ring-rose-500/20]="isFieldInvalid('location')"
+                  [class.ring-2]="isLocationDropdownOpen()"
+                  [class.ring-blue-500/20]="isLocationDropdownOpen() && !isFieldInvalid('location')"
+                  [class.border-blue-500]="isLocationDropdownOpen() && !isFieldInvalid('location')">
+                  
+                  <span
+                    class="material-symbols-outlined absolute left-4 top-3.5 text-[20px] transition-colors"
+                    [class.text-blue-600]="selectedAddressDisplay()"
+                    [class.dark:text-blue-400]="selectedAddressDisplay()"
+                    [class.text-slate-400]="!selectedAddressDisplay()">
+                    location_on
+                  </span>
+
+                  <span class="truncate"
+                    [class.text-slate-900]="selectedAddressDisplay()"
+                    [class.dark:text-white]="selectedAddressDisplay()"
+                    [class.text-slate-400]="!selectedAddressDisplay()"
+                    [class.dark:text-slate-500]="!selectedAddressDisplay()">
+                    {{ selectedAddressDisplay() || ('recruiterPostJob.addressPlaceholder' | t) }}
+                  </span>
+
+                  <span
+                    class="material-symbols-outlined absolute right-3.5 top-3.5 text-slate-400 pointer-events-none transition-transform duration-200 text-[20px]"
+                    [class.rotate-180]="isLocationDropdownOpen()">
+                    expand_more
+                  </span>
+                </button>
+
+                @if (isLocationDropdownOpen()) {
+                  <ul class="absolute z-20 w-full mt-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl shadow-blue-900/10 max-h-60 overflow-y-auto left-0 py-1 animate-panel-pop">
+                    @for (addr of companyAddresses; track addr.id) {
+                      <li
+                        class="px-4 py-3 hover:bg-blue-50/70 dark:hover:bg-slate-700/60 cursor-pointer text-slate-700 dark:text-slate-200 text-sm font-medium border-b border-slate-50 dark:border-slate-700/40 last:border-0 transition-colors flex items-center justify-between"
+                        [class.bg-blue-50]="selectedLocationId() === addr.id.toString()"
+                        [class.dark:bg-slate-700]="selectedLocationId() === addr.id.toString()"
+                        [class.text-blue-600]="selectedLocationId() === addr.id.toString()"
+                        [class.dark:text-blue-400]="selectedLocationId() === addr.id.toString()"
+                        (click)="selectAddress(addr)">
+                        <div class="flex items-center gap-2 truncate">
+                          <span class="font-semibold text-slate-900 dark:text-white">{{ addr.city }}</span>
+                          <span class="text-slate-400">-</span>
+                          <span class="text-slate-600 dark:text-slate-300 truncate">{{ addr.street }}</span>
+                          @if (addr.isDefault) {
+                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-md bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 shrink-0">
+                              {{ 'recruiterAddress.default' | t }}
+                            </span>
+                          }
+                        </div>
+                        @if (selectedLocationId() === addr.id.toString()) {
+                          <span class="material-symbols-outlined text-blue-600 dark:text-blue-400 text-[18px]">check</span>
+                        }
+                      </li>
+                    }
+                    @if (companyAddresses.length === 0) {
+                      <li class="px-4 py-4 text-slate-400 dark:text-slate-500 text-xs italic text-center">
+                        {{ 'recruiterPostJob.addressPlaceholder' | t }}
+                      </li>
+                    }
+                  </ul>
+                }
               </div>
               @if (isFieldInvalid('location')) {
                 <p class="text-xs font-semibold text-rose-500 flex items-center gap-1 mt-1.5">
@@ -230,7 +384,8 @@
         <!-- Elegant Section Divider -->
         <div class="relative flex items-center justify-center my-6">
           <div class="w-full border-t border-slate-100 dark:border-slate-800"></div>
-          <div class="absolute bg-white dark:bg-slate-900 px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-2">
+          <div
+            class="absolute bg-white dark:bg-slate-900 px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-2">
             <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
             <span>{{ 'recruiterPostJob.profileDetails' | t }}</span>
             <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
@@ -255,92 +410,95 @@
             <!-- 1. Mô tả công việc -->
             <div>
               <div class="flex items-center justify-between mb-2 px-1">
-                <label class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+                <label
+                  class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
                   {{ 'recruiterPostJob.description' | t }} <span class="text-rose-500">*</span>
                 </label>
-                <span class="text-[11px] text-slate-400 font-medium">{{ 'recruiterPostJob.validation.maxChars' | t }}</span>
+                <span class="text-[11px] text-slate-400 font-medium">{{ 'recruiterPostJob.validation.maxChars' | t
+                  }}</span>
               </div>
-              <div class="h-[280px] w-full rounded-2xl transition-all"
-                [class.ring-2]="isFieldInvalid('jobDescription')"
+              <div class="h-[280px] w-full rounded-2xl transition-all" [class.ring-2]="isFieldInvalid('jobDescription')"
                 [class.ring-rose-400]="isFieldInvalid('jobDescription')"
                 [class.ring-offset-1]="isFieldInvalid('jobDescription')">
                 <app-markdown-editor formControlName="jobDescription" [maxLength]="5000"
                   [placeholder]="'recruiterPostJob.descriptionPlaceholder' | t"></app-markdown-editor>
               </div>
               @if (isFieldInvalid('jobDescription')) {
-                <p class="text-xs font-semibold text-rose-500 flex items-center gap-1 mt-1.5">
-                  <span class="material-symbols-outlined text-[14px]">error</span>
-                  <span>{{ getFieldError('jobDescription') }}</span>
-                </p>
+              <p class="text-xs font-semibold text-rose-500 flex items-center gap-1 mt-1.5">
+                <span class="material-symbols-outlined text-[14px]">error</span>
+                <span>{{ getFieldError('jobDescription') }}</span>
+              </p>
               }
             </div>
 
             <!-- 2. Kỹ năng chuyên môn -->
             <div>
               <div class="flex items-center justify-between mb-2 px-1">
-                <label class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+                <label
+                  class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
                   {{ 'recruiterPostJob.skills' | t }} <span class="text-rose-500">*</span>
                 </label>
-                <span class="text-[11px] text-slate-400 font-medium">{{ 'recruiterPostJob.validation.maxChars' | t }}</span>
+                <span class="text-[11px] text-slate-400 font-medium">{{ 'recruiterPostJob.validation.maxChars' | t
+                  }}</span>
               </div>
-              <div class="h-[260px] w-full rounded-2xl transition-all"
-                [class.ring-2]="isFieldInvalid('jobSkill')"
-                [class.ring-rose-400]="isFieldInvalid('jobSkill')"
-                [class.ring-offset-1]="isFieldInvalid('jobSkill')">
+              <div class="h-[260px] w-full rounded-2xl transition-all" [class.ring-2]="isFieldInvalid('jobSkill')"
+                [class.ring-rose-400]="isFieldInvalid('jobSkill')" [class.ring-offset-1]="isFieldInvalid('jobSkill')">
                 <app-markdown-editor formControlName="jobSkill" [maxLength]="5000"
                   [placeholder]="'recruiterPostJob.skillsPlaceholder' | t"></app-markdown-editor>
               </div>
               @if (isFieldInvalid('jobSkill')) {
-                <p class="text-xs font-semibold text-rose-500 flex items-center gap-1 mt-1.5">
-                  <span class="material-symbols-outlined text-[14px]">error</span>
-                  <span>{{ getFieldError('jobSkill') }}</span>
-                </p>
+              <p class="text-xs font-semibold text-rose-500 flex items-center gap-1 mt-1.5">
+                <span class="material-symbols-outlined text-[14px]">error</span>
+                <span>{{ getFieldError('jobSkill') }}</span>
+              </p>
               }
             </div>
 
             <!-- 3. Yêu cầu ứng viên -->
             <div>
               <div class="flex items-center justify-between mb-2 px-1">
-                <label class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+                <label
+                  class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
                   {{ 'recruiterPostJob.requirements' | t }} <span class="text-rose-500">*</span>
                 </label>
-                <span class="text-[11px] text-slate-400 font-medium">{{ 'recruiterPostJob.validation.maxChars' | t }}</span>
+                <span class="text-[11px] text-slate-400 font-medium">{{ 'recruiterPostJob.validation.maxChars' | t
+                  }}</span>
               </div>
-              <div class="h-[280px] w-full rounded-2xl transition-all"
-                [class.ring-2]="isFieldInvalid('jobRequirement')"
+              <div class="h-[280px] w-full rounded-2xl transition-all" [class.ring-2]="isFieldInvalid('jobRequirement')"
                 [class.ring-rose-400]="isFieldInvalid('jobRequirement')"
                 [class.ring-offset-1]="isFieldInvalid('jobRequirement')">
                 <app-markdown-editor formControlName="jobRequirement" [maxLength]="5000"
                   [placeholder]="'recruiterPostJob.requirementsPlaceholder' | t"></app-markdown-editor>
               </div>
               @if (isFieldInvalid('jobRequirement')) {
-                <p class="text-xs font-semibold text-rose-500 flex items-center gap-1 mt-1.5">
-                  <span class="material-symbols-outlined text-[14px]">error</span>
-                  <span>{{ getFieldError('jobRequirement') }}</span>
-                </p>
+              <p class="text-xs font-semibold text-rose-500 flex items-center gap-1 mt-1.5">
+                <span class="material-symbols-outlined text-[14px]">error</span>
+                <span>{{ getFieldError('jobRequirement') }}</span>
+              </p>
               }
             </div>
 
             <!-- 4. Quyền lợi & đãi ngộ -->
             <div>
               <div class="flex items-center justify-between mb-2 px-1">
-                <label class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+                <label
+                  class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
                   {{ 'recruiterPostJob.benefits' | t }}
                 </label>
-                <span class="text-[11px] text-slate-400 font-medium">{{ 'recruiterPostJob.validation.maxChars' | t }}</span>
+                <span class="text-[11px] text-slate-400 font-medium">{{ 'recruiterPostJob.validation.maxChars' | t
+                  }}</span>
               </div>
-              <div class="h-[260px] w-full rounded-2xl transition-all"
-                [class.ring-2]="isFieldInvalid('moreDetail')"
+              <div class="h-[260px] w-full rounded-2xl transition-all" [class.ring-2]="isFieldInvalid('moreDetail')"
                 [class.ring-rose-400]="isFieldInvalid('moreDetail')"
                 [class.ring-offset-1]="isFieldInvalid('moreDetail')">
                 <app-markdown-editor formControlName="moreDetail" [maxLength]="5000"
                   [placeholder]="'recruiterPostJob.benefitsPlaceholder' | t"></app-markdown-editor>
               </div>
               @if (isFieldInvalid('moreDetail')) {
-                <p class="text-xs font-semibold text-rose-500 flex items-center gap-1 mt-1.5">
-                  <span class="material-symbols-outlined text-[14px]">error</span>
-                  <span>{{ getFieldError('moreDetail') }}</span>
-                </p>
+              <p class="text-xs font-semibold text-rose-500 flex items-center gap-1 mt-1.5">
+                <span class="material-symbols-outlined text-[14px]">error</span>
+                <span>{{ getFieldError('moreDetail') }}</span>
+              </p>
               }
             </div>
           </div>
@@ -352,10 +510,11 @@
       <div class="sticky bottom-6 z-40 flex justify-center pt-2">
         <div
           class="flex flex-wrap sm:flex-nowrap items-center gap-3 sm:gap-5 bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl px-5 py-3 rounded-2xl shadow-xl shadow-slate-900/10 border border-slate-200/80 dark:border-slate-800">
-          
+
           <!-- AI Analysis Toggle -->
           <div class="flex items-center gap-3 pr-4 border-r border-slate-200 dark:border-slate-800">
-            <div class="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0 shadow-2xs">
+            <div
+              class="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0 shadow-2xs">
               <span class="material-symbols-outlined text-[20px]">psychology</span>
             </div>
             <div class="flex flex-col text-left">
@@ -384,8 +543,7 @@
             </button>
 
             <!-- Save Job Button -->
-            <button type="button" [disabled]="isSubmitting"
-              (click)="onSubmit()"
+            <button type="button" [disabled]="isSubmitting" (click)="onSubmit()"
               class="flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm font-bold px-6 py-2.5 rounded-xl shadow-md shadow-blue-500/25 hover:shadow-blue-500/35 transition-all active:scale-95 duration-200 disabled:opacity-50 cursor-pointer">
               <span class="material-symbols-outlined text-[18px]">save</span>
               <span>{{ isSubmitting ? ('recruiterPostJob.saving' | t) : ('recruiterPostJob.saveJob' | t) }}</span>
@@ -398,11 +556,7 @@
   </div>
 
   <!-- Standalone Slide-Up Preview Component -->
-  <app-job-post-preview
-    [isOpen]="isPreviewMode()"
-    [isSubmitting]="isSubmitting"
-    [data]="previewData()"
-    (backToEdit)="closePreview()"
-    (saveJob)="onSubmit()">
+  <app-job-post-preview [isOpen]="isPreviewMode()" [isSubmitting]="isSubmitting" [data]="previewData()"
+    (backToEdit)="closePreview()" (saveJob)="onSubmit()">
   </app-job-post-preview>
 </main>

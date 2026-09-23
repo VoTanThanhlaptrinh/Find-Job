@@ -1,4 +1,4 @@
-import { Component, effect, OnInit, computed, signal } from '@angular/core';
+import { Component, effect, OnInit, computed, signal, HostListener } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -56,17 +56,29 @@ export class PostJobComponent implements OnInit {
 
   categorySearchTerm = signal('');
   isCategoryDropdownOpen = signal(false);
-  selectedCategoryName = signal('');
+  isJobTypeDropdownOpen = signal(false);
+  isLocationDropdownOpen = signal(false);
+  selectedCategoryId = signal<number | null>(null);
+  selectedJobType = signal<string>('FULL_TIME');
+  selectedLocationId = signal<string | null>(null);
   isPreviewMode = signal(false);
 
+  readonly jobTypeOptions = [
+    { value: 'FULL_TIME', labelKey: 'recruiterPostJob.jobTypeOptions.fullTime', icon: 'schedule' },
+    { value: 'PART_TIME', labelKey: 'recruiterPostJob.jobTypeOptions.partTime', icon: 'hourglass_bottom' },
+    { value: 'HYBRID', labelKey: 'recruiterPostJob.jobTypeOptions.hybrid', icon: 'home_work' },
+    { value: 'REMOTE', labelKey: 'recruiterPostJob.jobTypeOptions.remote', icon: 'public' }
+  ];
+
   filteredCategories = computed(() => {
-    const term = this.categorySearchTerm().toLowerCase();
+    const term = this.categorySearchTerm().toLowerCase().trim();
     const cats = this.categoryService.categories() || [];
+    if (!term) return cats;
     return cats.filter(c => c.name.toLowerCase().includes(term));
   });
 
   selectedAddressDisplay = computed(() => {
-    const locId = this.postJobFG.get('location')?.value;
+    const locId = this.selectedLocationId() || this.postJobFG.get('location')?.value;
     if (!locId) return '';
     const addr = this.companyAddresses.find(a => a.id?.toString() === locId.toString());
     if (!addr) return '';
@@ -74,27 +86,18 @@ export class PostJobComponent implements OnInit {
   });
 
   selectedCategoryDisplay = computed(() => {
-    const catId = this.postJobFG.get('categoryId')?.value;
-    if (!catId) return this.selectedCategoryName() || '';
+    const catId = this.selectedCategoryId();
+    if (!catId) return '';
     const cat = this.categoryService.categories()?.find(c => c.id === catId);
-    return cat?.name || this.selectedCategoryName() || '';
+    return cat?.name || '';
   });
 
-  previewData = computed<JobPreviewData>(() => ({
-    jobName: this.postJobFG.get('jobName')?.value || '',
-    categoryName: this.selectedCategoryDisplay(),
-    jobType: this.postJobFG.get('jobType')?.value || '',
-    jobTypeLabel: this.getJobTypeLabel(this.postJobFG.get('jobType')?.value),
-    salary: this.postJobFG.get('salary')?.value || '',
-    address: this.selectedAddressDisplay(),
-    headcount: this.postJobFG.get('headCount')?.value ?? null,
-    deadlineCV: this.formatDateDisplay(this.postJobFG.get('deadlineCV')?.value),
-    enableAiAnalysis: !!this.postJobFG.get('enableAiAnalysis')?.value,
-    jobDescription: this.postJobFG.get('jobDescription')?.value || '',
-    jobRequirement: this.postJobFG.get('jobRequirement')?.value || '',
-    jobSkill: this.postJobFG.get('jobSkill')?.value || '',
-    moreDetail: this.postJobFG.get('moreDetail')?.value || ''
-  }));    
+  selectedJobTypeOption = computed(() => {
+    const val = this.selectedJobType();
+    return this.jobTypeOptions.find(o => o.value === val);
+  });
+
+  previewData = signal<JobPreviewData | null>(null);    
 
   constructor(
     private readonly recruiterJobsService: RecruiterJobsService,
@@ -123,6 +126,17 @@ export class PostJobComponent implements OnInit {
           deadlineCV: null,
           enableAiAnalysis: false
         });
+        this.selectedJobType.set('FULL_TIME');
+        this.selectedCategoryId.set(null);
+        this.categorySearchTerm.set('');
+        const defaultAddress = this.companyAddresses.find(a => a.isDefault);
+        if (defaultAddress) {
+          this.postJobFG.get('location')?.setValue(defaultAddress.id.toString());
+          this.selectedLocationId.set(defaultAddress.id.toString());
+        } else {
+          this.selectedLocationId.set(null);
+        }
+        this.previewData.set(null);
         this.isPreviewMode.set(false);
         return;
       }
@@ -142,6 +156,7 @@ export class PostJobComponent implements OnInit {
           const defaultAddress = this.companyAddresses.find(a => a.isDefault);
           if (defaultAddress) {
             this.postJobFG.get('location')?.setValue(defaultAddress.id.toString());
+            this.selectedLocationId.set(defaultAddress.id.toString());
           }
         }
       },
@@ -149,36 +164,130 @@ export class PostJobComponent implements OnInit {
         console.error('Failed to load company addresses', err);
       }
     });
+
+    this.postJobFG.get('jobType')?.valueChanges.subscribe(val => {
+      this.selectedJobType.set(val || 'FULL_TIME');
+    });
+    this.postJobFG.get('location')?.valueChanges.subscribe(val => {
+      this.selectedLocationId.set(val ? val.toString() : null);
+    });
+    this.postJobFG.get('categoryId')?.valueChanges.subscribe(val => {
+      this.selectedCategoryId.set(val ? Number(val) : null);
+    });
   }
 
-  toggleCategoryDropdown() {
-    this.isCategoryDropdownOpen.update(v => !v);
+  toggleCategoryDropdown(): void {
+    const next = !this.isCategoryDropdownOpen();
+    this.closeAllDropdowns();
+    this.isCategoryDropdownOpen.set(next);
+    if (next) {
+      setTimeout(() => {
+        const input = document.getElementById('categorySearchInput') as HTMLInputElement;
+        input?.focus();
+      }, 50);
+    } else {
+      this.postJobFG.get('categoryId')?.markAsTouched();
+    }
   }
 
-  closeCategoryDropdown() {
-    this.postJobFG.get('categoryId')?.markAsTouched();
-    setTimeout(() => {
-      this.isCategoryDropdownOpen.set(false);
-    }, 200);
-  }
-
-  selectCategory(cat: Category) {
+  selectCategory(cat: Category, event?: Event): void {
+    if (event) event.stopPropagation();
     this.postJobFG.get('categoryId')?.setValue(cat.id);
-    this.selectedCategoryName.set(cat.name);
+    this.postJobFG.get('categoryId')?.markAsDirty();
+    this.postJobFG.get('categoryId')?.markAsTouched();
+    this.selectedCategoryId.set(Number(cat.id));
     this.categorySearchTerm.set('');
     this.isCategoryDropdownOpen.set(false);
   }
 
-  onCategorySearch(event: Event) {
+  clearCategory(event: MouseEvent): void {
+    event.stopPropagation();
+    this.postJobFG.get('categoryId')?.setValue(null);
+    this.postJobFG.get('categoryId')?.markAsDirty();
+    this.postJobFG.get('categoryId')?.markAsTouched();
+    this.selectedCategoryId.set(null);
+    this.categorySearchTerm.set('');
+  }
+
+  clearCategorySearch(event?: Event): void {
+    if (event) event.stopPropagation();
+    this.categorySearchTerm.set('');
+  }
+
+  onCategorySearch(event: Event): void {
     const val = (event.target as HTMLInputElement).value;
     this.categorySearchTerm.set(val);
-    
-    if (this.selectedCategoryName()) {
-      this.selectedCategoryName.set('');
-      this.postJobFG.get('categoryId')?.setValue(null);
-    } else if (!val) {
-      this.postJobFG.get('categoryId')?.setValue(null);
-      this.selectedCategoryName.set('');
+  }
+
+  toggleJobTypeDropdown(): void {
+    const next = !this.isJobTypeDropdownOpen();
+    this.closeAllDropdowns();
+    this.isJobTypeDropdownOpen.set(next);
+    if (!next) {
+      this.postJobFG.get('jobType')?.markAsTouched();
+    }
+  }
+
+  selectJobType(type: string): void {
+    this.postJobFG.get('jobType')?.setValue(type);
+    this.postJobFG.get('jobType')?.markAsDirty();
+    this.postJobFG.get('jobType')?.markAsTouched();
+    this.selectedJobType.set(type);
+    this.isJobTypeDropdownOpen.set(false);
+  }
+
+  toggleLocationDropdown(): void {
+    const next = !this.isLocationDropdownOpen();
+    this.closeAllDropdowns();
+    this.isLocationDropdownOpen.set(next);
+    if (!next) {
+      this.postJobFG.get('location')?.markAsTouched();
+    }
+  }
+
+  selectAddress(addr: CompanyAddress): void {
+    this.postJobFG.get('location')?.setValue(addr.id.toString());
+    this.postJobFG.get('location')?.markAsDirty();
+    this.postJobFG.get('location')?.markAsTouched();
+    this.selectedLocationId.set(addr.id.toString());
+    this.isLocationDropdownOpen.set(false);
+  }
+
+  closeAllDropdowns(): void {
+    if (this.isCategoryDropdownOpen()) {
+      this.isCategoryDropdownOpen.set(false);
+      this.postJobFG.get('categoryId')?.markAsTouched();
+    }
+    if (this.isJobTypeDropdownOpen()) {
+      this.isJobTypeDropdownOpen.set(false);
+      this.postJobFG.get('jobType')?.markAsTouched();
+    }
+    if (this.isLocationDropdownOpen()) {
+      this.isLocationDropdownOpen.set(false);
+      this.postJobFG.get('location')?.markAsTouched();
+    }
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.category-dropdown-container')) {
+      if (this.isCategoryDropdownOpen()) {
+        this.isCategoryDropdownOpen.set(false);
+        this.postJobFG.get('categoryId')?.markAsTouched();
+      }
+    }
+    if (!target.closest('.jobtype-dropdown-container')) {
+      if (this.isJobTypeDropdownOpen()) {
+        this.isJobTypeDropdownOpen.set(false);
+        this.postJobFG.get('jobType')?.markAsTouched();
+      }
+    }
+    if (!target.closest('.location-dropdown-container')) {
+      if (this.isLocationDropdownOpen()) {
+        this.isLocationDropdownOpen.set(false);
+        this.postJobFG.get('location')?.markAsTouched();
+      }
     }
   }
 
@@ -263,11 +372,23 @@ export class PostJobComponent implements OnInit {
   }
 
   openPreview(): void {
-    if (this.postJobFG.invalid) {
-      this.postJobFG.markAllAsTouched();
-      this.notify.showMessage(this.i18nService.translate('recruiterPostJob.validation.formInvalid'), '', 'error');
-      return;
-    }
+
+    this.previewData.set({
+      jobName: this.postJobFG.get('jobName')?.value || '',
+      categoryName: this.selectedCategoryDisplay(),
+      jobType: this.postJobFG.get('jobType')?.value || '',
+      jobTypeLabel: this.getJobTypeLabel(this.postJobFG.get('jobType')?.value),
+      salary: this.postJobFG.get('salary')?.value || '',
+      address: this.selectedAddressDisplay(),
+      headcount: this.postJobFG.get('headCount')?.value ?? null,
+      deadlineCV: this.formatDateDisplay(this.postJobFG.get('deadlineCV')?.value),
+      enableAiAnalysis: !!this.postJobFG.get('enableAiAnalysis')?.value,
+      jobDescription: this.postJobFG.get('jobDescription')?.value || '',
+      jobRequirement: this.postJobFG.get('jobRequirement')?.value || '',
+      jobSkill: this.postJobFG.get('jobSkill')?.value || '',
+      moreDetail: this.postJobFG.get('moreDetail')?.value || ''
+    });
+
     this.isPreviewMode.set(true);
     if (typeof window !== 'undefined') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
