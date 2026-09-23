@@ -7,7 +7,6 @@ import {
   ReactiveFormsModule, ValidationErrors,
   Validators
 } from '@angular/forms';
-import { QuillModule } from 'ngx-quill';
 import { CommonModule } from '@angular/common';
 import { NotifyMessageService } from '../../../../core/services/notify-message.service';
 import { RecruiterJobsService } from '../../services/recruiter-jobs.service';
@@ -16,15 +15,16 @@ import { RecruiterAddressService } from '../../services/recruiter-address.servic
 import { CompanyAddress } from '../company-address/company-address.component';
 import { CategoryService } from '../../../../core/services/category.service';
 import { Category } from '../../../../shared/models/category.model';
+import { MarkdownEditorComponent } from '../../../../shared/components/markdown-editor/markdown-editor.component';
 
 @Component({
   selector: 'app-post-job',
   imports: [
     FormsModule,
-    QuillModule,
     ReactiveFormsModule,
     CommonModule,
-    TranslatePipe
+    TranslatePipe,
+    MarkdownEditorComponent
   ],
   templateUrl: './recruiter-post-job.component.html',
   styleUrl: './recruiter-post-job.component.css'
