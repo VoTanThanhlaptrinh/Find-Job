@@ -17,21 +17,44 @@
             </h2>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Job Title -->
             <div class="lg:col-span-2">
               <label class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 px-1">
                 {{ 'recruiterPostJob.jobTitle' | t }} <span class="text-rose-500">*</span>
               </label>
               <input formControlName="jobName"
-                class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3.5 shadow-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all text-sm font-medium"
+                class="w-full bg-white dark:bg-slate-900 border rounded-xl px-4 py-3.5 shadow-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 transition-all text-sm font-medium"
+                [class.border-slate-200]="!isFieldInvalid('jobName')"
+                [class.dark:border-slate-700]="!isFieldInvalid('jobName')"
+                [class.focus:border-blue-500]="!isFieldInvalid('jobName')"
+                [class.focus:ring-blue-500/20]="!isFieldInvalid('jobName')"
+                [class.border-rose-400]="isFieldInvalid('jobName')"
+                [class.focus:border-rose-500]="isFieldInvalid('jobName')"
+                [class.focus:ring-rose-500/20]="isFieldInvalid('jobName')"
                 [placeholder]="'recruiterPostJob.jobTitlePlaceholder' | t" type="text" />
+              @if (isFieldInvalid('jobName')) {
+                <p class="text-xs font-semibold text-rose-500 flex items-center gap-1 mt-1.5">
+                  <span class="material-symbols-outlined text-[14px]">error</span>
+                  <span>{{ getFieldError('jobName') }}</span>
+                </p>
+              }
             </div>
+
+            <!-- Job Type -->
             <div>
               <label class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 px-1">
                 {{ 'recruiterPostJob.jobType' | t }} <span class="text-rose-500">*</span>
               </label>
               <div class="relative">
                 <select title="select" formControlName="jobType"
-                  class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3.5 pr-10 shadow-xs text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all appearance-none cursor-pointer text-sm font-medium">
+                  class="w-full bg-white dark:bg-slate-900 border rounded-xl px-4 py-3.5 pr-10 shadow-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 transition-all appearance-none cursor-pointer text-sm font-medium"
+                  [class.border-slate-200]="!isFieldInvalid('jobType')"
+                  [class.dark:border-slate-700]="!isFieldInvalid('jobType')"
+                  [class.focus:border-blue-500]="!isFieldInvalid('jobType')"
+                  [class.focus:ring-blue-500/20]="!isFieldInvalid('jobType')"
+                  [class.border-rose-400]="isFieldInvalid('jobType')"
+                  [class.focus:border-rose-500]="isFieldInvalid('jobType')"
+                  [class.focus:ring-rose-500/20]="isFieldInvalid('jobType')">
                   <option value="FULL_TIME">{{ 'recruiterPostJob.jobTypeOptions.fullTime' | t }}</option>
                   <option value="PART_TIME">{{ 'recruiterPostJob.jobTypeOptions.partTime' | t }}</option>
                   <option value="HYBRID">{{ 'recruiterPostJob.jobTypeOptions.hybrid' | t }}</option>
@@ -39,16 +62,29 @@
                 </select>
                 <span class="material-symbols-outlined absolute right-3.5 top-3.5 text-slate-400 pointer-events-none text-[20px]">expand_more</span>
               </div>
+              @if (isFieldInvalid('jobType')) {
+                <p class="text-xs font-semibold text-rose-500 flex items-center gap-1 mt-1.5">
+                  <span class="material-symbols-outlined text-[14px]">error</span>
+                  <span>{{ getFieldError('jobType') }}</span>
+                </p>
+              }
             </div>
+
+            <!-- Category -->
             <div class="relative">
               <label class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 px-1">
                 {{ 'recruiterPostJob.category' | t }} <span class="text-rose-500">*</span>
               </label>
               <div class="relative">
                 <input type="text" 
-                  class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3.5 pr-10 shadow-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all cursor-text text-sm font-medium"
-                  [class.border-rose-400]="postJobFG.get('categoryId')?.invalid && postJobFG.get('categoryId')?.touched"
-                  [class.focus:ring-rose-500/20]="postJobFG.get('categoryId')?.invalid && postJobFG.get('categoryId')?.touched"
+                  class="w-full bg-white dark:bg-slate-900 border rounded-xl px-4 py-3.5 pr-10 shadow-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 transition-all cursor-text text-sm font-medium"
+                  [class.border-slate-200]="!isFieldInvalid('categoryId')"
+                  [class.dark:border-slate-700]="!isFieldInvalid('categoryId')"
+                  [class.focus:border-blue-500]="!isFieldInvalid('categoryId')"
+                  [class.focus:ring-blue-500/20]="!isFieldInvalid('categoryId')"
+                  [class.border-rose-400]="isFieldInvalid('categoryId')"
+                  [class.focus:border-rose-500]="isFieldInvalid('categoryId')"
+                  [class.focus:ring-rose-500/20]="isFieldInvalid('categoryId')"
                   [placeholder]="selectedCategoryName() || ('recruiterPostJob.categoryPlaceholder' | t)"
                   [value]="selectedCategoryName() ? '' : categorySearchTerm()"
                   (input)="onCategorySearch($event)"
@@ -73,37 +109,90 @@
                   }
                   @if (filteredCategories().length === 0) {
                   <li class="px-4 py-3 text-slate-400 text-sm italic text-center">
-                    Không tìm thấy danh mục
+                    {{ 'recruiterPostJob.categoryEmpty' | t }}
                   </li>
                   }
                 </ul>
                 }
               </div>
+              @if (isFieldInvalid('categoryId')) {
+                <p class="text-xs font-semibold text-rose-500 flex items-center gap-1 mt-1.5">
+                  <span class="material-symbols-outlined text-[14px]">error</span>
+                  <span>{{ getFieldError('categoryId') }}</span>
+                </p>
+              }
             </div>
+
+            <!-- Salary -->
             <div>
               <label class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 px-1">
                 {{ 'recruiterPostJob.salary' | t }} <span class="text-rose-500">*</span>
               </label>
               <input formControlName="salary"
-                class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3.5 shadow-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all text-sm font-medium"
+                class="w-full bg-white dark:bg-slate-900 border rounded-xl px-4 py-3.5 shadow-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 transition-all text-sm font-medium"
+                [class.border-slate-200]="!isFieldInvalid('salary')"
+                [class.dark:border-slate-700]="!isFieldInvalid('salary')"
+                [class.focus:border-blue-500]="!isFieldInvalid('salary')"
+                [class.focus:ring-blue-500/20]="!isFieldInvalid('salary')"
+                [class.border-rose-400]="isFieldInvalid('salary')"
+                [class.focus:border-rose-500]="isFieldInvalid('salary')"
+                [class.focus:ring-rose-500/20]="isFieldInvalid('salary')"
                 [placeholder]="'recruiterPostJob.salaryPlaceholder' | t" type="text" />
+              @if (isFieldInvalid('salary')) {
+                <p class="text-xs font-semibold text-rose-500 flex items-center gap-1 mt-1.5">
+                  <span class="material-symbols-outlined text-[14px]">error</span>
+                  <span>{{ getFieldError('salary') }}</span>
+                </p>
+              }
             </div>
+
+            <!-- Headcount -->
             <div>
               <label class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 px-1">
                 {{ 'recruiterPostJob.headcount' | t }} <span class="text-rose-500">*</span>
               </label>
               <input formControlName="headCount"
-                class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3.5 shadow-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all text-sm font-medium"
-                [placeholder]="'recruiterPostJob.headcountPlaceholder' | t" type="number" />
+                class="w-full bg-white dark:bg-slate-900 border rounded-xl px-4 py-3.5 shadow-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 transition-all text-sm font-medium"
+                [class.border-slate-200]="!isFieldInvalid('headCount')"
+                [class.dark:border-slate-700]="!isFieldInvalid('headCount')"
+                [class.focus:border-blue-500]="!isFieldInvalid('headCount')"
+                [class.focus:ring-blue-500/20]="!isFieldInvalid('headCount')"
+                [class.border-rose-400]="isFieldInvalid('headCount')"
+                [class.focus:border-rose-500]="isFieldInvalid('headCount')"
+                [class.focus:ring-rose-500/20]="isFieldInvalid('headCount')"
+                [placeholder]="'recruiterPostJob.headcountPlaceholder' | t" type="number" min="1" />
+              @if (isFieldInvalid('headCount')) {
+                <p class="text-xs font-semibold text-rose-500 flex items-center gap-1 mt-1.5">
+                  <span class="material-symbols-outlined text-[14px]">error</span>
+                  <span>{{ getFieldError('headCount') }}</span>
+                </p>
+              }
             </div>
+
+            <!-- Deadline CV -->
             <div>
               <label class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 px-1">
                 {{ 'recruiterPostJob.expiredDate' | t }} <span class="text-rose-500">*</span>
               </label>
               <input title="input" formControlName="deadlineCV"
-                class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3.5 shadow-xs text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all text-sm font-medium"
+                class="w-full bg-white dark:bg-slate-900 border rounded-xl px-4 py-3.5 shadow-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 transition-all text-sm font-medium"
+                [class.border-slate-200]="!isFieldInvalid('deadlineCV')"
+                [class.dark:border-slate-700]="!isFieldInvalid('deadlineCV')"
+                [class.focus:border-blue-500]="!isFieldInvalid('deadlineCV')"
+                [class.focus:ring-blue-500/20]="!isFieldInvalid('deadlineCV')"
+                [class.border-rose-400]="isFieldInvalid('deadlineCV')"
+                [class.focus:border-rose-500]="isFieldInvalid('deadlineCV')"
+                [class.focus:ring-rose-500/20]="isFieldInvalid('deadlineCV')"
                 type="date" />
+              @if (isFieldInvalid('deadlineCV')) {
+                <p class="text-xs font-semibold text-rose-500 flex items-center gap-1 mt-1.5">
+                  <span class="material-symbols-outlined text-[14px]">error</span>
+                  <span>{{ getFieldError('deadlineCV') }}</span>
+                </p>
+              }
             </div>
+
+            <!-- Address Location -->
             <div class="lg:col-span-3">
               <label class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 px-1">
                 {{ 'recruiterPostJob.address' | t }} <span class="text-rose-500">*</span>
@@ -112,8 +201,14 @@
                 <span
                   class="material-symbols-outlined absolute left-4 top-3.5 text-slate-400 pointer-events-none text-[20px]">location_on</span>
                 <select title="address" formControlName="location"
-                  class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl pl-12 pr-10 py-3.5 shadow-xs text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all appearance-none cursor-pointer text-sm font-medium"
-                  [class.border-rose-400]="postJobFG.get('location')?.invalid && postJobFG.get('location')?.touched">
+                  class="w-full bg-white dark:bg-slate-900 border rounded-xl pl-12 pr-10 py-3.5 shadow-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 transition-all appearance-none cursor-pointer text-sm font-medium"
+                  [class.border-slate-200]="!isFieldInvalid('location')"
+                  [class.dark:border-slate-700]="!isFieldInvalid('location')"
+                  [class.focus:border-blue-500]="!isFieldInvalid('location')"
+                  [class.focus:ring-blue-500/20]="!isFieldInvalid('location')"
+                  [class.border-rose-400]="isFieldInvalid('location')"
+                  [class.focus:border-rose-500]="isFieldInvalid('location')"
+                  [class.focus:ring-rose-500/20]="isFieldInvalid('location')">
                   <option value="" disabled selected>{{ 'recruiterPostJob.addressPlaceholder' | t }}</option>
                   @for (addr of companyAddresses; track addr.id) {
                   <option [value]="addr.id">{{ addr.city }} - {{ addr.street }}</option>
@@ -122,6 +217,12 @@
                 <span
                   class="material-symbols-outlined absolute right-3.5 top-3.5 text-slate-400 pointer-events-none text-[20px]">expand_more</span>
               </div>
+              @if (isFieldInvalid('location')) {
+                <p class="text-xs font-semibold text-rose-500 flex items-center gap-1 mt-1.5">
+                  <span class="material-symbols-outlined text-[14px]">error</span>
+                  <span>{{ getFieldError('location') }}</span>
+                </p>
+              }
             </div>
           </div>
         </section>
@@ -153,46 +254,94 @@
           <div class="space-y-7">
             <!-- 1. Mô tả công việc -->
             <div>
-              <label class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 px-1">
-                {{ 'recruiterPostJob.description' | t }} <span class="text-rose-500">*</span>
-              </label>
-              <div class="h-[280px] w-full">
-                <app-markdown-editor formControlName="jobDescription"
+              <div class="flex items-center justify-between mb-2 px-1">
+                <label class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+                  {{ 'recruiterPostJob.description' | t }} <span class="text-rose-500">*</span>
+                </label>
+                <span class="text-[11px] text-slate-400 font-medium">{{ 'recruiterPostJob.validation.maxChars' | t }}</span>
+              </div>
+              <div class="h-[280px] w-full rounded-2xl transition-all"
+                [class.ring-2]="isFieldInvalid('jobDescription')"
+                [class.ring-rose-400]="isFieldInvalid('jobDescription')"
+                [class.ring-offset-1]="isFieldInvalid('jobDescription')">
+                <app-markdown-editor formControlName="jobDescription" [maxLength]="5000"
                   [placeholder]="'recruiterPostJob.descriptionPlaceholder' | t"></app-markdown-editor>
               </div>
+              @if (isFieldInvalid('jobDescription')) {
+                <p class="text-xs font-semibold text-rose-500 flex items-center gap-1 mt-1.5">
+                  <span class="material-symbols-outlined text-[14px]">error</span>
+                  <span>{{ getFieldError('jobDescription') }}</span>
+                </p>
+              }
             </div>
 
             <!-- 2. Kỹ năng chuyên môn -->
             <div>
-              <label class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 px-1">
-                {{ 'recruiterPostJob.skills' | t }} <span class="text-rose-500">*</span>
-              </label>
-              <div class="h-[260px] w-full">
-                <app-markdown-editor formControlName="jobSkill"
+              <div class="flex items-center justify-between mb-2 px-1">
+                <label class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+                  {{ 'recruiterPostJob.skills' | t }} <span class="text-rose-500">*</span>
+                </label>
+                <span class="text-[11px] text-slate-400 font-medium">{{ 'recruiterPostJob.validation.maxChars' | t }}</span>
+              </div>
+              <div class="h-[260px] w-full rounded-2xl transition-all"
+                [class.ring-2]="isFieldInvalid('jobSkill')"
+                [class.ring-rose-400]="isFieldInvalid('jobSkill')"
+                [class.ring-offset-1]="isFieldInvalid('jobSkill')">
+                <app-markdown-editor formControlName="jobSkill" [maxLength]="5000"
                   [placeholder]="'recruiterPostJob.skillsPlaceholder' | t"></app-markdown-editor>
               </div>
+              @if (isFieldInvalid('jobSkill')) {
+                <p class="text-xs font-semibold text-rose-500 flex items-center gap-1 mt-1.5">
+                  <span class="material-symbols-outlined text-[14px]">error</span>
+                  <span>{{ getFieldError('jobSkill') }}</span>
+                </p>
+              }
             </div>
 
             <!-- 3. Yêu cầu ứng viên -->
             <div>
-              <label class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 px-1">
-                {{ 'recruiterPostJob.requirements' | t }} <span class="text-rose-500">*</span>
-              </label>
-              <div class="h-[280px] w-full">
-                <app-markdown-editor formControlName="jobRequirement"
+              <div class="flex items-center justify-between mb-2 px-1">
+                <label class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+                  {{ 'recruiterPostJob.requirements' | t }} <span class="text-rose-500">*</span>
+                </label>
+                <span class="text-[11px] text-slate-400 font-medium">{{ 'recruiterPostJob.validation.maxChars' | t }}</span>
+              </div>
+              <div class="h-[280px] w-full rounded-2xl transition-all"
+                [class.ring-2]="isFieldInvalid('jobRequirement')"
+                [class.ring-rose-400]="isFieldInvalid('jobRequirement')"
+                [class.ring-offset-1]="isFieldInvalid('jobRequirement')">
+                <app-markdown-editor formControlName="jobRequirement" [maxLength]="5000"
                   [placeholder]="'recruiterPostJob.requirementsPlaceholder' | t"></app-markdown-editor>
               </div>
+              @if (isFieldInvalid('jobRequirement')) {
+                <p class="text-xs font-semibold text-rose-500 flex items-center gap-1 mt-1.5">
+                  <span class="material-symbols-outlined text-[14px]">error</span>
+                  <span>{{ getFieldError('jobRequirement') }}</span>
+                </p>
+              }
             </div>
 
             <!-- 4. Quyền lợi & đãi ngộ -->
             <div>
-              <label class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 px-1">
-                {{ 'recruiterPostJob.benefits' | t }}
-              </label>
-              <div class="h-[260px] w-full">
-                <app-markdown-editor formControlName="moreDetail"
+              <div class="flex items-center justify-between mb-2 px-1">
+                <label class="block text-xs font-label font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+                  {{ 'recruiterPostJob.benefits' | t }}
+                </label>
+                <span class="text-[11px] text-slate-400 font-medium">{{ 'recruiterPostJob.validation.maxChars' | t }}</span>
+              </div>
+              <div class="h-[260px] w-full rounded-2xl transition-all"
+                [class.ring-2]="isFieldInvalid('moreDetail')"
+                [class.ring-rose-400]="isFieldInvalid('moreDetail')"
+                [class.ring-offset-1]="isFieldInvalid('moreDetail')">
+                <app-markdown-editor formControlName="moreDetail" [maxLength]="5000"
                   [placeholder]="'recruiterPostJob.benefitsPlaceholder' | t"></app-markdown-editor>
               </div>
+              @if (isFieldInvalid('moreDetail')) {
+                <p class="text-xs font-semibold text-rose-500 flex items-center gap-1 mt-1.5">
+                  <span class="material-symbols-outlined text-[14px]">error</span>
+                  <span>{{ getFieldError('moreDetail') }}</span>
+                </p>
+              }
             </div>
           </div>
         </section>

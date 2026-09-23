@@ -67,6 +67,10 @@ export class MarkdownEditorComponent implements ControlValueAccessor {
     this.onTouched();
   }
 
+  onBlur(): void {
+    this.onTouched();
+  }
+
   toggleFullscreen(): void {
     this.isFullscreen = !this.isFullscreen;
   }

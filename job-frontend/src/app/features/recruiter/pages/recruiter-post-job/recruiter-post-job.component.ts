@@ -16,6 +16,7 @@ import { CompanyAddress } from '../company-address/company-address.component';
 import { CategoryService } from '../../../../core/services/category.service';
 import { Category } from '../../../../shared/models/category.model';
 import { MarkdownEditorComponent } from '../../../../shared/components/markdown-editor/markdown-editor.component';
+import { I18nService } from '../../../../core/i18n/i18n.service';
 
 @Component({
   selector: 'app-post-job',
@@ -34,18 +35,18 @@ export class PostJobComponent implements OnInit {
   messageType: boolean | undefined = undefined;
   message = '';
   postJobFG = new FormGroup({
-    jobName: new FormControl('', [Validators.required]),
+    jobName: new FormControl('', [Validators.required, Validators.maxLength(255)]),
     location: new FormControl('', [Validators.required]),
     jobType: new FormControl('FULL_TIME', [Validators.required]),
-    salary: new FormControl('', [Validators.required, Validators.min(2000000)]),
-    headCount: new FormControl('', [Validators.required, Validators.min(1)]),
-    jobDescription: new FormControl('', [Validators.required]),
-    jobRequirement: new FormControl('', [Validators.required]),
-    jobSkill: new FormControl('', [Validators.required]),
-    moreDetail: new FormControl(''),
-    deadlineCV: new FormControl<Date|null>(null, [Validators.required, minDatePlusOne]),
+    salary: new FormControl('', [Validators.required, Validators.maxLength(255)]),
+    headCount: new FormControl<number | null>(null, [Validators.required, Validators.min(1)]),
+    jobDescription: new FormControl('', [Validators.required, Validators.maxLength(5000)]),
+    jobRequirement: new FormControl('', [Validators.required, Validators.maxLength(5000)]),
+    jobSkill: new FormControl('', [Validators.required, Validators.maxLength(5000)]),
+    moreDetail: new FormControl('', [Validators.maxLength(5000)]),
+    deadlineCV: new FormControl<Date | null>(null, [Validators.required, minDatePlusOne]),
     enableAiAnalysis: new FormControl(false),
-    categoryId: new FormControl<number|null>(null, [Validators.required])
+    categoryId: new FormControl<number | null>(null, [Validators.required])
   });
 
   companyAddresses: CompanyAddress[] = [];
@@ -65,7 +66,8 @@ export class PostJobComponent implements OnInit {
     private readonly recruiterJobsService: RecruiterJobsService,
     private readonly notify: NotifyMessageService,
     private readonly addressService: RecruiterAddressService,
-    private readonly categoryService: CategoryService
+    private readonly categoryService: CategoryService,
+    private readonly i18nService: I18nService
   ) {
     effect(() => {
       this.isSubmitting = this.recruiterJobsService.isSubmittingJob$();
@@ -119,6 +121,7 @@ export class PostJobComponent implements OnInit {
   }
 
   closeCategoryDropdown() {
+    this.postJobFG.get('categoryId')?.markAsTouched();
     setTimeout(() => {
       this.isCategoryDropdownOpen.set(false);
     }, 200);
@@ -143,9 +146,60 @@ export class PostJobComponent implements OnInit {
       this.selectedCategoryName.set('');
     }
   }
+
+  isFieldInvalid(fieldName: string): boolean {
+    const control = this.postJobFG.get(fieldName);
+    return !!(control && control.invalid && (control.touched || control.dirty));
+  }
+
+  getFieldError(fieldName: string): string | null {
+    const control = this.postJobFG.get(fieldName);
+    if (!control || !control.errors || !(control.touched || control.dirty)) return null;
+
+    if (control.errors['required']) {
+      switch (fieldName) {
+        case 'jobName': return this.i18nService.translate('recruiterPostJob.validation.jobNameRequired');
+        case 'categoryId': return this.i18nService.translate('recruiterPostJob.validation.categoryRequired');
+        case 'jobType': return this.i18nService.translate('recruiterPostJob.validation.jobTypeRequired');
+        case 'location': return this.i18nService.translate('recruiterPostJob.validation.locationRequired');
+        case 'salary': return this.i18nService.translate('recruiterPostJob.validation.salaryRequired');
+        case 'headCount': return this.i18nService.translate('recruiterPostJob.validation.headcountRequired');
+        case 'deadlineCV': return this.i18nService.translate('recruiterPostJob.validation.deadlineRequired');
+        case 'jobDescription': return this.i18nService.translate('recruiterPostJob.validation.descriptionRequired');
+        case 'jobSkill': return this.i18nService.translate('recruiterPostJob.validation.skillsRequired');
+        case 'jobRequirement': return this.i18nService.translate('recruiterPostJob.validation.requirementsRequired');
+        default: return this.i18nService.translate('recruiterPostJob.validation.required');
+      }
+    }
+
+    if (control.errors['min']) {
+      if (fieldName === 'headCount') return this.i18nService.translate('recruiterPostJob.validation.headcountMin');
+      return `Min ${control.errors['min'].min}`;
+    }
+
+    if (control.errors['maxlength']) {
+      switch (fieldName) {
+        case 'jobName': return this.i18nService.translate('recruiterPostJob.validation.jobNameMax');
+        case 'salary': return this.i18nService.translate('recruiterPostJob.validation.salaryMax');
+        case 'jobDescription': return this.i18nService.translate('recruiterPostJob.validation.descriptionMax');
+        case 'jobSkill': return this.i18nService.translate('recruiterPostJob.validation.skillsMax');
+        case 'jobRequirement': return this.i18nService.translate('recruiterPostJob.validation.requirementsMax');
+        case 'moreDetail': return this.i18nService.translate('recruiterPostJob.validation.benefitsMax');
+        default: return `Max ${control.errors['maxlength'].requiredLength}`;
+      }
+    }
+
+    if (control.errors['minDatePlusOne']) {
+      return this.i18nService.translate('recruiterPostJob.validation.deadlineFuture');
+    }
+
+    return null;
+  }
+
   onSubmit() {
-    if(this.postJobFG.invalid){
+    if (this.postJobFG.invalid) {
       this.postJobFG.markAllAsTouched();
+      this.notify.showMessage(this.i18nService.translate('recruiterPostJob.validation.formInvalid'), '', 'error');
       return;
     }
     const formValue = this.postJobFG.value;
