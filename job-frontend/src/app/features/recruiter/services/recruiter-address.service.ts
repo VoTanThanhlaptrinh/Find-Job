@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { ApiResponse } from '../../../shared/models/api-response.model';
 import { AddressFormData } from '../components/add-address-modal/add-address-modal.component';
-import { CompanyAddress } from '../pages/company-address/company-address.component';
+import { CompanyAddress } from '../pages/company-profile/company-profile.component';
 
 @Injectable({
   providedIn: 'root'

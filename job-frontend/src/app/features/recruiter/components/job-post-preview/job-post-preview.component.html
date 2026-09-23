@@ -1,0 +1,298 @@
+<!-- Slide-Up Preview Layer (Fixed overlay inside recruiter canvas, sliding up smoothly from bottom) -->
+<div 
+  class="fixed inset-0 md:left-72 top-20 z-50 bg-[#F8FAFC] dark:bg-slate-950 overflow-y-auto transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
+  [ngClass]="isOpen 
+    ? 'translate-y-0 opacity-100 pointer-events-auto visible' 
+    : 'translate-y-full opacity-0 pointer-events-none invisible'"
+>
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+
+    <!-- 1. Sticky Preview Action Header Bar -->
+    <div class="sticky top-4 z-40 flex items-center justify-between bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl px-5 py-3.5 rounded-2xl shadow-lg shadow-slate-900/10 border border-slate-200/80 dark:border-slate-800">
+      <!-- Back to Edit Button -->
+      <button type="button" (click)="onBack()"
+        class="inline-flex items-center gap-2 text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 text-sm font-bold px-4 py-2 rounded-xl transition cursor-pointer border border-slate-200/60 dark:border-slate-700/60 shadow-2xs active:scale-95">
+        <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+        <span>{{ 'recruiterPostJob.previewMode.backToEdit' | t }}</span>
+      </button>
+
+      <!-- Badge Indicator -->
+      <div class="hidden sm:flex items-center gap-2 text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-3.5 py-1.5 rounded-xl border border-blue-100 dark:border-blue-900">
+        <span class="material-symbols-outlined text-[16px]">visibility</span>
+        <span>{{ 'recruiterPostJob.previewMode.badge' | t }}</span>
+      </div>
+
+      <!-- Publish / Save Job CTA -->
+      <button type="button" (click)="onSave()" [disabled]="isSubmitting"
+        class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm font-bold px-6 py-2 rounded-xl shadow-md shadow-blue-500/25 transition active:scale-95 duration-200 disabled:opacity-50 cursor-pointer">
+        <span class="material-symbols-outlined text-[18px]">send</span>
+        <span>{{ isSubmitting ? ('recruiterPostJob.saving' | t) : ('recruiterPostJob.previewMode.saveJob' | t) }}</span>
+      </button>
+    </div>
+
+    <!-- Preview Notice Banner -->
+    <div class="flex items-center gap-3 bg-blue-50/80 dark:bg-blue-950/40 border border-blue-200/70 dark:border-blue-800/60 px-5 py-3 rounded-2xl text-xs text-blue-800 dark:text-blue-200">
+      <span class="material-symbols-outlined text-blue-600 dark:text-blue-400 text-[20px] shrink-0">info</span>
+      <span>{{ 'recruiterPostJob.previewMode.previewNotice' | t }}</span>
+    </div>
+
+    @if (data) {
+      <!-- 2. Job Overview Card (matching job-single public view) -->
+      <section aria-label="Job Overview" class="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 shadow-sm">
+        <div class="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+          <div class="flex items-start gap-4 sm:gap-5 flex-1 min-w-0">
+            <!-- Job/Company Icon Box -->
+            <div class="flex h-16 w-16 sm:h-20 sm:w-20 shrink-0 items-center justify-center rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 p-2 shadow-xs">
+              <span class="material-symbols-outlined text-blue-600 dark:text-blue-400 text-[36px]">business_center</span>
+            </div>
+
+            <!-- Job Title & Badges -->
+            <div class="min-w-0 flex-1">
+              <div class="flex flex-wrap items-center gap-2 mb-2">
+                @if (data.categoryName) {
+                  <span class="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 bg-blue-50 dark:bg-blue-950/60 px-2.5 py-0.5 rounded-full border border-blue-100 dark:border-blue-900">
+                    <span class="material-symbols-outlined text-[14px]">category</span>
+                    <span>{{ data.categoryName }}</span>
+                  </span>
+                }
+                @if (data.jobTypeLabel) {
+                  <span class="inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 bg-indigo-50 dark:bg-indigo-950/60 px-2.5 py-0.5 rounded-full border border-indigo-100 dark:border-indigo-900">
+                    <span class="material-symbols-outlined text-[14px]">work</span>
+                    <span>{{ data.jobTypeLabel }}</span>
+                  </span>
+                }
+                @if (data.enableAiAnalysis) {
+                  <span class="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-0.5 rounded-full border border-emerald-100 dark:border-emerald-900">
+                    <span class="material-symbols-outlined text-[14px]">psychology</span>
+                    <span>AI Analysis</span>
+                  </span>
+                }
+              </div>
+              <h1 class="font-headline text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-snug">
+                {{ data.jobName || ('recruiterPostJob.jobTitle' | t) }}
+              </h1>
+            </div>
+          </div>
+        </div>
+
+        <!-- Divider Line -->
+        <div class="my-5 border-t border-slate-100 dark:border-slate-800"></div>
+
+        <!-- Bottom Quick Info Row -->
+        <div class="flex flex-wrap items-center gap-4 sm:gap-8 text-sm text-slate-700 dark:text-slate-300">
+          <!-- Location -->
+          <div class="flex items-center gap-2 font-medium">
+            <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950/60 text-[#2563EB]">
+              <span class="material-symbols-outlined text-[18px]">location_on</span>
+            </div>
+            <div>
+              <span class="text-xs text-slate-400 block font-normal">{{ 'recruiterPostJob.address' | t }}</span>
+              <span class="text-slate-800 dark:text-slate-200 font-semibold">{{ data.address || ('recruiterPostJob.addressPlaceholder' | t) }}</span>
+            </div>
+          </div>
+
+          <span class="hidden sm:inline text-slate-200 dark:text-slate-700">|</span>
+
+          <!-- Salary -->
+          <div class="flex items-center gap-2 font-medium">
+            <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-50 dark:bg-sky-950/60 text-[#0EA5E9]">
+              <span class="material-symbols-outlined text-[18px]">payments</span>
+            </div>
+            <div>
+              <span class="text-xs text-slate-400 block font-normal">{{ 'recruiterPostJob.salary' | t }}</span>
+              <span class="text-[#0EA5E9] font-bold">{{ data.salary || ('recruiterPostJob.salaryPlaceholder' | t) }}</span>
+            </div>
+          </div>
+
+          <span class="hidden sm:inline text-slate-200 dark:text-slate-700">|</span>
+
+          <!-- Work Type -->
+          <div class="flex items-center gap-2 font-medium">
+            <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600">
+              <span class="material-symbols-outlined text-[18px]">work</span>
+            </div>
+            <div>
+              <span class="text-xs text-slate-400 block font-normal">{{ 'recruiterPostJob.jobType' | t }}</span>
+              <span class="text-slate-800 dark:text-slate-200 font-semibold">{{ data.jobTypeLabel }}</span>
+            </div>
+          </div>
+
+          @if (data.deadlineCV) {
+            <span class="hidden md:inline text-slate-200 dark:text-slate-700">|</span>
+            <div class="flex items-center gap-2 font-medium">
+              <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600">
+                <span class="material-symbols-outlined text-[18px]">event</span>
+              </div>
+              <div>
+                <span class="text-xs text-slate-400 block font-normal">{{ 'recruiterPostJob.expiredDate' | t }}</span>
+                <span class="text-slate-800 dark:text-slate-200 font-semibold">{{ data.deadlineCV }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- 3. Body: 2-Column Grid (Left: Markdown Content, Right: Basic Info Card) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- LEFT COLUMN: Markdown Job Details -->
+        <main class="lg:col-span-8 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 shadow-sm space-y-8">
+          
+          <!-- Section 1: Mô tả công việc -->
+          <section aria-label="Job Description">
+            <h2 class="font-headline text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2.5">
+              <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950/60 text-[#2563EB]">
+                <span class="material-symbols-outlined text-[20px]">description</span>
+              </span>
+              <span>{{ 'recruiterPostJob.description' | t }}</span>
+            </h2>
+            <app-markdown-viewer [data]="data.jobDescription || ''"
+              emptyText="Chưa có nội dung mô tả công việc."></app-markdown-viewer>
+          </section>
+
+          <!-- Divider -->
+          <div class="border-t border-slate-100 dark:border-slate-800"></div>
+
+          <!-- Section 2: Yêu cầu ứng viên -->
+          <section aria-label="Job Requirements">
+            <h2 class="font-headline text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2.5">
+              <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-50 dark:bg-sky-950/60 text-[#0EA5E9]">
+                <span class="material-symbols-outlined text-[20px]">checklist</span>
+              </span>
+              <span>{{ 'recruiterPostJob.requirements' | t }}</span>
+            </h2>
+            <app-markdown-viewer [data]="data.jobRequirement || ''"
+              emptyText="Chưa có nội dung yêu cầu ứng viên."></app-markdown-viewer>
+          </section>
+
+          <!-- Divider -->
+          <div class="border-t border-slate-100 dark:border-slate-800"></div>
+
+          <!-- Section 3: Kỹ năng chuyên môn -->
+          <section aria-label="Job Skills">
+            <h2 class="font-headline text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2.5">
+              <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600">
+                <span class="material-symbols-outlined text-[20px]">psychology</span>
+              </span>
+              <span>{{ 'recruiterPostJob.skills' | t }}</span>
+            </h2>
+            <app-markdown-viewer [data]="data.jobSkill || ''"
+              emptyText="Chưa có nội dung kỹ năng chuyên môn."></app-markdown-viewer>
+          </section>
+
+          <!-- Section 4: Quyền lợi & đãi ngộ (if entered) -->
+          @if (data.moreDetail) {
+            <div class="border-t border-slate-100 dark:border-slate-800"></div>
+            <section aria-label="Benefits">
+              <h2 class="font-headline text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2.5">
+                <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600">
+                  <span class="material-symbols-outlined text-[20px]">card_giftcard</span>
+                </span>
+                <span>{{ 'recruiterPostJob.benefits' | t }}</span>
+              </h2>
+              <app-markdown-viewer [data]="data.moreDetail"></app-markdown-viewer>
+            </section>
+          }
+
+        </main>
+
+        <!-- RIGHT COLUMN: Basic Info Card -->
+        <aside class="lg:col-span-4 space-y-6">
+          <div class="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
+            <h3 class="font-headline text-base font-bold uppercase tracking-wider text-slate-900 dark:text-white pb-3.5 border-b border-slate-100 dark:border-slate-800 flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#2563EB] text-[20px]">badge</span>
+              <span>{{ 'recruiterPostJob.previewMode.jobOverview' | t }}</span>
+            </h3>
+
+            <div class="mt-4 space-y-4 text-sm">
+              <!-- Job Type -->
+              <div class="flex items-start gap-3">
+                <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-500 border border-slate-100 dark:border-slate-700">
+                  <span class="material-symbols-outlined text-[18px]">work</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 block">{{ 'recruiterPostJob.jobType' | t }}</span>
+                  <span class="font-semibold text-slate-800 dark:text-slate-200 text-sm mt-0.5 block">{{ data.jobTypeLabel }}</span>
+                </div>
+              </div>
+
+              <!-- Category -->
+              <div class="flex items-start gap-3">
+                <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-500 border border-slate-100 dark:border-slate-700">
+                  <span class="material-symbols-outlined text-[18px]">category</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 block">{{ 'recruiterPostJob.category' | t }}</span>
+                  <span class="font-semibold text-slate-800 dark:text-slate-200 text-sm mt-0.5 block">{{ data.categoryName || ('recruiterPostJob.categoryPlaceholder' | t) }}</span>
+                </div>
+              </div>
+
+              <!-- Salary -->
+              <div class="flex items-start gap-3">
+                <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-500 border border-slate-100 dark:border-slate-700">
+                  <span class="material-symbols-outlined text-[18px]">payments</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 block">{{ 'recruiterPostJob.salary' | t }}</span>
+                  <span class="font-semibold text-[#0EA5E9] text-sm mt-0.5 block">{{ data.salary || ('recruiterPostJob.salaryPlaceholder' | t) }}</span>
+                </div>
+              </div>
+
+              <!-- Work Address -->
+              <div class="flex items-start gap-3">
+                <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-500 border border-slate-100 dark:border-slate-700">
+                  <span class="material-symbols-outlined text-[18px]">place</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 block">{{ 'recruiterPostJob.address' | t }}</span>
+                  <span class="font-semibold text-slate-800 dark:text-slate-200 text-sm mt-0.5 block">{{ data.address || ('recruiterPostJob.addressPlaceholder' | t) }}</span>
+                </div>
+              </div>
+
+              <!-- Open Headcount -->
+              <div class="flex items-start gap-3">
+                <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-500 border border-slate-100 dark:border-slate-700">
+                  <span class="material-symbols-outlined text-[18px]">group</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 block">{{ 'recruiterPostJob.headcount' | t }}</span>
+                  <span class="font-semibold text-slate-800 dark:text-slate-200 text-sm mt-0.5 block">
+                    {{ data.headcount || 1 }} {{ 'recruiterPostJob.previewMode.headcountUnit' | t }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Application Deadline -->
+              <div class="flex items-start gap-3">
+                <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-500 border border-slate-100 dark:border-slate-700">
+                  <span class="material-symbols-outlined text-[18px]">event</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 block">{{ 'recruiterPostJob.expiredDate' | t }}</span>
+                  <span class="font-semibold text-slate-800 dark:text-slate-200 text-sm mt-0.5 block">{{ data.deadlineCV }}</span>
+                </div>
+              </div>
+
+              <!-- AI Analysis Status -->
+              <div class="flex items-start gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+                <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-500 border border-slate-100 dark:border-slate-700">
+                  <span class="material-symbols-outlined text-[18px]">psychology</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 block">{{ 'recruiterPostJob.aiAnalysis' | t }}</span>
+                  <span class="text-sm font-semibold mt-0.5 inline-flex items-center gap-1.5"
+                        [ngClass]="data.enableAiAnalysis ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500'">
+                    <span class="w-2 h-2 rounded-full" [ngClass]="data.enableAiAnalysis ? 'bg-indigo-600 animate-pulse' : 'bg-slate-300 dark:bg-slate-600'"></span>
+                    <span>{{ data.enableAiAnalysis ? ('recruiterPostJob.previewMode.enabled' | t) : ('recruiterPostJob.previewMode.disabled' | t) }}</span>
+                  </span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    }
+  </div>
+</div>

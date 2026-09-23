@@ -32,38 +32,44 @@
     </div>
 
     <footer *ngIf="!isLoading() && jobs().length > 0"
-      class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between pt-2">
-      <div class="flex items-center gap-2 text-sm">
-        <label for="job-page-size">{{ 'pagination.rowsPerPage' | t }}</label>
+      class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pt-4 pb-8 border-t border-slate-200/80">
+      <!-- Rows Per Page -->
+      <div class="flex items-center gap-2 text-sm text-slate-500">
+        <label for="job-page-size" class="font-medium text-xs sm:text-sm">{{ 'pagination.rowsPerPage' | t }}:</label>
         <select id="job-page-size"
-          class="bg-re-surface-container-low border border-re-outline-variant/20 rounded-lg px-2 py-1"
+          class="bg-white border border-slate-200 text-slate-700 rounded-lg px-2.5 py-1 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-xs cursor-pointer"
           [value]="currentPageSize" (change)="onPageSizeChange($event)">
           <option *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}</option>
         </select>
       </div>
 
-      <div class="flex items-center gap-2">
-        <div class="rounded-lg overflow-hidden border border-re-outline-variant/30" [class.opacity-40]="!canGoPrev">
-          <button type="button" class="w-full h-full px-3 py-1.5 disabled:cursor-not-allowed" [disabled]="!canGoPrev"
-            (click)="goPrevPage()">
-            {{ 'pagination.previous' | t }}
-          </button>
-        </div>
+      <!-- Page Nav Controls -->
+      <div class="flex items-center gap-1.5">
+        <button type="button"
+          class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors disabled:opacity-30 disabled:hover:bg-transparent disabled:cursor-not-allowed cursor-pointer"
+          [disabled]="!canGoPrev"
+          (click)="goPrevPage()">
+          <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+          <span class="hidden sm:inline">{{ 'pagination.previous' | t }}</span>
+        </button>
 
-        <div *ngFor="let page of pageButtons" class="rounded-lg overflow-hidden border border-re-outline-variant/30"
-          [class.bg-re-primary]="page === currentPage">
-          <button type="button" class="w-full h-full px-3 py-1.5" [class.text-re-on-primary]="page === currentPage"
+        <div class="flex items-center gap-1">
+          <button *ngFor="let page of pageButtons"
+            type="button"
+            class="min-w-[36px] h-9 px-2 flex items-center justify-center rounded-lg text-sm font-semibold transition-all duration-150 cursor-pointer"
+            [ngClass]="page === currentPage ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/20' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'"
             (click)="goToPage(page)">
             {{ page }}
           </button>
         </div>
 
-        <div class="rounded-lg overflow-hidden border border-re-outline-variant/30" [class.opacity-40]="!canGoNext">
-          <button type="button" class="w-full h-full px-3 py-1.5 disabled:cursor-not-allowed" [disabled]="!canGoNext"
-            (click)="goNextPage()">
-            {{ 'pagination.next' | t }}
-          </button>
-        </div>
+        <button type="button"
+          class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors disabled:opacity-30 disabled:hover:bg-transparent disabled:cursor-not-allowed cursor-pointer"
+          [disabled]="!canGoNext"
+          (click)="goNextPage()">
+          <span class="hidden sm:inline">{{ 'pagination.next' | t }}</span>
+          <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+        </button>
       </div>
     </footer>
   </section>

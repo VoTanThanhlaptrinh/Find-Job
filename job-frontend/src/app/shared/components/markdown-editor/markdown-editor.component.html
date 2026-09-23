@@ -206,6 +206,7 @@
       [ngModel]="value"
       (ngModelChange)="onContentChange($event)"
       (keydown)="onKeyDown($event)"
+      (blur)="onBlur()"
       [disabled]="disabled"
       [attr.maxlength]="maxLength || null"
       [placeholder]="placeholder"

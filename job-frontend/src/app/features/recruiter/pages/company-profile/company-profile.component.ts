@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, effect } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
 import { AddAddressModalComponent, AddressFormData } from '../../components/add-address-modal/add-address-modal.component';
 import { RecruiterAddressService } from '../../services/recruiter-address.service';
@@ -17,13 +18,15 @@ export interface CompanyAddress {
 import { SkeletonAddressCardComponent } from '../../components/skeleton-address-card/skeleton-address-card.component';
 
 @Component({
-  selector: 'app-company-address',
+  selector: 'app-company-profile',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, AddAddressModalComponent, SkeletonAddressCardComponent],
-  templateUrl: './company-address.component.html',
-  styleUrl: './company-address.component.css',
+  imports: [CommonModule, TranslatePipe, AddAddressModalComponent, SkeletonAddressCardComponent, ReactiveFormsModule],
+  templateUrl: './company-profile.component.html',
+  styleUrl: './company-profile.component.css',
 })
-export class CompanyAddressComponent implements OnInit {
+export class CompanyProfileComponent implements OnInit {
+  activeTab: 'info' | 'addresses' = 'info';
+  companyInfoForm: FormGroup;
   isLoading = false;
   addresses: CompanyAddress[] = [];
   openMenuId: number | null = null;
@@ -34,8 +37,19 @@ export class CompanyAddressComponent implements OnInit {
 
   constructor(
     private readonly addressService: RecruiterAddressService,
-    private readonly notifyService: NotifyMessageService
+    private readonly notifyService: NotifyMessageService,
+    private readonly fb: FormBuilder
   ) {
+    this.companyInfoForm = this.fb.group({
+      companyName: ['', [Validators.required, Validators.minLength(2)]],
+      description: [''],
+      size: [''],
+      industry: [''],
+      taxCode: ['', Validators.required],
+      website: ['', Validators.pattern(/^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/)],
+      phone: ['', [Validators.required, Validators.pattern(/^[0-9+\-\s]+$/)]],
+      logo: ['']
+    });
     effect(() => {
       this.addresses = this.addressService.addresses$();
       this.isLoading = this.addressService.isLoading$();
@@ -44,6 +58,19 @@ export class CompanyAddressComponent implements OnInit {
 
   ngOnInit(): void {
     this.addressService.loadAddresses();
+  }
+
+  setTab(tab: 'info' | 'addresses'): void {
+    this.activeTab = tab;
+  }
+
+  onSaveCompanyInfo(): void {
+    if (this.companyInfoForm.valid) {
+      console.log('Company Info Submitted (Mock):', this.companyInfoForm.value);
+      this.notifyService.success('Cập nhật thông tin công ty thành công (MOCK)');
+    } else {
+      this.companyInfoForm.markAllAsTouched();
+    }
   }
 
   loadAddresses(): void {
