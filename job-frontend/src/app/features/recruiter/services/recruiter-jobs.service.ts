@@ -26,6 +26,7 @@ export class RecruiterJobsService {
   private readonly postedJobsTotalCount = signal<number>(0);
   private readonly postedJobsTotalPages = signal<number>(0);
   private readonly isLoadingPostedJobs = signal<boolean>(false);
+  private readonly hasPostedJobsError = signal<boolean>(false);
   private readonly isSubmittingJob = signal<boolean>(false);
   private readonly lastActionType = signal<'create' | 'update' | 'delete' | null>(null);
   private readonly lastActionSuccess = signal<boolean>(false);
@@ -36,6 +37,7 @@ export class RecruiterJobsService {
   readonly postedJobsTotalCount$ = computed(() => this.postedJobsTotalCount());
   readonly postedJobsTotalPages$ = computed(() => this.postedJobsTotalPages());
   readonly isLoadingPostedJobs$ = computed(() => this.isLoadingPostedJobs());
+  readonly hasPostedJobsError$ = computed(() => this.hasPostedJobsError());
   readonly isSubmittingJob$ = computed(() => this.isSubmittingJob());
   readonly lastActionType$ = computed(() => this.lastActionType());
   readonly lastActionSuccess$ = computed(() => this.lastActionSuccess());
@@ -67,6 +69,7 @@ export class RecruiterJobsService {
 
   loadPostedJobs(pageIndex: number, pageSize: number): void {
     this.isLoadingPostedJobs.set(true);
+    this.hasPostedJobsError.set(false);
 
     const params = new HttpParams()
       .set('page', pageIndex)
@@ -87,6 +90,7 @@ export class RecruiterJobsService {
         this.postedJobsTotalPages.set(0);
         this.postedJobsTotalCount.set(0);
         this.isLoadingPostedJobs.set(false);
+        this.hasPostedJobsError.set(true);
         this.notify.error(this.i18nService.translate('recruiterCommon.errors.loadPostedJobsFailed'));
       }
     });
