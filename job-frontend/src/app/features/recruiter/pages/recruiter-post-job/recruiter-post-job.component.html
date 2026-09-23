@@ -377,7 +377,7 @@
 
           <div class="flex items-center gap-3">
             <!-- Preview Button -->
-            <button type="button"
+            <button type="button" (click)="openPreview()"
               class="flex items-center justify-center gap-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 text-sm font-semibold px-4 py-2.5 rounded-xl transition-all active:scale-95 cursor-pointer border border-slate-200/60 dark:border-slate-700/60">
               <span class="material-symbols-outlined text-[18px]">visibility</span>
               <span>{{ 'recruiterPostJob.preview' | t }}</span>
@@ -396,4 +396,13 @@
       </div>
     </form>
   </div>
+
+  <!-- Standalone Slide-Up Preview Component -->
+  <app-job-post-preview
+    [isOpen]="isPreviewMode()"
+    [isSubmitting]="isSubmitting"
+    [data]="previewData()"
+    (backToEdit)="closePreview()"
+    (saveJob)="onSubmit()">
+  </app-job-post-preview>
 </main>

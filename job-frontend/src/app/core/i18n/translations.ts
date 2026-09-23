@@ -732,6 +732,16 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
         benefitsMax: 'Quyền lợi & đãi ngộ tối đa 5.000 ký tự',
         formInvalid: 'Vui lòng kiểm tra và điền đầy đủ các thông tin bắt buộc.',
         maxChars: 'Tối đa 5.000 ký tự'
+      },
+      previewMode: {
+        badge: 'Chế độ xem trước',
+        backToEdit: 'Quay lại chỉnh sửa',
+        saveJob: 'Lưu công việc',
+        previewNotice: 'Đây là bản xem trước trực quan cách tin tuyển dụng hiển thị đối với ứng viên.',
+        jobOverview: 'Tổng quan công việc',
+        headcountUnit: 'người',
+        enabled: 'Đã kích hoạt',
+        disabled: 'Chưa kích hoạt'
       }
     },
     companyAddress: {
@@ -1759,6 +1769,16 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationTree> = {
         benefitsMax: 'Benefits and perks cannot exceed 5,000 characters',
         formInvalid: 'Please review and fill in all required fields.',
         maxChars: 'Maximum 5,000 characters'
+      },
+      previewMode: {
+        badge: 'Preview Mode',
+        backToEdit: 'Back to edit',
+        saveJob: 'Save Job',
+        previewNotice: 'This is a visual preview simulating how candidates will view your job posting.',
+        jobOverview: 'Job Overview',
+        headcountUnit: 'openings',
+        enabled: 'Enabled',
+        disabled: 'Disabled'
       }
     },
     companyAddress: {

@@ -16,6 +16,7 @@ import { CompanyAddress } from '../company-address/company-address.component';
 import { CategoryService } from '../../../../core/services/category.service';
 import { Category } from '../../../../shared/models/category.model';
 import { MarkdownEditorComponent } from '../../../../shared/components/markdown-editor/markdown-editor.component';
+import { JobPostPreviewComponent, JobPreviewData } from '../../components/job-post-preview/job-post-preview.component';
 import { I18nService } from '../../../../core/i18n/i18n.service';
 
 @Component({
@@ -25,7 +26,8 @@ import { I18nService } from '../../../../core/i18n/i18n.service';
     ReactiveFormsModule,
     CommonModule,
     TranslatePipe,
-    MarkdownEditorComponent
+    MarkdownEditorComponent,
+    JobPostPreviewComponent
   ],
   templateUrl: './recruiter-post-job.component.html',
   styleUrl: './recruiter-post-job.component.css'
@@ -55,12 +57,44 @@ export class PostJobComponent implements OnInit {
   categorySearchTerm = signal('');
   isCategoryDropdownOpen = signal(false);
   selectedCategoryName = signal('');
+  isPreviewMode = signal(false);
 
   filteredCategories = computed(() => {
     const term = this.categorySearchTerm().toLowerCase();
     const cats = this.categoryService.categories() || [];
     return cats.filter(c => c.name.toLowerCase().includes(term));
-  });    
+  });
+
+  selectedAddressDisplay = computed(() => {
+    const locId = this.postJobFG.get('location')?.value;
+    if (!locId) return '';
+    const addr = this.companyAddresses.find(a => a.id?.toString() === locId.toString());
+    if (!addr) return '';
+    return `${addr.city} - ${addr.street}`;
+  });
+
+  selectedCategoryDisplay = computed(() => {
+    const catId = this.postJobFG.get('categoryId')?.value;
+    if (!catId) return this.selectedCategoryName() || '';
+    const cat = this.categoryService.categories()?.find(c => c.id === catId);
+    return cat?.name || this.selectedCategoryName() || '';
+  });
+
+  previewData = computed<JobPreviewData>(() => ({
+    jobName: this.postJobFG.get('jobName')?.value || '',
+    categoryName: this.selectedCategoryDisplay(),
+    jobType: this.postJobFG.get('jobType')?.value || '',
+    jobTypeLabel: this.getJobTypeLabel(this.postJobFG.get('jobType')?.value),
+    salary: this.postJobFG.get('salary')?.value || '',
+    address: this.selectedAddressDisplay(),
+    headcount: this.postJobFG.get('headCount')?.value ?? null,
+    deadlineCV: this.formatDateDisplay(this.postJobFG.get('deadlineCV')?.value),
+    enableAiAnalysis: !!this.postJobFG.get('enableAiAnalysis')?.value,
+    jobDescription: this.postJobFG.get('jobDescription')?.value || '',
+    jobRequirement: this.postJobFG.get('jobRequirement')?.value || '',
+    jobSkill: this.postJobFG.get('jobSkill')?.value || '',
+    moreDetail: this.postJobFG.get('moreDetail')?.value || ''
+  }));    
 
   constructor(
     private readonly recruiterJobsService: RecruiterJobsService,
@@ -89,6 +123,7 @@ export class PostJobComponent implements OnInit {
           deadlineCV: null,
           enableAiAnalysis: false
         });
+        this.isPreviewMode.set(false);
         return;
       }
 
@@ -225,6 +260,45 @@ export class PostJobComponent implements OnInit {
   
   get f() {
     return this.postJobFG.controls;
+  }
+
+  openPreview(): void {
+    if (this.postJobFG.invalid) {
+      this.postJobFG.markAllAsTouched();
+      this.notify.showMessage(this.i18nService.translate('recruiterPostJob.validation.formInvalid'), '', 'error');
+      return;
+    }
+    this.isPreviewMode.set(true);
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  closePreview(): void {
+    this.isPreviewMode.set(false);
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  getJobTypeLabel(type?: string | null): string {
+    switch (type) {
+      case 'FULL_TIME': return this.i18nService.translate('recruiterPostJob.jobTypeOptions.fullTime');
+      case 'PART_TIME': return this.i18nService.translate('recruiterPostJob.jobTypeOptions.partTime');
+      case 'HYBRID': return this.i18nService.translate('recruiterPostJob.jobTypeOptions.hybrid');
+      case 'REMOTE': return this.i18nService.translate('recruiterPostJob.jobTypeOptions.remote');
+      default: return type || '';
+    }
+  }
+
+  formatDateDisplay(dateVal: any): string {
+    if (!dateVal) return '';
+    const d = new Date(dateVal);
+    if (isNaN(d.getTime())) return String(dateVal);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
   }
 
 
