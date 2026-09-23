@@ -35,7 +35,7 @@ export class RecruiterLayoutComponent implements OnInit {
   readonly navItems: NavItem[] = [
     { label: 'Overview', icon: 'dashboard', route: '/recruiter/dashboard' },
     { label: 'Jobs', icon: 'work', route: '/recruiter/jobs' },
-    { label: 'Company Address', icon: 'location_on', route: '/recruiter/company-address' }
+    { label: 'Company Profile', icon: 'apartment', route: '/recruiter/company-profile' }
   ];
   readonly username = signal<string>('Recruiter');
   readonly avatarLetter = signal<string>('R');

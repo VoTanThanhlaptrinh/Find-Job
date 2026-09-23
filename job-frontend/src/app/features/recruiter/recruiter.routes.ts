@@ -3,7 +3,7 @@ import { Routes } from '@angular/router';
 import { hirerChildGuard } from '../../core/guards/hirer-guard.guard';
 import { RecruiterLayoutComponent } from './components/recruiter-layout/recruiter-layout.component';
 import { CandidateListComponent } from './pages/candidate-list/candidate-list.component';
-import { CompanyAddressComponent } from './pages/company-address/company-address.component';
+import { CompanyProfileComponent } from './pages/company-profile/company-profile.component';
 import { RecruiterDashboardComponent } from './pages/recruiter-dashboard/recruiter-dashboard.component';
 import { RecruiterJobDetailComponent } from './pages/recruiter-job-detail/recruiter-job-detail.component';
 import { RecruiterJobListComponent } from './pages/recruiter-job-list/recruiter-job-list.component';
@@ -22,7 +22,8 @@ export const recruiterRoutes: Routes = [
   { path: 'dashboard/jobs/post-job', redirectTo: 'jobs/post-job', pathMatch: 'full' },
   { path: 'dashboard/jobs/detail/:id', redirectTo: 'jobs/detail/:id', pathMatch: 'full' },
   { path: 'dashboard/candidates', redirectTo: 'jobs', pathMatch: 'full' },
-  { path: 'dashboard/company-address', redirectTo: 'company-address', pathMatch: 'full' },
+  { path: 'dashboard/company-address', redirectTo: 'company-profile', pathMatch: 'full' },
+  { path: 'company-address', redirectTo: 'company-profile', pathMatch: 'full' },
 
   {
     path: '',
@@ -34,7 +35,7 @@ export const recruiterRoutes: Routes = [
       { path: 'jobs/detail/:id', component: RecruiterJobDetailComponent, data: { title: 'Job Detail' } },
       { path: 'jobs/:jobId/candidates', component: CandidateListComponent, data: { title: 'Candidates' } },
       { path: 'jobs/post-job', component: PostJobComponent, data: { title: 'Post Job' } },
-      { path: 'company-address', component: CompanyAddressComponent, data: { title: 'Company Address' } },
+      { path: 'company-profile', component: CompanyProfileComponent, data: { title: 'Company Profile' } },
     ],
   },
 

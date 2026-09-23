@@ -12,12 +12,13 @@ import { NotifyMessageService } from '../../../../core/services/notify-message.s
 import { RecruiterJobsService } from '../../services/recruiter-jobs.service';
 import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
 import { RecruiterAddressService } from '../../services/recruiter-address.service';
-import { CompanyAddress } from '../company-address/company-address.component';
+
 import { CategoryService } from '../../../../core/services/category.service';
 import { Category } from '../../../../shared/models/category.model';
 import { MarkdownEditorComponent } from '../../../../shared/components/markdown-editor/markdown-editor.component';
 import { JobPostPreviewComponent, JobPreviewData } from '../../components/job-post-preview/job-post-preview.component';
 import { I18nService } from '../../../../core/i18n/i18n.service';
+import { CompanyAddress } from '../company-profile/company-profile.component';
 
 @Component({
   selector: 'app-post-job',
