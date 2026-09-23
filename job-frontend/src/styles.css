@@ -243,7 +243,7 @@ body {
 
 /* Subpage Hero Banner (Jobs, Blog, Single Pages) */
 .page-hero-banner {
-  background-image: url('/assets/images/hero-images.png');
+  background-image: url('/assets/images/hero-images.webp');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

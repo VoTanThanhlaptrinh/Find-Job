@@ -33,6 +33,7 @@ export class AuthService {
   private readonly loggedIn = signal(false);
   private readonly _authReady = signal(false);
   private pageAccessTrackingInitialized = false;
+  private sseConnectTimeoutId: any = null;
 
   username = signal('');
   public isLoginClicked = computed(() => this.loginClick());
@@ -181,6 +182,10 @@ export class AuthService {
   }
 
   logout(redirectUrl?: string): void {
+    if (this.sseConnectTimeoutId) {
+      clearTimeout(this.sseConnectTimeoutId);
+      this.sseConnectTimeoutId = null;
+    }
     this.tokenService.clearToken();
     this.loggedIn.set(false);
     this.sseService.disconnect();
@@ -218,9 +223,20 @@ export class AuthService {
         roles: this.tokenService.getTokenRoles(),
       });
 
+      // Hủy timer kết nối SSE cũ nếu có
+      if (this.sseConnectTimeoutId) {
+        clearTimeout(this.sseConnectTimeoutId);
+        this.sseConnectTimeoutId = null;
+      }
+
       // Kết nối/ngắt SSE theo trạng thái đăng nhập
+      // Trì hoãn 3s khi đăng nhập để nhường băng thông cho các tài nguyên khởi tạo trang web ban đầu
       if (value) {
-        this.sseService.connect();
+        this.sseConnectTimeoutId = setTimeout(() => {
+          if (this.loggedIn()) {
+            this.sseService.connect();
+          }
+        }, 3000);
       } else {
         this.sseService.disconnect();
       }
