@@ -73,7 +73,7 @@ public class AdminEmployerServiceImpl implements AdminEmployerService {
                 .orElseThrow(() -> new ResourceNotFoundException("Employer not found"));
         if ("suspend".equalsIgnoreCase(request.getAction())) {
             recruitment.setRecordStatus(com.nlu.shared.domain.model.EntityStatus.SUSPENDED);
-        } else if ("activate".equalsIgnoreCase(request.getAction())) {
+        } else if ("activate".equalsIgnoreCase(request.getAction()) || "restore".equalsIgnoreCase(request.getAction())) {
             recruitment.setRecordStatus(com.nlu.shared.domain.model.EntityStatus.ACTIVE);
         }
         recruitmentRepository.save(recruitment);
