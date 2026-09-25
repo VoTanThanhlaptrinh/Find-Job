@@ -1,23 +1,33 @@
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { RouterModule } from '@angular/router';
+
+export interface AdminBreadcrumbItem {
+  label: string;
+  routerLink?: string | readonly unknown[];
+}
 
 @Component({
   selector: 'app-admin-page-header',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './page-header.component.html',
 })
 export class AdminPageHeaderComponent {
-  @Input() title = '';
+  @Input({ required: true }) title = '';
   @Input() description = '';
+  @Input() breadcrumbs: AdminBreadcrumbItem[] = [];
+
+  // Direct action inputs for backward compatibility / simple usage
   @Input() actionLabel = '';
   @Input() actionIcon = '';
+  @Input() actionDisabled = false;
+  @Input() actionLoading = false;
+  @Output() actionClick = new EventEmitter<void>();
 
-  @Input() wrapperClass = 'flex justify-between items-end mb-8';
-  @Input() titleClass = 'text-3xl font-bold tracking-tight text-slate-900';
-  @Input() descriptionClass = 'text-slate-500 mt-1';
-
-  @Input()
-  actionClass =
-    'flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 ad-rounded-xl font-bold text-sm shadow-md shadow-blue-600/20 hover:bg-blue-700 active:scale-95 transition-all';
+  onActionClick(): void {
+    if (!this.actionDisabled && !this.actionLoading) {
+      this.actionClick.emit();
+    }
+  }
 }
