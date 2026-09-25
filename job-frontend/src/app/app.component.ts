@@ -1,5 +1,5 @@
 import { Component, effect, OnInit } from '@angular/core';
-import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router, RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './core/layout/header/header.component';
 import { FooterComponent } from './core/layout/footer/footer.component';
 import { filter } from 'rxjs/operators';
@@ -20,6 +20,7 @@ export class AppComponent implements OnInit {
   title = 'job-list';
   showHeader = true;
   showFooter = true;
+  isResolvingAuth = false;
 
   constructor(
     private router: Router,
@@ -39,11 +40,17 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.i18nService.initialize();
     this.layoutVisibilityService.checkUrlIsHidden(this.router.url);
-    this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe((event) => {
-        const navigationEvent = event as NavigationEnd;
-        this.layoutVisibilityService.checkUrlIsHidden(navigationEvent.urlAfterRedirects);
-      });
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationStart) {
+        if ((event.url.startsWith('/admin') || event.url.startsWith('/recruiter') || event.url.startsWith('/blog-creation')) && !this.authService.isAuthReady()) {
+          this.isResolvingAuth = true;
+        }
+      } else if (event instanceof NavigationEnd) {
+        this.layoutVisibilityService.checkUrlIsHidden(event.urlAfterRedirects);
+        this.isResolvingAuth = false;
+      } else if (event instanceof NavigationCancel || event instanceof NavigationError) {
+        this.isResolvingAuth = false;
+      }
+    });
   }
 }

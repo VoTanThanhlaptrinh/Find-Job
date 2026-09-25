@@ -308,3 +308,28 @@ export interface AdminBillingSummary {
   mrrGrowthPct: number;
   activeSubscriptions: number;
 }
+
+export interface AdminRouteData {
+  title: string;
+  breadcrumb: string;
+  requiredPermission?: string;
+  navigationGroup: 'overview' | 'user-operations' | 'recruitment' | 'revenue';
+  navigationIcon: string;
+  badgeKey?: string;
+}
+
+export interface AdminNavigationItem {
+  label: string;
+  route: string;
+  icon: string;
+  capability: 'available' | 'partial' | 'proposed';
+  requiredPermission?: string;
+  badge?: number | null;
+}
+
+export interface AdminNavigationGroup {
+  id: string;
+  label: string;
+  items: AdminNavigationItem[];
+}
+

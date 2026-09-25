@@ -48,6 +48,7 @@ html {
   --color-site-border: #DCE5F2;
 
   /* --- Admin Colors --- */
+  --color-ad-surface-selected: #eef2ff;
   --color-ad-error-container: #fb5151;
   --color-ad-on-background: #282b51;
   --color-ad-surface-dim: #cfd1ff;

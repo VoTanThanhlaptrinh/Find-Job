@@ -1,5 +1,24 @@
-import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+export type MetricTrendDirection = 'up' | 'down' | 'flat';
+export type MetricTrendTone = 'positive' | 'negative' | 'warning' | 'neutral';
+
+export interface AdminMetricTrend {
+  displayValue: string;
+  direction: MetricTrendDirection;
+  tone: MetricTrendTone;
+  comparisonLabel: string;
+  ariaLabel?: string;
+}
+
+export interface AdminMetricCardViewModel {
+  label: string;
+  displayValue: string | number;
+  valueAriaLabel?: string;
+  trend?: AdminMetricTrend;
+  subtext?: string;
+}
 
 @Component({
   selector: 'app-admin-metric-card',
@@ -8,15 +27,70 @@ import { Component, Input } from '@angular/core';
   templateUrl: './metric-card.component.html',
 })
 export class AdminMetricCardComponent {
-  @Input() label = '';
-  @Input() value = '';
-  @Input() hint = '';
+  @Input({ required: true }) label = '';
+  @Input() displayValue: string | number | null = null;
+  @Input() valueAriaLabel?: string;
+  @Input() trend?: AdminMetricTrend;
+  @Input() subtext?: string;
+  @Input() loading = false;
+
+  // Compatibility getters/setters for legacy 'value' and 'hint' inputs
+  @Input()
+  set value(val: string | number | null) {
+    if (this.displayValue === null || this.displayValue === undefined) {
+      this.displayValue = val;
+    }
+  }
+  get value(): string | number | null {
+    return this.displayValue;
+  }
 
   @Input()
-  containerClass =
-    'bg-white p-6 ad-rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between';
-  @Input() labelClass = 'text-xs font-bold uppercase tracking-widest text-slate-500';
-  @Input() valueClass = 'text-3xl font-bold tracking-tight text-slate-900';
-  @Input() valueRowClass = 'flex items-baseline space-x-2';
-  @Input() hintClass = 'text-xs font-bold text-emerald-500';
+  set hint(val: string) {
+    if (val && !this.trend && !this.subtext) {
+      this.subtext = val;
+    }
+  }
+  get hint(): string {
+    return this.subtext || '';
+  }
+
+  get formattedDisplayValue(): string {
+    if (this.displayValue === null || this.displayValue === undefined || this.displayValue === '') {
+      return '—';
+    }
+    return String(this.displayValue);
+  }
+
+  get isUnknownValue(): boolean {
+    return this.displayValue === null || this.displayValue === undefined || this.displayValue === '';
+  }
+
+  getTrendToneClass(tone?: MetricTrendTone): string {
+    switch (tone) {
+      case 'positive':
+        return 'bg-emerald-50 text-emerald-700 border-emerald-200/60';
+      case 'negative':
+        return 'bg-rose-50 text-rose-700 border-rose-200/60';
+      case 'warning':
+        return 'bg-amber-50 text-amber-700 border-amber-200/60';
+      case 'neutral':
+      default:
+        return 'bg-slate-100 text-slate-700 border-slate-200';
+    }
+  }
+
+  getTrendTextClass(tone?: MetricTrendTone): string {
+    switch (tone) {
+      case 'positive':
+        return 'text-emerald-700';
+      case 'negative':
+        return 'text-rose-700';
+      case 'warning':
+        return 'text-amber-700';
+      case 'neutral':
+      default:
+        return 'text-slate-600';
+    }
+  }
 }

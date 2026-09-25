@@ -1,3 +1,10 @@
+@if (isResolvingAuth) {
+<div class="fixed inset-0 z-[9999] bg-[#F9FAFB] flex flex-col items-center justify-center">
+  <div class="w-12 h-12 border-4 border-gray-200 border-t-[#1E63F3] rounded-full animate-spin mb-4"></div>
+  <span class="text-gray-600 font-medium text-lg">Đang tải dữ liệu...</span>
+</div>
+}
+
 @if (showHeader) {
 <app-header></app-header>
 }

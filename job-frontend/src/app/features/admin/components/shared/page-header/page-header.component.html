@@ -1,13 +1,95 @@
-<div [class]="wrapperClass">
-  <div>
-    <h1 [class]="titleClass">{{ title }}</h1>
-    <p *ngIf="description" [class]="descriptionClass">{{ description }}</p>
+<header class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between border-b border-ad-outline-variant/30 pb-6 mb-6 md:mb-8">
+  <div class="space-y-1.5 max-w-3xl">
+    <!-- Breadcrumb Navigation (SC-08, SC-17) -->
+    <nav
+      *ngIf="breadcrumbs && breadcrumbs.length > 0"
+      aria-label="Đường dẫn trang"
+      class="flex flex-wrap items-center gap-2 text-xs font-medium text-slate-500 mb-2"
+    >
+      <ng-container *ngFor="let item of breadcrumbs; let isLast = last; let isFirst = first">
+        <!-- Linkable item -->
+        <a
+          *ngIf="!isLast && item.routerLink"
+          [routerLink]="item.routerLink"
+          class="hover:text-ad-primary transition-colors flex items-center gap-1 focus-visible:outline-2 focus-visible:outline-ad-primary rounded"
+        >
+          <svg
+            *ngIf="isFirst"
+            class="w-3.5 h-3.5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+          </svg>
+          <span>{{ item.label }}</span>
+        </a>
+
+        <!-- Non-link item (not last) -->
+        <span *ngIf="!isLast && !item.routerLink" class="text-slate-500">
+          {{ item.label }}
+        </span>
+
+        <!-- Separator -->
+        <span *ngIf="!isLast" class="text-slate-400" aria-hidden="true">/</span>
+
+        <!-- Current Page (Last item) -->
+        <span
+          *ngIf="isLast"
+          class="text-ad-on-surface font-semibold truncate"
+          aria-current="page"
+        >
+          {{ item.label }}
+        </span>
+      </ng-container>
+    </nav>
+
+    <!-- Page Title (Single H1 per page) -->
+    <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 leading-tight">
+      {{ title }}
+    </h1>
+
+    <!-- Description -->
+    <p *ngIf="description" class="text-sm text-ad-on-surface-variant leading-relaxed">
+      {{ description }}
+    </p>
   </div>
 
-  <button *ngIf="actionLabel" type="button" [class]="actionClass">
-    <span *ngIf="actionIcon" class="material-symbols-outlined text-lg">{{
-      actionIcon
-    }}</span>
-    <span>{{ actionLabel }}</span>
-  </button>
-</div>
+  <!-- Action Slots & Projected Actions (SC-09, SC-16, SC-18) -->
+  <div class="flex flex-wrap items-center gap-3 shrink-0">
+    <!-- Secondary actions slot projected first (SC-16) -->
+    <ng-content select="[header-secondary-action]"></ng-content>
+
+    <!-- Primary action slot projected -->
+    <ng-content select="[header-primary-action]"></ng-content>
+
+    <!-- General actions slot -->
+    <ng-content select="[header-actions]"></ng-content>
+
+    <!-- Backward compatible direct action button -->
+    <button
+      *ngIf="actionLabel"
+      type="button"
+      [disabled]="actionDisabled || actionLoading"
+      (click)="onActionClick()"
+      class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold bg-ad-primary text-white hover:bg-ad-primary-dim transition shadow-xs focus:outline-none focus:ring-2 focus:ring-ad-primary focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none"
+    >
+      <svg
+        *ngIf="actionLoading"
+        class="w-4 h-4 animate-spin text-white"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <span *ngIf="!actionLoading && actionIcon" class="material-symbols-outlined text-lg" aria-hidden="true">
+        {{ actionIcon }}
+      </span>
+      <span>{{ actionLabel }}</span>
+    </button>
+  </div>
+</header>

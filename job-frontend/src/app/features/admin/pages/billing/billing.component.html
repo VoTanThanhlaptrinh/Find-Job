@@ -1,135 +1,744 @@
-<main class="bg-ad-surface min-h-screen p-6 md:p-10 text-ad-on-surface">
-  <section class="max-w-7xl mx-auto space-y-6">
-    <header>
-      <h1 class="text-2xl md:text-3xl font-bold">Billing</h1>
-      <p class="text-ad-on-surface-variant mt-1">Du lieu tu admin/billing APIs</p>
-    </header>
-
-    <div *ngIf="isLoadingSummary" class="bg-ad-surface-container-low p-4 rounded-xl">Dang tai summary...</div>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4" *ngIf="summary as data">
-      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 rounded-xl">
-        <p class="text-sm text-ad-on-surface-variant">MRR</p>
-        <p class="text-2xl font-bold mt-1">{{ data.monthlyRecurringRevenue | number }}</p>
-      </article>
-      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 rounded-xl">
-        <p class="text-sm text-ad-on-surface-variant">MRR Growth</p>
-        <p class="text-2xl font-bold mt-1">{{ data.mrrGrowthPct }}%</p>
-      </article>
-      <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-4 rounded-xl">
-        <p class="text-sm text-ad-on-surface-variant">Active subscriptions</p>
-        <p class="text-2xl font-bold mt-1">{{ data.activeSubscriptions }}</p>
-      </article>
-    </div>
-
-    <section class="space-y-3">
-      <h2 class="text-lg font-semibold">Tiers</h2>
-      <div *ngIf="isLoadingTiers" class="bg-ad-surface-container-low p-4 rounded-xl">Dang tai tiers...</div>
-      <div *ngIf="!isLoadingTiers && tiers.length === 0" class="bg-ad-surface-container-low p-4 rounded-xl text-ad-on-surface-variant">
-        Khong co du lieu tiers.
+<main class="bg-ad-surface min-h-screen p-4 sm:p-6 md:p-8 lg:p-10 text-ad-on-surface">
+  <div class="mx-auto space-y-8">
+    <!-- SECTION 1: 3 KPI Summary Cards (BL-02, BL-03, BL-10) -->
+    <section aria-label="Tóm tắt doanh thu" class="space-y-3">
+      <div class="flex items-center justify-between">
+        <h2 class="text-base font-semibold text-slate-800 flex items-center gap-2">
+          <span>Chỉ số tài chính định kỳ</span>
+          <span class="text-xs font-normal text-slate-500">(Tháng hiện tại)</span>
+        </h2>
+        <div class="flex items-center gap-3">
+          <button type="button" (click)="reloadAll()"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-ad-surface-container-lowest border border-ad-outline-variant/40 hover:bg-slate-50 active:bg-slate-100 transition shadow-2xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-ad-primary focus:ring-offset-2"
+            [disabled]="isLoadingSummary || isLoadingTiers || isLoadingTransactions" title="Tải lại toàn bộ dữ liệu">
+            <svg class="w-4 h-4 text-slate-500"
+              [class.animate-spin]="isLoadingSummary || isLoadingTiers || isLoadingTransactions" fill="none"
+              stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span>Làm mới</span>
+          </button>
+        </div>
       </div>
-      <div *ngIf="!isLoadingTiers && tiers.length > 0" class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <article
-          *ngFor="let tier of tiers; trackBy: trackByTier"
-          class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 p-5 rounded-xl"
-        >
-          <div class="flex items-center justify-between">
-            <h3 class="font-semibold text-lg">{{ tier.name }}</h3>
-            <span class="text-xs px-2 py-1 rounded-full bg-ad-primary-fixed text-ad-on-primary-fixed">{{ tier.badge }}</span>
+
+      <!-- Scoped Error for Summary (BL-10) -->
+      <div *ngIf="summaryError && !summary"
+        class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <svg class="w-5 h-5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <span class="text-sm font-medium">{{ summaryError }}</span>
+        </div>
+        <button type="button" (click)="retrySummary()"
+          class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-900 transition">
+          Thử lại
+        </button>
+      </div>
+
+      <!-- Scoped Loading Skeletons for Summary (BL-10) -->
+      <div *ngIf="isLoadingSummary && !summary" class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div *ngFor="let item of [1, 2, 3]"
+          class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl animate-pulse space-y-4">
+          <div class="flex justify-between items-center">
+            <div class="h-4 bg-slate-200 rounded w-28"></div>
+            <div class="w-8 h-8 bg-slate-100 rounded-lg"></div>
           </div>
-          <p class="text-ad-on-surface-variant mt-2">{{ tier.priceMonthly | number }} {{ tier.currency }}/month</p>
-          <p class="text-sm mt-1">Usage: {{ tier.usagePct }}%</p>
-          <ul class="mt-3 space-y-1 text-sm">
-            <li *ngFor="let feature of tier.features">- {{ feature }}</li>
-          </ul>
-          <div class="mt-4 space-y-3 border-t border-ad-outline-variant/10 pt-3">
-            <div>
-              <label [for]="'tier-price-' + tier.id" class="text-xs text-ad-on-surface-variant">Price monthly</label>
-              <input
-                #priceInput
-                [id]="'tier-price-' + tier.id"
-                type="number"
-                min="1"
-                [value]="tier.priceMonthly"
-                title="Tier monthly price"
-                placeholder="Monthly price"
-                class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 rounded-xl px-3 py-2 text-sm"
-              />
+          <div class="h-8 bg-slate-200 rounded w-44"></div>
+          <div class="h-3 bg-slate-100 rounded w-36"></div>
+        </div>
+      </div>
+
+      <!-- 3 Real KPI Cards (BL-02, BL-03) -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5" *ngIf="summary as data">
+        <!-- KPI 1: MRR -->
+        <article
+          class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl relative overflow-hidden transition-shadow hover:shadow-xs flex flex-col justify-between">
+          <div class="flex items-start justify-between">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Doanh thu định kỳ (MRR)</span>
+            <div class="p-2 rounded-lg bg-blue-50 text-blue-600" aria-hidden="true">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
             </div>
-            <div>
-              <label [for]="'tier-features-' + tier.id" class="text-xs text-ad-on-surface-variant">Features (comma separated)</label>
-              <input
-                #featuresInput
-                [id]="'tier-features-' + tier.id"
-                type="text"
-                [value]="tier.features.join(', ')"
-                title="Tier features"
-                placeholder="feature 1, feature 2"
-                class="mt-1 w-full bg-ad-surface-container-low border border-ad-outline-variant/20 rounded-xl px-3 py-2 text-sm"
-              />
+          </div>
+          <div class="mt-3">
+            <p class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 tabular-nums">
+              {{ formatCurrency(data.monthlyRecurringRevenue, 'VND') }}
+            </p>
+            <p class="text-xs text-slate-500 mt-2 flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>Doanh thu tháng tính theo thuê bao kích hoạt</span>
+            </p>
+          </div>
+        </article>
+
+        <!-- KPI 2: MRR Growth -->
+        <article
+          class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl relative overflow-hidden transition-shadow hover:shadow-xs flex flex-col justify-between">
+          <div class="flex items-start justify-between">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Tăng trưởng MRR</span>
+            <div class="p-2 rounded-lg"
+              [ngClass]="data.mrrGrowthPct >= 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'"
+              aria-hidden="true">
+              <svg *ngIf="data.mrrGrowthPct >= 0" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+              </svg>
+              <svg *ngIf="data.mrrGrowthPct < 0" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" />
+              </svg>
             </div>
-            <button
-              type="button"
-              class="w-full px-3 py-2 rounded-lg bg-ad-primary text-ad-on-primary text-sm disabled:opacity-40"
-              [disabled]="updatingTierId === tier.id"
-              (click)="saveTier(tier, priceInput.value, featuresInput.value)"
-            >
-              {{ updatingTierId === tier.id ? 'Saving...' : 'Save Tier' }}
+          </div>
+          <div class="mt-3">
+            <div class="flex items-baseline gap-2">
+              <p class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 tabular-nums">
+                {{ data.mrrGrowthPct > 0 ? '+' : '' }}{{ data.mrrGrowthPct }}%
+              </p>
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold"
+                [ngClass]="data.mrrGrowthPct >= 0 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200'">
+                {{ data.mrrGrowthPct >= 0 ? '↑ Tăng trưởng' : '↓ Suy giảm' }}
+              </span>
+            </div>
+            <p class="text-xs text-slate-500 mt-2">So với kỳ đối soát tháng trước</p>
+          </div>
+        </article>
+
+        <!-- KPI 3: Active Subscriptions -->
+        <article
+          class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl relative overflow-hidden transition-shadow hover:shadow-xs flex flex-col justify-between">
+          <div class="flex items-start justify-between">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Thuê bao hoạt động</span>
+            <div class="p-2 rounded-lg bg-indigo-50 text-indigo-600" aria-hidden="true">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+            </div>
+          </div>
+          <div class="mt-3">
+            <p class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 tabular-nums">
+              {{ data.activeSubscriptions | number }}
+            </p>
+            <p class="text-xs text-slate-500 mt-2">Tổng số gói dịch vụ đang hiệu lực</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- SECTION 2: Gói dịch vụ tuyển dụng (Tiers) (BL-04, BL-10, BL-11) -->
+    <section aria-labelledby="tiers-heading" class="space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <div>
+          <h2 id="tiers-heading" class="text-xl font-bold text-slate-900 tracking-tight">Gói dịch vụ tuyển dụng</h2>
+          <p class="text-sm text-ad-on-surface-variant mt-0.5">
+            Cấu hình bảng giá và quyền lợi dành cho nhà tuyển dụng. Nhấn "Chỉnh sửa gói" để mở bảng điều chỉnh.
+          </p>
+        </div>
+        <span *ngIf="tiers.length > 0" class="text-xs text-slate-500 font-medium">
+          {{ tiers.length }} gói đang áp dụng
+        </span>
+      </div>
+
+      <!-- Scoped Error for Tiers (BL-10) -->
+      <div *ngIf="tiersError && tiers.length === 0"
+        class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <svg class="w-5 h-5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span class="text-sm font-medium">{{ tiersError }}</span>
+        </div>
+        <button type="button" (click)="retryTiers()"
+          class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-900 transition">
+          Thử lại
+        </button>
+      </div>
+
+      <!-- Scoped Loading Skeletons for Tiers (BL-10) -->
+      <div *ngIf="isLoadingTiers && tiers.length === 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div *ngFor="let i of [1, 2, 3]"
+          class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-6 rounded-xl animate-pulse space-y-4">
+          <div class="flex justify-between items-center">
+            <div class="h-6 bg-slate-200 rounded w-32"></div>
+            <div class="h-5 bg-slate-100 rounded-full w-16"></div>
+          </div>
+          <div class="h-9 bg-slate-200 rounded w-48"></div>
+          <div class="h-2 bg-slate-100 rounded-full w-full"></div>
+          <div class="space-y-2 pt-2">
+            <div class="h-4 bg-slate-100 rounded w-3/4"></div>
+            <div class="h-4 bg-slate-100 rounded w-5/6"></div>
+            <div class="h-4 bg-slate-100 rounded w-2/3"></div>
+          </div>
+          <div class="h-10 bg-slate-200 rounded-lg w-full mt-4"></div>
+        </div>
+      </div>
+
+      <!-- Empty state for Tiers -->
+      <div *ngIf="!isLoadingTiers && tiers.length === 0 && !tiersError"
+        class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-8 rounded-xl text-center">
+        <svg class="w-12 h-12 text-slate-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+          aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+        </svg>
+        <p class="text-base font-semibold text-slate-800">Chưa có gói dịch vụ nào</p>
+        <p class="text-sm text-slate-500 mt-1">Hệ thống chưa tìm thấy cấu hình gói cước từ máy chủ.</p>
+      </div>
+
+      <!-- Real Tier Cards (Read-only, BL-04, BL-11) -->
+      <div *ngIf="tiers.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <article *ngFor="let tier of tiers; trackBy: trackByTier"
+          class="bg-ad-surface-container-lowest rounded-xl p-6 flex flex-col justify-between transition-all duration-200 hover:shadow-sm"
+          [ngClass]="tier.isPopular ? 'border-2 border-purple-400 ring-4 ring-purple-100/60 relative' : 'border border-ad-outline-variant/40 hover:border-slate-300'">
+          <!-- Popular badge if applicable -->
+          <div *ngIf="tier.isPopular" class="absolute -top-3 left-1/2 -translate-x-1/2">
+            <span
+              class="inline-flex items-center gap-1 px-3 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-purple-600 text-white shadow-xs">
+              <svg class="w-3 h-3 text-amber-300" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
+              Phổ biến nhất
+            </span>
+          </div>
+
+          <div>
+            <!-- Card Header: Title & Badge -->
+            <div class="flex items-center justify-between gap-2 mt-1">
+              <h3 class="font-bold text-xl text-slate-900 tracking-tight">{{ tier.name }}</h3>
+              <span class="text-xs px-2.5 py-1 rounded-full font-semibold"
+                [ngClass]="tier.isPopular ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-700'">
+                {{ tier.badge }}
+              </span>
+            </div>
+
+            <!-- Price display (BL-03) -->
+            <div class="mt-4 pb-4 border-b border-ad-outline-variant/20">
+              <div class="flex items-baseline gap-1">
+                <span class="text-3xl font-extrabold text-slate-900 tracking-tight tabular-nums">
+                  {{ formatCurrency(tier.priceMonthly, tier.currency) }}
+                </span>
+                <span class="text-sm font-medium text-slate-500">/ tháng</span>
+              </div>
+            </div>
+
+            <!-- Usage Progress Bar (BL-11) -->
+            <div class="mt-4 space-y-1.5">
+              <div class="flex items-center justify-between text-xs font-medium">
+                <span class="text-slate-500">Mức độ sử dụng</span>
+                <span class="text-slate-800 font-semibold tabular-nums">{{ tier.usagePct }}%</span>
+              </div>
+              <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden" role="progressbar"
+                [attr.aria-valuenow]="tier.usagePct" aria-valuemin="0" aria-valuemax="100"
+                [attr.aria-label]="'Mức độ sử dụng gói ' + tier.name">
+                <div class="h-full rounded-full transition-all duration-500"
+                  [ngClass]="tier.isPopular ? 'bg-purple-600' : 'bg-ad-primary'" [style.width.%]="tier.usagePct"></div>
+              </div>
+              <p class="text-2xs text-slate-400">Tỷ lệ các nhà tuyển dụng trên hệ thống lựa chọn gói này</p>
+            </div>
+
+            <!-- Features list (BL-11) -->
+            <div class="mt-5 space-y-2">
+              <p class="text-xs font-bold uppercase tracking-wider text-slate-500">Quyền lợi bao gồm:</p>
+              <ul class="space-y-2 text-sm text-slate-700" [attr.aria-label]="'Quyền lợi gói ' + tier.name">
+                <li *ngFor="let feature of tier.features" class="flex items-start gap-2.5 leading-snug">
+                  <svg class="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>{{ feature }}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Action Button: Open Drawer (BL-04) -->
+          <div class="mt-6 pt-4 border-t border-ad-outline-variant/20">
+            <button type="button" (click)="openEditDrawer(tier, $event)"
+              [attr.aria-label]="'Chỉnh sửa thông tin gói ' + tier.name"
+              class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition shadow-2xs focus:outline-none focus:ring-2 focus:ring-ad-primary focus:ring-offset-2"
+              [ngClass]="tier.isPopular ? 'bg-purple-600 hover:bg-purple-700 text-white' : 'bg-slate-900 hover:bg-slate-800 text-white'">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              <span>Chỉnh sửa gói</span>
             </button>
           </div>
         </article>
       </div>
     </section>
 
-    <section class="bg-ad-surface-container-lowest border border-ad-outline-variant/20 rounded-xl overflow-hidden">
-      <div class="px-4 py-3 border-b border-ad-outline-variant/10 flex items-center justify-between">
-        <h2 class="text-lg font-semibold">Transactions</h2>
-        <div class="flex items-center gap-3">
-          <label for="transaction-status" class="text-sm text-ad-on-surface-variant">Status</label>
-          <select
-            id="transaction-status"
-            [value]="selectedTransactionStatus"
-            (change)="onTransactionsStatusChange($event)"
-            class="px-3 py-1.5 text-sm border border-ad-outline-variant/30 rounded-lg bg-ad-surface-container-low"
-          >
-            <option value="">all</option>
-            <option value="paid">paid</option>
-            <option value="pending">pending</option>
-            <option value="failed">failed</option>
-          </select>
-          <span class="text-sm text-ad-on-surface-variant">Tong: {{ totalTransactions }}</span>
+    <!-- SECTION 3: Lịch sử giao dịch (Transactions) (BL-08, BL-09, BL-10, BL-12, BL-13, BL-14) -->
+    <section aria-labelledby="transactions-heading"
+      class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 rounded-xl overflow-hidden shadow-2xs">
+      <!-- Section Header with Filter (BL-14) -->
+      <div
+        class="px-5 py-4 border-b border-ad-outline-variant/20 flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-ad-surface-container-lowest">
+        <div>
+          <h2 id="transactions-heading" class="text-lg font-bold text-slate-900 tracking-tight">Lịch sử giao dịch</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Danh sách các giao dịch thanh toán mua gói và gia hạn dịch vụ</p>
+        </div>
+
+        <!-- Status Filter Controls -->
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="flex items-center gap-2">
+            <label for="transaction-status" class="text-xs font-semibold text-slate-600">Trạng thái:</label>
+            <select id="transaction-status" [value]="selectedTransactionStatus"
+              (change)="onTransactionsStatusChange($event)"
+              class="px-3 py-1.5 text-xs font-medium border border-ad-outline-variant/40 rounded-lg bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-ad-primary focus:border-transparent cursor-pointer shadow-2xs">
+              <option value="">Tất cả trạng thái</option>
+              <option value="paid">Đã thanh toán (Thành công)</option>
+              <option value="pending">Đang chờ xử lý</option>
+              <option value="failed">Thất bại</option>
+            </select>
+          </div>
+
+          <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">
+            Tổng: {{ totalTransactions | number }} giao dịch
+          </span>
         </div>
       </div>
 
-      <div *ngIf="isLoadingTransactions" class="p-4">Dang tai giao dich...</div>
-      <div *ngIf="!isLoadingTransactions && transactions.length === 0" class="p-4 text-ad-on-surface-variant">
-        Khong co du lieu giao dich.
+      <!-- Scoped Error for Transactions (BL-10) -->
+      <div *ngIf="transactionsError && transactions.length === 0"
+        class="p-4 m-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <svg class="w-5 h-5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span class="text-sm font-medium">{{ transactionsError }}</span>
+        </div>
+        <button type="button" (click)="retryTransactions()"
+          class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-900 transition">
+          Thử lại
+        </button>
       </div>
-      <div *ngIf="!isLoadingTransactions && transactions.length > 0" class="overflow-x-auto">
-        <table class="w-full text-sm">
-          <thead class="bg-ad-surface-container-low text-left">
+
+      <!-- Scoped Loading Table Skeleton (BL-10) -->
+      <div *ngIf="isLoadingTransactions && transactions.length === 0" class="p-6">
+        <div class="animate-pulse space-y-4">
+          <div class="h-6 bg-slate-100 rounded w-full"></div>
+          <div *ngFor="let r of [1, 2, 3, 4, 5]" class="h-10 bg-slate-100/70 rounded w-full"></div>
+        </div>
+      </div>
+
+      <!-- Empty State for Transactions -->
+      <div *ngIf="!isLoadingTransactions && transactions.length === 0 && !transactionsError" class="p-12 text-center">
+        <svg class="w-12 h-12 text-slate-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+          aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+        </svg>
+        <p class="text-base font-semibold text-slate-800">
+          {{ selectedTransactionStatus ? 'Không tìm thấy giao dịch nào phù hợp' : 'Chưa có giao dịch thanh toán' }}
+        </p>
+        <p class="text-sm text-slate-500 mt-1 max-w-md mx-auto">
+          {{ selectedTransactionStatus ? 'Không có giao dịch nào mang trạng thái "' +
+          getStatusLabel(selectedTransactionStatus) + '". Hãy thử chọn trạng thái khác.' : 'Chưa có dữ liệu thanh toán
+          nào được ghi nhận trên cổng quản trị.' }}
+        </p>
+        <button *ngIf="selectedTransactionStatus" type="button" (click)="clearStatusFilter()"
+          class="mt-4 px-4 py-2 text-xs font-semibold rounded-lg bg-ad-primary text-white hover:bg-blue-700 transition">
+          Xóa bộ lọc trạng thái
+        </button>
+      </div>
+
+      <!-- Table View (BL-08) -->
+      <div *ngIf="transactions.length > 0" class="overflow-x-auto">
+        <table class="w-full text-left text-sm" aria-label="Bảng lịch sử giao dịch">
+          <caption class="sr-only">Lịch sử giao dịch thanh toán của nhà tuyển dụng</caption>
+          <thead
+            class="bg-ad-surface-container-low text-xs font-semibold uppercase tracking-wider text-slate-600 border-b border-ad-outline-variant/30">
             <tr>
-              <th class="px-4 py-3">Employer</th>
-              <th class="px-4 py-3">Package</th>
-              <th class="px-4 py-3">Amount</th>
-              <th class="px-4 py-3">Date</th>
-              <th class="px-4 py-3">Status</th>
+              <th scope="col" class="px-5 py-3.5">Nhà tuyển dụng</th>
+              <th scope="col" class="px-5 py-3.5">Gói dịch vụ</th>
+              <th scope="col" class="px-5 py-3.5">Số tiền</th>
+              <th scope="col" class="px-5 py-3.5">Thời gian giao dịch</th>
+              <th scope="col" class="px-5 py-3.5">Trạng thái</th>
             </tr>
           </thead>
-          <tbody>
-            <tr *ngFor="let tx of transactions; trackBy: trackByTransaction" class="border-t border-ad-outline-variant/10">
-              <td class="px-4 py-3">
-                <p class="font-medium">{{ tx.employerName }}</p>
-                <p class="text-xs text-ad-on-surface-variant">{{ tx.employerId }}</p>
+          <tbody class="divide-y divide-ad-outline-variant/20">
+            <tr *ngFor="let tx of transactions; trackBy: trackByTransaction"
+              class="hover:bg-slate-50/70 transition-colors">
+              <!-- Employer column -->
+              <td class="px-5 py-4">
+                <p class="font-semibold text-slate-900">{{ tx.employerName }}</p>
+                <p class="text-xs text-slate-500 font-mono mt-0.5" [title]="'Mã NTD: ' + tx.employerId">
+                  Mã: {{ tx.employerId }}
+                </p>
               </td>
-              <td class="px-4 py-3">{{ tx.packageName }}</td>
-              <td class="px-4 py-3">{{ tx.amount | number }} {{ tx.currency }}</td>
-              <td class="px-4 py-3">{{ tx.date }}</td>
-              <td class="px-4 py-3">{{ tx.status }}</td>
+
+              <!-- Package column -->
+              <td class="px-5 py-4">
+                <span
+                  class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-100 text-slate-800">
+                  {{ tx.packageName }}
+                </span>
+              </td>
+
+              <!-- Amount column (BL-03) -->
+              <td class="px-5 py-4">
+                <span class="font-bold text-slate-900 tabular-nums">
+                  {{ formatCurrency(tx.amount, tx.currency) }}
+                </span>
+              </td>
+
+              <!-- Date column (BL-13) -->
+              <td class="px-5 py-4 text-slate-600 text-xs">
+                <time [attr.datetime]="tx.date" [title]="'Thời điểm: ' + tx.date" class="tabular-nums">
+                  {{ formatDate(tx.date) }}
+                </time>
+              </td>
+
+              <!-- Status Badge (BL-12) -->
+              <td class="px-5 py-4">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border"
+                  [ngClass]="getStatusBadgeClass(tx.status)">
+                  <!-- Success icon -->
+                  <svg *ngIf="tx.status.toLowerCase() === 'paid' || tx.status.toLowerCase() === 'success'"
+                    class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <!-- Pending icon -->
+                  <svg *ngIf="tx.status.toLowerCase() === 'pending'" class="w-3.5 h-3.5 text-amber-600" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <!-- Failed icon -->
+                  <svg *ngIf="tx.status.toLowerCase() === 'failed'" class="w-3.5 h-3.5 text-rose-600" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                  <span>{{ getStatusLabel(tx.status) }}</span>
+                </span>
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
+
+      <!-- Pagination Bar (BL-09, BL-14) -->
+      <div *ngIf="totalTransactions > 0"
+        class="px-5 py-3.5 border-t border-ad-outline-variant/20 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-ad-surface-container-low/40">
+        <p class="text-xs text-slate-600">
+          Hiển thị <span class="font-bold text-slate-900 tabular-nums">{{ pageStartIndex }}</span> –
+          <span class="font-bold text-slate-900 tabular-nums">{{ pageEndIndex }}</span> trên tổng số
+          <span class="font-bold text-slate-900 tabular-nums">{{ totalTransactions | number }}</span> giao dịch
+        </p>
+
+        <!-- Pagination Controls -->
+        <nav aria-label="Điều hướng trang giao dịch" class="flex items-center gap-1.5">
+          <!-- First page -->
+          <button type="button" (click)="goToPage(1)" [disabled]="currentPage === 1" title="Trang đầu"
+            aria-label="Trang đầu"
+            class="p-1.5 rounded-lg border border-ad-outline-variant/30 text-slate-600 hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+            </svg>
+          </button>
+
+          <!-- Prev page -->
+          <button type="button" (click)="goToPrevPage()" [disabled]="currentPage === 1" title="Trang trước"
+            aria-label="Trang trước"
+            class="px-2.5 py-1.5 rounded-lg border border-ad-outline-variant/30 text-xs font-medium text-slate-700 hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none transition flex items-center gap-1">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            <span>Trước</span>
+          </button>
+
+          <!-- Page numbers -->
+          <div class="flex items-center gap-1 mx-1">
+            <button *ngFor="let p of pagesList" type="button" (click)="goToPage(p)"
+              [attr.aria-current]="p === currentPage ? 'page' : null"
+              class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center tabular-nums"
+              [ngClass]="p === currentPage ? 'bg-ad-primary text-white shadow-2xs' : 'text-slate-700 hover:bg-slate-100'">
+              {{ p }}
+            </button>
+          </div>
+
+          <!-- Next page -->
+          <button type="button" (click)="goToNextPage()" [disabled]="currentPage === totalPages" title="Trang sau"
+            aria-label="Trang sau"
+            class="px-2.5 py-1.5 rounded-lg border border-ad-outline-variant/30 text-xs font-medium text-slate-700 hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none transition flex items-center gap-1">
+            <span>Sau</span>
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+          <!-- Last page -->
+          <button type="button" (click)="goToPage(totalPages)" [disabled]="currentPage === totalPages"
+            title="Trang cuối" aria-label="Trang cuối"
+            class="p-1.5 rounded-lg border border-ad-outline-variant/30 text-slate-600 hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+            </svg>
+          </button>
+        </nav>
+      </div>
     </section>
-  </section>
+  </div>
+
+  <!-- EDIT TIER DRAWER (BL-04, BL-05, BL-06, BL-07, BL-15, BL-16) -->
+  <div *ngIf="isDrawerOpen" class="fixed inset-0 z-50 overflow-hidden" aria-labelledby="drawer-title" role="dialog"
+    aria-modal="true">
+    <!-- Backdrop overlay -->
+    <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity duration-300"
+      (click)="attemptCloseDrawer()" aria-hidden="true"></div>
+
+    <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
+      <div
+        class="w-screen max-w-md sm:max-w-lg bg-white shadow-2xl flex flex-col h-full overflow-hidden animate-in slide-in-from-right duration-300">
+        <!-- Drawer Header -->
+        <div class="px-6 py-5 border-b border-ad-outline-variant/20 flex items-start justify-between bg-slate-50/50">
+          <div>
+            <h2 id="drawer-title" class="text-lg font-bold text-slate-900 tracking-tight">
+              Chỉnh sửa gói: {{ editingTier?.name }}
+            </h2>
+            <p class="text-xs text-slate-500 mt-1">
+              Điều chỉnh mức giá hàng tháng và danh sách tính năng quyền lợi của gói cước.
+            </p>
+          </div>
+          <button type="button" (click)="attemptCloseDrawer()" aria-label="Đóng bảng chỉnh sửa"
+            class="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Drawer Body (Scrollable) -->
+        <div class="flex-1 overflow-y-auto p-6 space-y-6">
+          <!-- Inline Error if submit failed (BL-07) -->
+          <div *ngIf="drawerError" class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 space-y-2">
+            <div class="flex items-start gap-2.5">
+              <svg class="w-5 h-5 text-rose-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div class="flex-1">
+                <p class="text-xs font-semibold uppercase tracking-wider text-rose-700">Lưu thay đổi thất bại</p>
+                <p class="text-sm mt-0.5 leading-snug">{{ drawerError }}</p>
+              </div>
+            </div>
+            <div class="flex justify-end pt-1">
+              <button type="button" (click)="submitSaveTier()"
+                class="px-3 py-1 text-xs font-semibold rounded-lg bg-rose-200 hover:bg-rose-300 text-rose-900 transition">
+                Thử lại ngay
+              </button>
+            </div>
+          </div>
+
+          <!-- Effective Date Rule Notice (BL-06) -->
+          <div class="p-4 rounded-xl bg-blue-50/70 border border-blue-200/80 text-blue-900 flex items-start gap-3">
+            <svg class="w-5 h-5 text-blue-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+              aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div class="text-xs leading-relaxed">
+              <p class="font-bold text-blue-950">Quy tắc thời điểm áp dụng:</p>
+              <p class="mt-1 text-blue-800">
+                Mức giá và quyền lợi mới sẽ được áp dụng cho các lượt thanh toán hoặc gia hạn mới. Các thuê bao đang
+                trong chu kỳ hiện tại tiếp tục áp dụng mức giá cũ cho đến kỳ gia hạn kế tiếp. (Tính năng điều chỉnh kỳ
+                hạn tức thì / proration chưa có hiệu lực).
+              </p>
+            </div>
+          </div>
+
+          <!-- Read-only Metadata Card (Avoid modifying unsupported backend fields) -->
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
+            <p class="text-xs font-bold uppercase tracking-wider text-slate-500">Thông tin gói cố định</p>
+            <div class="grid grid-cols-2 gap-3 text-xs">
+              <div>
+                <span class="text-slate-500">Tên gói cước:</span>
+                <p class="font-semibold text-slate-900 mt-0.5">{{ editingTier?.name }}</p>
+              </div>
+              <div>
+                <span class="text-slate-500">Huy hiệu:</span>
+                <p class="font-semibold text-slate-900 mt-0.5">{{ editingTier?.badge }}</p>
+              </div>
+              <div>
+                <span class="text-slate-500">Đơn vị tiền tệ:</span>
+                <p class="font-semibold text-slate-900 mt-0.5">{{ editingTier?.currency || 'VND' }}</p>
+              </div>
+              <div>
+                <span class="text-slate-500">Trạng thái:</span>
+                <p class="font-semibold text-slate-900 mt-0.5">
+                  {{ editingTier?.isPopular ? 'Gói nổi bật (Popular)' : 'Gói tiêu chuẩn' }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Form Fields (BL-05) -->
+          <form (ngSubmit)="submitSaveTier()" class="space-y-5">
+            <!-- Price Input -->
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between">
+                <label for="drawer-price-input" class="text-xs font-bold uppercase tracking-wider text-slate-700">
+                  Mức giá theo tháng ({{ editingTier?.currency || 'VND' }}) <span class="text-rose-500">*</span>
+                </label>
+                <span *ngIf="formPriceMonthly > 0" class="text-xs font-semibold text-ad-primary tabular-nums">
+                  Xem trước: {{ formatCurrency(formPriceMonthly, editingTier?.currency) }}
+                </span>
+              </div>
+              <div class="relative">
+                <input id="drawer-price-input" type="number" min="1" step="1000" [(ngModel)]="formPriceMonthly"
+                  name="formPriceMonthly" required placeholder="Nhập mức giá hàng tháng (ví dụ: 1990000)"
+                  class="w-full px-4 py-2.5 text-sm font-semibold rounded-lg border bg-white focus:outline-none focus:ring-2 focus:ring-ad-primary focus:border-transparent transition tabular-nums"
+                  [ngClass]="formPriceMonthly <= 0 ? 'border-rose-300 focus:ring-rose-500' : 'border-ad-outline-variant/40'"
+                  aria-describedby="price-hint price-error" />
+              </div>
+              <p *ngIf="formPriceMonthly <= 0" id="price-error" class="text-xs font-medium text-rose-600">
+                Mức giá hàng tháng phải là số nguyên dương lớn hơn 0.
+              </p>
+              <p *ngIf="formPriceMonthly > 0" id="price-hint" class="text-2xs text-slate-500">
+                Số tiền nhà tuyển dụng phải thanh toán cho một tháng sử dụng.
+              </p>
+            </div>
+
+            <!-- Features Input -->
+            <div class="space-y-2 pt-2 border-t border-ad-outline-variant/20">
+              <div class="flex items-center justify-between">
+                <label class="text-xs font-bold uppercase tracking-wider text-slate-700">
+                  Quyền lợi & Tính năng <span class="text-rose-500">*</span>
+                </label>
+                <button type="button" (click)="toggleRawFeatureMode()"
+                  class="text-xs text-ad-primary hover:underline font-medium">
+                  {{ isRawFeatureMode ? 'Chuyển sang chế độ thẻ (Tags)' : 'Chuyển sang chế độ văn bản (Textarea)' }}
+                </button>
+              </div>
+
+              <!-- Tag Mode -->
+              <div *ngIf="!isRawFeatureMode" class="space-y-3">
+                <!-- Add new feature bar -->
+                <div class="flex gap-2">
+                  <input type="text" [(ngModel)]="formNewFeature" name="formNewFeature"
+                    (keydown)="onFeatureInputKeydown($event)"
+                    placeholder="Thêm quyền lợi mới (ví dụ: Xem 100 CV ứng viên)..."
+                    class="flex-1 px-3.5 py-2 text-sm rounded-lg border border-ad-outline-variant/40 bg-white focus:outline-none focus:ring-2 focus:ring-ad-primary" />
+                  <button type="button" (click)="addFeature()" [disabled]="!formNewFeature.trim()"
+                    class="px-4 py-2 text-xs font-semibold rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 disabled:opacity-40 transition">
+                    Thêm
+                  </button>
+                </div>
+
+                <!-- Chips / Feature list -->
+                <div class="space-y-2 max-h-60 overflow-y-auto pr-1">
+                  <div *ngFor="let feat of formFeatures; let idx = index"
+                    class="flex items-center justify-between gap-2 p-2.5 rounded-lg bg-slate-50 border border-slate-200/80 text-sm text-slate-800">
+                    <div class="flex items-center gap-2">
+                      <span
+                        class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 text-2xs font-bold flex items-center justify-center shrink-0">
+                        {{ idx + 1 }}
+                      </span>
+                      <span class="leading-snug">{{ feat }}</span>
+                    </div>
+                    <button type="button" (click)="removeFeature(idx)" [attr.aria-label]="'Xóa tính năng: ' + feat"
+                      class="p-1 text-slate-400 hover:text-rose-600 rounded transition shrink-0">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Raw Textarea Mode -->
+              <div *ngIf="isRawFeatureMode" class="space-y-1.5">
+                <textarea [(ngModel)]="formFeaturesRaw" (ngModelChange)="parseRawFeatures()" name="formFeaturesRaw"
+                  rows="6" placeholder="Mỗi tính năng một dòng..."
+                  class="w-full px-3.5 py-2.5 text-sm rounded-lg border border-ad-outline-variant/40 bg-white font-mono focus:outline-none focus:ring-2 focus:ring-ad-primary"></textarea>
+                <p class="text-2xs text-slate-500">Mỗi dòng tương ứng với một quyền lợi hoặc tính năng.</p>
+              </div>
+
+              <div class="flex items-center justify-between text-xs text-slate-500 pt-1">
+                <span>Số tính năng: <strong class="text-slate-800 tabular-nums">{{ formFeatures.length
+                    }}</strong></span>
+                <span *ngIf="formFeatures.length === 0" class="text-rose-600 font-semibold">
+                  Cần tối thiểu 1 tính năng
+                </span>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Drawer Sticky Footer -->
+        <div class="p-5 border-t border-ad-outline-variant/20 bg-slate-50/50 flex items-center justify-end gap-3">
+          <button type="button" (click)="attemptCloseDrawer()" [disabled]="isSavingTier"
+            class="px-4 py-2.5 text-sm font-semibold rounded-lg border border-ad-outline-variant/40 bg-white text-slate-700 hover:bg-slate-100 transition shadow-2xs">
+            Hủy bỏ
+          </button>
+          <button type="button" (click)="submitSaveTier()" [disabled]="!isFormValid || isSavingTier"
+            class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg bg-ad-primary hover:bg-blue-700 text-white transition shadow-sm disabled:opacity-50 disabled:pointer-events-none">
+            <svg *ngIf="isSavingTier" class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+              aria-hidden="true">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+              </path>
+            </svg>
+            <span>{{ isSavingTier ? 'Đang lưu gói...' : 'Lưu gói' }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UNSAVED CHANGES CONFIRMATION MODAL (BL-15) -->
+  <div *ngIf="showUnsavedDialog"
+    class="fixed inset-0 z-60 overflow-y-auto flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs"
+    role="dialog" aria-modal="true" aria-labelledby="unsaved-dialog-title">
+    <div
+      class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 animate-in fade-in zoom-in-95 duration-200">
+      <div class="flex items-start gap-4">
+        <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+        <div class="flex-1">
+          <h3 id="unsaved-dialog-title" class="text-base font-bold text-slate-900">
+            Hủy bỏ thay đổi chưa lưu?
+          </h3>
+          <p class="text-sm text-slate-600 mt-1.5 leading-relaxed">
+            Bạn đã chỉnh sửa thông tin gói cước. Nếu thoát lúc này, toàn bộ thay đổi của bạn sẽ bị mất.
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-6 flex items-center justify-end gap-3">
+        <button type="button" (click)="cancelDiscardChanges()"
+          class="px-4 py-2 text-xs font-semibold rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+          Tiếp tục chỉnh sửa
+        </button>
+        <button type="button" (click)="confirmDiscardChanges()"
+          class="px-4 py-2 text-xs font-semibold rounded-lg bg-rose-600 hover:bg-rose-700 text-white transition shadow-2xs">
+          Hủy bỏ thay đổi
+        </button>
+      </div>
+    </div>
+  </div>
 </main>

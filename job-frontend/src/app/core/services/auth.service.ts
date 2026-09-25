@@ -189,6 +189,11 @@ export class AuthService {
     this.tokenService.clearToken();
     this.loggedIn.set(false);
     this.sseService.disconnect();
+
+    if (redirectUrl) {
+      this.router.navigateByUrl(redirectUrl);
+    }
+
     this.http
       .get<any>(`${this.url}/auth/logout`, { withCredentials: true })
       .pipe(

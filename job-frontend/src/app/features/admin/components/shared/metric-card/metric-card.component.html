@@ -1,13 +1,97 @@
-<div [class]="containerClass">
-  <div class="flex justify-between items-start">
-    <span [class]="labelClass">{{ label }}</span>
-    <ng-content select="[metric-icon]"></ng-content>
-  </div>
+<article
+  class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl transition flex flex-col justify-between min-h-[128px]"
+  [attr.aria-label]="label"
+  [attr.aria-busy]="loading || null"
+>
+  <!-- Loading Skeleton State (SC-05, SC-15) -->
+  <ng-container *ngIf="loading">
+    <div class="space-y-3.5 motion-safe:animate-pulse" role="status">
+      <span class="sr-only">Đang tải chỉ số {{ label }}...</span>
+      <div class="flex items-center justify-between">
+        <div class="h-3.5 bg-slate-200 rounded w-24"></div>
+        <div class="w-8 h-8 rounded-lg bg-slate-100"></div>
+      </div>
+      <div class="h-8 bg-slate-200 rounded w-32"></div>
+      <div class="h-3 bg-slate-100 rounded w-28"></div>
+    </div>
+  </ng-container>
 
-  <div [class]="valueRowClass">
-    <span [class]="valueClass">{{ value }}</span>
-    <span *ngIf="hint" [class]="hintClass">{{ hint }}</span>
-  </div>
+  <!-- Loaded Content State -->
+  <ng-container *ngIf="!loading">
+    <header class="flex items-center justify-between">
+      <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-500 truncate" [title]="label">
+        {{ label }}
+      </h3>
+      <div class="shrink-0 text-slate-400" aria-hidden="true">
+        <ng-content select="[metric-icon]"></ng-content>
+      </div>
+    </header>
 
-  <ng-content select="[metric-footer]"></ng-content>
-</div>
+    <div class="mt-3">
+      <p
+        class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 tabular-nums"
+        [attr.aria-label]="valueAriaLabel || null"
+        [class.text-slate-400]="isUnknownValue"
+        [class.italic]="isUnknownValue"
+      >
+        {{ formattedDisplayValue }}
+      </p>
+
+      <!-- Trend Row -->
+      <div *ngIf="trend" class="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs">
+        <span
+          class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-2xs font-semibold border"
+          [ngClass]="getTrendToneClass(trend.tone)"
+          [attr.aria-label]="trend.ariaLabel || null"
+        >
+          <!-- Up Icon -->
+          <svg
+            *ngIf="trend.direction === 'up'"
+            class="w-3 h-3"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+          </svg>
+          <!-- Down Icon -->
+          <svg
+            *ngIf="trend.direction === 'down'"
+            class="w-3 h-3"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+          </svg>
+          <!-- Flat Icon -->
+          <svg
+            *ngIf="trend.direction === 'flat'"
+            class="w-3 h-3"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14" />
+          </svg>
+          <span>{{ trend.displayValue }}</span>
+        </span>
+
+        <span class="text-ad-on-surface-variant">
+          {{ trend.comparisonLabel }}
+        </span>
+      </div>
+
+      <!-- Subtext when no full trend is provided -->
+      <p *ngIf="!trend && subtext" class="text-xs text-slate-500 mt-1.5">
+        {{ subtext }}
+      </p>
+    </div>
+
+    <!-- Projected Footer Slot -->
+    <ng-content select="[metric-footer]"></ng-content>
+  </ng-container>
+</article>

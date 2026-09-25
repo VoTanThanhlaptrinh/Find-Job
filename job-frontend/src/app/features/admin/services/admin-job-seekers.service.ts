@@ -38,6 +38,10 @@ export class AdminJobSeekersService {
   private readonly _isCreating = signal(false);
   private readonly _isLoadingRegions = signal(false);
 
+  private readonly _metricsError = signal<string | null>(null);
+  private readonly _listError = signal<string | null>(null);
+  private readonly _regionError = signal<string | null>(null);
+
   // Public computed signals
   readonly metrics = computed(() => this._metrics());
   readonly jobSeekers = computed(() => this._jobSeekers());
@@ -49,6 +53,10 @@ export class AdminJobSeekersService {
   readonly isLoadingList = computed(() => this._isLoadingList());
   readonly isCreating = computed(() => this._isCreating());
   readonly isLoadingRegions = computed(() => this._isLoadingRegions());
+
+  readonly metricsError = computed(() => this._metricsError());
+  readonly listError = computed(() => this._listError());
+  readonly regionError = computed(() => this._regionError());
 
   constructor(
     private readonly http: HttpClient,
@@ -63,6 +71,7 @@ export class AdminJobSeekersService {
    */
   loadMetrics(): void {
     this._isLoadingMetrics.set(true);
+    this._metricsError.set(null);
     this.http
       .get<ApiResponse<AdminJobSeekersMetrics>>(`${this.url}/admin/job-seekers/metrics`, {
         withCredentials: true,
@@ -73,7 +82,11 @@ export class AdminJobSeekersService {
       )
       .subscribe({
         next: (res) => this._metrics.set(res.data),
-        error: (err) => this.handleError(err, 'Không thể tải chỉ số người tìm việc')
+        error: (err) => {
+          const msg = err?.error?.message || 'Không thể tải chỉ số người tìm việc';
+          this._metricsError.set(msg);
+          this.handleError(err, 'Không thể tải chỉ số người tìm việc');
+        }
       });
   }
 
@@ -90,6 +103,7 @@ export class AdminJobSeekersService {
    */
   loadJobSeekers(): void {
     this._isLoadingList.set(true);
+    this._listError.set(null);
     const params = buildHttpParams(this._currentQuery());
     this.http
       .get<ApiResponse<AdminListPayload<AdminJobSeekerItem>>>(`${this.url}/admin/job-seekers`, {
@@ -108,6 +122,8 @@ export class AdminJobSeekersService {
         error: (err) => {
           this._jobSeekers.set([]);
           this._totalItems.set(0);
+          const msg = err?.error?.message || 'Không thể tải danh sách người tìm việc';
+          this._listError.set(msg);
           this.handleError(err, 'Không thể tải danh sách người tìm việc');
         }
       });
@@ -143,6 +159,7 @@ export class AdminJobSeekersService {
    */
   loadRegionDistribution(): void {
     this._isLoadingRegions.set(true);
+    this._regionError.set(null);
     this.http
       .get<ApiResponse<AdminRegionDistribution>>(`${this.url}/admin/job-seekers/region-distribution`, {
         withCredentials: true,
@@ -153,7 +170,11 @@ export class AdminJobSeekersService {
       )
       .subscribe({
         next: (res) => this._regionDistribution.set(res.data),
-        error: (err) => this.handleError(err, 'Không thể tải phân bổ vùng miền')
+        error: (err) => {
+          const msg = err?.error?.message || 'Không thể tải phân bổ vùng miền';
+          this._regionError.set(msg);
+          this.handleError(err, 'Không thể tải phân bổ vùng miền');
+        }
       });
   }
 

@@ -38,6 +38,11 @@ export class AdminDashboardService {
   private readonly _isLoadingDistribution = signal(false);
   private readonly _isLoadingPendingJobs = signal(false);
 
+  private readonly _errorSummary = signal<string | null>(null);
+  private readonly _errorRevenue = signal<string | null>(null);
+  private readonly _errorDistribution = signal<string | null>(null);
+  private readonly _errorPendingJobs = signal<string | null>(null);
+
   // Public computed signals
   readonly summary = computed(() => this._summary());
   readonly revenueTrend = computed(() => this._revenueTrend());
@@ -50,6 +55,11 @@ export class AdminDashboardService {
   readonly isLoadingRevenue = computed(() => this._isLoadingRevenue());
   readonly isLoadingDistribution = computed(() => this._isLoadingDistribution());
   readonly isLoadingPendingJobs = computed(() => this._isLoadingPendingJobs());
+
+  readonly errorSummary = computed(() => this._errorSummary());
+  readonly errorRevenue = computed(() => this._errorRevenue());
+  readonly errorDistribution = computed(() => this._errorDistribution());
+  readonly errorPendingJobs = computed(() => this._errorPendingJobs());
 
   constructor(
     private readonly http: HttpClient,
@@ -64,6 +74,7 @@ export class AdminDashboardService {
    */
   loadSummary(): void {
     this._isLoadingSummary.set(true);
+    this._errorSummary.set(null);
     this.http
       .get<ApiResponse<AdminDashboardSummary>>(`${this.url}/admin/dashboard/summary`, {
         withCredentials: true,
@@ -73,8 +84,15 @@ export class AdminDashboardService {
         finalize(() => this._isLoadingSummary.set(false))
       )
       .subscribe({
-        next: (res) => this._summary.set(res.data),
-        error: (err) => this.handleError(err, 'Không thể tải thông tin tóm tắt Dashboard')
+        next: (res) => {
+          this._summary.set(res.data);
+          this._errorSummary.set(null);
+        },
+        error: (err) => {
+          const msg = err?.error?.message || 'Không thể tải thông tin tóm tắt Dashboard';
+          this._errorSummary.set(msg);
+          this.handleError(err, 'Không thể tải thông tin tóm tắt Dashboard');
+        }
       });
   }
 
@@ -83,6 +101,7 @@ export class AdminDashboardService {
    */
   loadRevenueTrend(range: string = '30d'): void {
     this._isLoadingRevenue.set(true);
+    this._errorRevenue.set(null);
     const params = buildHttpParams({ range });
     this.http
       .get<ApiResponse<AdminRevenueTrend>>(`${this.url}/admin/dashboard/revenue-trend`, {
@@ -94,8 +113,15 @@ export class AdminDashboardService {
         finalize(() => this._isLoadingRevenue.set(false))
       )
       .subscribe({
-        next: (res) => this._revenueTrend.set(res.data),
-        error: (err) => this.handleError(err, 'Không thể tải xu hướng doanh thu')
+        next: (res) => {
+          this._revenueTrend.set(res.data);
+          this._errorRevenue.set(null);
+        },
+        error: (err) => {
+          const msg = err?.error?.message || 'Không thể tải xu hướng doanh thu';
+          this._errorRevenue.set(msg);
+          this.handleError(err, 'Không thể tải xu hướng doanh thu');
+        }
       });
   }
 
@@ -104,6 +130,7 @@ export class AdminDashboardService {
    */
   loadJobDistribution(): void {
     this._isLoadingDistribution.set(true);
+    this._errorDistribution.set(null);
     this.http
       .get<ApiResponse<AdminJobDistribution>>(`${this.url}/admin/dashboard/job-distribution`, {
         withCredentials: true,
@@ -113,8 +140,15 @@ export class AdminDashboardService {
         finalize(() => this._isLoadingDistribution.set(false))
       )
       .subscribe({
-        next: (res) => this._jobDistribution.set(res.data),
-        error: (err) => this.handleError(err, 'Không thể tải phân bổ công việc')
+        next: (res) => {
+          this._jobDistribution.set(res.data);
+          this._errorDistribution.set(null);
+        },
+        error: (err) => {
+          const msg = err?.error?.message || 'Không thể tải phân bổ công việc';
+          this._errorDistribution.set(msg);
+          this.handleError(err, 'Không thể tải phân bổ công việc');
+        }
       });
   }
 
@@ -131,6 +165,7 @@ export class AdminDashboardService {
    */
   loadPendingJobs(): void {
     this._isLoadingPendingJobs.set(true);
+    this._errorPendingJobs.set(null);
     const params = buildHttpParams(this._pendingJobsQuery());
 
     this.http
@@ -146,10 +181,13 @@ export class AdminDashboardService {
         next: (res) => {
           this._pendingJobs.set(res.data.items);
           this._pendingJobsTotal.set(res.data.pagination.totalItems);
+          this._errorPendingJobs.set(null);
         },
         error: (err) => {
           this._pendingJobs.set([]);
           this._pendingJobsTotal.set(0);
+          const msg = err?.error?.message || 'Không thể tải danh sách công việc chờ duyệt';
+          this._errorPendingJobs.set(msg);
           this.handleError(err, 'Không thể tải danh sách công việc chờ duyệt');
         }
       });
@@ -158,9 +196,9 @@ export class AdminDashboardService {
   /**
    * Helper to refresh all dashboard data
    */
-  refreshAll(): void {
+  refreshAll(range: string = '30d'): void {
     this.loadSummary();
-    this.loadRevenueTrend();
+    this.loadRevenueTrend(range);
     this.loadJobDistribution();
     this.loadPendingJobs();
   }
