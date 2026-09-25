@@ -1,610 +1,554 @@
-<main class="bg-ad-surface min-h-screen p-4 sm:p-6 md:p-8 lg:p-10 text-ad-on-surface">
-  <div class="max-w-7xl mx-auto space-y-8">
-    <!-- Breadcrumb & Header Section (JS-01, JS-04, JS-16) -->
-    <header class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between border-b border-ad-outline-variant/30 pb-6">
-      <div>
-        <nav aria-label="Breadcrumb" class="flex items-center gap-2 text-xs font-medium text-slate-500 mb-2">
-          <a routerLink="/admin/dashboard" class="hover:text-ad-primary transition-colors flex items-center gap-1">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-            </svg>
-            Quản trị
-          </a>
-          <span class="text-slate-400">/</span>
-          <span class="text-ad-on-surface font-semibold" aria-current="page">Người tìm việc</span>
-        </nav>
-        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">Quản lý người tìm việc</h1>
-        <p class="text-sm text-ad-on-surface-variant mt-1.5 max-w-3xl leading-relaxed">
-          Theo dõi quy mô hồ sơ ứng viên, trạng thái CV, hoạt động gần đây và phân bổ theo khu vực địa lý.
-        </p>
-      </div>
-
-      <!-- Primary Action: Open Create Dialog (JS-04) -->
+<main class="w-full min-w-0 max-w-full overflow-x-hidden space-y-6 text-ad-on-surface p-4 md:p-6 mx-auto">
+  <!-- METRICS SECTION (5 Cards - JS-01, JS-08, JS-13) -->
+  <section aria-label="Chỉ số người tìm việc" class="space-y-3">
+    <div class="flex items-center justify-between">
+      <h2 class="text-base font-semibold text-slate-800">Tổng quan chỉ số</h2>
       <div class="flex items-center gap-3">
-        <button
-          #createTriggerBtn
-          type="button"
-          (click)="openCreateDialog(createTriggerBtn)"
-          class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold bg-ad-primary text-white hover:bg-ad-primary-dim transition shadow-xs focus:outline-none focus:ring-2 focus:ring-ad-primary focus:ring-offset-2"
-        >
+        <button #createTriggerBtn type="button" (click)="openCreateDialog(createTriggerBtn)"
+          class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold bg-ad-primary text-white hover:bg-ad-primary-dim transition shadow-xs focus:outline-none focus:ring-2 focus:ring-ad-primary focus:ring-offset-2">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
           </svg>
           <span>Thêm người tìm việc</span>
         </button>
       </div>
-    </header>
+    </div>
 
-    <!-- METRICS SECTION (5 Cards - JS-01, JS-08, JS-13) -->
-    <section aria-label="Chỉ số người tìm việc" class="space-y-3">
-      <div class="flex items-center justify-between">
-        <h2 class="text-base font-semibold text-slate-800">Tổng quan chỉ số</h2>
+    <!-- Scoped Error for Metrics (JS-08) -->
+    <div *ngIf="metricsError && !metrics"
+      class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <svg class="w-5 h-5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+          aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+        <span class="text-sm font-medium">{{ metricsError }}</span>
+      </div>
+      <button type="button" (click)="retryMetrics()"
+        class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-900 transition">
+        Thử lại
+      </button>
+    </div>
+
+    <!-- Loading Skeletons for Metrics (JS-08) -->
+    <div *ngIf="isLoadingMetrics && !metrics"
+      class="grid min-w-0 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+      <div *ngFor="let i of [1, 2, 3, 4, 5]"
+        class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl animate-pulse space-y-3">
+        <div class="h-4 bg-slate-200 rounded w-24"></div>
+        <div class="h-8 bg-slate-200 rounded w-32"></div>
+        <div class="h-3 bg-slate-100 rounded w-28"></div>
+      </div>
+    </div>
+
+    <!-- 5 KPI Cards -->
+    <div class="grid min-w-0 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4" *ngIf="metrics as data">
+      <!-- Metric 1: Total Seekers -->
+      <article
+        class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl hover:shadow-xs transition flex flex-col justify-between">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Tổng người tìm việc</span>
+          <div class="p-2 rounded-lg bg-blue-50 text-ad-primary" aria-hidden="true">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+          </div>
+        </div>
+        <div class="mt-3">
+          <p class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 tabular-nums">
+            {{ data.totalSeekers | number }}
+          </p>
+          <p class="text-xs text-slate-500 mt-1.5">Hồ sơ trên hệ thống</p>
+        </div>
+      </article>
+
+      <!-- Metric 2: Growth -->
+      <article
+        class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl hover:shadow-xs transition flex flex-col justify-between">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Tăng trưởng</span>
+          <div class="p-2 rounded-lg bg-emerald-50 text-emerald-600" aria-hidden="true">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+            </svg>
+          </div>
+        </div>
+        <div class="mt-3">
+          <p class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 tabular-nums">
+            {{ data.totalSeekersGrowthPct >= 0 ? '+' : '' }}{{ data.totalSeekersGrowthPct }}%
+          </p>
+          <p class="text-xs text-slate-500 mt-1.5 flex items-center gap-1">
+            <span
+              [ngClass]="data.totalSeekersGrowthPct >= 0 ? 'text-emerald-600 font-semibold' : 'text-rose-600 font-semibold'">
+              {{ data.totalSeekersGrowthPct >= 0 ? 'Tăng' : 'Giảm' }}
+            </span>
+            <span>so với kỳ trước</span>
+          </p>
+        </div>
+      </article>
+
+      <!-- Metric 3: Active 7d -->
+      <article
+        class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl hover:shadow-xs transition flex flex-col justify-between">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Hoạt động 7 ngày</span>
+          <div class="p-2 rounded-lg bg-amber-50 text-amber-600" aria-hidden="true">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+        </div>
+        <div class="mt-3">
+          <p class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 tabular-nums">
+            {{ data.activeLast7Days | number }}
+          </p>
+          <p class="text-xs text-slate-500 mt-1.5">Ứng viên tương tác</p>
+        </div>
+      </article>
+
+      <!-- Metric 4: Placed Candidates -->
+      <article
+        class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl hover:shadow-xs transition flex flex-col justify-between">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Đã tuyển dụng</span>
+          <div class="p-2 rounded-lg bg-teal-50 text-teal-600" aria-hidden="true">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+        </div>
+        <div class="mt-3">
+          <p class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 tabular-nums">
+            {{ data.placedCandidates | number }}
+          </p>
+          <p class="text-xs text-slate-500 mt-1.5">Ứng viên nhận việc</p>
+        </div>
+      </article>
+
+      <!-- Metric 5: Retention Rate -->
+      <article
+        class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl hover:shadow-xs transition flex flex-col justify-between">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Tỷ lệ duy trì</span>
+          <div class="p-2 rounded-lg bg-purple-50 text-purple-600" aria-hidden="true">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+          </div>
+        </div>
+        <div class="mt-3">
+          <p class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 tabular-nums">
+            {{ data.retentionPct }}%
+          </p>
+          <p class="text-xs text-slate-500 mt-1.5">Duy trì sau tuyển dụng</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- SEARCH & FILTER BAR SECTION (JS-01, JS-09, JS-10, JS-17) -->
+  <section aria-label="Bộ lọc người tìm việc"
+    class="min-w-0 bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-4 rounded-xl space-y-3">
+    <div class="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+      <!-- Search Input -->
+      <div class="relative min-w-0 flex-1 max-w-md">
+        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+        <input type="text" [value]="searchTerm" (input)="onSearchInput($event)"
+          placeholder="Tìm theo tên hoặc email ứng viên..." aria-label="Tìm kiếm người tìm việc theo tên hoặc email"
+          class="w-full pl-10 pr-9 py-2 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-ad-primary focus:bg-white transition" />
+        <button *ngIf="searchTerm" type="button" (click)="clearSearch()" aria-label="Xóa nội dung tìm kiếm"
+          class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
       </div>
 
-      <!-- Scoped Error for Metrics (JS-08) -->
-      <div *ngIf="metricsError && !metrics" class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <svg class="w-5 h-5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-          </svg>
-          <span class="text-sm font-medium">{{ metricsError }}</span>
+      <!-- Filter Dropdown & Clear Filters Action -->
+      <div class="flex min-w-0 flex-wrap items-center gap-2">
+        <!-- Resume Status Filter -->
+        <div class="relative min-w-[190px]">
+          <select [value]="selectedResumeStatus" (change)="onResumeStatusChange($event)"
+            aria-label="Lọc theo trạng thái CV"
+            class="w-full px-3 py-2 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-ad-primary focus:bg-white transition cursor-pointer">
+            <option value="">Tất cả trạng thái CV</option>
+            <option value="complete">CV hoàn chỉnh</option>
+            <option value="incomplete">CV chưa hoàn chỉnh</option>
+            <option value="missing">Thiếu CV</option>
+          </select>
         </div>
-        <button
-          type="button"
-          (click)="retryMetrics()"
-          class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-900 transition"
-        >
+
+        <!-- Reset Filter Button -->
+        <button *ngIf="hasActiveFilters" type="button" (click)="clearFilters()"
+          class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          <span>Xóa bộ lọc</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Active Filter Chips -->
+    <div *ngIf="hasActiveFilters"
+      class="flex flex-wrap items-center gap-2 pt-2 border-t border-ad-outline-variant/20 text-xs">
+      <span class="text-slate-500 font-medium">Bộ lọc đang áp dụng:</span>
+      <span *ngIf="searchTerm"
+        class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-50 text-ad-primary font-medium border border-blue-200/60">
+        Tìm kiếm: "{{ searchTerm }}"
+        <button type="button" (click)="clearSearch()" class="hover:text-ad-primary-dim"
+          aria-label="Xóa bộ lọc tìm kiếm">×</button>
+      </span>
+      <span *ngIf="selectedResumeStatus"
+        class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-medium border border-slate-200">
+        Trạng thái: {{ getResumeBadge(selectedResumeStatus).label }}
+        <button type="button" (click)="clearResumeStatusFilter()" class="hover:text-slate-900"
+          aria-label="Xóa bộ lọc trạng thái">×</button>
+      </span>
+    </div>
+  </section>
+  <!-- MAIN WORKSPACE: CANDIDATE TABLE (2/3) & REGION VISUALIZATION (1/3) -->
+  <div class="grid w-full min-w-0 max-w-full grid-cols-1 xl:grid-cols-3 gap-6 items-start">
+    <!-- CANDIDATE TABLE (2/3 width on desktop) -->
+    <section aria-label="Bảng danh sách người tìm việc"
+      class="min-w-0 max-w-full xl:col-span-2 bg-ad-surface-container-lowest border border-ad-outline-variant/30 rounded-xl overflow-hidden shadow-2xs">
+      <!-- Table Header Bar -->
+      <div class="px-5 py-4 border-b border-ad-outline-variant/20 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <h2 class="text-base font-semibold text-slate-900">Danh sách ứng viên</h2>
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-medium bg-slate-100 text-slate-600">
+            {{ totalItems | number }} hồ sơ
+          </span>
+        </div>
+      </div>
+
+      <!-- Scoped Error State for List (JS-08) -->
+      <div *ngIf="listError && jobSeekers.length === 0" class="p-6 text-center space-y-3">
+        <div class="inline-flex p-3 rounded-full bg-rose-50 text-rose-600">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+        <p class="text-sm font-medium text-slate-800">{{ listError }}</p>
+        <button type="button" (click)="retryList()"
+          class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-ad-primary text-white text-xs font-semibold hover:bg-ad-primary-dim transition">
+          Thử lại danh sách
+        </button>
+      </div>
+
+      <!-- Loading Skeleton for List -->
+      <div *ngIf="isLoadingList && jobSeekers.length === 0" class="p-5 space-y-4 animate-pulse">
+        <div *ngFor="let i of [1, 2, 3, 4, 5]"
+          class="flex items-center justify-between gap-4 py-2 border-b border-slate-100 last:border-b-0">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-slate-200"></div>
+            <div class="space-y-1.5">
+              <div class="h-4 bg-slate-200 rounded w-36"></div>
+              <div class="h-3 bg-slate-100 rounded w-24"></div>
+            </div>
+          </div>
+          <div class="h-4 bg-slate-100 rounded w-32 hidden md:block"></div>
+          <div class="h-6 bg-slate-200 rounded-full w-20"></div>
+          <div class="h-3 bg-slate-100 rounded w-24 hidden md:block"></div>
+        </div>
+      </div>
+
+      <!-- Empty Filter State (JS-10) -->
+      <div *ngIf="!isLoadingList && jobSeekers.length === 0 && hasActiveFilters && !listError"
+        class="p-12 text-center space-y-3">
+        <div class="inline-flex p-4 rounded-full bg-slate-100 text-slate-400">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+        <h3 class="text-base font-semibold text-slate-800">Không tìm thấy kết quả</h3>
+        <p class="text-xs text-slate-500 max-w-sm mx-auto">
+          Không có ứng viên nào phù hợp với từ khóa hoặc bộ lọc hiện tại. Vui lòng thử lại với tiêu chí khác.
+        </p>
+        <div class="pt-2">
+          <button type="button" (click)="clearFilters()"
+            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition">
+            Xóa bộ lọc
+          </button>
+        </div>
+      </div>
+
+      <!-- Clean Empty State (JS-10) -->
+      <div *ngIf="!isLoadingList && jobSeekers.length === 0 && !hasActiveFilters && !listError"
+        class="p-12 text-center space-y-3">
+        <div class="inline-flex p-4 rounded-full bg-blue-50 text-ad-primary">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+        </div>
+        <h3 class="text-base font-semibold text-slate-800">Chưa có dữ liệu người tìm việc</h3>
+        <p class="text-xs text-slate-500 max-w-sm mx-auto">
+          Hệ thống hiện tại chưa có hồ sơ người tìm việc nào. Nhấn vào nút bên dưới để tạo hồ sơ đầu tiên.
+        </p>
+        <div class="pt-2">
+          <button type="button" (click)="openCreateDialog()"
+            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-ad-primary text-white text-xs font-semibold hover:bg-ad-primary-dim transition">
+            Thêm người tìm việc
+          </button>
+        </div>
+      </div>
+
+      <!-- Table Display (Desktop & Tablet >= md) (JS-11) -->
+      <div *ngIf="!isLoadingList && jobSeekers.length > 0"
+        class="hidden md:block w-full min-w-0 max-w-full overflow-x-auto">
+        <table class="w-full min-w-[760px] text-sm text-left border-collapse">
+          <caption class="sr-only">Danh sách người tìm việc trên hệ thống</caption>
+          <thead
+            class="bg-ad-surface-container-low text-xs font-semibold uppercase tracking-wider text-slate-600 border-b border-ad-outline-variant/30">
+            <tr>
+              <th scope="col" class="px-5 py-3.5">Ứng viên</th>
+              <th scope="col" class="px-5 py-3.5">Email</th>
+              <th scope="col" class="px-5 py-3.5">Nghề nghiệp</th>
+              <th scope="col" class="px-5 py-3.5">Trạng thái CV</th>
+              <th scope="col" class="px-5 py-3.5">Hoạt động gần đây</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-ad-outline-variant/20 bg-white">
+            <tr *ngFor="let seeker of jobSeekers; trackBy: trackBySeeker"
+              class="hover:bg-slate-50/80 transition-colors">
+              <!-- Candidate Avatar + Full Name -->
+              <td class="px-5 py-3.5 whitespace-nowrap">
+                <div class="flex items-center gap-3">
+                  <div
+                    class="w-8 h-8 rounded-full bg-blue-100 text-ad-primary font-semibold text-xs flex items-center justify-center shrink-0"
+                    aria-hidden="true">
+                    {{ getInitials(seeker.fullName, seeker.avatarInitials) }}
+                  </div>
+                  <div>
+                    <p class="font-semibold text-slate-900">{{ seeker.fullName }}</p>
+                    <p class="text-2xs text-slate-400 font-mono">ID: {{ seeker.id }}</p>
+                  </div>
+                </div>
+              </td>
+
+              <!-- Email -->
+              <td class="px-5 py-3.5 whitespace-nowrap text-slate-600 select-all">
+                {{ seeker.email }}
+              </td>
+
+              <!-- Profession -->
+              <td class="px-5 py-3.5 whitespace-nowrap text-slate-700 font-medium">
+                {{ seeker.profession }}
+              </td>
+
+              <!-- Resume Status Badge (JS-14) -->
+              <td class="px-5 py-3.5 whitespace-nowrap">
+                <ng-container *ngIf="getResumeBadge(seeker.resumeStatus) as badge">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold border"
+                    [ngClass]="badge.badgeClass">
+                    <span class="w-1.5 h-1.5 rounded-full" [ngClass]="badge.dotClass" aria-hidden="true"></span>
+                    <span>{{ badge.label }}</span>
+                  </span>
+                </ng-container>
+              </td>
+
+              <!-- Last Active Date (JS-15) -->
+              <td class="px-5 py-3.5 whitespace-nowrap text-xs text-slate-500"
+                [title]="seeker.lastActiveAt || 'Chưa có thông tin'">
+                <span [ngClass]="seeker.lastActiveAt ? 'text-slate-600 font-medium' : 'text-slate-400 italic'">
+                  {{ formatDate(seeker.lastActiveAt) }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile Card List (< md screens) (JS-18) -->
+      <div *ngIf="!isLoadingList && jobSeekers.length > 0" class="md:hidden divide-y divide-ad-outline-variant/20">
+        <article *ngFor="let seeker of jobSeekers; trackBy: trackBySeeker"
+          class="p-4 space-y-2.5 hover:bg-slate-50 transition">
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex items-center gap-2.5">
+              <div
+                class="w-8 h-8 rounded-full bg-blue-100 text-ad-primary font-semibold text-xs flex items-center justify-center shrink-0">
+                {{ getInitials(seeker.fullName, seeker.avatarInitials) }}
+              </div>
+              <div>
+                <h3 class="font-semibold text-slate-900 text-sm leading-tight">{{ seeker.fullName }}</h3>
+                <p class="text-xs text-slate-500">{{ seeker.profession }}</p>
+              </div>
+            </div>
+            <ng-container *ngIf="getResumeBadge(seeker.resumeStatus) as badge">
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-2xs font-semibold border"
+                [ngClass]="badge.badgeClass">
+                <span class="w-1 h-1 rounded-full" [ngClass]="badge.dotClass"></span>
+                {{ badge.label }}
+              </span>
+            </ng-container>
+          </div>
+
+          <div class="text-xs text-slate-600 space-y-1 pt-1">
+            <p class="flex items-center gap-1.5 truncate">
+              <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              <span class="truncate select-all">{{ seeker.email }}</span>
+            </p>
+            <p class="flex items-center gap-1.5 text-slate-400">
+              <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>Hoạt động: {{ formatDate(seeker.lastActiveAt) }}</span>
+            </p>
+          </div>
+        </article>
+      </div>
+
+      <!-- Accessible Pagination Footer (JS-11) -->
+      <div *ngIf="totalItems > 0"
+        class="min-w-0 px-5 py-3.5 border-t border-ad-outline-variant/20 flex flex-col lg:flex-row lg:flex-wrap items-center justify-between gap-4 text-xs text-slate-600">
+        <!-- Current Range Info & Page Size Selector -->
+        <div class="flex min-w-0 flex-wrap items-center justify-center gap-3">
+          <span>
+            Hiển thị <strong class="text-slate-900 tabular-nums">{{ getStartIndex() }}</strong> - <strong
+              class="text-slate-900 tabular-nums">{{ getEndIndex() }}</strong> trong tổng số <strong
+              class="text-slate-900 tabular-nums">{{ totalItems | number }}</strong>
+          </span>
+
+          <div class="flex items-center gap-1.5 pl-2 border-l border-slate-200">
+            <label for="pageSizeSelect" class="text-slate-500 sr-only sm:not-sr-only">Số dòng:</label>
+            <select id="pageSizeSelect" [value]="pageSize" (change)="onPageSizeChange($event)"
+              class="px-2 py-1 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-ad-primary cursor-pointer">
+              <option [value]="10">10 / trang</option>
+              <option [value]="20">20 / trang</option>
+              <option [value]="50">50 / trang</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Page Navigation Buttons -->
+        <div class="flex shrink-0 items-center gap-1">
+          <!-- First Page -->
+          <button type="button" (click)="goFirstPage()" [disabled]="currentPage <= 1" aria-label="Trang đầu tiên"
+            title="Trang đầu tiên"
+            class="p-1.5 rounded-lg border border-ad-outline-variant/30 hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none transition text-slate-600">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+            </svg>
+          </button>
+
+          <!-- Previous Page -->
+          <button type="button" (click)="goPrevPage()" [disabled]="currentPage <= 1" aria-label="Trang trước"
+            title="Trang trước"
+            class="p-1.5 rounded-lg border border-ad-outline-variant/30 hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none transition text-slate-600">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          <!-- Page Info -->
+          <span class="px-2.5 py-1 font-semibold text-slate-800 tabular-nums">
+            Trang {{ currentPage }} / {{ totalPages }}
+          </span>
+
+          <!-- Next Page -->
+          <button type="button" (click)="goNextPage()" [disabled]="currentPage >= totalPages"
+            aria-label="Trang tiếp theo" title="Trang tiếp theo"
+            class="p-1.5 rounded-lg border border-ad-outline-variant/30 hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none transition text-slate-600">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+          <!-- Last Page -->
+          <button type="button" (click)="goLastPage()" [disabled]="currentPage >= totalPages"
+            aria-label="Trang cuối cùng" title="Trang cuối cùng"
+            class="p-1.5 rounded-lg border border-ad-outline-variant/30 hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none transition text-slate-600">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- REGION DISTRIBUTION VISUALIZATION (1/3 width on desktop) (JS-12) -->
+    <section aria-label="Phân bổ người tìm việc theo khu vực"
+      class="min-w-0 max-w-full xl:col-span-1 bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-4  rounded-xl shadow-2xs space-y-4">
+      <div>
+        <h2 class="text-base font-semibold text-slate-900">Phân bổ theo khu vực</h2>
+        <p class="text-xs text-ad-on-surface-variant mt-0.5">Thống kê ứng viên theo vùng địa lý</p>
+      </div>
+
+      <!-- Scoped Error for Region Distribution (JS-08) -->
+      <div *ngIf="regionError && !regionDistribution"
+        class="p-3.5 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-xs space-y-2">
+        <p class="font-medium">{{ regionError }}</p>
+        <button type="button" (click)="retryRegions()"
+          class="px-2.5 py-1 rounded bg-rose-100 hover:bg-rose-200 text-rose-900 font-semibold transition">
           Thử lại
         </button>
       </div>
 
-      <!-- Loading Skeletons for Metrics (JS-08) -->
-      <div *ngIf="isLoadingMetrics && !metrics" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-        <div *ngFor="let i of [1, 2, 3, 4, 5]" class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl animate-pulse space-y-3">
-          <div class="h-4 bg-slate-200 rounded w-24"></div>
-          <div class="h-8 bg-slate-200 rounded w-32"></div>
-          <div class="h-3 bg-slate-100 rounded w-28"></div>
+      <!-- Loading Skeleton for Region Distribution -->
+      <div *ngIf="isLoadingRegions && !regionDistribution" class="space-y-3.5 animate-pulse py-2">
+        <div *ngFor="let i of [1, 2, 3, 4, 5]" class="space-y-1.5">
+          <div class="flex justify-between">
+            <div class="h-3.5 bg-slate-200 rounded w-28"></div>
+            <div class="h-3.5 bg-slate-200 rounded w-10"></div>
+          </div>
+          <div class="h-2.5 bg-slate-100 rounded-full w-full"></div>
         </div>
       </div>
 
-      <!-- 5 KPI Cards -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4" *ngIf="metrics as data">
-        <!-- Metric 1: Total Seekers -->
-        <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl hover:shadow-xs transition flex flex-col justify-between">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Tổng người tìm việc</span>
-            <div class="p-2 rounded-lg bg-blue-50 text-ad-primary" aria-hidden="true">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-            </div>
-          </div>
-          <div class="mt-3">
-            <p class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 tabular-nums">
-              {{ data.totalSeekers | number }}
-            </p>
-            <p class="text-xs text-slate-500 mt-1.5">Hồ sơ trên hệ thống</p>
-          </div>
-        </article>
-
-        <!-- Metric 2: Growth -->
-        <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl hover:shadow-xs transition flex flex-col justify-between">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Tăng trưởng</span>
-            <div class="p-2 rounded-lg bg-emerald-50 text-emerald-600" aria-hidden="true">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-              </svg>
-            </div>
-          </div>
-          <div class="mt-3">
-            <p class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 tabular-nums">
-              {{ data.totalSeekersGrowthPct >= 0 ? '+' : '' }}{{ data.totalSeekersGrowthPct }}%
-            </p>
-            <p class="text-xs text-slate-500 mt-1.5 flex items-center gap-1">
-              <span [ngClass]="data.totalSeekersGrowthPct >= 0 ? 'text-emerald-600 font-semibold' : 'text-rose-600 font-semibold'">
-                {{ data.totalSeekersGrowthPct >= 0 ? 'Tăng' : 'Giảm' }}
-              </span>
-              <span>so với kỳ trước</span>
-            </p>
-          </div>
-        </article>
-
-        <!-- Metric 3: Active 7d -->
-        <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl hover:shadow-xs transition flex flex-col justify-between">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Hoạt động 7 ngày</span>
-            <div class="p-2 rounded-lg bg-amber-50 text-amber-600" aria-hidden="true">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </div>
-          </div>
-          <div class="mt-3">
-            <p class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 tabular-nums">
-              {{ data.activeLast7Days | number }}
-            </p>
-            <p class="text-xs text-slate-500 mt-1.5">Ứng viên tương tác</p>
-          </div>
-        </article>
-
-        <!-- Metric 4: Placed Candidates -->
-        <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl hover:shadow-xs transition flex flex-col justify-between">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Đã tuyển dụng</span>
-            <div class="p-2 rounded-lg bg-teal-50 text-teal-600" aria-hidden="true">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-            </div>
-          </div>
-          <div class="mt-3">
-            <p class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 tabular-nums">
-              {{ data.placedCandidates | number }}
-            </p>
-            <p class="text-xs text-slate-500 mt-1.5">Ứng viên nhận việc</p>
-          </div>
-        </article>
-
-        <!-- Metric 5: Retention Rate -->
-        <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl hover:shadow-xs transition flex flex-col justify-between">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Tỷ lệ duy trì</span>
-            <div class="p-2 rounded-lg bg-purple-50 text-purple-600" aria-hidden="true">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-              </svg>
-            </div>
-          </div>
-          <div class="mt-3">
-            <p class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 tabular-nums">
-              {{ data.retentionPct }}%
-            </p>
-            <p class="text-xs text-slate-500 mt-1.5">Duy trì sau tuyển dụng</p>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <!-- SEARCH & FILTER BAR SECTION (JS-01, JS-09, JS-10, JS-17) -->
-    <section aria-label="Bộ lọc người tìm việc" class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-4 rounded-xl space-y-3">
-      <div class="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
-        <!-- Search Input -->
-        <div class="relative flex-1 max-w-md">
-          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
-          <input
-            type="text"
-            [value]="searchTerm"
-            (input)="onSearchInput($event)"
-            placeholder="Tìm theo tên hoặc email ứng viên..."
-            aria-label="Tìm kiếm người tìm việc theo tên hoặc email"
-            class="w-full pl-10 pr-9 py-2 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-ad-primary focus:bg-white transition"
-          />
-          <button
-            *ngIf="searchTerm"
-            type="button"
-            (click)="clearSearch()"
-            aria-label="Xóa nội dung tìm kiếm"
-            class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600"
-          >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-
-        <!-- Filter Dropdown & Clear Filters Action -->
-        <div class="flex flex-wrap items-center gap-2">
-          <!-- Resume Status Filter -->
-          <div class="relative min-w-[190px]">
-            <select
-              [value]="selectedResumeStatus"
-              (change)="onResumeStatusChange($event)"
-              aria-label="Lọc theo trạng thái CV"
-              class="w-full px-3 py-2 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-ad-primary focus:bg-white transition cursor-pointer"
-            >
-              <option value="">Tất cả trạng thái CV</option>
-              <option value="complete">CV hoàn chỉnh</option>
-              <option value="incomplete">CV chưa hoàn chỉnh</option>
-              <option value="missing">Thiếu CV</option>
-            </select>
-          </div>
-
-          <!-- Reset Filter Button -->
-          <button
-            *ngIf="hasActiveFilters"
-            type="button"
-            (click)="clearFilters()"
-            class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition"
-          >
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
-            <span>Xóa bộ lọc</span>
-          </button>
-        </div>
+      <!-- Empty State for Region Distribution -->
+      <div *ngIf="!isLoadingRegions && (!regionDistribution || regionDistribution.regions.length === 0) && !regionError"
+        class="py-8 text-center text-xs text-slate-500">
+        Chưa có dữ liệu phân bổ khu vực.
       </div>
 
-      <!-- Active Filter Chips -->
-      <div *ngIf="hasActiveFilters" class="flex flex-wrap items-center gap-2 pt-2 border-t border-ad-outline-variant/20 text-xs">
-        <span class="text-slate-500 font-medium">Bộ lọc đang áp dụng:</span>
-        <span *ngIf="searchTerm" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-50 text-ad-primary font-medium border border-blue-200/60">
-          Tìm kiếm: "{{ searchTerm }}"
-          <button type="button" (click)="clearSearch()" class="hover:text-ad-primary-dim" aria-label="Xóa bộ lọc tìm kiếm">×</button>
-        </span>
-        <span *ngIf="selectedResumeStatus" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-medium border border-slate-200">
-          Trạng thái: {{ getResumeBadge(selectedResumeStatus).label }}
-          <button type="button" (click)="clearResumeStatusFilter()" class="hover:text-slate-900" aria-label="Xóa bộ lọc trạng thái">×</button>
-        </span>
-      </div>
-    </section>
-
-    <!-- MAIN WORKSPACE: CANDIDATE TABLE (2/3) & REGION VISUALIZATION (1/3) -->
-    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
-      <!-- CANDIDATE TABLE (2/3 width on desktop) -->
-      <section aria-label="Bảng danh sách người tìm việc" class="xl:col-span-2 bg-ad-surface-container-lowest border border-ad-outline-variant/30 rounded-xl overflow-hidden shadow-2xs">
-        <!-- Table Header Bar -->
-        <div class="px-5 py-4 border-b border-ad-outline-variant/20 flex items-center justify-between">
-          <div class="flex items-center gap-2.5">
-            <h2 class="text-base font-semibold text-slate-900">Danh sách ứng viên</h2>
-            <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-medium bg-slate-100 text-slate-600">
-              {{ totalItems | number }} hồ sơ
-            </span>
-          </div>
-        </div>
-
-        <!-- Scoped Error State for List (JS-08) -->
-        <div *ngIf="listError && jobSeekers.length === 0" class="p-6 text-center space-y-3">
-          <div class="inline-flex p-3 rounded-full bg-rose-50 text-rose-600">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
-          </div>
-          <p class="text-sm font-medium text-slate-800">{{ listError }}</p>
-          <button
-            type="button"
-            (click)="retryList()"
-            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-ad-primary text-white text-xs font-semibold hover:bg-ad-primary-dim transition"
-          >
-            Thử lại danh sách
-          </button>
-        </div>
-
-        <!-- Loading Skeleton for List -->
-        <div *ngIf="isLoadingList && jobSeekers.length === 0" class="p-5 space-y-4 animate-pulse">
-          <div *ngFor="let i of [1, 2, 3, 4, 5]" class="flex items-center justify-between gap-4 py-2 border-b border-slate-100 last:border-b-0">
-            <div class="flex items-center gap-3">
-              <div class="w-8 h-8 rounded-full bg-slate-200"></div>
-              <div class="space-y-1.5">
-                <div class="h-4 bg-slate-200 rounded w-36"></div>
-                <div class="h-3 bg-slate-100 rounded w-24"></div>
-              </div>
-            </div>
-            <div class="h-4 bg-slate-100 rounded w-32 hidden md:block"></div>
-            <div class="h-6 bg-slate-200 rounded-full w-20"></div>
-            <div class="h-3 bg-slate-100 rounded w-24 hidden md:block"></div>
-          </div>
-        </div>
-
-        <!-- Empty Filter State (JS-10) -->
-        <div *ngIf="!isLoadingList && jobSeekers.length === 0 && hasActiveFilters && !listError" class="p-12 text-center space-y-3">
-          <div class="inline-flex p-4 rounded-full bg-slate-100 text-slate-400">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
-          <h3 class="text-base font-semibold text-slate-800">Không tìm thấy kết quả</h3>
-          <p class="text-xs text-slate-500 max-w-sm mx-auto">
-            Không có ứng viên nào phù hợp với từ khóa hoặc bộ lọc hiện tại. Vui lòng thử lại với tiêu chí khác.
-          </p>
-          <div class="pt-2">
-            <button
-              type="button"
-              (click)="clearFilters()"
-              class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition"
-            >
-              Xóa bộ lọc
-            </button>
-          </div>
-        </div>
-
-        <!-- Clean Empty State (JS-10) -->
-        <div *ngIf="!isLoadingList && jobSeekers.length === 0 && !hasActiveFilters && !listError" class="p-12 text-center space-y-3">
-          <div class="inline-flex p-4 rounded-full bg-blue-50 text-ad-primary">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-            </svg>
-          </div>
-          <h3 class="text-base font-semibold text-slate-800">Chưa có dữ liệu người tìm việc</h3>
-          <p class="text-xs text-slate-500 max-w-sm mx-auto">
-            Hệ thống hiện tại chưa có hồ sơ người tìm việc nào. Nhấn vào nút bên dưới để tạo hồ sơ đầu tiên.
-          </p>
-          <div class="pt-2">
-            <button
-              type="button"
-              (click)="openCreateDialog()"
-              class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-ad-primary text-white text-xs font-semibold hover:bg-ad-primary-dim transition"
-            >
-              Thêm người tìm việc
-            </button>
-          </div>
-        </div>
-
-        <!-- Table Display (Desktop & Tablet >= md) (JS-11) -->
-        <div *ngIf="!isLoadingList && jobSeekers.length > 0" class="hidden md:block overflow-x-auto">
-          <table class="w-full text-sm text-left border-collapse">
-            <caption class="sr-only">Danh sách người tìm việc trên hệ thống</caption>
-            <thead class="bg-ad-surface-container-low text-xs font-semibold uppercase tracking-wider text-slate-600 border-b border-ad-outline-variant/30">
-              <tr>
-                <th scope="col" class="px-5 py-3.5">Ứng viên</th>
-                <th scope="col" class="px-5 py-3.5">Email</th>
-                <th scope="col" class="px-5 py-3.5">Nghề nghiệp</th>
-                <th scope="col" class="px-5 py-3.5">Trạng thái CV</th>
-                <th scope="col" class="px-5 py-3.5">Hoạt động gần đây</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-ad-outline-variant/20 bg-white">
-              <tr
-                *ngFor="let seeker of jobSeekers; trackBy: trackBySeeker"
-                class="hover:bg-slate-50/80 transition-colors"
-              >
-                <!-- Candidate Avatar + Full Name -->
-                <td class="px-5 py-3.5 whitespace-nowrap">
-                  <div class="flex items-center gap-3">
-                    <div
-                      class="w-8 h-8 rounded-full bg-blue-100 text-ad-primary font-semibold text-xs flex items-center justify-center shrink-0"
-                      aria-hidden="true"
-                    >
-                      {{ getInitials(seeker.fullName, seeker.avatarInitials) }}
-                    </div>
-                    <div>
-                      <p class="font-semibold text-slate-900">{{ seeker.fullName }}</p>
-                      <p class="text-2xs text-slate-400 font-mono">ID: {{ seeker.id }}</p>
-                    </div>
-                  </div>
-                </td>
-
-                <!-- Email -->
-                <td class="px-5 py-3.5 whitespace-nowrap text-slate-600 select-all">
-                  {{ seeker.email }}
-                </td>
-
-                <!-- Profession -->
-                <td class="px-5 py-3.5 whitespace-nowrap text-slate-700 font-medium">
-                  {{ seeker.profession }}
-                </td>
-
-                <!-- Resume Status Badge (JS-14) -->
-                <td class="px-5 py-3.5 whitespace-nowrap">
-                  <ng-container *ngIf="getResumeBadge(seeker.resumeStatus) as badge">
-                    <span
-                      class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold border"
-                      [ngClass]="badge.badgeClass"
-                    >
-                      <span class="w-1.5 h-1.5 rounded-full" [ngClass]="badge.dotClass" aria-hidden="true"></span>
-                      <span>{{ badge.label }}</span>
-                    </span>
-                  </ng-container>
-                </td>
-
-                <!-- Last Active Date (JS-15) -->
-                <td class="px-5 py-3.5 whitespace-nowrap text-xs text-slate-500" [title]="seeker.lastActiveAt || 'Chưa có thông tin'">
-                  <span [ngClass]="seeker.lastActiveAt ? 'text-slate-600 font-medium' : 'text-slate-400 italic'">
-                    {{ formatDate(seeker.lastActiveAt) }}
-                  </span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Mobile Card List (< md screens) (JS-18) -->
-        <div *ngIf="!isLoadingList && jobSeekers.length > 0" class="md:hidden divide-y divide-ad-outline-variant/20">
-          <article
-            *ngFor="let seeker of jobSeekers; trackBy: trackBySeeker"
-            class="p-4 space-y-2.5 hover:bg-slate-50 transition"
-          >
-            <div class="flex items-start justify-between gap-3">
-              <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-full bg-blue-100 text-ad-primary font-semibold text-xs flex items-center justify-center shrink-0">
-                  {{ getInitials(seeker.fullName, seeker.avatarInitials) }}
-                </div>
-                <div>
-                  <h3 class="font-semibold text-slate-900 text-sm leading-tight">{{ seeker.fullName }}</h3>
-                  <p class="text-xs text-slate-500">{{ seeker.profession }}</p>
-                </div>
-              </div>
-              <ng-container *ngIf="getResumeBadge(seeker.resumeStatus) as badge">
-                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-2xs font-semibold border" [ngClass]="badge.badgeClass">
-                  <span class="w-1 h-1 rounded-full" [ngClass]="badge.dotClass"></span>
-                  {{ badge.label }}
-                </span>
-              </ng-container>
-            </div>
-
-            <div class="text-xs text-slate-600 space-y-1 pt-1">
-              <p class="flex items-center gap-1.5 truncate">
-                <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-                <span class="truncate select-all">{{ seeker.email }}</span>
-              </p>
-              <p class="flex items-center gap-1.5 text-slate-400">
-                <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span>Hoạt động: {{ formatDate(seeker.lastActiveAt) }}</span>
-              </p>
-            </div>
-          </article>
-        </div>
-
-        <!-- Accessible Pagination Footer (JS-11) -->
-        <footer
-          *ngIf="totalItems > 0"
-          class="px-5 py-3.5 border-t border-ad-outline-variant/20 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-600"
-        >
-          <!-- Current Range Info & Page Size Selector -->
-          <div class="flex items-center gap-3">
-            <span>
-              Hiển thị <strong class="text-slate-900 tabular-nums">{{ getStartIndex() }}</strong> - <strong class="text-slate-900 tabular-nums">{{ getEndIndex() }}</strong> trong tổng số <strong class="text-slate-900 tabular-nums">{{ totalItems | number }}</strong>
-            </span>
-
-            <div class="flex items-center gap-1.5 pl-2 border-l border-slate-200">
-              <label for="pageSizeSelect" class="text-slate-500 sr-only sm:not-sr-only">Số dòng:</label>
-              <select
-                id="pageSizeSelect"
-                [value]="pageSize"
-                (change)="onPageSizeChange($event)"
-                class="px-2 py-1 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-ad-primary cursor-pointer"
-              >
-                <option [value]="10">10 / trang</option>
-                <option [value]="20">20 / trang</option>
-                <option [value]="50">50 / trang</option>
-              </select>
+      <!-- Horizontal Bars Visualization -->
+      <div *ngIf="regionDistribution as region" class="space-y-4">
+        <div *ngFor="let item of region.regions" class="space-y-1.5">
+          <div class="flex min-w-0 items-center justify-between gap-2 text-xs">
+            <span class="min-w-0 truncate font-medium text-slate-700" [title]="getRegionName(item.code)">{{
+              getRegionName(item.code) }}</span>
+            <div class="flex shrink-0 items-center gap-1.5 tabular-nums">
+              <span class="font-bold text-slate-900">{{ item.count | number }}</span>
+              <span class="text-slate-400 font-normal">({{ getRegionPercentage(item.count) }}%)</span>
             </div>
           </div>
-
-          <!-- Page Navigation Buttons -->
-          <div class="flex items-center gap-1">
-            <!-- First Page -->
-            <button
-              type="button"
-              (click)="goFirstPage()"
-              [disabled]="currentPage <= 1"
-              aria-label="Trang đầu tiên"
-              title="Trang đầu tiên"
-              class="p-1.5 rounded-lg border border-ad-outline-variant/30 hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none transition text-slate-600"
-            >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
-              </svg>
-            </button>
-
-            <!-- Previous Page -->
-            <button
-              type="button"
-              (click)="goPrevPage()"
-              [disabled]="currentPage <= 1"
-              aria-label="Trang trước"
-              title="Trang trước"
-              class="p-1.5 rounded-lg border border-ad-outline-variant/30 hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none transition text-slate-600"
-            >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-
-            <!-- Page Info -->
-            <span class="px-2.5 py-1 font-semibold text-slate-800 tabular-nums">
-              Trang {{ currentPage }} / {{ totalPages }}
-            </span>
-
-            <!-- Next Page -->
-            <button
-              type="button"
-              (click)="goNextPage()"
-              [disabled]="currentPage >= totalPages"
-              aria-label="Trang tiếp theo"
-              title="Trang tiếp theo"
-              class="p-1.5 rounded-lg border border-ad-outline-variant/30 hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none transition text-slate-600"
-            >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-
-            <!-- Last Page -->
-            <button
-              type="button"
-              (click)="goLastPage()"
-              [disabled]="currentPage >= totalPages"
-              aria-label="Trang cuối cùng"
-              title="Trang cuối cùng"
-              class="p-1.5 rounded-lg border border-ad-outline-variant/30 hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none transition text-slate-600"
-            >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
-              </svg>
-            </button>
-          </div>
-        </footer>
-      </section>
-
-      <!-- REGION DISTRIBUTION VISUALIZATION (1/3 width on desktop) (JS-12) -->
-      <section aria-label="Phân bổ người tìm việc theo khu vực" class="xl:col-span-1 bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl shadow-2xs space-y-4">
-        <div>
-          <h2 class="text-base font-semibold text-slate-900">Phân bổ theo khu vực</h2>
-          <p class="text-xs text-ad-on-surface-variant mt-0.5">Thống kê ứng viên theo vùng địa lý</p>
-        </div>
-
-        <!-- Scoped Error for Region Distribution (JS-08) -->
-        <div *ngIf="regionError && !regionDistribution" class="p-3.5 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-xs space-y-2">
-          <p class="font-medium">{{ regionError }}</p>
-          <button
-            type="button"
-            (click)="retryRegions()"
-            class="px-2.5 py-1 rounded bg-rose-100 hover:bg-rose-200 text-rose-900 font-semibold transition"
-          >
-            Thử lại
-          </button>
-        </div>
-
-        <!-- Loading Skeleton for Region Distribution -->
-        <div *ngIf="isLoadingRegions && !regionDistribution" class="space-y-3.5 animate-pulse py-2">
-          <div *ngFor="let i of [1, 2, 3, 4, 5]" class="space-y-1.5">
-            <div class="flex justify-between">
-              <div class="h-3.5 bg-slate-200 rounded w-28"></div>
-              <div class="h-3.5 bg-slate-200 rounded w-10"></div>
-            </div>
-            <div class="h-2.5 bg-slate-100 rounded-full w-full"></div>
+          <!-- Accessible Horizontal Progress Bar -->
+          <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden" role="progressbar"
+            [attr.aria-valuenow]="item.count" [attr.aria-valuemin]="0" [attr.aria-valuemax]="getTotalRegionCount()"
+            [attr.aria-label]="getRegionName(item.code) + ': ' + item.count + ' ứng viên'">
+            <div class="h-full rounded-full transition-all duration-500" [ngClass]="getRegionColorClass(item.code)"
+              [style.width.%]="getRegionBarWidth(item.count)"></div>
           </div>
         </div>
 
-        <!-- Empty State for Region Distribution -->
-        <div *ngIf="!isLoadingRegions && (!regionDistribution || regionDistribution.regions.length === 0) && !regionError" class="py-8 text-center text-xs text-slate-500">
-          Chưa có dữ liệu phân bổ khu vực.
+        <!-- Total Sample Summary -->
+        <div
+          class="pt-3 border-t border-ad-outline-variant/20 flex items-center justify-between text-xs text-slate-500">
+          <span>Tổng ứng viên theo vùng</span>
+          <span class="font-semibold text-slate-800 tabular-nums">{{ getTotalRegionCount() | number }}</span>
         </div>
 
-        <!-- Horizontal Bars Visualization -->
-        <div *ngIf="regionDistribution as region" class="space-y-4">
-          <div *ngFor="let item of region.regions" class="space-y-1.5">
-            <div class="flex items-center justify-between text-xs">
-              <span class="font-medium text-slate-700">{{ getRegionName(item.code) }}</span>
-              <div class="flex items-center gap-1.5 tabular-nums">
-                <span class="font-bold text-slate-900">{{ item.count | number }}</span>
-                <span class="text-slate-400 font-normal">({{ getRegionPercentage(item.count) }}%)</span>
-              </div>
-            </div>
-            <!-- Accessible Horizontal Progress Bar -->
-            <div
-              class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden"
-              role="progressbar"
-              [attr.aria-valuenow]="item.count"
-              [attr.aria-valuemin]="0"
-              [attr.aria-valuemax]="getTotalRegionCount()"
-              [attr.aria-label]="getRegionName(item.code) + ': ' + item.count + ' ứng viên'"
-            >
-              <div
-                class="h-full rounded-full transition-all duration-500"
-                [ngClass]="getRegionColorClass(item.code)"
-                [style.width.%]="getRegionBarWidth(item.count)"
-              ></div>
-            </div>
-          </div>
-
-          <!-- Total Sample Summary -->
-          <div class="pt-3 border-t border-ad-outline-variant/20 flex items-center justify-between text-xs text-slate-500">
-            <span>Tổng ứng viên theo vùng</span>
-            <span class="font-semibold text-slate-800 tabular-nums">{{ getTotalRegionCount() | number }}</span>
-          </div>
-
-          <!-- Screen Reader Accessible Fallback Table (JS-12) -->
-          <table class="sr-only">
+        <!-- Screen Reader Accessible Fallback Table (JS-12) -->
+        <div class="sr-only">
+          <table>
             <caption>Bảng phân bổ ứng viên theo khu vực địa lý</caption>
             <thead>
               <tr>
@@ -624,221 +568,11 @@
             </tbody>
           </table>
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
   </div>
 
-  <!-- CREATE JOB SEEKER MODAL DIALOG (JS-04, JS-05, JS-06, JS-07, Form Rules §9) -->
-  <div
-    *ngIf="isCreateDialogOpen"
-    class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6 overflow-y-auto"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="create-dialog-title"
-    aria-describedby="create-dialog-desc"
-  >
-    <!-- Dialog Card Container (560-640px desktop, full-screen mobile) -->
-    <div
-      class="bg-white rounded-2xl border border-ad-outline-variant/40 shadow-2xl max-w-lg w-full p-6 sm:p-8 space-y-6 animate-in fade-in zoom-in-95 duration-150"
-    >
-      <!-- Dialog Header -->
-      <div class="flex items-start justify-between border-b border-ad-outline-variant/30 pb-4">
-        <div>
-          <h2 id="create-dialog-title" class="text-xl font-bold tracking-tight text-slate-900">
-            Thêm người tìm việc mới
-          </h2>
-          <p id="create-dialog-desc" class="text-xs text-slate-500 mt-1">
-            Nhập thông tin hồ sơ ứng viên để lưu trữ vào hệ thống quản trị.
-          </p>
-        </div>
-        <button
-          type="button"
-          (click)="attemptCloseCreateDialog()"
-          aria-label="Đóng hộp thoại"
-          class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
-        >
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
-
-      <!-- Scoped Dialog Error Banner -->
-      <div *ngIf="createError" class="p-3.5 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2.5">
-        <svg class="w-4 h-4 text-rose-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <span>{{ createError }}</span>
-      </div>
-
-      <!-- Create Form (JS-05) -->
-      <form [formGroup]="createJobSeekerForm" (ngSubmit)="submitCreateJobSeeker()" class="space-y-4">
-        <!-- Field 1: Full Name -->
-        <div>
-          <label for="fullNameInput" class="block text-xs font-semibold text-slate-700 mb-1">
-            Họ và tên <span class="text-rose-500">*</span>
-          </label>
-          <input
-            id="fullNameInput"
-            type="text"
-            formControlName="fullName"
-            placeholder="Ví dụ: Nguyễn Văn A"
-            [attr.aria-invalid]="isCreateFieldInvalid('fullName')"
-            aria-describedby="fullName-error"
-            class="w-full px-3.5 py-2.5 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-ad-primary focus:bg-white transition"
-          />
-          <p
-            *ngIf="isCreateFieldInvalid('fullName')"
-            id="fullName-error"
-            class="mt-1 text-xs text-rose-600 flex items-center gap-1"
-          >
-            Họ và tên là bắt buộc (tối thiểu 2 ký tự).
-          </p>
-        </div>
-
-        <!-- Field 2: Email -->
-        <div>
-          <label for="emailInput" class="block text-xs font-semibold text-slate-700 mb-1">
-            Địa chỉ email <span class="text-rose-500">*</span>
-          </label>
-          <input
-            id="emailInput"
-            type="email"
-            formControlName="email"
-            placeholder="ungvien@example.com"
-            [attr.aria-invalid]="isCreateFieldInvalid('email')"
-            aria-describedby="email-error"
-            class="w-full px-3.5 py-2.5 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-ad-primary focus:bg-white transition"
-          />
-          <p
-            *ngIf="isCreateFieldInvalid('email')"
-            id="email-error"
-            class="mt-1 text-xs text-rose-600 flex items-center gap-1"
-          >
-            Vui lòng nhập địa chỉ email hợp lệ.
-          </p>
-        </div>
-
-        <!-- Field 3: Profession -->
-        <div>
-          <label for="professionInput" class="block text-xs font-semibold text-slate-700 mb-1">
-            Nghề nghiệp / Chuyên ngành <span class="text-rose-500">*</span>
-          </label>
-          <input
-            id="professionInput"
-            type="text"
-            formControlName="profession"
-            placeholder="Ví dụ: Kỹ sư Phần mềm Frontend"
-            [attr.aria-invalid]="isCreateFieldInvalid('profession')"
-            aria-describedby="profession-error"
-            class="w-full px-3.5 py-2.5 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-ad-primary focus:bg-white transition"
-          />
-          <p
-            *ngIf="isCreateFieldInvalid('profession')"
-            id="profession-error"
-            class="mt-1 text-xs text-rose-600 flex items-center gap-1"
-          >
-            Nghề nghiệp là bắt buộc.
-          </p>
-        </div>
-
-        <!-- Field 4: Resume URL -->
-        <div>
-          <label for="resumeUrlInput" class="block text-xs font-semibold text-slate-700 mb-1">
-            Đường dẫn liên kết CV <span class="text-rose-500">*</span>
-          </label>
-          <input
-            id="resumeUrlInput"
-            type="url"
-            formControlName="resumeUrl"
-            placeholder="https://example.com/cv.pdf"
-            [attr.aria-invalid]="isCreateFieldInvalid('resumeUrl')"
-            aria-describedby="resumeUrl-error"
-            class="w-full px-3.5 py-2.5 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-ad-primary focus:bg-white transition"
-          />
-          <p
-            *ngIf="isCreateFieldInvalid('resumeUrl')"
-            id="resumeUrl-error"
-            class="mt-1 text-xs text-rose-600 flex items-center gap-1"
-          >
-            Vui lòng nhập đường dẫn URL hợp lệ (bắt đầu bằng http:// hoặc https://).
-          </p>
-        </div>
-
-        <!-- Dialog Footer Actions -->
-        <div class="pt-4 border-t border-ad-outline-variant/30 flex items-center justify-end gap-3">
-          <button
-            type="button"
-            (click)="attemptCloseCreateDialog()"
-            [disabled]="isCreating"
-            class="px-4 py-2.5 rounded-lg border border-ad-outline-variant/40 hover:bg-slate-100 text-slate-700 text-sm font-semibold transition disabled:opacity-50"
-          >
-            Hủy bỏ
-          </button>
-          <button
-            type="submit"
-            [disabled]="isCreating || createJobSeekerForm.invalid"
-            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-ad-primary text-white text-sm font-semibold hover:bg-ad-primary-dim transition shadow-xs disabled:opacity-50 disabled:pointer-events-none"
-          >
-            <svg
-              *ngIf="isCreating"
-              class="w-4 h-4 animate-spin text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <span>{{ isCreating ? 'Đang tạo...' : 'Tạo người tìm việc' }}</span>
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- UNSAVED CHANGES CONFIRMATION POPUP (JS-07) -->
-  <div
-    *ngIf="isConfirmDiscardOpen"
-    class="fixed inset-0 z-60 bg-slate-950/40 backdrop-blur-2xs flex items-center justify-center p-4"
-    role="alertdialog"
-    aria-modal="true"
-    aria-labelledby="discard-title"
-    aria-describedby="discard-desc"
-  >
-    <div class="bg-white rounded-xl border border-ad-outline-variant/40 shadow-xl max-w-sm w-full p-5 space-y-4 animate-in fade-in zoom-in-95 duration-100">
-      <div class="flex items-start gap-3">
-        <div class="p-2 rounded-full bg-amber-50 text-amber-600 shrink-0">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-          </svg>
-        </div>
-        <div>
-          <h3 id="discard-title" class="text-sm font-bold text-slate-900">
-            Hủy thay đổi chưa lưu?
-          </h3>
-          <p id="discard-desc" class="text-xs text-slate-500 mt-1 leading-relaxed">
-            Bạn có các thông tin đã nhập trong biểu mẫu. Đóng hộp thoại lúc này sẽ làm mất toàn bộ các nội dung bạn đã điền.
-          </p>
-        </div>
-      </div>
-      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
-        <button
-          type="button"
-          (click)="cancelDiscardChanges()"
-          class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition"
-        >
-          Tiếp tục nhập
-        </button>
-        <button
-          type="button"
-          (click)="confirmDiscardChanges()"
-          class="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold transition"
-        >
-          Xác nhận hủy
-        </button>
-      </div>
-    </div>
-  </div>
 </main>
+
+<app-create-job-seeker-modal *ngIf="isCreateDialogOpen" (closeModal)="closeCreateDialog()">
+</app-create-job-seeker-modal>

@@ -1,66 +1,44 @@
 <main class="bg-ad-surface min-h-screen p-4 sm:p-6 md:p-8 lg:p-10 text-ad-on-surface">
   <div class="max-w-7xl mx-auto space-y-8">
-    <!-- Breadcrumb & Header Section (JM-01, JM-04, Design §6.6) -->
-    <header class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between border-b border-ad-outline-variant/30 pb-6">
-      <div>
-        <nav aria-label="Breadcrumb" class="flex items-center gap-2 text-xs font-medium text-slate-500 mb-2">
-          <a routerLink="/admin/dashboard" class="hover:text-ad-primary transition-colors flex items-center gap-1">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-            </svg>
-            Quản trị
-          </a>
-          <span class="text-slate-400">/</span>
-          <span class="text-ad-on-surface font-semibold" aria-current="page">Tin tuyển dụng</span>
-        </nav>
-        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">Quản lý tin tuyển dụng</h1>
-        <p class="text-sm text-ad-on-surface-variant mt-1.5 max-w-3xl leading-relaxed">
-          Theo dõi tình trạng tin tuyển dụng, phê duyệt hồ sơ đăng tuyển, số lượng ứng tuyển và thao tác hàng loạt.
-        </p>
-      </div>
 
-      <!-- Primary Action: Open Create Drawer (JM-04) -->
-      <div class="flex items-center gap-3">
-        <button
-          #createTriggerBtn
-          type="button"
-          (click)="openCreateDrawer(createTriggerBtn)"
-          class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold bg-ad-primary text-white hover:bg-ad-primary-dim transition shadow-xs focus:outline-none focus:ring-2 focus:ring-ad-primary focus:ring-offset-2"
-        >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-          </svg>
-          <span>Tạo tin tuyển dụng</span>
-        </button>
-      </div>
-    </header>
 
     <!-- METRICS SECTION (4 Cards - JM-01, JM-08, JM-16) -->
     <section aria-label="Chỉ số tin tuyển dụng" class="space-y-3">
       <div class="flex items-center justify-between">
         <h2 class="text-base font-semibold text-slate-800">Tổng quan chỉ số</h2>
+        <!-- Primary Action: Open Create Drawer (JM-04) -->
+        <div class="flex items-center gap-3">
+          <button #createTriggerBtn type="button" (click)="openCreateDrawer(createTriggerBtn)"
+            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold bg-ad-primary text-white hover:bg-ad-primary-dim transition shadow-xs focus:outline-none focus:ring-2 focus:ring-ad-primary focus:ring-offset-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            <span>Tạo tin tuyển dụng</span>
+          </button>
+        </div>
       </div>
 
       <!-- Scoped Error for Metrics (JM-08) -->
-      <div *ngIf="metricsError && !metrics" class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 flex items-center justify-between">
+      <div *ngIf="metricsError && !metrics"
+        class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <svg class="w-5 h-5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          <svg class="w-5 h-5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
           <span class="text-sm font-medium">{{ metricsError }}</span>
         </div>
-        <button
-          type="button"
-          (click)="retryMetrics()"
-          class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-900 transition"
-        >
+        <button type="button" (click)="retryMetrics()"
+          class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-900 transition">
           Thử lại
         </button>
       </div>
 
       <!-- Loading Skeletons for Metrics (JM-08) -->
       <div *ngIf="isLoadingMetrics && !metrics" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div *ngFor="let i of [1, 2, 3, 4]" class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl animate-pulse space-y-3">
+        <div *ngFor="let i of [1, 2, 3, 4]"
+          class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl animate-pulse space-y-3">
           <div class="h-4 bg-slate-200 rounded w-24"></div>
           <div class="h-8 bg-slate-200 rounded w-32"></div>
           <div class="h-3 bg-slate-100 rounded w-28"></div>
@@ -70,12 +48,14 @@
       <!-- 4 KPI Cards (JM-16) -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" *ngIf="metrics as data">
         <!-- Metric 1: Live Postings -->
-        <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl hover:shadow-xs transition flex flex-col justify-between">
+        <article
+          class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl hover:shadow-xs transition flex flex-col justify-between">
           <div class="flex items-center justify-between">
             <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Đang hoạt động</span>
             <div class="p-2 rounded-lg bg-emerald-50 text-emerald-600" aria-hidden="true">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
           </div>
@@ -84,7 +64,8 @@
               {{ data.livePostings | number }}
             </p>
             <p class="text-xs text-slate-500 mt-1.5 flex items-center gap-1">
-              <span [ngClass]="data.livePostingsGrowthPct >= 0 ? 'text-emerald-600 font-semibold' : 'text-rose-600 font-semibold'">
+              <span
+                [ngClass]="data.livePostingsGrowthPct >= 0 ? 'text-emerald-600 font-semibold' : 'text-rose-600 font-semibold'">
                 {{ data.livePostingsGrowthPct >= 0 ? '+' : '' }}{{ data.livePostingsGrowthPct }}%
               </span>
               <span>so với tháng trước</span>
@@ -93,12 +74,14 @@
         </article>
 
         <!-- Metric 2: Pending Review -->
-        <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl hover:shadow-xs transition flex flex-col justify-between">
+        <article
+          class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl hover:shadow-xs transition flex flex-col justify-between">
           <div class="flex items-center justify-between">
             <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Chờ duyệt</span>
             <div class="p-2 rounded-lg bg-amber-50 text-amber-600" aria-hidden="true">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
           </div>
@@ -111,12 +94,14 @@
         </article>
 
         <!-- Metric 3: Applicants -->
-        <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl hover:shadow-xs transition flex flex-col justify-between">
+        <article
+          class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl hover:shadow-xs transition flex flex-col justify-between">
           <div class="flex items-center justify-between">
             <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Tổng ứng viên</span>
             <div class="p-2 rounded-lg bg-blue-50 text-ad-primary" aria-hidden="true">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
             </div>
           </div>
@@ -129,12 +114,14 @@
         </article>
 
         <!-- Metric 4: Avg Time to Hire -->
-        <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl hover:shadow-xs transition flex flex-col justify-between">
+        <article
+          class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl hover:shadow-xs transition flex flex-col justify-between">
           <div class="flex items-center justify-between">
             <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Thời gian tuyển TB</span>
             <div class="p-2 rounded-lg bg-purple-50 text-purple-600" aria-hidden="true">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             </div>
           </div>
@@ -149,30 +136,23 @@
     </section>
 
     <!-- SEARCH & FILTER BAR SECTION (JM-01, JM-09, JM-21) -->
-    <section aria-label="Bộ lọc tin tuyển dụng" class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-4 rounded-xl space-y-3">
+    <section aria-label="Bộ lọc tin tuyển dụng"
+      class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-4 rounded-xl space-y-3">
       <div class="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
         <!-- Search Input -->
         <div class="relative flex-1 max-w-md">
           <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
-          <input
-            type="text"
-            [value]="searchTerm"
-            (input)="onSearch($event)"
+          <input type="text" [value]="searchTerm" (input)="onSearch($event)"
             placeholder="Tìm theo tiêu đề tin, tên doanh nghiệp..."
             aria-label="Tìm kiếm tin tuyển dụng theo tiêu đề hoặc doanh nghiệp"
-            class="w-full pl-10 pr-9 py-2 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-ad-primary focus:bg-white transition"
-          />
-          <button
-            *ngIf="searchTerm"
-            type="button"
-            (click)="clearSearch()"
-            aria-label="Xóa nội dung tìm kiếm"
-            class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600"
-          >
+            class="w-full pl-10 pr-9 py-2 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-ad-primary focus:bg-white transition" />
+          <button *ngIf="searchTerm" type="button" (click)="clearSearch()" aria-label="Xóa nội dung tìm kiếm"
+            class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -183,12 +163,8 @@
         <div class="flex flex-wrap items-center gap-2">
           <!-- Category Filter (From CategoryService) -->
           <div class="relative min-w-[170px]">
-            <select
-              [value]="selectedCategory"
-              (change)="onCategoryChange($event)"
-              aria-label="Lọc theo ngành nghề"
-              class="w-full px-3 py-2 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-ad-primary focus:bg-white transition cursor-pointer"
-            >
+            <select [value]="selectedCategory" (change)="onCategoryChange($event)" aria-label="Lọc theo ngành nghề"
+              class="w-full px-3 py-2 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-ad-primary focus:bg-white transition cursor-pointer">
               <option value="">Tất cả danh mục</option>
               <option *ngFor="let cat of categories" [value]="cat.name">{{ cat.name }}</option>
             </select>
@@ -196,12 +172,9 @@
 
           <!-- Status Filter -->
           <div class="relative min-w-[160px]">
-            <select
-              [value]="selectedStatus"
-              (change)="onStatusFilterChange($event)"
+            <select [value]="selectedStatus" (change)="onStatusFilterChange($event)"
               aria-label="Lọc theo trạng thái tin"
-              class="w-full px-3 py-2 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-ad-primary focus:bg-white transition cursor-pointer"
-            >
+              class="w-full px-3 py-2 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-ad-primary focus:bg-white transition cursor-pointer">
               <option value="">Tất cả trạng thái</option>
               <option value="active">Đang hoạt động</option>
               <option value="pending">Chờ duyệt</option>
@@ -212,14 +185,11 @@
           </div>
 
           <!-- Reset Filter Button -->
-          <button
-            *ngIf="hasActiveFilters"
-            type="button"
-            (click)="clearFilters()"
-            class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition"
-          >
+          <button *ngIf="hasActiveFilters" type="button" (click)="clearFilters()"
+            class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
             <span>Xóa bộ lọc</span>
           </button>
@@ -227,69 +197,68 @@
       </div>
 
       <!-- Active Filter Chips -->
-      <div *ngIf="hasActiveFilters" class="flex flex-wrap items-center gap-2 pt-2 border-t border-ad-outline-variant/20 text-xs">
+      <div *ngIf="hasActiveFilters"
+        class="flex flex-wrap items-center gap-2 pt-2 border-t border-ad-outline-variant/20 text-xs">
         <span class="text-slate-500 font-medium">Bộ lọc đang áp dụng:</span>
-        <span *ngIf="searchTerm" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-50 text-ad-primary font-medium border border-blue-200/60">
+        <span *ngIf="searchTerm"
+          class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-50 text-ad-primary font-medium border border-blue-200/60">
           Tìm kiếm: "{{ searchTerm }}"
-          <button type="button" (click)="clearSearch()" class="hover:text-ad-primary-dim" aria-label="Xóa bộ lọc tìm kiếm">×</button>
+          <button type="button" (click)="clearSearch()" class="hover:text-ad-primary-dim"
+            aria-label="Xóa bộ lọc tìm kiếm">×</button>
         </span>
-        <span *ngIf="selectedCategory" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-medium border border-slate-200">
+        <span *ngIf="selectedCategory"
+          class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-medium border border-slate-200">
           Danh mục: {{ selectedCategory }}
-          <button type="button" (click)="clearCategoryFilter()" class="hover:text-slate-900" aria-label="Xóa bộ lọc danh mục">×</button>
+          <button type="button" (click)="clearCategoryFilter()" class="hover:text-slate-900"
+            aria-label="Xóa bộ lọc danh mục">×</button>
         </span>
-        <span *ngIf="selectedStatus" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-medium border border-slate-200">
+        <span *ngIf="selectedStatus"
+          class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-medium border border-slate-200">
           Trạng thái: {{ getStatusBadge(selectedStatus).label }}
-          <button type="button" (click)="clearStatusFilter()" class="hover:text-slate-900" aria-label="Xóa bộ lọc trạng thái">×</button>
+          <button type="button" (click)="clearStatusFilter()" class="hover:text-slate-900"
+            aria-label="Xóa bộ lọc trạng thái">×</button>
         </span>
       </div>
     </section>
 
     <!-- CONTEXTUAL BULK ACTION BAR (JM-13, JM-14, JM-15, JM-19) - ONLY SHOWN WHEN SELECTION > 0 -->
-    <section
-      *ngIf="selectedJobsCount > 0"
-      aria-label="Thao tác hàng loạt"
-      class="bg-blue-50 border border-blue-200 p-4 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4 animate-in fade-in slide-in-from-top-2 duration-150 shadow-xs"
-    >
+    <section *ngIf="selectedJobsCount > 0" aria-label="Thao tác hàng loạt"
+      class="bg-blue-50 border border-blue-200 p-4 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4 animate-in fade-in slide-in-from-top-2 duration-150 shadow-xs">
       <div class="flex items-center gap-3 text-sm text-slate-800">
         <div class="p-1.5 rounded-lg bg-blue-100 text-ad-primary">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
         <span>
-          Đã chọn <strong class="text-ad-primary font-bold tabular-nums">{{ selectedJobsCount }}</strong> tin tuyển dụng trên trang này
+          Đã chọn <strong class="text-ad-primary font-bold tabular-nums">{{ selectedJobsCount }}</strong> tin tuyển dụng
+          trên trang này
         </span>
-        <button
-          type="button"
-          (click)="clearSelection()"
-          class="text-xs font-semibold text-slate-500 hover:text-slate-700 underline transition"
-        >
+        <button type="button" (click)="clearSelection()"
+          class="text-xs font-semibold text-slate-500 hover:text-slate-700 underline transition">
           Bỏ chọn
         </button>
       </div>
 
       <!-- Bulk Action Selector & Confirmation Trigger -->
       <form [formGroup]="bulkActionForm" (ngSubmit)="openBulkDialog()" class="flex items-center gap-3 w-full sm:w-auto">
-        <select
-          formControlName="action"
-          aria-label="Chọn thao tác hàng loạt"
-          class="px-3 py-2 bg-white border border-blue-300 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-ad-primary cursor-pointer shadow-2xs"
-        >
+        <select formControlName="action" aria-label="Chọn thao tác hàng loạt"
+          class="px-3 py-2 bg-white border border-blue-300 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-ad-primary cursor-pointer shadow-2xs">
           <option value="activate">Kích hoạt hàng loạt</option>
           <option value="suspend">Đình chỉ hàng loạt</option>
           <option value="close">Đóng tin hàng loạt</option>
         </select>
-        <button
-          type="submit"
-          class="px-4 py-2 rounded-lg bg-ad-primary text-white text-sm font-semibold hover:bg-ad-primary-dim transition shadow-xs whitespace-nowrap"
-        >
+        <button type="submit"
+          class="px-4 py-2 rounded-lg bg-ad-primary text-white text-sm font-semibold hover:bg-ad-primary-dim transition shadow-xs whitespace-nowrap">
           Áp dụng
         </button>
       </form>
     </section>
 
     <!-- JOBS TABLE WORKSPACE SECTION (JM-01, JM-10, JM-11, JM-17, JM-18) -->
-    <section aria-label="Bảng danh sách tin tuyển dụng" class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 rounded-xl overflow-hidden shadow-2xs">
+    <section aria-label="Bảng danh sách tin tuyển dụng"
+      class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 rounded-xl overflow-hidden shadow-2xs">
       <!-- Table Header Bar -->
       <div class="px-5 py-4 border-b border-ad-outline-variant/20 flex items-center justify-between">
         <div class="flex items-center gap-2.5">
@@ -304,22 +273,21 @@
       <div *ngIf="listError && jobs.length === 0" class="p-8 text-center space-y-3">
         <div class="inline-flex p-3 rounded-full bg-rose-50 text-rose-600">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
         </div>
         <p class="text-sm font-medium text-slate-800">{{ listError }}</p>
-        <button
-          type="button"
-          (click)="retryList()"
-          class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-ad-primary text-white text-xs font-semibold hover:bg-ad-primary-dim transition"
-        >
+        <button type="button" (click)="retryList()"
+          class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-ad-primary text-white text-xs font-semibold hover:bg-ad-primary-dim transition">
           Thử lại danh sách
         </button>
       </div>
 
       <!-- Loading Skeleton for List -->
       <div *ngIf="isLoadingList && jobs.length === 0" class="p-5 space-y-4 animate-pulse">
-        <div *ngFor="let i of [1, 2, 3, 4, 5]" class="flex items-center justify-between gap-4 py-2 border-b border-slate-100 last:border-b-0">
+        <div *ngFor="let i of [1, 2, 3, 4, 5]"
+          class="flex items-center justify-between gap-4 py-2 border-b border-slate-100 last:border-b-0">
           <div class="flex items-center gap-3">
             <div class="w-4 h-4 bg-slate-200 rounded"></div>
             <div class="space-y-1.5">
@@ -335,10 +303,12 @@
       </div>
 
       <!-- Empty Filter State -->
-      <div *ngIf="!isLoadingList && jobs.length === 0 && hasActiveFilters && !listError" class="p-12 text-center space-y-3">
+      <div *ngIf="!isLoadingList && jobs.length === 0 && hasActiveFilters && !listError"
+        class="p-12 text-center space-y-3">
         <div class="inline-flex p-4 rounded-full bg-slate-100 text-slate-400">
           <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </div>
         <h3 class="text-base font-semibold text-slate-800">Không tìm thấy kết quả</h3>
@@ -346,21 +316,20 @@
           Không có tin tuyển dụng nào phù hợp với bộ lọc hiện tại. Vui lòng thử lại với tiêu chí khác.
         </p>
         <div class="pt-2">
-          <button
-            type="button"
-            (click)="clearFilters()"
-            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition"
-          >
+          <button type="button" (click)="clearFilters()"
+            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition">
             Xóa bộ lọc
           </button>
         </div>
       </div>
 
       <!-- Clean Empty State -->
-      <div *ngIf="!isLoadingList && jobs.length === 0 && !hasActiveFilters && !listError" class="p-12 text-center space-y-3">
+      <div *ngIf="!isLoadingList && jobs.length === 0 && !hasActiveFilters && !listError"
+        class="p-12 text-center space-y-3">
         <div class="inline-flex p-4 rounded-full bg-blue-50 text-ad-primary">
           <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
           </svg>
         </div>
         <h3 class="text-base font-semibold text-slate-800">Chưa có tin tuyển dụng</h3>
@@ -368,11 +337,8 @@
           Hệ thống hiện tại chưa có tin tuyển dụng nào. Nhấn vào nút bên dưới để tạo tin đầu tiên.
         </p>
         <div class="pt-2">
-          <button
-            type="button"
-            (click)="openCreateDrawer()"
-            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-ad-primary text-white text-xs font-semibold hover:bg-ad-primary-dim transition"
-          >
+          <button type="button" (click)="openCreateDrawer()"
+            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-ad-primary text-white text-xs font-semibold hover:bg-ad-primary-dim transition">
             Tạo tin tuyển dụng
           </button>
         </div>
@@ -382,18 +348,14 @@
       <div *ngIf="!isLoadingList && jobs.length > 0" class="hidden md:block overflow-x-auto">
         <table class="w-full text-sm text-left border-collapse">
           <caption class="sr-only">Danh sách tin tuyển dụng trên hệ thống</caption>
-          <thead class="bg-ad-surface-container-low text-xs font-semibold uppercase tracking-wider text-slate-600 border-b border-ad-outline-variant/30">
+          <thead
+            class="bg-ad-surface-container-low text-xs font-semibold uppercase tracking-wider text-slate-600 border-b border-ad-outline-variant/30">
             <tr>
               <th scope="col" class="px-4 py-3.5 w-10 text-center">
-                <input
-                  type="checkbox"
-                  [checked]="areAllJobsSelected"
-                  [indeterminate]="isIndeterminate"
-                  (change)="toggleSelectAll(($any($event.target)).checked)"
-                  title="Chọn tất cả tin trên trang này"
+                <input type="checkbox" [checked]="areAllJobsSelected" [indeterminate]="isIndeterminate"
+                  (change)="toggleSelectAll(($any($event.target)).checked)" title="Chọn tất cả tin trên trang này"
                   aria-label="Chọn tất cả tin trên trang này"
-                  class="rounded border-slate-300 text-ad-primary focus:ring-ad-primary cursor-pointer"
-                />
+                  class="rounded border-slate-300 text-ad-primary focus:ring-ad-primary cursor-pointer" />
               </th>
               <th scope="col" class="px-5 py-3.5">Tiêu đề tin</th>
               <th scope="col" class="px-4 py-3.5">Doanh nghiệp</th>
@@ -406,21 +368,14 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-ad-outline-variant/20 bg-white">
-            <tr
-              *ngFor="let job of jobs; trackBy: trackByJob"
-              class="hover:bg-slate-50/80 transition-colors"
-              [class.bg-blue-50]="isJobSelected(job.id)"
-            >
+            <tr *ngFor="let job of jobs; trackBy: trackByJob" class="hover:bg-slate-50/80 transition-colors"
+              [class.bg-blue-50]="isJobSelected(job.id)">
               <!-- Row Checkbox -->
               <td class="px-4 py-3.5 text-center whitespace-nowrap">
-                <input
-                  type="checkbox"
-                  [checked]="isJobSelected(job.id)"
-                  (change)="toggleJobSelection(job.id, ($any($event.target)).checked)"
-                  [title]="'Chọn tin ' + job.title"
+                <input type="checkbox" [checked]="isJobSelected(job.id)"
+                  (change)="toggleJobSelection(job.id, ($any($event.target)).checked)" [title]="'Chọn tin ' + job.title"
                   [attr.aria-label]="'Chọn tin ' + job.title"
-                  class="rounded border-slate-300 text-ad-primary focus:ring-ad-primary cursor-pointer"
-                />
+                  class="rounded border-slate-300 text-ad-primary focus:ring-ad-primary cursor-pointer" />
               </td>
 
               <!-- Title -->
@@ -439,9 +394,12 @@
               <!-- Location -->
               <td class="px-4 py-3.5 whitespace-nowrap text-slate-600 text-xs">
                 <span class="inline-flex items-center gap-1">
-                  <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                   <span>{{ job.location }}</span>
                 </span>
@@ -465,10 +423,8 @@
               <!-- Status Badge (JM-17) -->
               <td class="px-4 py-3.5 whitespace-nowrap text-center">
                 <ng-container *ngIf="getStatusBadge(job.status) as badge">
-                  <span
-                    class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold border"
-                    [ngClass]="badge.badgeClass"
-                  >
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold border"
+                    [ngClass]="badge.badgeClass">
                     <span class="w-1.5 h-1.5 rounded-full" [ngClass]="badge.dotClass" aria-hidden="true"></span>
                     <span>{{ badge.label }}</span>
                   </span>
@@ -476,38 +432,27 @@
               </td>
 
               <!-- Expiry Date (JM-18) -->
-              <td class="px-4 py-3.5 whitespace-nowrap text-xs text-slate-500" [title]="job.expiryDate || 'Chưa có thông tin'">
+              <td class="px-4 py-3.5 whitespace-nowrap text-xs text-slate-500"
+                [title]="job.expiryDate || 'Chưa có thông tin'">
                 <span>{{ formatDate(job.expiryDate) }}</span>
               </td>
 
               <!-- Action Menu: Replaced select + save with Action Dialog trigger (JM-11) -->
               <td class="px-5 py-3.5 whitespace-nowrap text-right">
-                <button
-                  type="button"
-                  (click)="openStatusDialog(job)"
-                  [disabled]="updatingStatusJobId === job.id"
+                <button type="button" (click)="openStatusDialog(job)" [disabled]="updatingStatusJobId === job.id"
                   class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-ad-outline-variant/40 hover:bg-slate-100 text-slate-700 text-xs font-semibold transition disabled:opacity-50"
-                  [attr.aria-label]="'Đổi trạng thái cho tin ' + job.title"
-                >
-                  <svg
-                    *ngIf="updatingStatusJobId === job.id"
-                    class="w-3.5 h-3.5 animate-spin text-ad-primary"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  [attr.aria-label]="'Đổi trạng thái cho tin ' + job.title">
+                  <svg *ngIf="updatingStatusJobId === job.id" class="w-3.5 h-3.5 animate-spin text-ad-primary"
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    <path class="opacity-75" fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                    </path>
                   </svg>
-                  <svg
-                    *ngIf="updatingStatusJobId !== job.id"
-                    class="w-3.5 h-3.5 text-slate-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                  >
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  <svg *ngIf="updatingStatusJobId !== job.id" class="w-3.5 h-3.5 text-slate-500" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                   </svg>
                   <span>Đổi trạng thái</span>
                 </button>
@@ -519,44 +464,37 @@
 
       <!-- Mobile Card List (< md screens) (JM-22) -->
       <div *ngIf="!isLoadingList && jobs.length > 0" class="md:hidden divide-y divide-ad-outline-variant/20">
-        <article
-          *ngFor="let job of jobs; trackBy: trackByJob"
-          class="p-4 space-y-3 hover:bg-slate-50 transition"
-          [class.bg-blue-50]="isJobSelected(job.id)"
-        >
+        <article *ngFor="let job of jobs; trackBy: trackByJob" class="p-4 space-y-3 hover:bg-slate-50 transition"
+          [class.bg-blue-50]="isJobSelected(job.id)">
           <div class="flex items-start justify-between gap-3">
             <div class="flex items-start gap-2.5">
-              <input
-                type="checkbox"
-                [checked]="isJobSelected(job.id)"
+              <input type="checkbox" [checked]="isJobSelected(job.id)"
                 (change)="toggleJobSelection(job.id, ($any($event.target)).checked)"
                 [attr.aria-label]="'Chọn tin ' + job.title"
-                class="mt-1 rounded border-slate-300 text-ad-primary focus:ring-ad-primary cursor-pointer"
-              />
+                class="mt-1 rounded border-slate-300 text-ad-primary focus:ring-ad-primary cursor-pointer" />
               <div>
                 <h3 class="font-semibold text-slate-900 text-sm leading-tight">{{ job.title }}</h3>
                 <p class="text-xs text-slate-500 mt-0.5">{{ job.company }} · {{ job.location }}</p>
               </div>
             </div>
             <ng-container *ngIf="getStatusBadge(job.status) as badge">
-              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-2xs font-semibold border shrink-0" [ngClass]="badge.badgeClass">
+              <span
+                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-2xs font-semibold border shrink-0"
+                [ngClass]="badge.badgeClass">
                 <span class="w-1 h-1 rounded-full" [ngClass]="badge.dotClass"></span>
                 {{ badge.label }}
               </span>
             </ng-container>
           </div>
 
-          <div class="flex flex-wrap items-center justify-between text-xs text-slate-600 gap-2 pt-1 border-t border-slate-100">
+          <div
+            class="flex flex-wrap items-center justify-between text-xs text-slate-600 gap-2 pt-1 border-t border-slate-100">
             <div class="flex items-center gap-3">
               <span>Ứng tuyển: <strong class="text-slate-900">{{ job.applications }}</strong></span>
               <span>Hạn: {{ formatDate(job.expiryDate) }}</span>
             </div>
-            <button
-              type="button"
-              (click)="openStatusDialog(job)"
-              [disabled]="updatingStatusJobId === job.id"
-              class="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition"
-            >
+            <button type="button" (click)="openStatusDialog(job)" [disabled]="updatingStatusJobId === job.id"
+              class="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition">
               Đổi trạng thái
             </button>
           </div>
@@ -564,24 +502,20 @@
       </div>
 
       <!-- Accessible Pagination Footer (JM-10) -->
-      <footer
-        *ngIf="totalItems > 0"
-        class="px-5 py-3.5 border-t border-ad-outline-variant/20 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-600"
-      >
+      <footer *ngIf="totalItems > 0"
+        class="px-5 py-3.5 border-t border-ad-outline-variant/20 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-600">
         <!-- Range & Size Selector -->
         <div class="flex items-center gap-3">
           <span>
-            Hiển thị <strong class="text-slate-900 tabular-nums">{{ getStartIndex() }}</strong> - <strong class="text-slate-900 tabular-nums">{{ getEndIndex() }}</strong> trong tổng số <strong class="text-slate-900 tabular-nums">{{ totalItems | number }}</strong>
+            Hiển thị <strong class="text-slate-900 tabular-nums">{{ getStartIndex() }}</strong> - <strong
+              class="text-slate-900 tabular-nums">{{ getEndIndex() }}</strong> trong tổng số <strong
+              class="text-slate-900 tabular-nums">{{ totalItems | number }}</strong>
           </span>
 
           <div class="flex items-center gap-1.5 pl-2 border-l border-slate-200">
             <label for="jobsPageSize" class="text-slate-500 sr-only sm:not-sr-only">Số dòng:</label>
-            <select
-              id="jobsPageSize"
-              [value]="pageSize"
-              (change)="onPageSizeChange($event)"
-              class="px-2 py-1 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-ad-primary cursor-pointer"
-            >
+            <select id="jobsPageSize" [value]="pageSize" (change)="onPageSizeChange($event)"
+              class="px-2 py-1 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-ad-primary cursor-pointer">
               <option [value]="10">10 / trang</option>
               <option [value]="20">20 / trang</option>
               <option [value]="50">50 / trang</option>
@@ -591,27 +525,17 @@
 
         <!-- Navigation Buttons -->
         <div class="flex items-center gap-1">
-          <button
-            type="button"
-            (click)="goFirstPage()"
-            [disabled]="currentPage <= 1"
-            aria-label="Trang đầu tiên"
+          <button type="button" (click)="goFirstPage()" [disabled]="currentPage <= 1" aria-label="Trang đầu tiên"
             title="Trang đầu tiên"
-            class="p-1.5 rounded-lg border border-ad-outline-variant/30 hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none transition text-slate-600"
-          >
+            class="p-1.5 rounded-lg border border-ad-outline-variant/30 hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none transition text-slate-600">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
             </svg>
           </button>
 
-          <button
-            type="button"
-            (click)="goPrevPage()"
-            [disabled]="currentPage <= 1"
-            aria-label="Trang trước"
+          <button type="button" (click)="goPrevPage()" [disabled]="currentPage <= 1" aria-label="Trang trước"
             title="Trang trước"
-            class="p-1.5 rounded-lg border border-ad-outline-variant/30 hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none transition text-slate-600"
-          >
+            class="p-1.5 rounded-lg border border-ad-outline-variant/30 hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none transition text-slate-600">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
             </svg>
@@ -621,27 +545,17 @@
             Trang {{ currentPage }} / {{ totalPages }}
           </span>
 
-          <button
-            type="button"
-            (click)="goNextPage()"
-            [disabled]="currentPage >= totalPages"
-            aria-label="Trang tiếp theo"
-            title="Trang tiếp theo"
-            class="p-1.5 rounded-lg border border-ad-outline-variant/30 hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none transition text-slate-600"
-          >
+          <button type="button" (click)="goNextPage()" [disabled]="currentPage >= totalPages"
+            aria-label="Trang tiếp theo" title="Trang tiếp theo"
+            class="p-1.5 rounded-lg border border-ad-outline-variant/30 hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none transition text-slate-600">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
           </button>
 
-          <button
-            type="button"
-            (click)="goLastPage()"
-            [disabled]="currentPage >= totalPages"
-            aria-label="Trang cuối cùng"
-            title="Trang cuối cùng"
-            class="p-1.5 rounded-lg border border-ad-outline-variant/30 hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none transition text-slate-600"
-          >
+          <button type="button" (click)="goLastPage()" [disabled]="currentPage >= totalPages"
+            aria-label="Trang cuối cùng" title="Trang cuối cùng"
+            class="p-1.5 rounded-lg border border-ad-outline-variant/30 hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none transition text-slate-600">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
             </svg>
@@ -652,17 +566,11 @@
   </div>
 
   <!-- CREATE JOB DRAWER (JM-04, JM-05, JM-06, JM-07, §9) -->
-  <div
-    *ngIf="isCreateDrawerOpen"
-    class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex justify-end overflow-hidden"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="create-drawer-title"
-  >
+  <div *ngIf="isCreateDrawerOpen"
+    class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex justify-end overflow-hidden" role="dialog"
+    aria-modal="true" aria-labelledby="create-drawer-title">
     <!-- Drawer Container: 560-640px desktop, full-screen mobile -->
-    <div
-      class="bg-white w-full max-w-xl h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-200"
-    >
+    <div class="bg-white w-full max-w-xl h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-200">
       <!-- Drawer Header -->
       <div class="px-6 py-5 border-b border-ad-outline-variant/30 flex items-center justify-between">
         <div>
@@ -673,12 +581,8 @@
             Điền đầy đủ hai phần thông tin để đăng tải tin tuyển dụng lên hệ thống.
           </p>
         </div>
-        <button
-          type="button"
-          (click)="attemptCloseCreateDrawer()"
-          aria-label="Đóng bảng tạo tin"
-          class="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
-        >
+        <button type="button" (click)="attemptCloseCreateDrawer()" aria-label="Đóng bảng tạo tin"
+          class="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
@@ -686,19 +590,25 @@
       </div>
 
       <!-- Scoped Drawer Error Banner -->
-      <div *ngIf="createError" class="mx-6 mt-4 p-3.5 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2">
-        <svg class="w-4 h-4 text-rose-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      <div *ngIf="createError"
+        class="mx-6 mt-4 p-3.5 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2">
+        <svg class="w-4 h-4 text-rose-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+          aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
         <span>{{ createError }}</span>
       </div>
 
       <!-- Drawer Form Body (Two Parts) -->
-      <form [formGroup]="createJobForm" (ngSubmit)="submitCreateJob()" class="flex-1 overflow-y-auto px-6 py-5 space-y-6">
+      <form [formGroup]="createJobForm" (ngSubmit)="submitCreateJob()"
+        class="flex-1 overflow-y-auto px-6 py-5 space-y-6">
         <!-- Part 1: Basic Information -->
         <fieldset class="space-y-4">
-          <legend class="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2 w-full flex items-center gap-2">
-            <span class="w-5 h-5 rounded-full bg-blue-100 text-ad-primary text-xs flex items-center justify-center font-bold">1</span>
+          <legend
+            class="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2 w-full flex items-center gap-2">
+            <span
+              class="w-5 h-5 rounded-full bg-blue-100 text-ad-primary text-xs flex items-center justify-center font-bold">1</span>
             <span>Thông tin cơ bản</span>
           </legend>
 
@@ -707,15 +617,10 @@
             <label for="createTitle" class="block text-xs font-semibold text-slate-700 mb-1">
               Tiêu đề công việc <span class="text-rose-500">*</span>
             </label>
-            <input
-              id="createTitle"
-              type="text"
-              formControlName="title"
-              placeholder="Ví dụ: Kỹ sư Phần mềm Senior Backend"
-              [attr.aria-invalid]="isCreateFieldInvalid('title')"
+            <input id="createTitle" type="text" formControlName="title"
+              placeholder="Ví dụ: Kỹ sư Phần mềm Senior Backend" [attr.aria-invalid]="isCreateFieldInvalid('title')"
               aria-describedby="title-error"
-              class="w-full px-3.5 py-2.5 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-ad-primary focus:bg-white transition"
-            />
+              class="w-full px-3.5 py-2.5 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-ad-primary focus:bg-white transition" />
             <p *ngIf="isCreateFieldInvalid('title')" id="title-error" class="mt-1 text-xs text-rose-600">
               Tiêu đề công việc là bắt buộc (tối thiểu 3 ký tự).
             </p>
@@ -726,15 +631,10 @@
             <label for="createCompanyId" class="block text-xs font-semibold text-slate-700 mb-1">
               Mã doanh nghiệp tuyển dụng <span class="text-rose-500">*</span>
             </label>
-            <input
-              id="createCompanyId"
-              type="text"
-              formControlName="companyId"
-              placeholder="Ví dụ: cmp-001 hoặc FPT-Software"
-              [attr.aria-invalid]="isCreateFieldInvalid('companyId')"
+            <input id="createCompanyId" type="text" formControlName="companyId"
+              placeholder="Ví dụ: cmp-001 hoặc FPT-Software" [attr.aria-invalid]="isCreateFieldInvalid('companyId')"
               aria-describedby="companyId-error"
-              class="w-full px-3.5 py-2.5 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-ad-primary focus:bg-white transition"
-            />
+              class="w-full px-3.5 py-2.5 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-ad-primary focus:bg-white transition" />
             <p *ngIf="isCreateFieldInvalid('companyId')" id="companyId-error" class="mt-1 text-xs text-rose-600">
               Mã doanh nghiệp tuyển dụng là bắt buộc.
             </p>
@@ -745,13 +645,9 @@
             <label for="createCategory" class="block text-xs font-semibold text-slate-700 mb-1">
               Danh mục nghề nghiệp <span class="text-rose-500">*</span>
             </label>
-            <select
-              id="createCategory"
-              formControlName="category"
-              [attr.aria-invalid]="isCreateFieldInvalid('category')"
-              aria-describedby="category-error"
-              class="w-full px-3.5 py-2.5 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-ad-primary focus:bg-white transition cursor-pointer"
-            >
+            <select id="createCategory" formControlName="category"
+              [attr.aria-invalid]="isCreateFieldInvalid('category')" aria-describedby="category-error"
+              class="w-full px-3.5 py-2.5 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-ad-primary focus:bg-white transition cursor-pointer">
               <option value="">-- Chọn danh mục nghề nghiệp --</option>
               <option *ngFor="let cat of categories" [value]="cat.name">{{ cat.name }}</option>
             </select>
@@ -765,15 +661,10 @@
             <label for="createLocation" class="block text-xs font-semibold text-slate-700 mb-1">
               Địa điểm làm việc <span class="text-rose-500">*</span>
             </label>
-            <input
-              id="createLocation"
-              type="text"
-              formControlName="location"
+            <input id="createLocation" type="text" formControlName="location"
               placeholder="Ví dụ: TP. Hồ Chí Minh, Hà Nội, Từ xa..."
-              [attr.aria-invalid]="isCreateFieldInvalid('location')"
-              aria-describedby="location-error"
-              class="w-full px-3.5 py-2.5 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-ad-primary focus:bg-white transition"
-            />
+              [attr.aria-invalid]="isCreateFieldInvalid('location')" aria-describedby="location-error"
+              class="w-full px-3.5 py-2.5 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-ad-primary focus:bg-white transition" />
             <p *ngIf="isCreateFieldInvalid('location')" id="location-error" class="mt-1 text-xs text-rose-600">
               Địa điểm làm việc là bắt buộc.
             </p>
@@ -782,8 +673,10 @@
 
         <!-- Part 2: Description & Schedule -->
         <fieldset class="space-y-4">
-          <legend class="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2 w-full flex items-center gap-2">
-            <span class="w-5 h-5 rounded-full bg-blue-100 text-ad-primary text-xs flex items-center justify-center font-bold">2</span>
+          <legend
+            class="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2 w-full flex items-center gap-2">
+            <span
+              class="w-5 h-5 rounded-full bg-blue-100 text-ad-primary text-xs flex items-center justify-center font-bold">2</span>
             <span>Mô tả và thời hạn đăng</span>
           </legend>
 
@@ -792,14 +685,9 @@
             <label for="createExpiryDate" class="block text-xs font-semibold text-slate-700 mb-1">
               Thời hạn nộp hồ sơ <span class="text-rose-500">*</span>
             </label>
-            <input
-              id="createExpiryDate"
-              type="datetime-local"
-              formControlName="expiryDate"
-              [attr.aria-invalid]="isCreateFieldInvalid('expiryDate')"
-              aria-describedby="expiryDate-error"
-              class="w-full px-3.5 py-2.5 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-ad-primary focus:bg-white transition"
-            />
+            <input id="createExpiryDate" type="datetime-local" formControlName="expiryDate"
+              [attr.aria-invalid]="isCreateFieldInvalid('expiryDate')" aria-describedby="expiryDate-error"
+              class="w-full px-3.5 py-2.5 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-ad-primary focus:bg-white transition" />
             <p *ngIf="isCreateFieldInvalid('expiryDate')" id="expiryDate-error" class="mt-1 text-xs text-rose-600">
               Thời hạn nộp hồ sơ là bắt buộc.
             </p>
@@ -810,15 +698,10 @@
             <label for="createDescription" class="block text-xs font-semibold text-slate-700 mb-1">
               Mô tả chi tiết công việc <span class="text-rose-500">*</span>
             </label>
-            <textarea
-              id="createDescription"
-              rows="5"
-              formControlName="description"
+            <textarea id="createDescription" rows="5" formControlName="description"
               placeholder="Mô tả phạm vi trách nhiệm, yêu cầu kỹ năng và các phúc lợi liên quan..."
-              [attr.aria-invalid]="isCreateFieldInvalid('description')"
-              aria-describedby="description-error"
-              class="w-full px-3.5 py-2.5 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-ad-primary focus:bg-white transition"
-            ></textarea>
+              [attr.aria-invalid]="isCreateFieldInvalid('description')" aria-describedby="description-error"
+              class="w-full px-3.5 py-2.5 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-ad-primary focus:bg-white transition"></textarea>
             <p *ngIf="isCreateFieldInvalid('description')" id="description-error" class="mt-1 text-xs text-rose-600">
               Mô tả chi tiết công việc là bắt buộc (tối thiểu 10 ký tự).
             </p>
@@ -827,29 +710,18 @@
 
         <!-- Drawer Action Footer -->
         <div class="pt-4 border-t border-ad-outline-variant/30 flex items-center justify-end gap-3">
-          <button
-            type="button"
-            (click)="attemptCloseCreateDrawer()"
-            [disabled]="isCreating"
-            class="px-4 py-2.5 rounded-lg border border-ad-outline-variant/40 hover:bg-slate-100 text-slate-700 text-sm font-semibold transition disabled:opacity-50"
-          >
+          <button type="button" (click)="attemptCloseCreateDrawer()" [disabled]="isCreating"
+            class="px-4 py-2.5 rounded-lg border border-ad-outline-variant/40 hover:bg-slate-100 text-slate-700 text-sm font-semibold transition disabled:opacity-50">
             Hủy bỏ
           </button>
-          <button
-            type="submit"
-            [disabled]="isCreating || createJobForm.invalid"
-            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-ad-primary text-white text-sm font-semibold hover:bg-ad-primary-dim transition shadow-xs disabled:opacity-50 disabled:pointer-events-none"
-          >
-            <svg
-              *ngIf="isCreating"
-              class="w-4 h-4 animate-spin text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
+          <button type="submit" [disabled]="isCreating || createJobForm.invalid"
+            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-ad-primary text-white text-sm font-semibold hover:bg-ad-primary-dim transition shadow-xs disabled:opacity-50 disabled:pointer-events-none">
+            <svg *ngIf="isCreating" class="w-4 h-4 animate-spin text-white" fill="none" stroke="currentColor"
+              viewBox="0 0 24 24" aria-hidden="true">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              <path class="opacity-75" fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+              </path>
             </svg>
             <span>{{ isCreating ? 'Đang tạo tin...' : 'Tạo tin tuyển dụng' }}</span>
           </button>
@@ -859,14 +731,11 @@
   </div>
 
   <!-- STATUS CHANGE CONFIRMATION DIALOG (JM-11, JM-12) -->
-  <div
-    *ngIf="isStatusDialogOpen && jobToUpdateStatus"
-    class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="status-dialog-title"
-  >
-    <div class="bg-white rounded-2xl border border-ad-outline-variant/40 shadow-2xl max-w-md w-full p-6 space-y-5 animate-in fade-in zoom-in-95 duration-150">
+  <div *ngIf="isStatusDialogOpen && jobToUpdateStatus"
+    class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4" role="dialog"
+    aria-modal="true" aria-labelledby="status-dialog-title">
+    <div
+      class="bg-white rounded-2xl border border-ad-outline-variant/40 shadow-2xl max-w-md w-full p-6 space-y-5 animate-in fade-in zoom-in-95 duration-150">
       <div class="flex items-start justify-between border-b border-slate-100 pb-3">
         <div>
           <h3 id="status-dialog-title" class="text-lg font-bold text-slate-900">
@@ -876,12 +745,8 @@
             Mã tin: #{{ jobToUpdateStatus.id }} · {{ jobToUpdateStatus.company }}
           </p>
         </div>
-        <button
-          type="button"
-          (click)="closeStatusDialog()"
-          class="p-1 rounded-lg text-slate-400 hover:text-slate-600"
-          aria-label="Đóng hộp thoại cập nhật trạng thái"
-        >
+        <button type="button" (click)="closeStatusDialog()" class="p-1 rounded-lg text-slate-400 hover:text-slate-600"
+          aria-label="Đóng hộp thoại cập nhật trạng thái">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
@@ -890,7 +755,8 @@
 
       <div class="bg-slate-50 p-3 rounded-lg border border-slate-200/70 text-xs space-y-1">
         <p class="font-semibold text-slate-800">{{ jobToUpdateStatus.title }}</p>
-        <p class="text-slate-500">Trạng thái hiện tại: <span class="font-medium text-slate-700">{{ getStatusBadge(jobToUpdateStatus.status).label }}</span></p>
+        <p class="text-slate-500">Trạng thái hiện tại: <span class="font-medium text-slate-700">{{
+            getStatusBadge(jobToUpdateStatus.status).label }}</span></p>
       </div>
 
       <div *ngIf="statusDialogError" class="p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-xs">
@@ -902,11 +768,8 @@
           <label for="newStatusSelect" class="block text-xs font-semibold text-slate-700 mb-1">
             Trạng thái mới <span class="text-rose-500">*</span>
           </label>
-          <select
-            id="newStatusSelect"
-            formControlName="status"
-            class="w-full px-3 py-2 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-ad-primary cursor-pointer"
-          >
+          <select id="newStatusSelect" formControlName="status"
+            class="w-full px-3 py-2 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-ad-primary cursor-pointer">
             <option value="active">Đang hoạt động (active)</option>
             <option value="pending">Chờ duyệt (pending)</option>
             <option value="suspended">Đình chỉ (suspended)</option>
@@ -918,27 +781,18 @@
           <label for="statusReasonInput" class="block text-xs font-semibold text-slate-700 mb-1">
             Lý do thay đổi (tùy chọn)
           </label>
-          <textarea
-            id="statusReasonInput"
-            rows="2"
-            formControlName="reason"
+          <textarea id="statusReasonInput" rows="2" formControlName="reason"
             placeholder="Nhập lý do thay đổi trạng thái nếu cần thiết..."
-            class="w-full px-3 py-2 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-ad-primary"
-          ></textarea>
+            class="w-full px-3 py-2 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-ad-primary"></textarea>
         </div>
 
         <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2.5">
-          <button
-            type="button"
-            (click)="closeStatusDialog()"
-            class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-100 transition"
-          >
+          <button type="button" (click)="closeStatusDialog()"
+            class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-100 transition">
             Hủy bỏ
           </button>
-          <button
-            type="submit"
-            class="px-4 py-2 rounded-lg bg-ad-primary hover:bg-ad-primary-dim text-white text-xs font-semibold transition shadow-xs"
-          >
+          <button type="submit"
+            class="px-4 py-2 rounded-lg bg-ad-primary hover:bg-ad-primary-dim text-white text-xs font-semibold transition shadow-xs">
             Xác nhận cập nhật
           </button>
         </div>
@@ -947,18 +801,16 @@
   </div>
 
   <!-- BULK ACTION CONFIRMATION DIALOG (JM-13, JM-14) -->
-  <div
-    *ngIf="isBulkDialogOpen"
-    class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="bulk-dialog-title"
-  >
-    <div class="bg-white rounded-2xl border border-ad-outline-variant/40 shadow-2xl max-w-md w-full p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
+  <div *ngIf="isBulkDialogOpen"
+    class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4" role="dialog"
+    aria-modal="true" aria-labelledby="bulk-dialog-title">
+    <div
+      class="bg-white rounded-2xl border border-ad-outline-variant/40 shadow-2xl max-w-md w-full p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
       <div class="flex items-start gap-3">
         <div class="p-2.5 rounded-full bg-blue-50 text-ad-primary shrink-0">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
           </svg>
         </div>
         <div>
@@ -966,7 +818,9 @@
             Xác nhận thao tác hàng loạt
           </h3>
           <p class="text-xs text-slate-500 mt-1 leading-relaxed">
-            Bạn có chắc chắn muốn thực hiện hành động <strong class="text-slate-800">{{ getBulkActionLabel(bulkActionForm.controls.action.value) }}</strong> cho <strong class="text-slate-800">{{ selectedJobsCount }}</strong> tin tuyển dụng đã chọn?
+            Bạn có chắc chắn muốn thực hiện hành động <strong class="text-slate-800">{{
+              getBulkActionLabel(bulkActionForm.controls.action.value) }}</strong> cho <strong class="text-slate-800">{{
+              selectedJobsCount }}</strong> tin tuyển dụng đã chọn?
           </p>
         </div>
       </div>
@@ -976,29 +830,18 @@
       </div>
 
       <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2.5">
-        <button
-          type="button"
-          (click)="closeBulkDialog()"
-          [disabled]="isSubmittingBulk"
-          class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-100 transition disabled:opacity-50"
-        >
+        <button type="button" (click)="closeBulkDialog()" [disabled]="isSubmittingBulk"
+          class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-100 transition disabled:opacity-50">
           Hủy bỏ
         </button>
-        <button
-          type="button"
-          (click)="confirmBulkAction()"
-          [disabled]="isSubmittingBulk"
-          class="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-ad-primary hover:bg-ad-primary-dim text-white text-xs font-semibold transition shadow-xs disabled:opacity-50"
-        >
-          <svg
-            *ngIf="isSubmittingBulk"
-            class="w-3.5 h-3.5 animate-spin text-white"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+        <button type="button" (click)="confirmBulkAction()" [disabled]="isSubmittingBulk"
+          class="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-ad-primary hover:bg-ad-primary-dim text-white text-xs font-semibold transition shadow-xs disabled:opacity-50">
+          <svg *ngIf="isSubmittingBulk" class="w-3.5 h-3.5 animate-spin text-white" fill="none" stroke="currentColor"
+            viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            <path class="opacity-75" fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+            </path>
           </svg>
           <span>{{ isSubmittingBulk ? 'Đang thực hiện...' : 'Xác nhận áp dụng' }}</span>
         </button>
@@ -1007,19 +850,16 @@
   </div>
 
   <!-- UNSAVED CHANGES CONFIRMATION POPUP FOR CREATE DRAWER (JM-07) -->
-  <div
-    *ngIf="isConfirmDiscardCreateOpen"
-    class="fixed inset-0 z-60 bg-slate-950/40 backdrop-blur-2xs flex items-center justify-center p-4"
-    role="alertdialog"
-    aria-modal="true"
-    aria-labelledby="discard-job-title"
-    aria-describedby="discard-job-desc"
-  >
-    <div class="bg-white rounded-xl border border-ad-outline-variant/40 shadow-xl max-w-sm w-full p-5 space-y-4 animate-in fade-in zoom-in-95 duration-100">
+  <div *ngIf="isConfirmDiscardCreateOpen"
+    class="fixed inset-0 z-60 bg-slate-950/40 backdrop-blur-2xs flex items-center justify-center p-4" role="alertdialog"
+    aria-modal="true" aria-labelledby="discard-job-title" aria-describedby="discard-job-desc">
+    <div
+      class="bg-white rounded-xl border border-ad-outline-variant/40 shadow-xl max-w-sm w-full p-5 space-y-4 animate-in fade-in zoom-in-95 duration-100">
       <div class="flex items-start gap-3">
         <div class="p-2 rounded-full bg-amber-50 text-amber-600 shrink-0">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
         </div>
         <div>
@@ -1032,18 +872,12 @@
         </div>
       </div>
       <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
-        <button
-          type="button"
-          (click)="cancelDiscardCreate()"
-          class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition"
-        >
+        <button type="button" (click)="cancelDiscardCreate()"
+          class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">
           Tiếp tục nhập
         </button>
-        <button
-          type="button"
-          (click)="confirmDiscardCreate()"
-          class="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold transition"
-        >
+        <button type="button" (click)="confirmDiscardCreate()"
+          class="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold transition">
           Xác nhận hủy
         </button>
       </div>

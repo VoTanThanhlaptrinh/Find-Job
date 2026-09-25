@@ -1,85 +1,51 @@
-<main class="bg-ad-surface min-h-screen p-4 sm:p-6 md:p-8 lg:p-10 text-ad-on-surface">
+<main class="bg-ad-surface min-h-screen p-4 md:p-6 text-ad-on-surface">
   <div class="max-w-7xl mx-auto space-y-8">
-    <!-- Breadcrumb & Header Section (ER-01) -->
-    <header class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between border-b border-ad-outline-variant/30 pb-6">
-      <div>
-        <nav aria-label="Breadcrumb" class="flex items-center gap-2 text-xs font-medium text-slate-500 mb-2">
-          <a routerLink="/admin/dashboard" class="hover:text-ad-primary transition-colors flex items-center gap-1">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-            </svg>
-            Quản trị
-          </a>
-          <span class="text-slate-400">/</span>
-          <span class="text-ad-on-surface font-semibold" aria-current="page">Nhà tuyển dụng</span>
-        </nav>
-        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">Quản lý nhà tuyển dụng</h1>
-        <p class="text-sm text-ad-on-surface-variant mt-1.5 max-w-3xl leading-relaxed">
-          Theo dõi, tra cứu thông tin doanh nghiệp, giám sát tình trạng tài khoản và phê duyệt các hoạt động tuyển dụng trên hệ thống.
-        </p>
-      </div>
-
-      <!-- Action: Export CSV (ER-12) -->
-      <div class="flex items-center gap-3">
-        <button
-          type="button"
-          (click)="exportEmployers()"
-          [disabled]="isExporting || isLoadingList"
-          title="Xuất danh sách nhà tuyển dụng theo bộ lọc hiện tại ra file CSV"
-          class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold bg-white border border-ad-outline-variant/40 hover:bg-slate-50 text-slate-700 transition shadow-2xs focus:outline-none focus:ring-2 focus:ring-ad-primary disabled:opacity-50 disabled:pointer-events-none"
-        >
-          <svg
-            *ngIf="isExporting"
-            class="w-4 h-4 animate-spin text-ad-primary"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-          >
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-          <svg
-            *ngIf="!isExporting"
-            class="w-4 h-4 text-slate-500"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          <span>{{ isExporting ? 'Đang chuẩn bị tệp...' : 'Xuất CSV' }}</span>
-        </button>
-      </div>
-    </header>
-
     <!-- METRICS SECTION (4 Cards - ER-13) -->
     <section aria-label="Chỉ số nhà tuyển dụng" class="space-y-3">
       <div class="flex items-center justify-between">
         <h2 class="text-base font-semibold text-slate-800">Tổng quan chỉ số</h2>
+        <div class="flex items-center gap-3">
+          <button type="button" (click)="exportEmployers()" [disabled]="isExporting || isLoadingList"
+            title="Xuất danh sách nhà tuyển dụng theo bộ lọc hiện tại ra file CSV"
+            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold bg-white border border-ad-outline-variant/40 hover:bg-slate-50 text-slate-700 transition shadow-2xs focus:outline-none focus:ring-2 focus:ring-ad-primary disabled:opacity-50 disabled:pointer-events-none">
+            <svg *ngIf="isExporting" class="w-4 h-4 animate-spin text-ad-primary" fill="none" stroke="currentColor"
+              viewBox="0 0 24 24" aria-hidden="true">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+              </path>
+            </svg>
+            <svg *ngIf="!isExporting" class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor"
+              viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <span>{{ isExporting ? 'Đang chuẩn bị tệp...' : 'Xuất CSV' }}</span>
+          </button>
+        </div>
       </div>
 
       <!-- Scoped Error for Metrics (ER-04) -->
-      <div *ngIf="metricsError && !metrics" class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 flex items-center justify-between">
+      <div *ngIf="metricsError && !metrics"
+        class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <svg class="w-5 h-5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          <svg class="w-5 h-5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
           <span class="text-sm font-medium">{{ metricsError }}</span>
         </div>
-        <button
-          type="button"
-          (click)="retryMetrics()"
-          class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-900 transition"
-        >
+        <button type="button" (click)="retryMetrics()"
+          class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-900 transition">
           Thử lại
         </button>
       </div>
 
       <!-- Loading Skeletons for Metrics (ER-04) -->
       <div *ngIf="isLoadingMetrics && !metrics" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        <div *ngFor="let i of [1, 2, 3, 4]" class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl animate-pulse space-y-3">
+        <div *ngFor="let i of [1, 2, 3, 4]"
+          class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl animate-pulse space-y-3">
           <div class="h-4 bg-slate-200 rounded w-24"></div>
           <div class="h-8 bg-slate-200 rounded w-32"></div>
           <div class="h-3 bg-slate-100 rounded w-28"></div>
@@ -89,12 +55,14 @@
       <!-- 4 KPI Cards -->
       <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4" *ngIf="metrics as data">
         <!-- Metric 1: Total -->
-        <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl hover:shadow-xs transition flex flex-col justify-between">
+        <article
+          class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl hover:shadow-xs transition flex flex-col justify-between">
           <div class="flex items-center justify-between">
             <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Tổng nhà tuyển dụng</span>
             <div class="p-2 rounded-lg bg-blue-50 text-ad-primary" aria-hidden="true">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
               </svg>
             </div>
           </div>
@@ -110,12 +78,14 @@
         </article>
 
         <!-- Metric 2: KYC Verified -->
-        <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl hover:shadow-xs transition flex flex-col justify-between">
+        <article
+          class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl hover:shadow-xs transition flex flex-col justify-between">
           <div class="flex items-center justify-between">
             <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">KYC đã xác thực</span>
             <div class="p-2 rounded-lg bg-emerald-50 text-emerald-600" aria-hidden="true">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
             </div>
           </div>
@@ -131,12 +101,14 @@
         </article>
 
         <!-- Metric 3: Pending KYC -->
-        <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl hover:shadow-xs transition flex flex-col justify-between">
+        <article
+          class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl hover:shadow-xs transition flex flex-col justify-between">
           <div class="flex items-center justify-between">
             <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">KYC chờ xử lý</span>
             <div class="p-2 rounded-lg bg-amber-50 text-amber-600" aria-hidden="true">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
           </div>
@@ -149,12 +121,14 @@
         </article>
 
         <!-- Metric 4: Suspended -->
-        <article class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl hover:shadow-xs transition flex flex-col justify-between">
+        <article
+          class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-5 rounded-xl hover:shadow-xs transition flex flex-col justify-between">
           <div class="flex items-center justify-between">
             <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Đã đình chỉ</span>
             <div class="p-2 rounded-lg bg-rose-50 text-rose-600" aria-hidden="true">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
               </svg>
             </div>
           </div>
@@ -169,36 +143,29 @@
     </section>
 
     <!-- SEARCH & FILTER BAR (ER-05, ER-17) -->
-    <section aria-label="Bộ lọc tìm kiếm" class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-4 sm:p-5 rounded-xl shadow-2xs space-y-3">
+    <section aria-label="Bộ lọc tìm kiếm"
+      class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 p-4 sm:p-5 rounded-xl shadow-2xs space-y-3">
       <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
         <!-- Search Field (Debounced) -->
         <div class="md:col-span-6 relative">
           <label for="employer-search" class="sr-only">Tìm kiếm nhà tuyển dụng</label>
           <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+              aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
-          <input
-            id="employer-search"
-            type="text"
-            [value]="searchTerm"
-            (input)="onSearchInput($event)"
-            (keydown.enter)="onSearchEnter($event)"
-            placeholder="Tìm theo tên công ty, mã hoặc email..."
-            class="w-full pl-10 pr-4 py-2 text-sm rounded-lg border border-ad-outline-variant/40 bg-ad-surface-container-low focus:bg-white focus:outline-none focus:ring-2 focus:ring-ad-primary transition"
-          />
+          <input id="employer-search" type="text" [value]="searchTerm" (input)="onSearchInput($event)"
+            (keydown.enter)="onSearchEnter($event)" placeholder="Tìm theo tên công ty, mã hoặc email..."
+            class="w-full pl-10 pr-4 py-2 text-sm rounded-lg border border-ad-outline-variant/40 bg-ad-surface-container-low focus:bg-white focus:outline-none focus:ring-2 focus:ring-ad-primary transition" />
         </div>
 
         <!-- KYC Filter Select -->
         <div class="md:col-span-3">
           <label for="kyc-filter" class="sr-only">Lọc theo trạng thái KYC</label>
-          <select
-            id="kyc-filter"
-            [value]="selectedKycStatus"
-            (change)="onKycStatusChange($event)"
-            class="w-full px-3 py-2 text-xs sm:text-sm font-medium rounded-lg border border-ad-outline-variant/40 bg-ad-surface-container-low focus:bg-white focus:outline-none focus:ring-2 focus:ring-ad-primary cursor-pointer transition"
-          >
+          <select id="kyc-filter" [value]="selectedKycStatus" (change)="onKycStatusChange($event)"
+            class="w-full px-3 py-2 text-xs sm:text-sm font-medium rounded-lg border border-ad-outline-variant/40 bg-ad-surface-container-low focus:bg-white focus:outline-none focus:ring-2 focus:ring-ad-primary cursor-pointer transition">
             <option value="">Tất cả trạng thái KYC</option>
             <option value="verified">Đã xác thực (Verified)</option>
             <option value="pending">Chờ duyệt (Pending)</option>
@@ -209,12 +176,8 @@
         <!-- Account Status Filter Select -->
         <div class="md:col-span-3">
           <label for="account-filter" class="sr-only">Lọc theo trạng thái tài khoản</label>
-          <select
-            id="account-filter"
-            [value]="selectedAccountStatus"
-            (change)="onAccountStatusChange($event)"
-            class="w-full px-3 py-2 text-xs sm:text-sm font-medium rounded-lg border border-ad-outline-variant/40 bg-ad-surface-container-low focus:bg-white focus:outline-none focus:ring-2 focus:ring-ad-primary cursor-pointer transition"
-          >
+          <select id="account-filter" [value]="selectedAccountStatus" (change)="onAccountStatusChange($event)"
+            class="w-full px-3 py-2 text-xs sm:text-sm font-medium rounded-lg border border-ad-outline-variant/40 bg-ad-surface-container-low focus:bg-white focus:outline-none focus:ring-2 focus:ring-ad-primary cursor-pointer transition">
             <option value="">Tất cả tài khoản</option>
             <option value="active">Đang hoạt động (Active)</option>
             <option value="suspended">Đã đình chỉ (Suspended)</option>
@@ -223,35 +186,39 @@
       </div>
 
       <!-- Active Filters Summary & Reset Button -->
-      <div *ngIf="hasActiveFilters" class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-ad-outline-variant/20 text-xs">
+      <div *ngIf="hasActiveFilters"
+        class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-ad-outline-variant/20 text-xs">
         <div class="flex flex-wrap items-center gap-2">
           <span class="text-slate-500 font-medium">Bộ lọc đang chọn:</span>
-          <span *ngIf="searchTerm" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 text-ad-primary border border-blue-200">
+          <span *ngIf="searchTerm"
+            class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 text-ad-primary border border-blue-200">
             Từ khóa: "{{ searchTerm }}"
           </span>
-          <span *ngIf="selectedKycStatus" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
+          <span *ngIf="selectedKycStatus"
+            class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
             KYC: {{ getKycLabel(selectedKycStatus) }}
           </span>
-          <span *ngIf="selectedAccountStatus" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-800 border border-slate-200">
+          <span *ngIf="selectedAccountStatus"
+            class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-800 border border-slate-200">
             Tài khoản: {{ getAccountLabel(selectedAccountStatus) }}
           </span>
         </div>
-        <button
-          type="button"
-          (click)="clearFilters()"
-          class="text-xs font-semibold text-rose-600 hover:text-rose-700 hover:underline transition"
-        >
+        <button type="button" (click)="clearFilters()"
+          class="text-xs font-semibold text-rose-600 hover:text-rose-700 hover:underline transition">
           Xóa tất cả bộ lọc
         </button>
       </div>
     </section>
 
     <!-- EMPLOYERS LIST SECTION (ER-11, ER-14, ER-16, ER-18) -->
-    <section aria-labelledby="employers-list-heading" class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 rounded-xl overflow-hidden shadow-2xs">
+    <section aria-labelledby="employers-list-heading"
+      class="bg-ad-surface-container-lowest border border-ad-outline-variant/30 rounded-xl overflow-hidden shadow-2xs">
       <!-- Section Header -->
-      <div class="px-5 py-4 border-b border-ad-outline-variant/20 flex items-center justify-between bg-ad-surface-container-lowest">
+      <div
+        class="px-5 py-4 border-b border-ad-outline-variant/20 flex items-center justify-between bg-ad-surface-container-lowest">
         <div>
-          <h2 id="employers-list-heading" class="text-lg font-bold text-slate-900 tracking-tight">Danh sách nhà tuyển dụng</h2>
+          <h2 id="employers-list-heading" class="text-lg font-bold text-slate-900 tracking-tight">Danh sách nhà tuyển
+            dụng</h2>
           <p class="text-xs text-slate-500 mt-0.5">Nhấp vào tên doanh nghiệp để xem thông tin chi tiết</p>
         </div>
         <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 tabular-nums">
@@ -260,18 +227,18 @@
       </div>
 
       <!-- Scoped Error for Employers List (ER-04) -->
-      <div *ngIf="listError && employers.length === 0" class="p-4 m-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 flex items-center justify-between">
+      <div *ngIf="listError && employers.length === 0"
+        class="p-4 m-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <svg class="w-5 h-5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <svg class="w-5 h-5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           <span class="text-sm font-medium">{{ listError }}</span>
         </div>
-        <button
-          type="button"
-          (click)="retryList()"
-          class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-900 transition"
-        >
+        <button type="button" (click)="retryList()"
+          class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-900 transition">
           Thử lại
         </button>
       </div>
@@ -286,21 +253,20 @@
 
       <!-- Empty State (ER-06) -->
       <div *ngIf="!isLoadingList && employers.length === 0 && !listError" class="p-12 text-center">
-        <svg class="w-12 h-12 text-slate-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+        <svg class="w-12 h-12 text-slate-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+          aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
         </svg>
         <p class="text-base font-semibold text-slate-800">
           {{ hasActiveFilters ? 'Không tìm thấy nhà tuyển dụng phù hợp' : 'Chưa có nhà tuyển dụng nào' }}
         </p>
         <p class="text-sm text-slate-500 mt-1 max-w-md mx-auto">
-          {{ hasActiveFilters ? 'Không có doanh nghiệp nào khớp với các điều kiện lọc bạn đã thiết lập. Hãy thử xóa hoặc thay đổi bộ lọc.' : 'Chưa có tài khoản nhà tuyển dụng nào được tạo trên hệ thống.' }}
+          {{ hasActiveFilters ? 'Không có doanh nghiệp nào khớp với các điều kiện lọc bạn đã thiết lập. Hãy thử xóa hoặc
+          thay đổi bộ lọc.' : 'Chưa có tài khoản nhà tuyển dụng nào được tạo trên hệ thống.' }}
         </p>
-        <button
-          *ngIf="hasActiveFilters"
-          type="button"
-          (click)="clearFilters()"
-          class="mt-4 px-4 py-2 text-xs font-semibold rounded-lg bg-ad-primary text-white hover:bg-blue-700 transition"
-        >
+        <button *ngIf="hasActiveFilters" type="button" (click)="clearFilters()"
+          class="mt-4 px-4 py-2 text-xs font-semibold rounded-lg bg-ad-primary text-white hover:bg-blue-700 transition">
           Xóa bộ lọc tìm kiếm
         </button>
       </div>
@@ -309,7 +275,8 @@
       <div *ngIf="employers.length > 0" class="hidden md:block overflow-x-auto">
         <table class="w-full text-left text-sm" aria-label="Bảng danh sách nhà tuyển dụng">
           <caption class="sr-only">Danh sách nhà tuyển dụng đăng ký trên cổng quản trị</caption>
-          <thead class="bg-ad-surface-container-low text-xs font-semibold uppercase tracking-wider text-slate-600 border-b border-ad-outline-variant/30">
+          <thead
+            class="bg-ad-surface-container-low text-xs font-semibold uppercase tracking-wider text-slate-600 border-b border-ad-outline-variant/30">
             <tr>
               <th scope="col" class="px-5 py-3.5">Nhà tuyển dụng</th>
               <th scope="col" class="px-5 py-3.5">Ngành nghề</th>
@@ -320,18 +287,12 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-ad-outline-variant/20">
-            <tr
-              *ngFor="let emp of employers; trackBy: trackByEmployer"
-              class="hover:bg-slate-50/70 transition-colors"
-            >
+            <tr *ngFor="let emp of employers; trackBy: trackByEmployer" class="hover:bg-slate-50/70 transition-colors">
               <!-- Name & ID & Reg Date -->
               <td class="px-5 py-4">
-                <button
-                  type="button"
-                  (click)="openDetail(emp, $event)"
+                <button type="button" (click)="openDetail(emp, $event)"
                   [attr.aria-label]="'Xem chi tiết nhà tuyển dụng ' + emp.name"
-                  class="font-bold text-slate-900 hover:text-ad-primary hover:underline text-left transition focus:outline-none focus:ring-1 focus:ring-ad-primary rounded"
-                >
+                  class="font-bold text-slate-900 hover:text-ad-primary hover:underline text-left transition focus:outline-none focus:ring-1 focus:ring-ad-primary rounded">
                   {{ emp.name }}
                 </button>
                 <p class="text-xs text-slate-500 font-mono mt-0.5">
@@ -346,24 +307,27 @@
 
               <!-- Active jobs -->
               <td class="px-5 py-4">
-                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 tabular-nums">
+                <span
+                  class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 tabular-nums">
                   {{ emp.activeJobs }} tin
                 </span>
               </td>
 
               <!-- KYC Status (ER-14) -->
               <td class="px-5 py-4">
-                <span
-                  class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border"
-                  [ngClass]="getKycBadgeClass(emp.kycStatus)"
-                >
-                  <svg *ngIf="emp.kycStatus.toLowerCase() === 'verified'" class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border"
+                  [ngClass]="getKycBadgeClass(emp.kycStatus)">
+                  <svg *ngIf="emp.kycStatus.toLowerCase() === 'verified'" class="w-3.5 h-3.5 text-emerald-600"
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                   </svg>
-                  <svg *ngIf="emp.kycStatus.toLowerCase() === 'pending'" class="w-3.5 h-3.5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <svg *ngIf="emp.kycStatus.toLowerCase() === 'pending'" class="w-3.5 h-3.5 text-amber-600" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <svg *ngIf="emp.kycStatus.toLowerCase() === 'rejected'" class="w-3.5 h-3.5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <svg *ngIf="emp.kycStatus.toLowerCase() === 'rejected'" class="w-3.5 h-3.5 text-rose-600" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                   </svg>
                   <span>{{ getKycLabel(emp.kycStatus) }}</span>
@@ -372,15 +336,11 @@
 
               <!-- Account Status (ER-14) -->
               <td class="px-5 py-4">
-                <span
-                  class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border"
-                  [ngClass]="getAccountBadgeClass(emp.accountStatus)"
-                >
-                  <span
-                    class="w-1.5 h-1.5 rounded-full"
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border"
+                  [ngClass]="getAccountBadgeClass(emp.accountStatus)">
+                  <span class="w-1.5 h-1.5 rounded-full"
                     [ngClass]="emp.accountStatus.toLowerCase() === 'active' ? 'bg-emerald-600' : 'bg-rose-600'"
-                    aria-hidden="true"
-                  ></span>
+                    aria-hidden="true"></span>
                   <span>{{ getAccountLabel(emp.accountStatus) }}</span>
                 </span>
               </td>
@@ -388,15 +348,11 @@
               <!-- Context-specific Row Actions (ER-16) -->
               <td class="px-5 py-4 text-right">
                 <!-- If Suspended: Show Restore button ONLY -->
-                <button
-                  *ngIf="isEmployerSuspended(emp)"
-                  type="button"
-                  (click)="openRestoreDialog(emp, $event)"
-                  [disabled]="updatingEmployerId === emp.id"
-                  [attr.aria-label]="'Khôi phục tài khoản ' + emp.name"
-                  class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:opacity-40"
-                >
-                  <svg *ngIf="updatingEmployerId === emp.id" class="w-3.5 h-3.5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button *ngIf="isEmployerSuspended(emp)" type="button" (click)="openRestoreDialog(emp, $event)"
+                  [disabled]="updatingEmployerId === emp.id" [attr.aria-label]="'Khôi phục tài khoản ' + emp.name"
+                  class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:opacity-40">
+                  <svg *ngIf="updatingEmployerId === emp.id" class="w-3.5 h-3.5 animate-spin" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                   </svg>
@@ -404,15 +360,11 @@
                 </button>
 
                 <!-- If Active: Show Suspend button ONLY -->
-                <button
-                  *ngIf="!isEmployerSuspended(emp)"
-                  type="button"
-                  (click)="openSuspendDialog(emp, $event)"
-                  [disabled]="updatingEmployerId === emp.id"
-                  [attr.aria-label]="'Đình chỉ tài khoản ' + emp.name"
-                  class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 transition focus:outline-none focus:ring-2 focus:ring-rose-500 disabled:opacity-40"
-                >
-                  <svg *ngIf="updatingEmployerId === emp.id" class="w-3.5 h-3.5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button *ngIf="!isEmployerSuspended(emp)" type="button" (click)="openSuspendDialog(emp, $event)"
+                  [disabled]="updatingEmployerId === emp.id" [attr.aria-label]="'Đình chỉ tài khoản ' + emp.name"
+                  class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 transition focus:outline-none focus:ring-2 focus:ring-rose-500 disabled:opacity-40">
+                  <svg *ngIf="updatingEmployerId === emp.id" class="w-3.5 h-3.5 animate-spin" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                   </svg>
@@ -429,11 +381,8 @@
         <article *ngFor="let emp of employers; trackBy: trackByEmployer" class="p-4 space-y-3">
           <div class="flex items-start justify-between gap-3">
             <div>
-              <button
-                type="button"
-                (click)="openDetail(emp, $event)"
-                class="font-bold text-slate-900 text-left hover:text-ad-primary"
-              >
+              <button type="button" (click)="openDetail(emp, $event)"
+                class="font-bold text-slate-900 text-left hover:text-ad-primary">
                 {{ emp.name }}
               </button>
               <p class="text-xs text-slate-500 font-mono mt-0.5">
@@ -446,40 +395,31 @@
           </div>
 
           <div class="flex flex-wrap items-center gap-2 pt-1">
-            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border" [ngClass]="getKycBadgeClass(emp.kycStatus)">
+            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border"
+              [ngClass]="getKycBadgeClass(emp.kycStatus)">
               KYC: {{ getKycLabel(emp.kycStatus) }}
             </span>
-            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border" [ngClass]="getAccountBadgeClass(emp.accountStatus)">
+            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border"
+              [ngClass]="getAccountBadgeClass(emp.accountStatus)">
               {{ getAccountLabel(emp.accountStatus) }}
             </span>
           </div>
 
           <div class="pt-2 flex items-center justify-between border-t border-slate-100">
-            <button
-              type="button"
-              (click)="openDetail(emp, $event)"
-              class="text-xs font-semibold text-ad-primary hover:underline py-1.5"
-            >
+            <button type="button" (click)="openDetail(emp, $event)"
+              class="text-xs font-semibold text-ad-primary hover:underline py-1.5">
               Xem chi tiết
             </button>
 
             <!-- Contextual action button -->
-            <button
-              *ngIf="isEmployerSuspended(emp)"
-              type="button"
-              (click)="openRestoreDialog(emp, $event)"
+            <button *ngIf="isEmployerSuspended(emp)" type="button" (click)="openRestoreDialog(emp, $event)"
               [disabled]="updatingEmployerId === emp.id"
-              class="px-4 py-2 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200"
-            >
+              class="px-4 py-2 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
               Khôi phục tài khoản
             </button>
-            <button
-              *ngIf="!isEmployerSuspended(emp)"
-              type="button"
-              (click)="openSuspendDialog(emp, $event)"
+            <button *ngIf="!isEmployerSuspended(emp)" type="button" (click)="openSuspendDialog(emp, $event)"
               [disabled]="updatingEmployerId === emp.id"
-              class="px-4 py-2 rounded-lg text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200"
-            >
+              class="px-4 py-2 rounded-lg text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">
               Đình chỉ tài khoản
             </button>
           </div>
@@ -487,7 +427,8 @@
       </div>
 
       <!-- PAGINATION BAR (ER-11) -->
-      <footer *ngIf="totalItems > 0" class="px-5 py-3.5 border-t border-ad-outline-variant/20 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-ad-surface-container-low/40">
+      <footer *ngIf="totalItems > 0"
+        class="px-5 py-3.5 border-t border-ad-outline-variant/20 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-ad-surface-container-low/40">
         <div class="flex items-center gap-3">
           <p class="text-xs text-slate-600">
             Hiển thị <span class="font-bold text-slate-900 tabular-nums">{{ pageStartIndex }}</span> –
@@ -496,12 +437,8 @@
           </p>
           <div class="hidden sm:flex items-center gap-1.5 text-xs text-slate-500">
             <label for="page-size-select" class="sr-only">Số bản ghi mỗi trang</label>
-            <select
-              id="page-size-select"
-              [value]="pageSize"
-              (change)="onPageSizeChange($event)"
-              class="px-2 py-1 text-xs font-medium rounded border border-ad-outline-variant/30 bg-white"
-            >
+            <select id="page-size-select" [value]="pageSize" (change)="onPageSizeChange($event)"
+              class="px-2 py-1 text-xs font-medium rounded border border-ad-outline-variant/30 bg-white">
               <option [value]="10">10 / trang</option>
               <option [value]="20">20 / trang</option>
               <option [value]="50">50 / trang</option>
@@ -512,28 +449,18 @@
         <!-- Navigation Controls -->
         <nav aria-label="Điều hướng phân trang" class="flex items-center gap-1.5">
           <!-- First page -->
-          <button
-            type="button"
-            (click)="goToPage(1)"
-            [disabled]="currentPage === 1"
-            title="Trang đầu"
+          <button type="button" (click)="goToPage(1)" [disabled]="currentPage === 1" title="Trang đầu"
             aria-label="Trang đầu"
-            class="p-1.5 rounded-lg border border-ad-outline-variant/30 text-slate-600 hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none transition"
-          >
+            class="p-1.5 rounded-lg border border-ad-outline-variant/30 text-slate-600 hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none transition">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
             </svg>
           </button>
 
           <!-- Prev page -->
-          <button
-            type="button"
-            (click)="goToPrevPage()"
-            [disabled]="currentPage === 1"
-            title="Trang trước"
+          <button type="button" (click)="goToPrevPage()" [disabled]="currentPage === 1" title="Trang trước"
             aria-label="Trang trước"
-            class="px-2.5 py-1.5 rounded-lg border border-ad-outline-variant/30 text-xs font-medium text-slate-700 hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none transition flex items-center gap-1"
-          >
+            class="px-2.5 py-1.5 rounded-lg border border-ad-outline-variant/30 text-xs font-medium text-slate-700 hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none transition flex items-center gap-1">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
             </svg>
@@ -542,27 +469,18 @@
 
           <!-- Page numbers -->
           <div class="flex items-center gap-1 mx-1">
-            <button
-              *ngFor="let p of pagesList"
-              type="button"
-              (click)="goToPage(p)"
+            <button *ngFor="let p of pagesList" type="button" (click)="goToPage(p)"
               [attr.aria-current]="p === currentPage ? 'page' : null"
               class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center tabular-nums"
-              [ngClass]="p === currentPage ? 'bg-ad-primary text-white shadow-2xs' : 'text-slate-700 hover:bg-slate-100'"
-            >
+              [ngClass]="p === currentPage ? 'bg-ad-primary text-white shadow-2xs' : 'text-slate-700 hover:bg-slate-100'">
               {{ p }}
             </button>
           </div>
 
           <!-- Next page -->
-          <button
-            type="button"
-            (click)="goToNextPage()"
-            [disabled]="currentPage === totalPages"
-            title="Trang sau"
+          <button type="button" (click)="goToNextPage()" [disabled]="currentPage === totalPages" title="Trang sau"
             aria-label="Trang sau"
-            class="px-2.5 py-1.5 rounded-lg border border-ad-outline-variant/30 text-xs font-medium text-slate-700 hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none transition flex items-center gap-1"
-          >
+            class="px-2.5 py-1.5 rounded-lg border border-ad-outline-variant/30 text-xs font-medium text-slate-700 hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none transition flex items-center gap-1">
             <span>Sau</span>
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -570,14 +488,9 @@
           </button>
 
           <!-- Last page -->
-          <button
-            type="button"
-            (click)="goToPage(totalPages)"
-            [disabled]="currentPage === totalPages"
-            title="Trang cuối"
-            aria-label="Trang cuối"
-            class="p-1.5 rounded-lg border border-ad-outline-variant/30 text-slate-600 hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none transition"
-          >
+          <button type="button" (click)="goToPage(totalPages)" [disabled]="currentPage === totalPages"
+            title="Trang cuối" aria-label="Trang cuối"
+            class="p-1.5 rounded-lg border border-ad-outline-variant/30 text-slate-600 hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none transition">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
             </svg>
@@ -588,22 +501,15 @@
   </div>
 
   <!-- EMPLOYER DETAIL DRAWER (ER-07) -->
-  <div
-    *ngIf="isDetailDrawerOpen"
-    class="fixed inset-0 z-50 overflow-hidden"
-    aria-labelledby="detail-drawer-title"
-    role="dialog"
-    aria-modal="true"
-  >
+  <div *ngIf="isDetailDrawerOpen" class="fixed inset-0 z-50 overflow-hidden" aria-labelledby="detail-drawer-title"
+    role="dialog" aria-modal="true">
     <!-- Backdrop -->
-    <div
-      class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity duration-300"
-      (click)="closeDetailDrawer()"
-      aria-hidden="true"
-    ></div>
+    <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity duration-300"
+      (click)="closeDetailDrawer()" aria-hidden="true"></div>
 
     <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
-      <div class="w-screen max-w-md sm:max-w-lg bg-white shadow-2xl flex flex-col h-full overflow-hidden animate-in slide-in-from-right duration-200">
+      <div
+        class="w-screen max-w-md sm:max-w-lg bg-white shadow-2xl flex flex-col h-full overflow-hidden animate-in slide-in-from-right duration-200">
         <!-- Drawer Header -->
         <div class="px-6 py-5 border-b border-ad-outline-variant/20 flex items-start justify-between bg-slate-50/50">
           <div>
@@ -614,12 +520,8 @@
               Hồ sơ pháp lý, thông tin liên hệ và lịch sử tuyển dụng
             </p>
           </div>
-          <button
-            type="button"
-            (click)="closeDetailDrawer()"
-            aria-label="Đóng bảng chi tiết"
-            class="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition"
-          >
+          <button type="button" (click)="closeDetailDrawer()" aria-label="Đóng bảng chi tiết"
+            class="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -640,16 +542,15 @@
           <!-- Error state -->
           <div *ngIf="detailError" class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 space-y-2">
             <div class="flex items-center gap-2.5">
-              <svg class="w-5 h-5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg class="w-5 h-5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <p class="text-sm font-medium">{{ detailError }}</p>
             </div>
-            <button
-              type="button"
-              (click)="retryDetail()"
-              class="px-3 py-1 text-xs font-semibold rounded bg-rose-200 hover:bg-rose-300 text-rose-900 transition"
-            >
+            <button type="button" (click)="retryDetail()"
+              class="px-3 py-1 text-xs font-semibold rounded bg-rose-200 hover:bg-rose-300 text-rose-900 transition">
               Thử lại
             </button>
           </div>
@@ -661,10 +562,12 @@
               <h3 class="text-xl font-bold text-slate-900">{{ detail.name }}</h3>
               <p class="text-xs text-slate-500 font-mono">Mã định danh: {{ detail.id }}</p>
               <div class="flex flex-wrap items-center gap-2 pt-1">
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border" [ngClass]="getKycBadgeClass(detail.kycStatus)">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border"
+                  [ngClass]="getKycBadgeClass(detail.kycStatus)">
                   KYC: {{ getKycLabel(detail.kycStatus) }}
                 </span>
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border" [ngClass]="getAccountBadgeClass(detail.accountStatus)">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border"
+                  [ngClass]="getAccountBadgeClass(detail.accountStatus)">
                   Tài khoản: {{ getAccountLabel(detail.accountStatus) }}
                 </span>
               </div>
@@ -693,15 +596,19 @@
             <div class="space-y-3">
               <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500">Thông tin tuyển dụng</h4>
               <div class="space-y-2 text-xs">
-                <div class="flex items-center justify-between p-3 rounded-lg border border-ad-outline-variant/30 bg-white">
+                <div
+                  class="flex items-center justify-between p-3 rounded-lg border border-ad-outline-variant/30 bg-white">
                   <span class="text-slate-500">Lĩnh vực / Ngành nghề:</span>
                   <span class="font-semibold text-slate-900">{{ detail.industry || 'Chưa phân loại' }}</span>
                 </div>
-                <div class="flex items-center justify-between p-3 rounded-lg border border-ad-outline-variant/30 bg-white">
+                <div
+                  class="flex items-center justify-between p-3 rounded-lg border border-ad-outline-variant/30 bg-white">
                   <span class="text-slate-500">Ngày đăng ký tham gia:</span>
-                  <span class="font-semibold text-slate-900 tabular-nums">{{ formatDate(detail.registrationDate) }}</span>
+                  <span class="font-semibold text-slate-900 tabular-nums">{{ formatDate(detail.registrationDate)
+                    }}</span>
                 </div>
-                <div class="flex items-center justify-between p-3 rounded-lg border border-ad-outline-variant/30 bg-white">
+                <div
+                  class="flex items-center justify-between p-3 rounded-lg border border-ad-outline-variant/30 bg-white">
                   <span class="text-slate-500">Số tin đăng đang hoạt động:</span>
                   <span class="font-bold text-ad-primary tabular-nums">{{ detail.activeJobs }} tin</span>
                 </div>
@@ -712,11 +619,8 @@
 
         <!-- Drawer Footer -->
         <div class="p-5 border-t border-ad-outline-variant/20 bg-slate-50/50 flex items-center justify-end gap-3">
-          <button
-            type="button"
-            (click)="closeDetailDrawer()"
-            class="px-4 py-2.5 text-xs font-semibold rounded-lg border border-ad-outline-variant/40 bg-white text-slate-700 hover:bg-slate-100 transition shadow-2xs"
-          >
+          <button type="button" (click)="closeDetailDrawer()"
+            class="px-4 py-2.5 text-xs font-semibold rounded-lg border border-ad-outline-variant/40 bg-white text-slate-700 hover:bg-slate-100 transition shadow-2xs">
             Đóng
           </button>
         </div>
@@ -725,19 +629,17 @@
   </div>
 
   <!-- SUSPEND EMPLOYER DIALOG (ER-08, EC-06) -->
-  <div
-    *ngIf="isSuspendDialogOpen"
+  <div *ngIf="isSuspendDialogOpen"
     class="fixed inset-0 z-60 overflow-y-auto flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="suspend-dialog-title"
-  >
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 animate-in fade-in zoom-in-95 duration-200 space-y-4">
+    role="dialog" aria-modal="true" aria-labelledby="suspend-dialog-title">
+    <div
+      class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 animate-in fade-in zoom-in-95 duration-200 space-y-4">
       <!-- Dialog Header -->
       <div class="flex items-start gap-3.5">
         <div class="w-10 h-10 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
         </div>
         <div>
@@ -751,7 +653,8 @@
       </div>
 
       <p class="text-xs text-slate-600 leading-relaxed bg-rose-50/60 border border-rose-100 p-3 rounded-lg">
-        <strong>Lưu ý:</strong> Khi bị đình chỉ, doanh nghiệp sẽ không thể đăng tin mới, các tin đăng hiện tại sẽ bị tạm ẩn và quyền quản lý ứng viên sẽ bị khóa cho đến khi được khôi phục.
+        <strong>Lưu ý:</strong> Khi bị đình chỉ, doanh nghiệp sẽ không thể đăng tin mới, các tin đăng hiện tại sẽ bị tạm
+        ẩn và quyền quản lý ứng viên sẽ bị khóa cho đến khi được khôi phục.
       </p>
 
       <!-- Reason Textarea (Required) -->
@@ -759,34 +662,23 @@
         <label for="suspend-reason" class="text-xs font-bold uppercase tracking-wider text-slate-700">
           Lý do đình chỉ <span class="text-rose-600">*</span>
         </label>
-        <textarea
-          id="suspend-reason"
-          [(ngModel)]="suspendReason"
-          rows="3"
+        <textarea id="suspend-reason" [(ngModel)]="suspendReason" rows="3"
           placeholder="Nhập lý do chi tiết (ví dụ: Vi phạm chính sách tuyển dụng, nghi vấn mạo danh)..."
           class="w-full px-3.5 py-2.5 text-xs rounded-lg border bg-white focus:outline-none focus:ring-2 focus:ring-rose-500 transition"
-          [ngClass]="suspendError ? 'border-rose-300' : 'border-ad-outline-variant/40'"
-        ></textarea>
+          [ngClass]="suspendError ? 'border-rose-300' : 'border-ad-outline-variant/40'"></textarea>
         <p *ngIf="suspendError" class="text-xs font-medium text-rose-600">{{ suspendError }}</p>
       </div>
 
       <!-- Action Buttons -->
       <div class="flex items-center justify-end gap-3 pt-2">
-        <button
-          type="button"
-          (click)="closeSuspendDialog()"
-          [disabled]="isSubmittingSuspend"
-          class="px-4 py-2 text-xs font-semibold rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition"
-        >
+        <button type="button" (click)="closeSuspendDialog()" [disabled]="isSubmittingSuspend"
+          class="px-4 py-2 text-xs font-semibold rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
           Hủy bỏ
         </button>
-        <button
-          type="button"
-          (click)="confirmSuspend()"
-          [disabled]="isSubmittingSuspend || !suspendReason.trim()"
-          class="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-lg bg-rose-600 hover:bg-rose-700 text-white transition shadow-2xs disabled:opacity-50"
-        >
-          <svg *ngIf="isSubmittingSuspend" class="w-3.5 h-3.5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button type="button" (click)="confirmSuspend()" [disabled]="isSubmittingSuspend || !suspendReason.trim()"
+          class="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-lg bg-rose-600 hover:bg-rose-700 text-white transition shadow-2xs disabled:opacity-50">
+          <svg *ngIf="isSubmittingSuspend" class="w-3.5 h-3.5 animate-spin" fill="none" stroke="currentColor"
+            viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
           </svg>
@@ -797,14 +689,11 @@
   </div>
 
   <!-- RESTORE EMPLOYER DIALOG (ER-09, EC-05) -->
-  <div
-    *ngIf="isRestoreDialogOpen"
+  <div *ngIf="isRestoreDialogOpen"
     class="fixed inset-0 z-60 overflow-y-auto flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="restore-dialog-title"
-  >
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 animate-in fade-in zoom-in-95 duration-200 space-y-4">
+    role="dialog" aria-modal="true" aria-labelledby="restore-dialog-title">
+    <div
+      class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 animate-in fade-in zoom-in-95 duration-200 space-y-4">
       <div class="flex items-start gap-3.5">
         <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -822,25 +711,19 @@
       </div>
 
       <p class="text-xs text-slate-600 leading-relaxed bg-emerald-50/60 border border-emerald-100 p-3 rounded-lg">
-        Tài khoản nhà tuyển dụng sẽ được kích hoạt lại trạng thái hoạt động bình thường và có thể tiếp tục đăng tin tuyển dụng.
+        Tài khoản nhà tuyển dụng sẽ được kích hoạt lại trạng thái hoạt động bình thường và có thể tiếp tục đăng tin
+        tuyển dụng.
       </p>
 
       <div class="flex items-center justify-end gap-3 pt-2">
-        <button
-          type="button"
-          (click)="closeRestoreDialog()"
-          [disabled]="isSubmittingRestore"
-          class="px-4 py-2 text-xs font-semibold rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition"
-        >
+        <button type="button" (click)="closeRestoreDialog()" [disabled]="isSubmittingRestore"
+          class="px-4 py-2 text-xs font-semibold rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
           Hủy bỏ
         </button>
-        <button
-          type="button"
-          (click)="confirmRestore()"
-          [disabled]="isSubmittingRestore"
-          class="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition shadow-2xs disabled:opacity-50"
-        >
-          <svg *ngIf="isSubmittingRestore" class="w-3.5 h-3.5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button type="button" (click)="confirmRestore()" [disabled]="isSubmittingRestore"
+          class="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition shadow-2xs disabled:opacity-50">
+          <svg *ngIf="isSubmittingRestore" class="w-3.5 h-3.5 animate-spin" fill="none" stroke="currentColor"
+            viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
           </svg>

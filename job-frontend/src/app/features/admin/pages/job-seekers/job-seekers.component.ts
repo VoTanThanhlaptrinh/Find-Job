@@ -7,10 +7,10 @@ import {
   effect,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { Subject, Subscription, debounceTime, distinctUntilChanged, take } from 'rxjs';
 import { AdminJobSeekersService } from '../../services/admin-job-seekers.service';
+import { CreateJobSeekerModalComponent } from './components/create-job-seeker-modal/create-job-seeker-modal.component';
 import {
   AdminJobSeekerItem,
   AdminJobSeekerListQuery,
@@ -21,12 +21,11 @@ import {
 @Component({
   selector: 'app-job-seekers',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, RouterModule, CreateJobSeekerModalComponent],
   templateUrl: './job-seekers.component.html',
 })
 export class JobSeekersComponent implements OnInit, OnDestroy {
   private readonly jobSeekersService = inject(AdminJobSeekersService);
-  private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
@@ -34,14 +33,6 @@ export class JobSeekersComponent implements OnInit, OnDestroy {
   readonly searchSubject = new Subject<string>();
   private searchSub?: Subscription;
   private queryParamSub?: Subscription;
-
-  // Typed Reactive Form for Create Job Seeker Dialog
-  readonly createJobSeekerForm = this.fb.nonNullable.group({
-    fullName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
-    email: ['', [Validators.required, Validators.email]],
-    profession: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
-    resumeUrl: ['', [Validators.required, Validators.pattern(/^(https?:\/\/).+/i)]],
-  });
 
   // Typed Data States
   metrics: AdminJobSeekersMetrics | null = null;
@@ -52,13 +43,11 @@ export class JobSeekersComponent implements OnInit, OnDestroy {
   isLoadingMetrics = false;
   isLoadingList = false;
   isLoadingRegions = false;
-  isCreating = false;
 
   // Scoped Error States
   metricsError: string | null = null;
   listError: string | null = null;
   regionError: string | null = null;
-  createError: string | null = null;
 
   // Pagination & Filter States
   totalItems = 0;
@@ -69,7 +58,6 @@ export class JobSeekersComponent implements OnInit, OnDestroy {
 
   // Dialog & Unsaved Changes State
   isCreateDialogOpen = false;
-  isConfirmDiscardOpen = false;
   private lastFocusedTrigger: HTMLElement | null = null;
 
   constructor() {
@@ -82,7 +70,6 @@ export class JobSeekersComponent implements OnInit, OnDestroy {
       this.isLoadingMetrics = this.jobSeekersService.isLoadingMetrics();
       this.isLoadingList = this.jobSeekersService.isLoadingList();
       this.isLoadingRegions = this.jobSeekersService.isLoadingRegions();
-      this.isCreating = this.jobSeekersService.isCreating();
 
       this.metricsError = this.jobSeekersService.metricsError();
       this.listError = this.jobSeekersService.listError();
@@ -136,16 +123,6 @@ export class JobSeekersComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.searchSub?.unsubscribe();
     this.queryParamSub?.unsubscribe();
-  }
-
-  // --- Keyboard navigation & Dialog Listeners ---
-  @HostListener('keydown.escape')
-  handleEscape(): void {
-    if (this.isConfirmDiscardOpen) {
-      this.cancelDiscardChanges();
-    } else if (this.isCreateDialogOpen) {
-      this.attemptCloseCreateDialog();
-    }
   }
 
   // --- Computed UI Helpers ---
@@ -258,77 +235,14 @@ export class JobSeekersComponent implements OnInit, OnDestroy {
   // --- Create Job Seeker Dialog Flow ---
   openCreateDialog(trigger?: HTMLElement): void {
     this.lastFocusedTrigger = trigger || (document.activeElement as HTMLElement);
-    this.createError = null;
-    this.createJobSeekerForm.reset({
-      fullName: '',
-      email: '',
-      profession: '',
-      resumeUrl: '',
-    });
     this.isCreateDialogOpen = true;
-  }
-
-  attemptCloseCreateDialog(): void {
-    if (this.createJobSeekerForm.dirty && !this.isCreating) {
-      this.isConfirmDiscardOpen = true;
-    } else {
-      this.closeCreateDialog();
-    }
-  }
-
-  confirmDiscardChanges(): void {
-    this.isConfirmDiscardOpen = false;
-    this.closeCreateDialog();
-  }
-
-  cancelDiscardChanges(): void {
-    this.isConfirmDiscardOpen = false;
   }
 
   closeCreateDialog(): void {
     this.isCreateDialogOpen = false;
-    this.isConfirmDiscardOpen = false;
-    this.createError = null;
-    this.createJobSeekerForm.reset({
-      fullName: '',
-      email: '',
-      profession: '',
-      resumeUrl: '',
-    });
     if (this.lastFocusedTrigger) {
       this.lastFocusedTrigger.focus();
     }
-  }
-
-  isCreateFieldInvalid(
-    controlName: 'fullName' | 'email' | 'profession' | 'resumeUrl'
-  ): boolean {
-    const control = this.createJobSeekerForm.controls[controlName];
-    return control.invalid && (control.touched || control.dirty);
-  }
-
-  submitCreateJobSeeker(): void {
-    if (this.createJobSeekerForm.invalid) {
-      this.createJobSeekerForm.markAllAsTouched();
-      return;
-    }
-
-    this.createError = null;
-    const payload = this.createJobSeekerForm.getRawValue();
-
-    this.jobSeekersService
-      .createJobSeeker(payload)
-      .pipe(take(1))
-      .subscribe({
-        next: () => {
-          this.closeCreateDialog();
-        },
-        error: (err) => {
-          this.createError =
-            err?.error?.message ||
-            'Không thể tạo hồ sơ người tìm việc. Vui lòng kiểm tra lại thông tin và thử lại.';
-        },
-      });
   }
 
   // --- Presentation Helpers ---

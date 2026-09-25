@@ -1,0 +1,151 @@
+<!-- CREATE JOB SEEKER MODAL DIALOG (JS-04, JS-05, JS-06, JS-07, Form Rules §9) -->
+<div class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6 overflow-y-auto"
+  role="dialog" aria-modal="true" aria-labelledby="create-dialog-title" aria-describedby="create-dialog-desc">
+  <!-- Dialog Card Container (560-640px desktop, full-screen mobile) -->
+  <div
+    class="bg-white rounded-2xl border border-ad-outline-variant/40 shadow-2xl max-w-lg w-full p-6 sm:p-8 space-y-6 animate-in fade-in zoom-in-95 duration-150">
+    <!-- Dialog Header -->
+    <div class="flex items-start justify-between border-b border-ad-outline-variant/30 pb-4">
+      <div>
+        <h2 id="create-dialog-title" class="text-xl font-bold tracking-tight text-slate-900">
+          Thêm người tìm việc mới
+        </h2>
+        <p id="create-dialog-desc" class="text-xs text-slate-500 mt-1">
+          Nhập thông tin hồ sơ ứng viên để lưu trữ vào hệ thống quản trị.
+        </p>
+      </div>
+      <button type="button" (click)="attemptCloseCreateDialog()" aria-label="Đóng hộp thoại"
+        class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Scoped Dialog Error Banner -->
+    <div *ngIf="createError"
+      class="p-3.5 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2.5">
+      <svg class="w-4 h-4 text-rose-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+        aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span>{{ createError }}</span>
+    </div>
+
+    <!-- Create Form (JS-05) -->
+    <form [formGroup]="createJobSeekerForm" (ngSubmit)="submitCreateJobSeeker()" class="space-y-4">
+      <!-- Field 1: Full Name -->
+      <div>
+        <label for="fullNameInput" class="block text-xs font-semibold text-slate-700 mb-1">
+          Họ và tên <span class="text-rose-500">*</span>
+        </label>
+        <input id="fullNameInput" type="text" formControlName="fullName" placeholder="Ví dụ: Nguyễn Văn A"
+          [attr.aria-invalid]="isCreateFieldInvalid('fullName')" aria-describedby="fullName-error"
+          class="w-full px-3.5 py-2.5 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-ad-primary focus:bg-white transition" />
+        <p *ngIf="isCreateFieldInvalid('fullName')" id="fullName-error"
+          class="mt-1 text-xs text-rose-600 flex items-center gap-1">
+          Họ và tên là bắt buộc (tối thiểu 2 ký tự).
+        </p>
+      </div>
+
+      <!-- Field 2: Email -->
+      <div>
+        <label for="emailInput" class="block text-xs font-semibold text-slate-700 mb-1">
+          Địa chỉ email <span class="text-rose-500">*</span>
+        </label>
+        <input id="emailInput" type="email" formControlName="email" placeholder="ungvien@example.com"
+          [attr.aria-invalid]="isCreateFieldInvalid('email')" aria-describedby="email-error"
+          class="w-full px-3.5 py-2.5 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-ad-primary focus:bg-white transition" />
+        <p *ngIf="isCreateFieldInvalid('email')" id="email-error"
+          class="mt-1 text-xs text-rose-600 flex items-center gap-1">
+          Vui lòng nhập địa chỉ email hợp lệ.
+        </p>
+      </div>
+
+      <!-- Field 3: Profession -->
+      <div>
+        <label for="professionInput" class="block text-xs font-semibold text-slate-700 mb-1">
+          Nghề nghiệp / Chuyên ngành <span class="text-rose-500">*</span>
+        </label>
+        <input id="professionInput" type="text" formControlName="profession"
+          placeholder="Ví dụ: Kỹ sư Phần mềm Frontend" [attr.aria-invalid]="isCreateFieldInvalid('profession')"
+          aria-describedby="profession-error"
+          class="w-full px-3.5 py-2.5 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-ad-primary focus:bg-white transition" />
+        <p *ngIf="isCreateFieldInvalid('profession')" id="profession-error"
+          class="mt-1 text-xs text-rose-600 flex items-center gap-1">
+          Nghề nghiệp là bắt buộc.
+        </p>
+      </div>
+
+      <!-- Field 4: Resume URL -->
+      <div>
+        <label for="resumeUrlInput" class="block text-xs font-semibold text-slate-700 mb-1">
+          Đường dẫn liên kết CV <span class="text-rose-500">*</span>
+        </label>
+        <input id="resumeUrlInput" type="url" formControlName="resumeUrl" placeholder="https://example.com/cv.pdf"
+          [attr.aria-invalid]="isCreateFieldInvalid('resumeUrl')" aria-describedby="resumeUrl-error"
+          class="w-full px-3.5 py-2.5 bg-ad-surface-container-low border border-ad-outline-variant/30 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-ad-primary focus:bg-white transition" />
+        <p *ngIf="isCreateFieldInvalid('resumeUrl')" id="resumeUrl-error"
+          class="mt-1 text-xs text-rose-600 flex items-center gap-1">
+          Vui lòng nhập đường dẫn URL hợp lệ (bắt đầu bằng http:// hoặc https://).
+        </p>
+      </div>
+
+      <!-- Dialog Footer Actions -->
+      <div class="pt-4 border-t border-ad-outline-variant/30 flex items-center justify-end gap-3">
+        <button type="button" (click)="attemptCloseCreateDialog()" [disabled]="isCreating"
+          class="px-4 py-2.5 rounded-lg border border-ad-outline-variant/40 hover:bg-slate-100 text-slate-700 text-sm font-semibold transition disabled:opacity-50">
+          Hủy bỏ
+        </button>
+        <button type="submit" [disabled]="isCreating || createJobSeekerForm.invalid"
+          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-ad-primary text-white text-sm font-semibold hover:bg-ad-primary-dim transition shadow-xs disabled:opacity-50 disabled:pointer-events-none">
+          <svg *ngIf="isCreating" class="w-4 h-4 animate-spin text-white" fill="none" stroke="currentColor"
+            viewBox="0 0 24 24" aria-hidden="true">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+            </path>
+          </svg>
+          <span>{{ isCreating ? 'Đang tạo...' : 'Tạo người tìm việc' }}</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- UNSAVED CHANGES CONFIRMATION POPUP (JS-07) -->
+<div *ngIf="isConfirmDiscardOpen"
+  class="fixed inset-0 z-60 bg-slate-950/40 backdrop-blur-2xs flex items-center justify-center p-4" role="alertdialog"
+  aria-modal="true" aria-labelledby="discard-title" aria-describedby="discard-desc">
+  <div
+    class="bg-white rounded-xl border border-ad-outline-variant/40 shadow-xl max-w-sm w-full p-5 space-y-4 animate-in fade-in zoom-in-95 duration-100">
+    <div class="flex items-start gap-3">
+      <div class="p-2 rounded-full bg-amber-50 text-amber-600 shrink-0">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+      </div>
+      <div>
+        <h3 id="discard-title" class="text-sm font-bold text-slate-900">
+          Hủy thay đổi chưa lưu?
+        </h3>
+        <p id="discard-desc" class="text-xs text-slate-500 mt-1 leading-relaxed">
+          Bạn có các thông tin đã nhập trong biểu mẫu. Đóng hộp thoại lúc này sẽ làm mất toàn bộ các nội dung bạn đã
+          điền.
+        </p>
+      </div>
+    </div>
+    <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+      <button type="button" (click)="cancelDiscardChanges()"
+        class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">
+        Tiếp tục nhập
+      </button>
+      <button type="button" (click)="confirmDiscardChanges()"
+        class="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold transition">
+        Xác nhận hủy
+      </button>
+    </div>
+  </div>
+</div>
