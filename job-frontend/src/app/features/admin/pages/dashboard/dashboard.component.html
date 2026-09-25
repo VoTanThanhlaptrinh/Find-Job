@@ -7,11 +7,17 @@
 </a>
 
 <!-- DESKTOP & TABLET SIDEBAR (DS-01, DS-05, DS-06, DS-09, DS-11, DS-13) -->
-<aside
-  aria-label="Điều hướng quản trị chính"
-  class="hidden lg:flex flex-col fixed left-0 top-0 h-full z-40 bg-ad-surface-container-lowest border-r border-ad-outline-variant/30 transition-all duration-200 ease-in-out"
-  [ngClass]="isCompactSidebar ? 'w-[72px]' : 'w-64'"
+<div
+  data-testid="admin-shell"
+  class="min-h-screen bg-ad-surface transition-[grid-template-columns] duration-200 ease-in-out lg:grid"
+  [ngClass]="isCompactSidebar
+    ? 'lg:grid-cols-[72px_minmax(0,1fr)]'
+    : 'lg:grid-cols-[16rem_minmax(0,1fr)]'"
 >
+  <aside
+    aria-label="Điều hướng quản trị chính"
+    class="hidden lg:flex sticky top-0 self-start h-screen w-full z-40 flex-col bg-ad-surface-container-lowest border-r border-ad-outline-variant/30 transition-all duration-200 ease-in-out"
+  >
   <!-- Brand Header -->
   <div class="h-16 px-4 flex items-center border-b border-ad-outline-variant/20" [ngClass]="isCompactSidebar ? 'justify-center' : 'justify-between'">
     <a
@@ -145,7 +151,7 @@
       <span *ngIf="!isCompactSidebar">{{ isLoggingOut ? 'Đang đăng xuất...' : 'Đăng xuất' }}</span>
     </button>
   </div>
-</aside>
+  </aside>
 
 <!-- MOBILE DRAWER NAVIGATION (DS-10) -->
 <div
@@ -254,11 +260,11 @@
 </div>
 
 <!-- TOP APP BAR SHELL (DS-03, DS-04, DS-07, DS-13, DS-15) -->
-<header
-  role="banner"
-  class="fixed top-0 right-0 z-30 h-16 bg-white/90 backdrop-blur-md border-b border-ad-outline-variant/30 flex items-center justify-between px-4 sm:px-6 transition-all duration-200 ease-in-out"
-  [ngClass]="isCompactSidebar ? 'lg:left-[72px] lg:w-[calc(100%-72px)] left-0 w-full' : 'lg:left-64 lg:w-[calc(100%-16rem)] left-0 w-full'"
->
+  <div data-testid="admin-content" class="min-w-0">
+    <header
+      role="banner"
+      class="sticky top-0 z-30 h-16 w-full bg-white/90 backdrop-blur-md border-b border-ad-outline-variant/30 flex items-center justify-between px-4 sm:px-6 transition-all duration-200 ease-in-out"
+    >
   <!-- Left Side: Mobile Menu Button & Dynamic Route Title/Breadcrumb (DS-04) -->
   <div class="flex items-center gap-3 min-w-0">
     <!-- Hamburger button for mobile (DS-10) -->
@@ -389,17 +395,18 @@
       </div>
     </div>
   </div>
-</header>
+    </header>
 
 <!-- MAIN CONTENT CANVAS (DS-07, DS-13) -->
-<!-- No overflow-hidden! Natural scrolling for child pages. Offset properly. -->
-<main
-  id="admin-main"
-  tabindex="-1"
-  class="pt-16 min-h-screen bg-ad-surface transition-all duration-200 ease-in-out focus:outline-none"
-  [ngClass]="isCompactSidebar ? 'lg:ml-[72px] ml-0' : 'lg:ml-64 ml-0'"
->
-  <div class="w-full">
-    <router-outlet></router-outlet>
+<!-- Routed pages own their main landmark; this wrapper provides focus and sizing. -->
+    <div
+      id="admin-main"
+      tabindex="-1"
+      class="min-h-[calc(100vh-4rem)] min-w-0 bg-ad-surface focus:outline-none"
+    >
+      <div class="w-full min-w-0">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
   </div>
-</main>
+</div>

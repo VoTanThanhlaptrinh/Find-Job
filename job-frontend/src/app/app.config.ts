@@ -87,9 +87,10 @@ export const appConfig: ApplicationConfig = {
       const platformId = inject(PLATFORM_ID);
 
       if (isPlatformBrowser(platformId)) {
-        authService.refreshToken().subscribe();
+        return authService.refreshToken();
       } else {
         authService.markAuthReady();
+        return Promise.resolve();
       }
     }),
     provideAnimations()

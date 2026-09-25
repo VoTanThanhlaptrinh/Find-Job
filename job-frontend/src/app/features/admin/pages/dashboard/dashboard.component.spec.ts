@@ -119,12 +119,39 @@ describe('DashboardComponent (Admin Shell)', () => {
   });
 
   describe('Responsive Sidebar & Mobile Drawer (DS-09, DS-10)', () => {
+    it('should keep the desktop sidebar and routed content in a two-column grid', () => {
+      const shell = fixture.nativeElement.querySelector('[data-testid="admin-shell"]') as HTMLElement;
+      const sidebar = fixture.nativeElement.querySelector('aside[aria-label="Điều hướng quản trị chính"]') as HTMLElement;
+      const content = fixture.nativeElement.querySelector('[data-testid="admin-content"]') as HTMLElement;
+      const header = fixture.nativeElement.querySelector('header[role="banner"]') as HTMLElement;
+
+      expect(shell.classList.contains('lg:grid')).toBeTrue();
+      expect(shell.classList.contains('lg:grid-cols-[16rem_minmax(0,1fr)]')).toBeTrue();
+      expect(sidebar.classList.contains('sticky')).toBeTrue();
+      expect(sidebar.classList.contains('fixed')).toBeFalse();
+      expect(content.classList.contains('min-w-0')).toBeTrue();
+      expect(header.classList.contains('sticky')).toBeTrue();
+      expect(header.classList.contains('fixed')).toBeFalse();
+    });
+
     it('should toggle compact sidebar state', () => {
+      const shell = fixture.nativeElement.querySelector('[data-testid="admin-shell"]') as HTMLElement;
+
       expect(component.isCompactSidebar).toBeFalse();
+      expect(shell.classList.contains('lg:grid-cols-[16rem_minmax(0,1fr)]')).toBeTrue();
+
       component.toggleCompactSidebar();
+      fixture.detectChanges();
+
       expect(component.isCompactSidebar).toBeTrue();
+      expect(shell.classList.contains('lg:grid-cols-[72px_minmax(0,1fr)]')).toBeTrue();
+      expect(shell.classList.contains('lg:grid-cols-[16rem_minmax(0,1fr)]')).toBeFalse();
+
       component.toggleCompactSidebar();
+      fixture.detectChanges();
+
       expect(component.isCompactSidebar).toBeFalse();
+      expect(shell.classList.contains('lg:grid-cols-[16rem_minmax(0,1fr)]')).toBeTrue();
     });
 
     it('should toggle and close mobile drawer', () => {

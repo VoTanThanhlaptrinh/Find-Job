@@ -48,12 +48,6 @@ export const hirerGuard: CanActivateFn = (
   const authReady = authService.isAuthReady();
   const roles = tokenService.getTokenRoles();
 
-  // Allow navigation while auth state is still restoring from refresh token.
-  if (!authReady) {
-    logGuardDecision('Auth is not ready yet, allowing temporary navigation.', state, authReady, roles);
-    return true;
-  }
-
   const isAuthorized = hasHirerRole(tokenService);
 
   logGuardDecision(
