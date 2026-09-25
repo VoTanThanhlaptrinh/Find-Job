@@ -40,6 +40,9 @@ export class AdminJobsService {
   private readonly _isCreating = signal(false);
   private readonly _isUpdatingStatus = signal<string | null>(null); // Job ID being updated
 
+  private readonly _metricsError = signal<string | null>(null);
+  private readonly _listError = signal<string | null>(null);
+
   // Public computed signals
   readonly metrics = computed(() => this._metrics());
   readonly jobs = computed(() => this._jobs());
@@ -50,6 +53,9 @@ export class AdminJobsService {
   readonly isLoadingList = computed(() => this._isLoadingList());
   readonly isCreating = computed(() => this._isCreating());
   readonly updatingStatusJobId = computed(() => this._isUpdatingStatus());
+
+  readonly metricsError = computed(() => this._metricsError());
+  readonly listError = computed(() => this._listError());
 
   constructor(
     private readonly http: HttpClient,
@@ -64,6 +70,7 @@ export class AdminJobsService {
    */
   loadMetrics(): void {
     this._isLoadingMetrics.set(true);
+    this._metricsError.set(null);
     this.http
       .get<ApiResponse<AdminJobsMetrics>>(`${this.url}/admin/jobs/metrics`, {
         withCredentials: true,
@@ -74,7 +81,11 @@ export class AdminJobsService {
       )
       .subscribe({
         next: (res) => this._metrics.set(res.data),
-        error: (err) => this.handleError(err, 'Không thể tải chỉ số tin tuyển dụng')
+        error: (err) => {
+          const msg = err?.error?.message || 'Không thể tải chỉ số tin tuyển dụng';
+          this._metricsError.set(msg);
+          this.handleError(err, 'Không thể tải chỉ số tin tuyển dụng');
+        }
       });
   }
 
@@ -91,6 +102,7 @@ export class AdminJobsService {
    */
   loadJobs(): void {
     this._isLoadingList.set(true);
+    this._listError.set(null);
     const params = buildHttpParams(this._currentQuery());
     this.http
       .get<ApiResponse<AdminListPayload<AdminJobItem>>>(`${this.url}/admin/jobs`, {
@@ -109,6 +121,8 @@ export class AdminJobsService {
         error: (err) => {
           this._jobs.set([]);
           this._totalItems.set(0);
+          const msg = err?.error?.message || 'Không thể tải danh sách tin tuyển dụng';
+          this._listError.set(msg);
           this.handleError(err, 'Không thể tải danh sách tin tuyển dụng');
         }
       });
