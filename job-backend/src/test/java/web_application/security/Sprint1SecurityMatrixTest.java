@@ -27,7 +27,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import web_application.support.TestSecurityConfig;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -206,15 +206,15 @@ class Sprint1SecurityMatrixTest {
                     "Backend Engineer",
                     1L,
                     EmploymentType.FULL_TIME,
-                    "<p>Valid text</p><img src=x onerror=alert(1)><script>stealToken()</script>",
                     "$2000",
+                    "<p>Valid text</p><img src=x onerror=alert(1)><script>stealToken()</script>",
                     "<ul><li>Java 17</li></ul><svg onload=alert(2)>",
                     "Java, Spring",
-                    LocalDateTime.now().plusDays(10),
+                    LocalDate.now().plusDays(10),
                     "<a href=\"javascript:alert(3)\">Click</a>",
                     2,
-                    1L,
-                    false
+                    false,
+                    1L
             );
 
             Job job = mapper.toJob(dto);
