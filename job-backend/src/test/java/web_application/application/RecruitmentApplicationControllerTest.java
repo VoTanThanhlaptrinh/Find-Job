@@ -3,6 +3,7 @@ package web_application.application;
 import com.nlu.applicationProcess.api.HirerApplicationController;
 import com.nlu.applicationProcess.api.dto.req.CandidateDTO;
 import com.nlu.applicationProcess.application.JobApplicationService;
+import com.nlu.shared.domain.exception.ForbiddenException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,7 @@ import web_application.support.TestSecurityConfig;
 
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -68,12 +70,23 @@ class RecruitmentApplicationControllerTest {
                 }
             };
             Page<CandidateDTO> page = new PageImpl<>(List.of(candidate));
-            when(jobApplicationService.getCandidatesAppliedToJob(eq(0), eq(10), eq(1L))).thenReturn(page);
+            when(jobApplicationService.getCandidatesAppliedToJob(eq(0), eq(10), eq(1L), any())).thenReturn(page);
 
             mockMvc.perform(get(BASE_URL + "/jobs/1/candidates/0/10"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.message").isNotEmpty())
                     .andExpect(jsonPath("$.data.content[0].email").value("candidate@test.com"));
+        }
+
+        @Test
+        @DisplayName("HA05: Tra ve 403 khi HIRER xem danh sach ung vien cua job khong thuoc minh (chong IDOR)")
+        @WithMockUser(username = "other-hirer@test.com", roles = "HIRER")
+        void listCandidates_NotOwnerForbidden() throws Exception {
+            when(jobApplicationService.getCandidatesAppliedToJob(eq(0), eq(10), eq(99L), any()))
+                    .thenThrow(new ForbiddenException("Access denied"));
+
+            mockMvc.perform(get(BASE_URL + "/jobs/99/candidates/0/10"))
+                    .andExpect(status().isForbidden());
         }
 
         @Test

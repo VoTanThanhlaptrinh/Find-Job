@@ -5,7 +5,6 @@ import { JobDetailViewModel, AddressCountViewModel } from '../../../../shared/mo
 import { JobCardModel } from '../../../../shared/models/jobs/job-card.model';
 import { CareerBlogItem } from '../../../../shared/models/jobs/career-blog.model';
 import { JobService } from '../../services/job.service';
-import { SafeHtmlPipe } from '../../../../shared/pipes/safe-html.pipe';
 import { AuthService } from '../../../../core/services/auth.service';
 import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
 import { I18nService } from '../../../../core/i18n/i18n.service';
@@ -15,7 +14,7 @@ import { BlogService } from '../../../blog/services/blog.service';
 
 @Component({
   selector: 'app-job-single',
-  imports: [CommonModule, RouterModule, SafeHtmlPipe, TranslatePipe, SkeletonJobSingleComponent],
+  imports: [CommonModule, RouterModule, TranslatePipe, SkeletonJobSingleComponent],
   standalone: true,
   templateUrl: './job-single.component.html',
   styleUrl: './job-single.component.css',

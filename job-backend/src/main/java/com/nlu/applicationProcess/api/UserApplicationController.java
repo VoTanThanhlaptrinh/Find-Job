@@ -1,15 +1,18 @@
 package com.nlu.applicationProcess.api;
 
 import java.io.IOException;
+import java.util.List;
 
 import com.nlu.applicationProcess.api.dto.req.ApplyCvWithExistingRequest;
 import com.nlu.applicationProcess.api.dto.req.ApplyCvWithUploadRequest;
 import com.nlu.shared.domain.model.ApiResponse;
 import com.nlu.recruitment.api.dto.JobCardView;
+import com.nlu.recruitment.api.dto.JobMatchView;
 import com.nlu.identity.domain.model.CurrentUser;
 import com.nlu.identity.domain.model.User;
 import com.nlu.applicationProcess.application.JobApplicationService;
 import com.nlu.recruitment.application.JobQueryService;
+import com.nlu.recruitment.application.JobService;
 import com.nlu.shared.utils.MessageUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -29,10 +33,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(path = "/api/user", produces = "application/json")
+@PreAuthorize("hasAnyAuthority('ROLE_USER', 'USER')")
 @RequiredArgsConstructor
 public class UserApplicationController {
     private final JobApplicationService jobApplicationService;
     private final JobQueryService jobQueryService;
+    private final JobService jobService;
 
     @PostMapping("/applications/submit-existing")
     public ResponseEntity<ApiResponse<String>> applyWithExistingCv(@Valid @RequestBody ApplyCvWithExistingRequest request,
@@ -71,5 +77,13 @@ public class UserApplicationController {
             @CurrentUser User currentUser) {
         Page<JobCardView> data = jobQueryService.listJobUserApplied(PageRequest.of(page, size), currentUser.getEmail());
         return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("message.success"), data, HttpStatus.OK.value()));
+    }
+
+    @GetMapping("/jobs/match/{cvId}")
+    public ResponseEntity<ApiResponse<List<JobMatchView>>> getMatchedJobs(
+            @PathVariable("cvId") long cvId,
+            @CurrentUser User currentUser) {
+        List<JobMatchView> jobs = jobService.matchJobs(cvId, currentUser);
+        return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("message.success"), jobs, HttpStatus.OK.value()));
     }
 }

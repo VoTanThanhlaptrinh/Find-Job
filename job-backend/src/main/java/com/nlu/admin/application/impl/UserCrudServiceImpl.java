@@ -8,6 +8,7 @@ import com.nlu.admin.api.dto.user.UserCrudDTO;
 import com.nlu.admin.api.dto.user.UserResponseDTO;
 import com.nlu.shared.domain.exception.BadRequestException;
 import com.nlu.shared.domain.exception.ResourceNotFoundException;
+import com.nlu.identity.application.JwtFamilyService;
 import com.nlu.identity.domain.model.User;
 import com.nlu.admin.application.UserCrudService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 public class UserCrudServiceImpl implements UserCrudService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final JwtFamilyService jwtFamilyService;
 
     private static final String MDC_USER_ID = "userId";
 
@@ -67,8 +69,14 @@ public class UserCrudServiceImpl implements UserCrudService {
                 throw new BadRequestException("account.email.exists");
             }
 
+            String previousEmail = user.getEmail();
             applyDtoToUser(user, userDTO, false);
             userRepository.save(user);
+
+            if (!user.isAccountNonLocked() || !user.isEnabled() || !user.isActive() || userDTO.getPassword() != null) {
+                jwtFamilyService.revokeAllUserFamilies(previousEmail);
+                jwtFamilyService.revokeAllUserFamilies(user.getEmail());
+            }
 
             log.info("User updated — user: {}, role: {}", id, user.getRole());
         } finally {
@@ -88,6 +96,7 @@ public class UserCrudServiceImpl implements UserCrudService {
             user.setActive(false);
             user.setEnabled(false);
             userRepository.save(user);
+            jwtFamilyService.revokeAllUserFamilies(user.getEmail());
 
             log.info("User soft-deleted — user: {}", id);
         } finally {

@@ -126,7 +126,7 @@ export class JobService {
   getSuggestedJobsByResume(resumeId: number): void {
     this.isLoadingRecommendedJobs.set(true);
     this.recommendedJobs.set([]);
-    this.http.get<ApiResponse<JobMatchView[]>>(`${this.url}/jobs/match/${resumeId}`)
+    this.http.get<ApiResponse<JobMatchView[]>>(`${this.url}/user/jobs/match/${resumeId}`)
       .pipe(take(1))
       .subscribe({
         next: (response) => {

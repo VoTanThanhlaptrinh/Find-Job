@@ -20,6 +20,7 @@ import com.nlu.shared.infrastructure.message.MessageProducer;
 import com.nlu.recruitment.domain.model.Recruitment;
 import com.nlu.identity.domain.model.User;
 import com.nlu.identity.application.AuthService;
+import com.nlu.identity.application.JwtFamilyService;
 import com.nlu.identity.application.JwtService;
 import com.nlu.identity.application.RefreshTokenService;
 import com.nlu.shared.application.ReferenceService;
@@ -58,6 +59,7 @@ public class AuthServiceImpl implements AuthService {
     private final VerificationService verifyService;
     private final MessageProducer messageProducer;
     private final RefreshTokenService refreshTokenService;
+    private final JwtFamilyService jwtFamilyService;
     private final SpamService spamService;
     private final JwtService jwtService;
     private final RegistrationFormMapper mapper;
@@ -135,16 +137,19 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void activeAccount(String token) {
-        final String activate = jwtService.extractUsername(token);
-        String[] values = StringUtils.delimitedListToStringArray(activate, "|");
+        final String rawSubject = jwtService.extractUsername(token);
+        String[] values = StringUtils.delimitedListToStringArray(rawSubject, "|");
+        if (values.length == 0 || !StringUtils.hasText(values[0])) {
+            throw new BadRequestException("auth.token.expired");
+        }
         User user = userRepository.findByEmail_Value(values[0])
                 .orElseThrow(() -> new BadRequestException("auth.user.not_found"));
 
         try {
             MDC.put(MDC_USER_ID, String.valueOf(user.getId()));
 
-            if (!jwtService.isTokenValid(token, user)) {
-                log.warn("Account activation failed — expired token for user: {}", user.getId());
+            if (!jwtService.isActivationTokenValid(token, user.getEmail())) {
+                log.warn("Account activation failed — invalid or expired token for user: {}", user.getId());
                 throw new BadRequestException("auth.token.expired");
             }
             user.setActive(true);
@@ -196,6 +201,8 @@ public class AuthServiceImpl implements AuthService {
                 throw new BadRequestException("auth.login.wrong_password");
             }
 
+            validateAccountStatus(user);
+
             spamService.deleteIpSpamLogin(ip);
             String accessToken = jwtService.generateToken(user);
             String refreshToken = refreshTokenService.createRefreshToken(loginDTO.getUsername());
@@ -228,7 +235,10 @@ public class AuthServiceImpl implements AuthService {
             String token = cookie.getValue();
             if (refreshTokenService.isValid(token)) {
                 String username = jwtService.extractUsername(token);
-                String accessToken = jwtService.generateToken(username);
+                User user = userRepository.findByEmail_Value(username)
+                        .orElseThrow(() -> new ResourceNotFoundException("auth.user.not_found"));
+                validateAccountStatus(user);
+                String accessToken = jwtService.generateToken(user);
                 String refreshTokenVal = refreshTokenService.reGenerateRefreshToken(token);
                 ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshTokenVal)
                         .httpOnly(true)
@@ -348,6 +358,7 @@ public class AuthServiceImpl implements AuthService {
 
             user.setPassword(new Password(encoder.encode(resetDTO.getNewPass())));
             userRepository.save(user);
+            jwtFamilyService.revokeAllUserFamilies(user.getEmail());
             verifyService.delete("ref-email:" + email);
             verifyService.delete("random:" + resetDTO.getRandom());
             verifyService.delete(resetDTO.getRandom());
@@ -403,8 +414,23 @@ public class AuthServiceImpl implements AuthService {
                 : "auth.login.user.account_type_invalid";
     }
 
+    private void validateAccountStatus(User user) {
+        if (!user.isAccountNonLocked()) {
+            log.warn("Authentication rejected — account locked for user: {}", user.getId());
+            throw new ForbiddenException("auth.account.locked");
+        }
+        if (!user.isEnabled()) {
+            log.warn("Authentication rejected — account disabled for user: {}", user.getId());
+            throw new ForbiddenException("auth.account.disabled");
+        }
+        if (!user.isActive()) {
+            log.warn("Authentication rejected — account not activated for user: {}", user.getId());
+            throw new ForbiddenException("auth.account.not_activated");
+        }
+    }
+
     private String createLink(User user) {
-        String token = jwtService.generateToken(user.getUsername() + "|activate");
+        String token = jwtService.generateActivationToken(user.getUsername());
         return url + "/activate?token=" + token;
     }
 }

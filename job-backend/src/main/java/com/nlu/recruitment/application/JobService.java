@@ -17,7 +17,8 @@ public interface JobService {
     void updateJob(Long id, JobDto jobDTO, User user);
 
     void deleteJob(Long id, User user);
-    List<JobMatchView> matchJobs(long cvId);
+
+    List<JobMatchView> matchJobs(long cvId, User user);
 
     void analyzeJob(Long id, User user);
 }

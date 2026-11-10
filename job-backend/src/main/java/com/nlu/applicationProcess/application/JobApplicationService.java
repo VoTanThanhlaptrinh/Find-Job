@@ -12,6 +12,6 @@ import java.io.IOException;
 public interface JobApplicationService {
     void applyWithExistingCv(ApplyCvWithExistingRequest request, User user);
     void applyWithUploadCv(ApplyCvWithUploadRequest request, User user) throws IOException;
-    Page<CandidateDTO> getCandidatesAppliedToJob(int pageIndex, int pageSize, long jobId);
+    Page<CandidateDTO> getCandidatesAppliedToJob(int pageIndex, int pageSize, long jobId, User hirerUser);
     Boolean hasApplied(String email, long jobId);
 }

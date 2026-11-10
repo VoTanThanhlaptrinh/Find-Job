@@ -33,4 +33,19 @@ public interface JobApplicationRepository extends JpaRepository<JobApplication, 
             where j.id = ?1
             """, nativeQuery = true)
     Page<CandidateDTO> getCandidatesAppliedToJob(long jobId, Pageable pageable);
+
+    @Query(value = """
+            select exists (
+                select 1
+                from job_application a
+                join job j on a.job_id = j.id
+                join recruitment rec on j.hirer_id = rec.id
+                join users u on rec.user_id = u.id
+                where a.resume_id = ?1
+                  and u.email = ?2
+                  and a.record_status <> 'DELETED'
+                  and j.record_status <> 'DELETED'
+            )
+            """, nativeQuery = true)
+    boolean existsByResumeIdAndHirerEmail(long resumeId, String hirerEmail);
 }

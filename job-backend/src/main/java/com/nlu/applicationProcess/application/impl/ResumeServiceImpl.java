@@ -1,5 +1,6 @@
 package com.nlu.applicationProcess.application.impl;
 
+import com.nlu.applicationProcess.domain.repository.JobApplicationRepository;
 import com.nlu.applicationProcess.domain.repository.ResumeRepository;
 import com.nlu.applicationProcess.infrastructure.query.ResumeQueryDSL;
 import com.nlu.applicationProcess.api.dto.client.ResumeParsingMessage;
@@ -36,6 +37,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ResumeServiceImpl implements ResumeService {
     private final ResumeRepository resumeRepository;
+    private final JobApplicationRepository jobApplicationRepository;
     private final ResumeQueryDSL resumeQueryDSL;
     private final FileService fileService;
     private final ApplicationEventPublisher eventPublisher;
@@ -173,29 +175,41 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public ResumeUrlDTO getResumeViewUrlForHirer(long id) {
-        Resume cv = findResumeById(id);
+    public ResumeUrlDTO getResumeViewUrlForHirer(long id, User hirerUser) {
+        Resume cv = findResumeAndAssertHirerAccess(id, hirerUser, "resume.view.forbidden");
 
         try {
             String url = s3PresignedUrlService.generateViewUrl(cv.getKeyCf(), DEFAULT_URL_EXPIRATION_MINUTES);
             return new ResumeUrlDTO(cv.getId(), cv.getFileName(), url, DEFAULT_URL_EXPIRATION_MINUTES);
         } catch (Exception e) {
             log.warn("Failed to generate hirer view URL for CV: {}", id);
-            throw new RuntimeException(MessageUtils.getMessage("resume.url.generate_failed"));
+            throw new RuntimeException(MessageUtils.getMessage("resume.url.generate_failed"), e);
         }
     }
 
     @Override
-    public ResumeUrlDTO getResumeDownloadUrlForHirer(long id) {
-        Resume cv = findResumeById(id);
+    public ResumeUrlDTO getResumeDownloadUrlForHirer(long id, User hirerUser) {
+        Resume cv = findResumeAndAssertHirerAccess(id, hirerUser, "resume.download.forbidden");
 
         try {
             String url = s3PresignedUrlService.generateDownloadUrl(cv.getKeyCf(), cv.getFileName(), DEFAULT_URL_EXPIRATION_MINUTES);
             return new ResumeUrlDTO(cv.getId(), cv.getFileName(), url, DEFAULT_URL_EXPIRATION_MINUTES);
         } catch (Exception e) {
             log.warn("Failed to generate hirer download URL for CV: {}", id);
-            throw new RuntimeException(MessageUtils.getMessage("resume.url.generate_failed"));
+            throw new RuntimeException(MessageUtils.getMessage("resume.url.generate_failed"), e);
         }
+    }
+
+    private Resume findResumeAndAssertHirerAccess(long id, User hirerUser, String forbiddenMessageKey) {
+        if (hirerUser == null) {
+            throw new UnauthorizedException(MessageUtils.getMessage("message.unauthorized"));
+        }
+        Resume cv = findResumeById(id);
+        if (!jobApplicationRepository.existsByResumeIdAndHirerEmail(id, hirerUser.getEmail())) {
+            log.warn("Hirer resume access forbidden — hirer user: {} has no job application with CV: {}", hirerUser.getId(), id);
+            throw new ForbiddenException(MessageUtils.getMessage(forbiddenMessageKey));
+        }
+        return cv;
     }
 
     private Resume findResumeAndAssertOwner(long id, User user, String forbiddenMessageKey) {

@@ -1,5 +1,6 @@
 package com.nlu.recruitment.application.impl;
 
+import com.nlu.applicationProcess.domain.repository.ResumeRepository;
 import com.nlu.recruitment.domain.repository.AddressRepository;
 import com.nlu.recruitment.domain.vo.EmploymentType;
 import com.nlu.recruitment.domain.repository.RecruitmentRepository;
@@ -45,6 +46,7 @@ public class JobServiceImpl implements JobService {
     private final RecruitmentRepository recruitmentRepository;
     private final AddressRepository addressRepository;
     private final CategoryRepository categoryRepository;
+    private final ResumeRepository resumeRepository;
     private final JobMapper jobMapper;
     private static final String MDC_USER_ID = "userId";
     private static final String MDC_JOB_ID = "jobId";
@@ -191,7 +193,16 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public List<JobMatchView> matchJobs(long cvId) {
+    public List<JobMatchView> matchJobs(long cvId, User user) {
+        if (user == null) {
+            throw new UnauthorizedException(MessageUtils.getMessage("message.unauthorized"));
+        }
+        resumeRepository.findById(cvId)
+                .orElseThrow(() -> new ResourceNotFoundException(MessageUtils.getMessage("resume.not_found")));
+        if (resumeRepository.countOwnedByUser(cvId, user.getEmail()) == 0) {
+            log.warn("Job matching forbidden — user: {} does not own CV: {}", user.getId(), cvId);
+            throw new ForbiddenException(MessageUtils.getMessage("resume.access.forbidden"));
+        }
         List<Tuple> tuples = jobRepository.matchJobs(cvId);
         return tuples.stream().map(t -> {
             String timeStr = t.get("time", String.class);

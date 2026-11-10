@@ -7,36 +7,40 @@ import com.nlu.shared.domain.model.ApiResponse;
 import com.nlu.shared.domain.model.PageResponse;
 import com.nlu.admin.application.AdminService;
 import com.nlu.shared.utils.MessageUtils;
-import lombok.RequiredArgsConstructor;
+
+import lombok.AllArgsConstructor;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/admin/billing", produces = "application/json")
-@RequiredArgsConstructor
+@PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ADMIN')")
+@AllArgsConstructor  
 public class AdminBillingController {
-    private final AdminService adminService;
+
+    private AdminService adminService;
 
     @GetMapping("/tiers")
     public ResponseEntity<ApiResponse<List<BillingTierDTO>>> getTiers() {
         return ResponseEntity.ok(new ApiResponse<>(
-                MessageUtils.getMessage("message.success"), 
-                adminService.getBillingTiers(), 
-                HttpStatus.OK.value()
-        ));
+                MessageUtils.getMessage("message.success"),
+                adminService.getBillingTiers(),
+                HttpStatus.OK.value()));
     }
 
     @PatchMapping("/tiers/{id}")
-    public ResponseEntity<ApiResponse<Boolean>> updateTier(@PathVariable String id, @RequestBody BillingTierDTO request) {
+    public ResponseEntity<ApiResponse<Boolean>> updateTier(@PathVariable String id,
+            @RequestBody BillingTierDTO request) {
         adminService.updateBillingTier(id, request);
         return ResponseEntity.ok(new ApiResponse<>(
-                MessageUtils.getMessage("message.success"), 
-                true, 
-                HttpStatus.OK.value()
-        ));
+                MessageUtils.getMessage("message.success"),
+                true,
+                HttpStatus.OK.value()));
     }
 
     @GetMapping("/transactions")
@@ -45,18 +49,16 @@ public class AdminBillingController {
             @RequestParam(defaultValue = "20") int pageSize,
             @RequestParam(required = false) String status) {
         return ResponseEntity.ok(new ApiResponse<>(
-                MessageUtils.getMessage("message.success"), 
-                adminService.getTransactions(page, pageSize, status), 
-                HttpStatus.OK.value()
-        ));
+                MessageUtils.getMessage("message.success"),
+                adminService.getTransactions(page, pageSize, status),
+                HttpStatus.OK.value()));
     }
 
     @GetMapping("/summary")
     public ResponseEntity<ApiResponse<BillingSummaryResponse>> getSummary() {
         return ResponseEntity.ok(new ApiResponse<>(
-                MessageUtils.getMessage("message.success"), 
-                adminService.getBillingSummary(), 
-                HttpStatus.OK.value()
-        ));
+                MessageUtils.getMessage("message.success"),
+                adminService.getBillingSummary(),
+                HttpStatus.OK.value()));
     }
 }

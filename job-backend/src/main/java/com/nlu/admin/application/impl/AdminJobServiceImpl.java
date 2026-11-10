@@ -13,6 +13,8 @@ import com.nlu.shared.domain.exception.ResourceNotFoundException;
 import com.nlu.recruitment.domain.model.Job;
 import com.nlu.admin.application.AdminJobService;
 import lombok.RequiredArgsConstructor;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -53,7 +55,10 @@ public class AdminJobServiceImpl implements AdminJobService {
     public void createJob(AdminJobRequest request) {
         Job job = new Job();
         job.setTitle(request.getTitle());
-        job.setDescription(request.getDescription());
+        String sanitizedDesc = request.getDescription() != null
+                ? Jsoup.clean(request.getDescription(), Safelist.relaxed())
+                : null;
+        job.setDescription(sanitizedDesc);
         job.setExpiredDate(request.getExpiryDate());
         job.setRecordStatus(com.nlu.shared.domain.model.EntityStatus.PENDING);
         jobRepository.save(job);
