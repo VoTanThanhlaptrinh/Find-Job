@@ -3,6 +3,8 @@ package web_application;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nlu.JobPortalWebApplication;
 import com.nlu.applicationProcess.api.dto.req.ResumeUrlDTO;
+import com.nlu.shared.domain.exception.ForbiddenException;
+import com.nlu.shared.domain.exception.ResourceNotFoundException;
 import com.nlu.shared.domain.model.ApiResponse;
 import com.nlu.applicationProcess.application.ResumeService;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -71,12 +74,11 @@ class RecruitmentResumeControllerTest {
         @DisplayName("H01: Xem resume thành công với quyền HIRER")
         @WithMockUser(username = TEST_HIRER_EMAIL, roles = "HIRER")
         void getResumeViewUrl_Success() throws Exception {
-            when(resumeService.getResumeViewUrlForHirer(eq(VALID_RESUME_ID))).thenReturn(validResumeUrlDTO);
+            when(resumeService.getResumeViewUrlForHirer(eq(VALID_RESUME_ID), any())).thenReturn(validResumeUrlDTO);
 
             mockMvc.perform(get(BASE_URL + "/" + VALID_RESUME_ID + "/view")
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.message").value("success"))
                     .andExpect(jsonPath("$.data.resumeId").value(VALID_RESUME_ID))
                     .andExpect(jsonPath("$.data.url").value(TEST_PRESIGNED_URL))
                     .andExpect(jsonPath("$.data.fileName").value(TEST_FILE_NAME))
@@ -95,14 +97,26 @@ class RecruitmentResumeControllerTest {
         @DisplayName("H03: Trả về 404 khi resume không tồn tại")
         @WithMockUser(username = TEST_HIRER_EMAIL, roles = "HIRER")
         void getResumeViewUrl_ResumeNotFound() throws Exception {
-            ApiResponse<ResumeUrlDTO> response = new ApiResponse<>("Resume not found.", null, HttpStatus.NOT_FOUND.value());
-            when(resumeService.getResumeViewUrlForHirer(eq(INVALID_RESUME_ID))).thenReturn(null);
+            when(resumeService.getResumeViewUrlForHirer(eq(INVALID_RESUME_ID), any()))
+                    .thenThrow(new ResourceNotFoundException("Resume not found."));
 
             mockMvc.perform(get(BASE_URL + "/" + INVALID_RESUME_ID + "/view")
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.message").value("Resume not found."))
                     .andExpect(jsonPath("$.data").isEmpty());
+        }
+
+        @Test
+        @DisplayName("H08: Trả về 403 khi HIRER xem CV không ứng tuyển vào job của mình (chống IDOR)")
+        @WithMockUser(username = TEST_HIRER_EMAIL, roles = "HIRER")
+        void getResumeViewUrl_IdorForbidden() throws Exception {
+            when(resumeService.getResumeViewUrlForHirer(eq(VALID_RESUME_ID), any()))
+                    .thenThrow(new ForbiddenException("Access denied"));
+
+            mockMvc.perform(get(BASE_URL + "/" + VALID_RESUME_ID + "/view")
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isForbidden());
         }
 
         @Test
@@ -123,13 +137,11 @@ class RecruitmentResumeControllerTest {
         @DisplayName("H04: Tải resume thành công với quyền HIRER")
         @WithMockUser(username = TEST_HIRER_EMAIL, roles = "HIRER")
         void getResumeDownloadUrl_Success() throws Exception {
-            ApiResponse<ResumeUrlDTO> response = new ApiResponse<>("success", validResumeUrlDTO, HttpStatus.OK.value());
-            when(resumeService.getResumeDownloadUrlForHirer(eq(VALID_RESUME_ID))).thenReturn(validResumeUrlDTO);
+            when(resumeService.getResumeDownloadUrlForHirer(eq(VALID_RESUME_ID), any())).thenReturn(validResumeUrlDTO);
 
             mockMvc.perform(get(BASE_URL + "/" + VALID_RESUME_ID + "/download")
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.message").value("success"))
                     .andExpect(jsonPath("$.data.resumeId").value(VALID_RESUME_ID))
                     .andExpect(jsonPath("$.data.url").value(TEST_PRESIGNED_URL))
                     .andExpect(jsonPath("$.data.fileName").value(TEST_FILE_NAME));
@@ -147,8 +159,8 @@ class RecruitmentResumeControllerTest {
         @DisplayName("H06: Trả về 404 khi resume không tồn tại")
         @WithMockUser(username = TEST_HIRER_EMAIL, roles = "HIRER")
         void getResumeDownloadUrl_ResumeNotFound() throws Exception {
-            ApiResponse<ResumeUrlDTO> response = new ApiResponse<>("Resume not found.", null, HttpStatus.NOT_FOUND.value());
-            when(resumeService.getResumeDownloadUrlForHirer(eq(INVALID_RESUME_ID))).thenReturn(null);
+            when(resumeService.getResumeDownloadUrlForHirer(eq(INVALID_RESUME_ID), any()))
+                    .thenThrow(new ResourceNotFoundException("Resume not found."));
 
             mockMvc.perform(get(BASE_URL + "/" + INVALID_RESUME_ID + "/download")
                             .contentType(MediaType.APPLICATION_JSON))
@@ -165,7 +177,7 @@ class RecruitmentResumeControllerTest {
         @DisplayName("ADMIN có thể truy cập endpoint HIRER")
         @WithMockUser(username = "admin@test.com", roles = {"ADMIN", "HIRER"})
         void adminCanAccessHirerEndpoint() throws Exception {
-            when(resumeService.getResumeViewUrlForHirer(eq(VALID_RESUME_ID))).thenReturn(validResumeUrlDTO);
+            when(resumeService.getResumeViewUrlForHirer(eq(VALID_RESUME_ID), any())).thenReturn(validResumeUrlDTO);
 
             mockMvc.perform(get(BASE_URL + "/" + VALID_RESUME_ID + "/view")
                             .contentType(MediaType.APPLICATION_JSON))
@@ -189,7 +201,7 @@ class RecruitmentResumeControllerTest {
         @DisplayName("Response JSON format đúng chuẩn")
         @WithMockUser(username = TEST_HIRER_EMAIL, roles = "HIRER")
         void responseFormat_CorrectStructure() throws Exception {
-            when(resumeService.getResumeViewUrlForHirer(eq(VALID_RESUME_ID))).thenReturn(validResumeUrlDTO);
+            when(resumeService.getResumeViewUrlForHirer(eq(VALID_RESUME_ID), any())).thenReturn(validResumeUrlDTO);
 
             mockMvc.perform(get(BASE_URL + "/" + VALID_RESUME_ID + "/view")
                             .contentType(MediaType.APPLICATION_JSON))

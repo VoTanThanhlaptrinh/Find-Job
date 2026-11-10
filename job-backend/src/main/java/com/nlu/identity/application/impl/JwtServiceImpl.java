@@ -1,5 +1,6 @@
 package com.nlu.identity.application.impl;
 
+import java.time.Duration;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -61,8 +62,37 @@ public class JwtServiceImpl implements JwtService {
 	}
 
 	public boolean isTokenValid(String token, UserDetails userDetails) {
-		final String username = extractUsername(token);
-		return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+		final Claims claims = extractAllClaims(token);
+		final String username = claims.getSubject();
+		final Object purpose = claims.get("purpose");
+		if ("activate".equals(purpose)) {
+			return false;
+		}
+		return username != null
+				&& username.equals(userDetails.getUsername())
+				&& claims.getExpiration().after(new Date());
+	}
+
+	@Override
+	public String generateActivationToken(String email) {
+		HashMap<String, Object> claims = new HashMap<>();
+		claims.put("purpose", "activate");
+		return generateToken(claims, email, Duration.ofHours(24).toMillis());
+	}
+
+	@Override
+	public boolean isActivationTokenValid(String token, String email) {
+		try {
+			final Claims claims = extractAllClaims(token);
+			final String subject = claims.getSubject();
+			final Object purpose = claims.get("purpose");
+			return email != null
+					&& email.equals(subject)
+					&& "activate".equals(purpose)
+					&& claims.getExpiration().after(new Date());
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	@Override
@@ -91,7 +121,8 @@ public class JwtServiceImpl implements JwtService {
 		HashMap<String, Object> claims = new HashMap<>();
 		claims.put("familyId", familyId);
 		String token = generateToken(claims, username, expirationMillis);
-		jwtFamilyService.saveFamilyJti(familyId,extractJTI(token));
+		jwtFamilyService.saveFamilyJti(familyId, extractJTI(token));
+		jwtFamilyService.saveUserFamily(username, familyId);
 		return token;
 	}
 

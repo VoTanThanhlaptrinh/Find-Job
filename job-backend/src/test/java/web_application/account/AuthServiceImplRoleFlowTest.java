@@ -1,8 +1,11 @@
 package web_application.account;
 
 import com.nlu.identity.api.dto.HirerRegistrationForm;
+import com.nlu.identity.application.JwtFamilyService;
 import com.nlu.identity.domain.vo.EmailAddress;
+import com.nlu.identity.domain.vo.Password;
 import com.nlu.identity.domain.vo.RoleConstants;
+import com.nlu.identity.mapper.RegistrationFormMapper;
 import com.nlu.recruitment.domain.model.Recruitment;
 import com.nlu.recruitment.domain.repository.RecruitmentRepository;
 import com.nlu.identity.domain.repository.UserRepository;
@@ -26,7 +29,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -35,7 +37,9 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -65,13 +69,16 @@ class AuthServiceImplRoleFlowTest {
     private RefreshTokenService refreshTokenService;
 
     @Mock
+    private JwtFamilyService jwtFamilyService;
+
+    @Mock
     private SpamService spamService;
 
     @Mock
     private JwtService jwtService;
 
     @Mock
-    private Environment environment;
+    private RegistrationFormMapper mapper;
 
     @Mock
     private HttpServletRequest request;
@@ -82,25 +89,26 @@ class AuthServiceImplRoleFlowTest {
     @BeforeEach
     void setUp() {
         ReflectionTestUtils.setField(authService, "isSecure", false);
+        ReflectionTestUtils.setField(authService, "url", "http://localhost:4200");
         ReflectionTestUtils.setField(authService, "subjectVerify", "Verify");
         ReflectionTestUtils.setField(authService, "textVerify", "Link: %s");
     }
 
     @Test
-    @DisplayName("AS01: Dang ky hirer tao user role HIRER va tao ban ghi Hirer")
+    @DisplayName("AS01: Dang ky hirer tao user role HIRER va tao ban ghi Hirer + token kich hoat rieng")
     void registerHirer_CreatesHirerFlow() {
-        HirerRegistrationForm form = new HirerRegistrationForm("Recruiter Test", "hirer@test.com", "password123", "password123", "", "");
-        when(environment.getActiveProfiles()).thenReturn(new String[]{"dev"});
-        when(encoder.encode("password123")).thenReturn("encoded-password");
+        HirerRegistrationForm form = new HirerRegistrationForm("Recruiter Test", "hirer@test.com", "password123", "password123", "", "ACME");
+        User mappedUser = new User();
+        mappedUser.setEmail(new EmailAddress("hirer@test.com"));
+        mappedUser.setFullName("Recruiter Test");
+        mappedUser.setRole(RoleConstants.ROLE_HIRER);
+        mappedUser.setEnabled(true);
+        mappedUser.setActive(false);
+
+        when(mapper.toUser(eq(form), eq(encoder), eq(RoleConstants.HIRER))).thenReturn(mappedUser);
         when(userRepository.saveAndFlush(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        when(userRepository.findByEmail_Value("hirer@test.com")).thenAnswer(invocation -> {
-            User user = new User();
-            user.setEmail(new EmailAddress("hirer@test.com"));
-            user.setFullName("Recruiter Test");
-            user.setRole(RoleConstants.ROLE_HIRER);
-            return Optional.of(user);
-        });
-        when(jwtService.generateToken("hirer@test.com|activate")).thenReturn("activate-token");
+        when(userRepository.findByEmail_Value("hirer@test.com")).thenReturn(Optional.of(mappedUser));
+        when(jwtService.generateActivationToken("hirer@test.com")).thenReturn("activate-token");
 
         String username = authService.registerHirer(form);
 
@@ -108,20 +116,27 @@ class AuthServiceImplRoleFlowTest {
         verify(userRepository).saveAndFlush(userCaptor.capture());
         assertEquals(RoleConstants.ROLE_HIRER, userCaptor.getValue().getRole());
         verify(recruitmentRepository).save(any(Recruitment.class));
+        verify(jwtService).generateActivationToken("hirer@test.com");
         verify(messageProducer).sendMail(any());
         assertEquals("hirer@test.com", username);
     }
 
     @Test
-    @DisplayName("AS02: User login tu endpoint USER nhung gui role HIRER thi bi chan")
-    void loginUser_InvalidRequestRole() {
-        LoginDTO dto = new LoginDTO( "user@test.com", "password123");
+    @DisplayName("AS02: Kich hoat tai khoan thanh cong voi activation token hop le")
+    void activeAccount_ValidToken_ActivatesUser() {
+        User user = new User();
+        user.setEmail(new EmailAddress("user@test.com"));
+        user.setActive(false);
+        user.setEnabled(true);
 
-        BadRequestException ex = assertThrows(BadRequestException.class,
-                () -> authService.loginUser(dto, request, new MockHttpServletResponse()));
+        when(jwtService.extractUsername("valid-act-token")).thenReturn("user@test.com");
+        when(userRepository.findByEmail_Value("user@test.com")).thenReturn(Optional.of(user));
+        when(jwtService.isActivationTokenValid("valid-act-token", "user@test.com")).thenReturn(true);
 
-        assertEquals("auth.login.user.role_invalid", ex.getMessage());
-        verify(userRepository, never()).findByEmail_Value(any());
+        authService.activeAccount("valid-act-token");
+
+        assertTrue(user.isActive());
+        verify(userRepository).save(user);
     }
 
     @Test
@@ -140,5 +155,51 @@ class AuthServiceImplRoleFlowTest {
 
         assertEquals("auth.login.hirer.account_type_invalid", ex.getMessage());
         verify(encoder, never()).matches(any(), any());
+    }
+
+    @Test
+    @DisplayName("AS04: Login bi tu choi khi tai khoan bi khoa (accountLocked = true)")
+    void loginUser_LockedAccountRejected() {
+        LoginDTO dto = new LoginDTO("user@test.com", "password123");
+        User user = new User();
+        user.setEmail(new EmailAddress("user@test.com"));
+        user.setPassword(new Password("encoded"));
+        user.setRole(RoleConstants.ROLE_USER);
+        user.setAccountLocked(true);
+        user.setEnabled(true);
+        user.setActive(true);
+
+        when(request.getRemoteAddr()).thenReturn("127.0.0.1");
+        when(spamService.checkIpSpamLogin("127.0.0.1")).thenReturn(false);
+        when(userRepository.findByEmail_Value("user@test.com")).thenReturn(Optional.of(user));
+        when(encoder.matches("password123", "encoded")).thenReturn(true);
+
+        ForbiddenException ex = assertThrows(ForbiddenException.class,
+                () -> authService.loginUser(dto, request, new MockHttpServletResponse()));
+
+        assertEquals("auth.account.locked", ex.getMessage());
+    }
+
+    @Test
+    @DisplayName("AS05: Login bi tu choi khi tai khoan chua kich hoat email (active = false)")
+    void loginUser_InactiveAccountRejected() {
+        LoginDTO dto = new LoginDTO("user@test.com", "password123");
+        User user = new User();
+        user.setEmail(new EmailAddress("user@test.com"));
+        user.setPassword(new Password("encoded"));
+        user.setRole(RoleConstants.ROLE_USER);
+        user.setAccountLocked(false);
+        user.setEnabled(true);
+        user.setActive(false);
+
+        when(request.getRemoteAddr()).thenReturn("127.0.0.1");
+        when(spamService.checkIpSpamLogin("127.0.0.1")).thenReturn(false);
+        when(userRepository.findByEmail_Value("user@test.com")).thenReturn(Optional.of(user));
+        when(encoder.matches("password123", "encoded")).thenReturn(true);
+
+        ForbiddenException ex = assertThrows(ForbiddenException.class,
+                () -> authService.loginUser(dto, request, new MockHttpServletResponse()));
+
+        assertEquals("auth.account.not_activated", ex.getMessage());
     }
 }

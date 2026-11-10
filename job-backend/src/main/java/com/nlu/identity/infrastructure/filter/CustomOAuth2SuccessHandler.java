@@ -51,6 +51,13 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
             user.setEnabled(true);
             user.setOauth2Enabled(true);
             userRepository.save(user);
+        } else if (!user.isAccountNonLocked() || !user.isEnabled() || !user.isActive()) {
+            log.warn("OAuth2 login rejected — account locked, disabled, or not activated for user: {}", user.getId());
+            response.setStatus(HttpStatus.FORBIDDEN.value());
+            response.setContentType("application/json");
+            response.getWriter().write("{\"message\":\"Account is locked, disabled, or not activated\"}");
+            response.getWriter().flush();
+            return;
         }
         UsernamePasswordAuthenticationToken  usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                 user, null, user.getAuthorities());

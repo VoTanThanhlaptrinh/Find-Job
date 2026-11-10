@@ -10,6 +10,7 @@ import com.nlu.shared.domain.exception.BadRequestException;
 import com.nlu.shared.infrastructure.message.MessageProducer;
 import com.nlu.identity.domain.model.User;
 import com.nlu.identity.application.AccountService;
+import com.nlu.identity.application.JwtFamilyService;
 import com.nlu.shared.application.VerificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,7 @@ public class AccountServiceImpl implements AccountService {
     private final VerificationService verifyService;
     private final MessageProducer mailProducer;
     private final UserMapper userMapper;
+    private final JwtFamilyService jwtFamilyService;
 
     @Value("${app.frontend-url}")
     private String url;
@@ -60,6 +62,7 @@ public class AccountServiceImpl implements AccountService {
 
             user.setPassword(new Password(encoder.encode(newPassword)));
             userRepository.save(user);
+            jwtFamilyService.revokeAllUserFamilies(user.getEmail());
 
             log.info("Password changed successfully for user: {}", user.getId());
         } finally {

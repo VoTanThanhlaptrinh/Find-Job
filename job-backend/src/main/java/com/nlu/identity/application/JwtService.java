@@ -26,6 +26,10 @@ public interface JwtService {
     String generateRefreshToken(String username, String familyId, long expirationMillis);
 
     String extractFamily(String token);
+
+    String generateActivationToken(String email);
+
+    boolean isActivationTokenValid(String token, String email);
 }
 
 

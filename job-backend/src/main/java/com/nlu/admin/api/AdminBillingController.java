@@ -10,12 +10,14 @@ import com.nlu.shared.utils.MessageUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/admin/billing", produces = "application/json")
+@PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ADMIN')")
 @RequiredArgsConstructor
 public class AdminBillingController {
     private final AdminService adminService;

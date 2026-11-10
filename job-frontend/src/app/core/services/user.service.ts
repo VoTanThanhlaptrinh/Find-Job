@@ -18,7 +18,7 @@ export class UserService {
   }
 
   getDetails(): void {
-    this.http.get<any>(`${this.url}/users`).pipe(take(1)).subscribe({
+    this.http.get<any>(`${this.url}/account/profile`).pipe(take(1)).subscribe({
       next: (res) => {
         this.userDetails.set(res.data);
       },
@@ -28,9 +28,9 @@ export class UserService {
     });
   }
 
-  updateInfo(value: any, id: string | number = 'id'): Observable<any> {
+  updateInfo(value: any): Observable<any> {
     return this.http
-      .put<any>(`${this.url}/users/${id}`, value)
+      .put<any>(`${this.url}/account/profile`, value)
       .pipe(take(1));
   }
 }

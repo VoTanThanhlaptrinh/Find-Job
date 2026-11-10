@@ -13,13 +13,14 @@ public class ApiConstants {
             "/auth/**" ,
             "/api/jobs/filter",
             "/api/admin/auth/**",
+            "/api/language"
     };
 
     // 2. Các API Public nhưng chỉ cho phép method GET
     public static final String[] PUBLIC_GET_ENDPOINTS = {
             "/api/jobs/**",
             "/api/blogs/**",
-            "/api/*/categories/**",
+            "/api/v1/categories/**",
             "/api/addresses/address-count"
     };
 
@@ -29,7 +30,10 @@ public class ApiConstants {
             "/api/account/password",
             "/api/account/oauth2",
             "/api/sse/**",
-            "/api/blogs"            // POST blog
+            "/api/blogs",
+            "/api/blogs/**",
+            "/api/addresses",
+            "/api/addresses/**"
     };
 
     // 4. Các API yêu cầu quyền HIRER
@@ -46,10 +50,6 @@ public class ApiConstants {
 
     // 6. Cac API yeu cau quyen ADMIN
     public static final String[] ADMIN_ENDPOINTS = {
-            "/api/admin/dashboard/**",
-            "/api/admin/employers/**",
-            "/api/admin/job-seekers/**",
-            "/api/admin/jobs/**",
-            "/api/admin/billing/**"
+            "/api/admin/**"
     };
 }

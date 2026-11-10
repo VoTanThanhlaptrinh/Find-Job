@@ -1,5 +1,8 @@
 package com.nlu.admin.application.impl;
 
+import com.nlu.identity.application.JwtFamilyService;
+import com.nlu.identity.domain.model.User;
+import com.nlu.identity.domain.repository.UserRepository;
 import com.nlu.recruitment.domain.repository.RecruitmentRepository;
 import com.nlu.admin.infrastructure.query.RecruitmentQuery;
 import com.nlu.admin.api.dto.employer.EmployerDetail;
@@ -23,6 +26,8 @@ import java.time.LocalDate;
 public class AdminEmployerServiceImpl implements AdminEmployerService {
 
     private final RecruitmentRepository recruitmentRepository;
+    private final UserRepository userRepository;
+    private final JwtFamilyService jwtFamilyService;
     private final RecruitmentQuery recruitmentQuery;
     private final AdminPaginationMapper paginationMapper;
 
@@ -71,10 +76,20 @@ public class AdminEmployerServiceImpl implements AdminEmployerService {
     public void updateEmployerStatus(long id, EmployerStatusRequest request) {
         Recruitment recruitment = recruitmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Employer not found"));
+        User user = recruitment.getUser();
         if ("suspend".equalsIgnoreCase(request.getAction())) {
             recruitment.setRecordStatus(com.nlu.shared.domain.model.EntityStatus.SUSPENDED);
+            if (user != null) {
+                user.setAccountLocked(true);
+                userRepository.save(user);
+                jwtFamilyService.revokeAllUserFamilies(user.getEmail());
+            }
         } else if ("activate".equalsIgnoreCase(request.getAction()) || "restore".equalsIgnoreCase(request.getAction())) {
             recruitment.setRecordStatus(com.nlu.shared.domain.model.EntityStatus.ACTIVE);
+            if (user != null) {
+                user.setAccountLocked(false);
+                userRepository.save(user);
+            }
         }
         recruitmentRepository.save(recruitment);
     }

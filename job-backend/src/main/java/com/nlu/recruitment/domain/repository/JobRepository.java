@@ -72,7 +72,9 @@ public interface JobRepository extends JpaRepository<Job, Long> {
                                                               j.address_id
                                                           FROM stage_1_retrieval sr
                                                           JOIN job j ON sr.job_id = j.id
-                                                          WHERE (sr.exp_dist * 0.5 + (sr.skill_and_project_embedding <=> sr.cv_skill_vec) * 0.5) < 0.5
+                                                          WHERE j.record_status = 'ACTIVE'
+                                                            AND (j.expired_date IS NULL OR j.expired_date > CURRENT_TIMESTAMP)
+                                                            AND (sr.exp_dist * 0.5 + (sr.skill_and_project_embedding <=> sr.cv_skill_vec) * 0.5) < 0.5
                                                           ORDER BY final_dist ASC
                                                           LIMIT 10
                                                       )

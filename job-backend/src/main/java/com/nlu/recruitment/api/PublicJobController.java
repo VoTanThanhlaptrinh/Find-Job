@@ -69,10 +69,4 @@ public class PublicJobController {
         Boolean data = jobService.checkExistJob(id);
         return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("message.success"), data, HttpStatus.OK.value()));
     }
-
-    @GetMapping("/match/{cvId}")
-    public ResponseEntity<ApiResponse<List<JobMatchView>>> getMatchedJobs(@PathVariable("cvId") long cvId) {
-        List<JobMatchView> jobs = jobService.matchJobs(cvId);
-        return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("message.success"), jobs, HttpStatus.OK.value()));
-    }
 }

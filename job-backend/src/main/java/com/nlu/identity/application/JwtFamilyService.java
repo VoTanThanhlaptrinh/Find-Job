@@ -6,4 +6,8 @@ public interface JwtFamilyService {
     void deleteFamily(String familyId);
 
     String getFamilyJti(String familyId);
+
+    void saveUserFamily(String username, String familyId);
+
+    void revokeAllUserFamilies(String username);
 }

@@ -176,7 +176,7 @@
               <span>{{ "jobSingle.jobDescription" | t }}</span>
             </h2>
 
-            <div class="prose prose-slate max-w-none text-[15px] leading-relaxed text-slate-700" [innerHTML]="jobDetail.description | safeHtml"></div>
+            <div class="prose prose-slate max-w-none text-[15px] leading-relaxed text-slate-700" [innerHTML]="jobDetail.description"></div>
           </section>
 
           <!-- Divider -->
@@ -191,7 +191,7 @@
               <span>{{ "jobSingle.experienceRequirements" | t }}</span>
             </h2>
 
-            <div class="prose prose-slate max-w-none text-[15px] leading-relaxed text-slate-700" [innerHTML]="jobDetail.requireDetails | safeHtml"></div>
+            <div class="prose prose-slate max-w-none text-[15px] leading-relaxed text-slate-700" [innerHTML]="jobDetail.requireDetails"></div>
           </section>
 
           <!-- Divider -->
@@ -220,7 +220,7 @@
 
             <!-- Additional Rich Text Skills Explanation if present -->
             @if (skillHasRichExplanation) {
-              <div class="prose prose-slate max-w-none text-[15px] leading-relaxed text-slate-700 mt-3" [innerHTML]="jobDetail.skill | safeHtml"></div>
+              <div class="prose prose-slate max-w-none text-[15px] leading-relaxed text-slate-700 mt-3" [innerHTML]="jobDetail.skill"></div>
             }
           </section>
 

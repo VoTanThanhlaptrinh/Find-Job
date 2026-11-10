@@ -102,14 +102,14 @@ class PublicJobControllerTest {
     }
 
     @Nested
-    @DisplayName("Validation Tests")
-    class ValidationTests {
+    @DisplayName("GET /api/jobs/match/{cvId} - Endpoint da chuyen sang /api/user/jobs/match/{cvId}")
+    class MatchJobProtectedTests {
 
         @Test
-        @DisplayName("PJ03: Tra ve 400 khi cvId khong hop le")
-        void getMatchedJobs_InvalidCvId() throws Exception {
-            mockMvc.perform(get(BASE_URL + "/match/not-a-number"))
-                    .andExpect(status().isBadRequest());
+        @DisplayName("PJ03: Anonymous khong duoc phep goi /api/user/jobs/match/{cvId}")
+        void getMatchedJobs_AnonymousUnauthorized() throws Exception {
+            mockMvc.perform(get("/api/user/jobs/match/1"))
+                    .andExpect(status().isUnauthorized());
         }
     }
 }

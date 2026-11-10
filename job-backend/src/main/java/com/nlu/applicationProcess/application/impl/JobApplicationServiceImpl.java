@@ -1,7 +1,9 @@
 package com.nlu.applicationProcess.application.impl;
 
 import com.nlu.applicationProcess.domain.repository.JobApplicationRepository;
+import com.nlu.recruitment.domain.model.Recruitment;
 import com.nlu.recruitment.domain.repository.JobRepository;
+import com.nlu.recruitment.domain.repository.RecruitmentRepository;
 import com.nlu.applicationProcess.domain.repository.ResumeRepository;
 import com.nlu.identity.domain.repository.UserRepository;
 import com.nlu.applicationProcess.api.dto.client.ResumeParsingMessage;
@@ -10,7 +12,9 @@ import com.nlu.applicationProcess.api.dto.req.ApplyCvWithUploadRequest;
 import com.nlu.applicationProcess.api.dto.req.CandidateDTO;
 import com.nlu.shared.application.CloudStorageService;
 import com.nlu.shared.domain.exception.BadRequestException;
+import com.nlu.shared.domain.exception.ForbiddenException;
 import com.nlu.shared.domain.exception.ResourceNotFoundException;
+import com.nlu.shared.domain.exception.UnauthorizedException;
 import com.nlu.applicationProcess.domain.event.ResumeAnalysisRequestedEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import com.nlu.applicationProcess.domain.model.JobApplication;
@@ -36,6 +40,7 @@ public class JobApplicationServiceImpl implements JobApplicationService {
     private final JobApplicationRepository jobApplicationRepository;
     private final ResumeRepository resumeRepository;
     private final JobRepository jobRepository;
+    private final RecruitmentRepository recruitmentRepository;
     private final UserRepository userRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final FileService fileService;
@@ -161,7 +166,18 @@ public class JobApplicationServiceImpl implements JobApplicationService {
     }
 
     @Override
-    public Page<CandidateDTO> getCandidatesAppliedToJob(int pageIndex, int pageSize, long jobId) {
+    public Page<CandidateDTO> getCandidatesAppliedToJob(int pageIndex, int pageSize, long jobId, User hirerUser) {
+        if (hirerUser == null) {
+            throw new UnauthorizedException(MessageUtils.getMessage("message.unauthorized"));
+        }
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new ResourceNotFoundException(MessageUtils.getMessage("job.not_found")));
+        Recruitment recruitment = recruitmentRepository.findRecruitmentByUser(hirerUser)
+                .orElseThrow(() -> new ForbiddenException(MessageUtils.getMessage("message.forbidden")));
+        if (!job.isOwnedBy(recruitment)) {
+            log.warn("Candidate list access forbidden — hirer: {} does not own job: {}", recruitment.getId(), jobId);
+            throw new ForbiddenException(MessageUtils.getMessage("message.forbidden"));
+        }
         return jobApplicationRepository.getCandidatesAppliedToJob(jobId, PageRequest.of(pageIndex, pageSize));
     }
 
