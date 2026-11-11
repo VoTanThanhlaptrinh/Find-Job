@@ -46,18 +46,18 @@ public class SseEmitterServiceImpl implements SseEmitterService {
         SseEmitter emitter = new SseEmitter(SSE_TIMEOUT);
         emitters.put(userId, emitter);
 
-        // Callback cleanup — tự động xóa khỏi map khi kết nối kết thúc
+        // Callback cleanup — chỉ xóa đúng emitter hiện tại để tránh emitter cũ xóa nhầm kết nối mới
         emitter.onCompletion(() -> {
-            removeEmitter(userId);
+            emitters.remove(userId, emitter);
             log.debug("SSE completed for userId={}", userId);
         });
         emitter.onTimeout(() -> {
-            removeEmitter(userId);
+            emitters.remove(userId, emitter);
             log.info("SSE timed out for userId={}", userId);
             emitter.complete();
         });
         emitter.onError(ex -> {
-            removeEmitter(userId);
+            emitters.remove(userId, emitter);
             log.warn("SSE error for userId={}: {}", userId, ex.getMessage());
         });
 

@@ -1,7 +1,6 @@
 package com.nlu.shared.infrastructure.message;
 
 import com.nlu.applicationProcess.api.dto.client.ResumeParsingMessage;
-import com.nlu.applicationProcess.api.dto.client.ResumeConfirmMessage;
 import com.nlu.recruitment.api.dto.VectorizeJdRequest;
 import com.nlu.shared.api.message.dto.ApiMessage;
 import com.nlu.shared.api.message.dto.MailMessage;
@@ -32,18 +31,6 @@ public class MessageProducer {
 		rabbitTemplate.convertAndSend(
 			RabbitMQConfig.PARSING_EXCHANGE_V2,
 			RabbitMQConfig.PARSING_ROUTING_KEY_V2,
-			message,
-			m -> {
-				m.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);
-				return m;
-			}
-		);
-	}
-
-	public void confirmResume(ResumeConfirmMessage message) {
-		rabbitTemplate.convertAndSend(
-			RabbitMQConfig.RESUME_CONFIRM_EXCHANGE,
-			RabbitMQConfig.RESUME_CONFIRM_ROUTING_KEY,
 			message,
 			m -> {
 				m.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);

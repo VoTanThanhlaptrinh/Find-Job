@@ -12,3 +12,17 @@ export interface ResumeUploadInitiateResponse {
   requiredHeaders: Record<string, string>;
   expiresAt: string;
 }
+
+export interface StagedResumeUpload {
+  uploadId: string;
+  fileName: string;
+  expiresAt: string;
+}
+
+export interface CompletedResumeUpload {
+  id: number;
+  fileName: string;
+  createDate?: string;
+  createdAt?: string;
+  status: string;
+}

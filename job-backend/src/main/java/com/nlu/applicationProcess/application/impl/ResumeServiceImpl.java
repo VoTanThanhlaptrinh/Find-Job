@@ -92,7 +92,6 @@ public class ResumeServiceImpl implements ResumeService {
         String rawText = cv.getRawText();
         if (rawText == null || rawText.isBlank()) {
             try {
-                ensureResumeConfirmed(cv);
                 byte[] fileBytes = getResumeBytes(cv);
                 rawText = fileService.extractTextFromFile(new ByteArrayInputStream(fileBytes));
                 if (rawText == null || rawText.isBlank()) {
@@ -157,7 +156,6 @@ public class ResumeServiceImpl implements ResumeService {
     public ResumeUrlDTO getResumeViewUrl(long id, User user) {
         Resume cv = findResumeAndAssertOwner(id, user, "resume.view.forbidden");
         try {
-            ensureResumeConfirmed(cv);
             String url = isFileServiceKey(cv.getKeyCf())
                     ? fileServiceClient.readUrl(cv.getKeyCf(), null)
                     : s3PresignedUrlService.generateViewUrl(cv.getKeyCf(), DEFAULT_URL_EXPIRATION_MINUTES);
@@ -174,7 +172,6 @@ public class ResumeServiceImpl implements ResumeService {
         Resume cv = findResumeAndAssertOwner(id, user, "resume.download.forbidden");
 
         try {
-            ensureResumeConfirmed(cv);
             String url = isFileServiceKey(cv.getKeyCf())
                     ? fileServiceClient.readUrl(cv.getKeyCf(), cv.getFileName())
                     : s3PresignedUrlService.generateDownloadUrl(cv.getKeyCf(), cv.getFileName(), DEFAULT_URL_EXPIRATION_MINUTES);
@@ -191,7 +188,6 @@ public class ResumeServiceImpl implements ResumeService {
         Resume cv = findResumeAndAssertHirerAccess(id, hirerUser, "resume.view.forbidden");
 
         try {
-            ensureResumeConfirmed(cv);
             String url = isFileServiceKey(cv.getKeyCf())
                     ? fileServiceClient.readUrl(cv.getKeyCf(), null)
                     : s3PresignedUrlService.generateViewUrl(cv.getKeyCf(), DEFAULT_URL_EXPIRATION_MINUTES);
@@ -208,7 +204,6 @@ public class ResumeServiceImpl implements ResumeService {
         Resume cv = findResumeAndAssertHirerAccess(id, hirerUser, "resume.download.forbidden");
 
         try {
-            ensureResumeConfirmed(cv);
             String url = isFileServiceKey(cv.getKeyCf())
                     ? fileServiceClient.readUrl(cv.getKeyCf(), cv.getFileName())
                     : s3PresignedUrlService.generateDownloadUrl(cv.getKeyCf(), cv.getFileName(), DEFAULT_URL_EXPIRATION_MINUTES);
@@ -259,14 +254,5 @@ public class ResumeServiceImpl implements ResumeService {
 
     private boolean isFileServiceKey(String key) {
         return key != null && key.startsWith("private/job-portal/candidate-cv/");
-    }
-
-    private void ensureResumeConfirmed(Resume resume) {
-        if (resume.getStorageStatus() == com.nlu.applicationProcess.domain.model.ResumeStorageStatus.PENDING_CONFIRM) {
-            throw new BadRequestException("CV storage confirmation is still pending");
-        }
-        if (resume.getStorageStatus() == com.nlu.applicationProcess.domain.model.ResumeStorageStatus.CONFIRM_FAILED) {
-            throw new BadRequestException("CV storage confirmation failed; please retry storage confirmation");
-        }
     }
 }

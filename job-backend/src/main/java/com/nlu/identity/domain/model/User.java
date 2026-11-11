@@ -64,7 +64,6 @@ public class User extends BaseEntity implements UserDetails, Principal {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		// TODO Auto-generated method stub
 		StringTokenizer tokenizer = new StringTokenizer(role, " ");
 		List<SimpleGrantedAuthority> authorities = new LinkedList<>();
 		while (tokenizer.hasMoreTokens()) {
@@ -80,25 +79,21 @@ public class User extends BaseEntity implements UserDetails, Principal {
 
 	@Override
 	public boolean isAccountNonExpired() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
 	public boolean isAccountNonLocked() {
-		// TODO Auto-generated method stub
 		return !accountLocked;
 	}
 
 	@Override
 	public boolean isCredentialsNonExpired() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
 	public boolean isEnabled() {
-		// TODO Auto-generated method stub
 		return enabled;
 	}
 	public void addApplication(JobApplication jobApplication) {
@@ -110,7 +105,6 @@ public class User extends BaseEntity implements UserDetails, Principal {
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
 		return email.getValue();
 	}
 

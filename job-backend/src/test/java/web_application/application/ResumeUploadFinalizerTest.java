@@ -182,7 +182,7 @@ class ResumeUploadFinalizerTest {
     class FinalizeUploadTests {
 
         @Test
-        @DisplayName("Finalizer tạo đúng một Resume pending confirm và cập nhật session CONFIRM_PENDING")
+        @DisplayName("Finalizer tạo đúng một Resume với status UPLOADED và rawText null, cập nhật session COMPLETED")
         void finalizeUpload_Success() {
             String token = UUID.randomUUID().toString();
             ResumeUploadSession session = ResumeUploadSession.builder()
@@ -213,8 +213,7 @@ class ResumeUploadFinalizerTest {
             assertEquals("resumes/42/" + uploadId, result.getKeyCf());
             assertEquals("my_resume.pdf", result.getFileName());
 
-            // Confirm is asynchronous; the session remains pending until the worker succeeds.
-            assertEquals(ResumeUploadSessionStatus.CONFIRM_PENDING, session.getStatus());
+            assertEquals(ResumeUploadSessionStatus.COMPLETED, session.getStatus());
             assertEquals(1001L, session.getResumeId());
             assertNull(session.getProcessingToken());
             verify(sessionRepository).save(session);
@@ -490,6 +489,27 @@ class ResumeUploadFinalizerTest {
 
             assertTrue(ex.getMessage().contains("token"));
             verify(sessionRepository, never()).save(session);
+        }
+
+        @Test
+        @DisplayName("releaseFinalizingClaim trả FINALIZING về PENDING_UPLOAD khi token khớp")
+        void releaseFinalizingClaim_ResetsToPendingUpload() {
+            ResumeUploadSession session = ResumeUploadSession.builder()
+                    .id(uploadId)
+                    .userId(42L)
+                    .status(ResumeUploadSessionStatus.FINALIZING)
+                    .processingToken("valid-token")
+                    .finalizingStartedAt(LocalDateTime.now())
+                    .build();
+
+            when(sessionRepository.findByIdForUpdate(uploadId)).thenReturn(Optional.of(session));
+
+            resumeUploadFinalizer.releaseFinalizingClaim(uploadId, "valid-token");
+
+            assertEquals(ResumeUploadSessionStatus.PENDING_UPLOAD, session.getStatus());
+            assertNull(session.getProcessingToken());
+            assertNull(session.getFinalizingStartedAt());
+            verify(sessionRepository).save(session);
         }
     }
 }

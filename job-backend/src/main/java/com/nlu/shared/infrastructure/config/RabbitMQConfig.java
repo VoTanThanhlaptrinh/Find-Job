@@ -38,10 +38,6 @@ public class RabbitMQConfig {
 	public static final String API_EXCHANGE_V2 = "apiExchange.v2";
 	public static final String API_ROUTING_KEY_V2 = "apiRoutingKey.v2";
 
-	public static final String RESUME_CONFIRM_QUEUE = "resumeConfirmQueue.v1";
-	public static final String RESUME_CONFIRM_EXCHANGE = "resumeConfirmExchange.v1";
-	public static final String RESUME_CONFIRM_ROUTING_KEY = "resumeConfirmRoutingKey.v1";
-
 	// Legacy cloud upload constants (unchanged)
 	public static final String CLOUD_UPLOAD_QUEUE = "cloudUploadQueue";
 	public static final String CLOUD_UPLOAD_EXCHANGE = "cloudUploadExchange";
@@ -93,21 +89,6 @@ public class RabbitMQConfig {
 	@Bean
 	Binding apiBinding(Queue apiQueue, DirectExchange apiExchange) {
 		return BindingBuilder.bind(apiQueue).to(apiExchange).with(API_ROUTING_KEY_V2);
-	}
-
-	@Bean
-	Queue resumeConfirmQueue() {
-		return new Queue(RESUME_CONFIRM_QUEUE, true);
-	}
-
-	@Bean
-	DirectExchange resumeConfirmExchange() {
-		return new DirectExchange(RESUME_CONFIRM_EXCHANGE, true, false);
-	}
-
-	@Bean
-	Binding resumeConfirmBinding(Queue resumeConfirmQueue, DirectExchange resumeConfirmExchange) {
-		return BindingBuilder.bind(resumeConfirmQueue).to(resumeConfirmExchange).with(RESUME_CONFIRM_ROUTING_KEY);
 	}
 
 	/* Config for Cloud upload message queue (unchanged) */

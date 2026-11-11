@@ -13,7 +13,6 @@ import com.nlu.applicationProcess.domain.repository.ResumeUploadSessionRepositor
 import com.nlu.applicationProcess.infrastructure.redis.ResumeUploadLockService;
 import com.nlu.identity.domain.model.User;
 import com.nlu.shared.application.FileServiceClient;
-import com.nlu.applicationProcess.domain.event.ResumeConfirmRequestedEvent;
 import com.nlu.shared.domain.exception.*;
 import com.nlu.shared.infrastructure.config.ResumeUploadProperties;
 import com.nlu.shared.utils.MessageUtils;
@@ -21,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
@@ -44,7 +44,6 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
     private final ResumeUploadFinalizer resumeUploadFinalizer;
     private final ResumeUploadLockService lockService;
     private final ResumeUploadProperties properties;
-    private final org.springframework.context.ApplicationEventPublisher eventPublisher;
 
     private static final Map<String, String> ALLOWED_EXTENSIONS_TO_MIME = Map.of(
             ".pdf", "application/pdf",
@@ -207,11 +206,11 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
                         Map.of("Content-Type", existingSession.getDeclaredContentType()),
                         existingSession.getUploadUrlExpiresAt());
             }
-            case FINALIZING, CONFIRM_PENDING, CONFIRMING -> {
+            case FINALIZING -> {
                 throw new ConflictException(
-                        "Upload session is already being completed or confirmed.");
+                        "Upload session is currently finalizing. Please check status or retry complete.");
             }
-            case COMPLETED, CONFIRM_FAILED -> {
+            case COMPLETED -> {
                 log.info("Upload session {} already COMPLETED. Returning existing resume id: {}",
                         existingSession.getId(), existingSession.getResumeId());
                 return new ResumeUploadInitiateResponse(
@@ -250,11 +249,7 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
             Resume resume = resumeRepository.findById(claimResult.existingResumeId())
                     .orElseThrow(() -> new ResourceNotFoundException(
                             "Associated resume not found: " + claimResult.existingResumeId()));
-            if (resume.getStorageStatus() == com.nlu.applicationProcess.domain.model.ResumeStorageStatus.PENDING_CONFIRM) {
-                eventPublisher.publishEvent(new ResumeConfirmRequestedEvent(resume.getId()));
-            }
-            return new ResumeView(resume.getId(), resume.getFileName(), resume.getCreatedAt(),
-                    resume.getStatus(), resume.getStorageStatus());
+            return new ResumeView(resume.getId(), resume.getFileName(), resume.getCreatedAt(), resume.getStatus());
         }
 
         if (claimResult.status() == ClaimResult.ClaimStatus.IN_PROGRESS) {
@@ -267,33 +262,64 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
                     break;
                 }
                 Optional<ResumeUploadSession> pollOpt = sessionRepository.findById(uploadId);
-                if (pollOpt.isPresent() && (pollOpt.get().getStatus() == ResumeUploadSessionStatus.CONFIRM_PENDING
-                        || pollOpt.get().getStatus() == ResumeUploadSessionStatus.CONFIRMING
-                        || pollOpt.get().getStatus() == ResumeUploadSessionStatus.CONFIRM_FAILED
-                        || pollOpt.get().getStatus() == ResumeUploadSessionStatus.COMPLETED)) {
-                    Resume resume = resumeRepository.findById(pollOpt.get().getResumeId())
+                if (pollOpt.isEmpty()) {
+                    continue;
+                }
+                ResumeUploadSession polled = pollOpt.get();
+                if (polled.getStatus() == ResumeUploadSessionStatus.COMPLETED) {
+                    Resume resume = resumeRepository.findById(polled.getResumeId())
                             .orElseThrow(() -> new ResourceNotFoundException(
-                                    "Associated resume not found: " + pollOpt.get().getResumeId()));
-                    if (resume.getStorageStatus() == com.nlu.applicationProcess.domain.model.ResumeStorageStatus.PENDING_CONFIRM) {
-                        eventPublisher.publishEvent(new ResumeConfirmRequestedEvent(resume.getId()));
-                    }
-                    return new ResumeView(resume.getId(), resume.getFileName(), resume.getCreatedAt(),
-                            resume.getStatus(), resume.getStorageStatus());
+                                    "Associated resume not found: " + polled.getResumeId()));
+                    return new ResumeView(resume.getId(), resume.getFileName(), resume.getCreatedAt(), resume.getStatus());
+                }
+                if (polled.getStatus() == ResumeUploadSessionStatus.REJECTED) {
+                    throw new BadRequestException("Upload session was rejected: " + uploadId);
+                }
+                if (polled.getStatus() == ResumeUploadSessionStatus.EXPIRED) {
+                    throw new BadRequestException("Upload session has expired: " + uploadId);
                 }
             }
             throw new ConflictException("Upload finalization is in progress. Please retry shortly.");
         }
 
         String processingToken = claimResult.processingToken();
+        confirmTempObject(uploadId, processingToken, claimResult.session());
         Resume finalizedResume = resumeUploadFinalizer.finalizeUpload(uploadId, processingToken, currentUser);
-        eventPublisher.publishEvent(new ResumeConfirmRequestedEvent(finalizedResume.getId()));
 
         return new ResumeView(
                 finalizedResume.getId(),
                 finalizedResume.getFileName(),
                 finalizedResume.getCreatedAt(),
-                finalizedResume.getStatus(),
-                finalizedResume.getStorageStatus());
+                finalizedResume.getStatus());
+    }
+
+    private void confirmTempObject(UUID uploadId, String processingToken, ResumeUploadSession session) {
+        try {
+            var confirmed = fileServiceClient.confirm(session.getTempKey());
+            if (confirmed == null || confirmed.key() == null || !confirmed.key().equals(session.getPermanentKey())) {
+                resumeUploadFinalizer.releaseFinalizingClaim(uploadId, processingToken);
+                throw new StorageException("File service returned an unexpected permanent key");
+            }
+        } catch (HttpClientErrorException ex) {
+            String detail = ex.getMessage();
+            if (detail != null && detail.length() > 512) {
+                detail = detail.substring(0, 512);
+            }
+            resumeUploadFinalizer.markRejected(
+                    uploadId,
+                    processingToken,
+                    "TEMP_CONFIRM_REJECTED",
+                    detail != null ? detail : "Temp file rejected by storage service",
+                    null,
+                    null,
+                    null);
+            throw new BadRequestException("Uploaded file not found or rejected in temporary storage");
+        } catch (StorageException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            resumeUploadFinalizer.releaseFinalizingClaim(uploadId, processingToken);
+            throw new StorageException("Failed to confirm uploaded file in storage", ex);
+        }
     }
 
     private String validateAndNormalizeIdempotencyKey(String idempotencyKey) {

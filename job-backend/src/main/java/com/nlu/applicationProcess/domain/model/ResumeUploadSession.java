@@ -56,16 +56,6 @@ public class ResumeUploadSession {
     @Column(name = "upload_url_expires_at")
     private LocalDateTime uploadUrlExpiresAt;
 
-    @Builder.Default
-    @Column(name = "confirm_attempts", nullable = false, columnDefinition = "integer not null default 0")
-    private int confirmAttempts = 0;
-
-    @Column(name = "confirm_last_error", length = 512)
-    private String confirmLastError;
-
-    @Column(name = "confirm_completed_at")
-    private LocalDateTime confirmCompletedAt;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 32)
     private ResumeUploadSessionStatus status;

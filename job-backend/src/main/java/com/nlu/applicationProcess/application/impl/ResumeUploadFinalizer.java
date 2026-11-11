@@ -50,12 +50,9 @@ public class ResumeUploadFinalizer {
             throw new ForbiddenException("You do not have permission to access this upload session.");
         }
 
-        // Return the existing CV for any post-upload confirmation state.
-        if (session.getStatus() == ResumeUploadSessionStatus.CONFIRM_PENDING
-                || session.getStatus() == ResumeUploadSessionStatus.CONFIRMING
-                || session.getStatus() == ResumeUploadSessionStatus.CONFIRM_FAILED
-                || session.getStatus() == ResumeUploadSessionStatus.COMPLETED) {
-            log.info("Session {} already has a Resume. Returning existing resume id: {}", uploadId, session.getResumeId());
+        // Return the existing CV if already COMPLETED.
+        if (session.getStatus() == ResumeUploadSessionStatus.COMPLETED) {
+            log.info("Session {} is already COMPLETED. Returning existing resume id: {}", uploadId, session.getResumeId());
             return ClaimResult.alreadyCompleted(session.getResumeId());
         }
 
@@ -98,8 +95,8 @@ public class ResumeUploadFinalizer {
     }
 
     /**
-     * Creates the Resume entity and moves the upload session to CONFIRM_PENDING.
-     * The external file-service confirm operation is handled asynchronously by RabbitMQ.
+     * Finalizes upload in a short database transaction after storage confirm succeeds.
+     * Creates exactly one Resume entity and transitions session status to COMPLETED.
      */
     @Transactional
     public Resume finalizeUpload(UUID uploadId, String processingToken, User currentUser) {
@@ -143,13 +140,11 @@ public class ResumeUploadFinalizer {
         resume.setFileName(session.getOriginalFileName());
         resume.setRawText(null);
         resume.markUploaded();
-        resume.markStoragePending();
 
         Resume savedResume = resumeRepository.save(resume);
 
-        // The RabbitMQ worker transitions this to COMPLETED after file-service confirmation.
         session.setResumeId(savedResume.getId());
-        session.setStatus(ResumeUploadSessionStatus.CONFIRM_PENDING);
+        session.setStatus(ResumeUploadSessionStatus.COMPLETED);
         session.setProcessingToken(null);
         sessionRepository.save(session);
 
@@ -200,6 +195,25 @@ public class ResumeUploadFinalizer {
         sessionRepository.save(session);
 
         log.info("Marked upload session {} as REJECTED. Code: {}, Detail: {}", uploadId, rejectionCode, rejectionDetail);
+    }
+
+    /**
+     * Releases a FINALIZING claim back to PENDING_UPLOAD after a transient external storage failure.
+     */
+    @Transactional
+    public void releaseFinalizingClaim(UUID uploadId, String processingToken) {
+        sessionRepository.findByIdForUpdate(uploadId).ifPresent(session -> {
+            if (session.getStatus() != ResumeUploadSessionStatus.FINALIZING) {
+                return;
+            }
+            if (processingToken == null || !Objects.equals(session.getProcessingToken(), processingToken)) {
+                return;
+            }
+            session.setStatus(ResumeUploadSessionStatus.PENDING_UPLOAD);
+            session.setProcessingToken(null);
+            session.setFinalizingStartedAt(null);
+            sessionRepository.save(session);
+        });
     }
 
     /**

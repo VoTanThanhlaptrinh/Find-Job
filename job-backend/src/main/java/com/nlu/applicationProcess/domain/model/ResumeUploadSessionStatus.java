@@ -6,19 +6,10 @@ public enum ResumeUploadSessionStatus {
      */
     PENDING_UPLOAD,
 
-    /** Client completed the direct upload; confirm is waiting to be processed. */
+    /** Client completed the direct upload; storage confirm is being processed. */
     FINALIZING,
 
-    /** The resume record exists and the confirm message is waiting in RabbitMQ. */
-    CONFIRM_PENDING,
-
-    /** A consumer is currently confirming the temp object. */
-    CONFIRMING,
-
-    /** Confirm exhausted its configured attempts and needs operational recovery. */
-    CONFIRM_FAILED,
-
-    /** The storage service confirmed the object and returned its permanent key. */
+    /** The storage service confirmed the object and the Resume record was created. */
     COMPLETED,
 
     /**
