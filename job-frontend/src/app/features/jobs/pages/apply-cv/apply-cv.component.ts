@@ -1,11 +1,11 @@
-import { Component, effect, inject, OnInit } from '@angular/core';
+import { Component, effect, inject, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { JobService } from '../../services/job.service';
 import { ResumeService } from '../../../../core/services/resume.service';
 import { NotifyMessageService } from '../../../../core/services/notify-message.service';
 
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { take } from 'rxjs';
+import { Observable, Subscription, switchMap, take, tap } from 'rxjs';
 import {
   ApplyCvRequest,
   ApplyCvResponse,
@@ -13,7 +13,6 @@ import {
   ApplyCvWithUploadRequest
 } from '../../../../shared/models/jobs/apply-cv.model';
 import { ResumeReviewInput } from '../../../../shared/models/jobs/resume-review-input.model';
-import { ResumeReviewComponent } from '../../../../shared/components/resume-review/resume-review.component';
 import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
 import { I18nService } from '../../../../core/i18n/i18n.service';
 
@@ -31,13 +30,18 @@ type ApplyCvFormGroup = FormGroup<{
   templateUrl: './apply-cv.component.html',
   styleUrl: './apply-cv.component.css'
 })
-export class ApplyCvComponent implements OnInit {
+export class ApplyCvComponent implements OnInit, OnDestroy {
   private readonly fb = inject(FormBuilder);
   applyCvForm: ApplyCvFormGroup;
   jobId!: number;
   selectedFile: File | null = null;
+  stagedUploadId: string | null = null;
+  completedResumeId: number | null = null;
+  isUploadingCv = false;
+  isSubmitting = false;
+  private uploadSubscription?: Subscription;
   isDragging = false;
-  readonly maxFileSize = 5 * 1024 * 1024;
+  readonly maxFileSize = 10 * 1024 * 1024;
   readonly acceptedExtensions = '.pdf,.doc,.docx';
   previousCvOptions: ResumeReviewInput[] = [];
 
@@ -100,6 +104,10 @@ export class ApplyCvComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    this.uploadSubscription?.unsubscribe();
+  }
+
   checkApplyJob(): void {
     this.jobService.checkApplyJob(this.jobId);
   }
@@ -119,6 +127,7 @@ export class ApplyCvComponent implements OnInit {
   onFileInputChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0] ?? null;
+    input.value = '';
     this.setSelectedFile(file);
   }
 
@@ -143,8 +152,16 @@ export class ApplyCvComponent implements OnInit {
     this.applyCvForm.patchValue({ cvMode: mode });
     this.updateExistingCvValidator(mode);
     if (mode === 'existing') {
-      this.selectedFile = null;
+      this.resetUploadState();
     }
+  }
+
+  private resetUploadState(): void {
+    this.uploadSubscription?.unsubscribe();
+    this.selectedFile = null;
+    this.stagedUploadId = null;
+    this.completedResumeId = null;
+    this.isUploadingCv = false;
   }
 
   private updateExistingCvValidator(mode: CvMode): void {
@@ -159,21 +176,50 @@ export class ApplyCvComponent implements OnInit {
 
   private setSelectedFile(file: File | null): void {
     if (!file) {
-      this.selectedFile = null;
+      this.resetUploadState();
       return;
     }
 
     const extension = `.${file.name.split('.').pop()?.toLowerCase() ?? ''}`;
-    const isAllowedExtension = this.acceptedExtensions.includes(extension);
-    const isAllowedSize = file.size <= this.maxFileSize;
-
-    if (!isAllowedExtension || !isAllowedSize) {
-      this.selectedFile = null;
+    if (!this.acceptedExtensions.includes(extension)) {
+      this.resetUploadState();
+      this.notifyService.error(this.i18nService.translate('applyCv.errors.unsupportedFormat'));
       return;
     }
 
+    if (file.size > this.maxFileSize) {
+      this.resetUploadState();
+      this.notifyService.error(this.i18nService.translate('applyCv.errors.fileTooLarge'));
+      return;
+    }
+
+    if (this.selectedFile === file && (this.isUploadingCv || this.stagedUploadId !== null)) {
+      return;
+    }
+
+    this.uploadSubscription?.unsubscribe();
     this.selectedFile = file;
+    this.stagedUploadId = null;
+    this.completedResumeId = null;
     this.setCvMode('upload');
+    this.isUploadingCv = true;
+    this.uploadSubscription = this.resumeService.stageCvToTemp(file).subscribe({
+      next: staged => {
+        if (this.selectedFile !== file) {
+          return;
+        }
+        this.stagedUploadId = staged.uploadId;
+        this.isUploadingCv = false;
+      },
+      error: error => {
+        if (this.selectedFile !== file) {
+          return;
+        }
+        this.stagedUploadId = null;
+        this.isUploadingCv = false;
+        this.notifyService.error(error?.error?.message || this.i18nService.translate('applyCv.errors.uploadFailed'));
+      }
+    });
   }
 
   get selectedFileSizeLabel(): string {
@@ -191,6 +237,9 @@ export class ApplyCvComponent implements OnInit {
   }
 
   onSubmit(): void {
+    if (this.isSubmitting) {
+      return;
+    }
     if (this.applyCvForm.invalid) {
       this.applyCvForm.markAllAsTouched();
       this.notifyService.error(this.i18nService.translate('applyCv.errors.invalidForm'));
@@ -204,25 +253,50 @@ export class ApplyCvComponent implements OnInit {
     }
 
     if (this.isMode('existing')) {
-      this.jobService.submitApplyCvExisting(payload as ApplyCvWithExistingRequest).subscribe({
-        next: (response: ApplyCvResponse) => {
-          this.notifyService.success(response.message || this.i18nService.translate('applyCv.notifications.success'));
-          this.router.navigate(['/single', this.jobId]);
-        },
-        error: (error: any) => {
-           this.notifyService.error(error.error?.message || this.i18nService.translate('applyCv.errors.submitFailed'));
-        }
-      });
+      this.executeApplicationSubmit(this.jobService.submitApplyCvExisting(payload as ApplyCvWithExistingRequest));
       return;
     }
 
-    this.jobService.submitApplyCvUpload(payload as ApplyCvWithUploadRequest).subscribe({
+    if (this.isUploadingCv || !this.stagedUploadId || !this.selectedFile) {
+      this.notifyService.error(this.i18nService.translate('applyCv.errors.uploadFailed'));
+      return;
+    }
+
+    const uploadPayload = payload as ApplyCvWithUploadRequest;
+    const application$ = this.completedResumeId !== null
+      ? this.jobService.submitApplyCvExisting({
+          jobId: uploadPayload.jobId,
+          existingCvId: this.completedResumeId,
+          coverLetter: uploadPayload.coverLetter
+        })
+      : this.resumeService.confirmStagedUpload(this.stagedUploadId, this.selectedFile).pipe(
+          tap(resume => {
+            this.completedResumeId = resume.id;
+          }),
+          switchMap(resume => this.jobService.submitApplyCvExisting({
+            jobId: uploadPayload.jobId,
+            existingCvId: resume.id,
+            coverLetter: uploadPayload.coverLetter
+          }))
+        );
+
+    this.executeApplicationSubmit(application$);
+  }
+
+  private executeApplicationSubmit(request$: Observable<ApplyCvResponse>): void {
+    this.isSubmitting = true;
+    request$.pipe(take(1)).subscribe({
       next: (response: ApplyCvResponse) => {
+        this.isSubmitting = false;
         this.notifyService.success(response.message || this.i18nService.translate('applyCv.notifications.success'));
         this.router.navigate(['/single', this.jobId]);
       },
       error: (error: any) => {
-        this.notifyService.error(error.error?.message || this.i18nService.translate('applyCv.errors.uploadFailed'));
+        this.isSubmitting = false;
+        if (this.completedResumeId === null && (error?.status === 400 || error?.status === 404)) {
+          this.stagedUploadId = null;
+        }
+        this.notifyService.error(error?.error?.message || this.i18nService.translate('applyCv.errors.submitFailed'));
       }
     });
   }

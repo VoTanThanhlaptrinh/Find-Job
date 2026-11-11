@@ -199,4 +199,60 @@ describe('ResumeService Presigned Upload & Double-click', () => {
 
     expect(service.resumes$()[0].id).toBe(789);
   });
+
+  it('should only initiate and PUT to temp cloud when calling stageCvToTemp without calling complete', () => {
+    const file = new File(['docx content'], 'candidate.docx', { type: '', lastModified: 1700000004000 });
+    let stagedResult: { uploadId: string; fileName: string; expiresAt: string } | undefined;
+
+    service.stageCvToTemp(file).subscribe(res => {
+      stagedResult = res;
+    });
+
+    const initReq = httpMock.expectOne(req => req.url.endsWith('/user/resume-uploads/initiate'));
+    expect(initReq.request.body).toEqual({
+      fileName: 'candidate.docx',
+      contentType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      size: file.size
+    });
+    initReq.flush({
+      status: 201,
+      message: 'Created',
+      data: {
+        uploadId: 'staged-up-1',
+        uploadUrl: 'https://r2.example.com/temp-put',
+        method: 'PUT',
+        requiredHeaders: { 'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' },
+        expiresAt: new Date(Date.now() + 600000).toISOString()
+      }
+    });
+
+    const putReq = httpMock.expectOne('https://r2.example.com/temp-put');
+    expect(putReq.request.method).toBe('PUT');
+    putReq.flush({}, { status: 200, statusText: 'OK' });
+
+    httpMock.expectNone(req => req.url.endsWith('/complete'));
+    expect(stagedResult?.uploadId).toBe('staged-up-1');
+    expect(service.resumes$().length).toBe(0);
+  });
+
+  it('should call complete only when confirmStagedUpload or completeStagedResume is invoked', () => {
+    const file = new File(['pdf content'], 'staged.pdf', { type: 'application/pdf', lastModified: 1700000005000 });
+
+    service.completeStagedResume('staged-up-2', file, false);
+
+    httpMock.expectNone(req => req.url.endsWith('/initiate'));
+    expect(service.resumes$().length).toBe(1);
+    expect(service.resumes$()[0].id).toBeLessThan(0);
+
+    const completeReq = httpMock.expectOne(req => req.url.endsWith('/user/resume-uploads/staged-up-2/complete'));
+    expect(completeReq.request.method).toBe('POST');
+    completeReq.flush({
+      status: 200,
+      message: 'OK',
+      data: { id: 999, fileName: 'staged.pdf', createDate: new Date().toISOString(), status: 'UPLOADED' }
+    });
+
+    expect(service.resumes$().length).toBe(1);
+    expect(service.resumes$()[0].id).toBe(999);
+  });
 });

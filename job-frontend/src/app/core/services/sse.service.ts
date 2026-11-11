@@ -93,7 +93,7 @@ export class SseService {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
-    
+
     this.disconnect();
 
     const token = this.tokenService.getToken();
@@ -114,7 +114,7 @@ export class SseService {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
-    
+
     if (this.abortController) {
       this.abortController.abort();
       this.abortController = undefined;
@@ -272,25 +272,19 @@ export class SseService {
   private _refreshAndReconnect(): void {
     const authService = this.injector.get(AuthService);
     authService.refreshToken$().pipe(take(1)).subscribe({
-      next: (res) => {
-        let nextToken: string | null = null;
-        if (typeof res === 'string') {
-          nextToken = res;
-        } else if (res && typeof res === 'object' && 'data' in res && typeof res.data === 'string') {
-          nextToken = res.data;
-        }
-
-        if (nextToken) {
-          console.log('[SSE] Token refreshed successfully, reconnecting...');
-          this.tokenService.setToken(nextToken);
-          authService.setLoggedIn(true);
-          this._doConnect(nextToken);
-        } else {
+      next: (nextToken) => {
+        if (!nextToken) {
           console.error('[SSE] Failed to extract token from refresh response');
           this.tokenService.clearToken();
           authService.setLoggedIn(false);
           this.status.set('error');
+          return;
         }
+
+        console.log('[SSE] Token refreshed successfully, reconnecting...');
+        this.tokenService.setToken(nextToken);
+        authService.setLoggedIn(true);
+        this._doConnect(nextToken);
       },
       error: (err) => {
         console.error('[SSE] Refresh token request failed', err);

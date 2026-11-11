@@ -73,3 +73,5 @@ cd job-backend
 ```
 
 The backend also requires supporting services and environment variables such as MySQL, Redis, RabbitMQ, Gmail App Password, and OAuth client credentials if you want to run the full application flow locally.
+
+Candidate CV uploads use the external file service. Configure `UPLOAD_SERVICE_API_KEY` only on the backend (and optionally `UPLOAD_SERVICE_BASE_URL`; defaults to the production service URL). Before production deployment, apply `job-backend/src/main/resources/db/manual/V20261111__resume_file_service_confirm.sql`. The browser receives only short-lived presigned upload/read URLs; it must never receive the service API key.

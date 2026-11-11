@@ -6,14 +6,10 @@ public enum ResumeUploadSessionStatus {
      */
     PENDING_UPLOAD,
 
-    /**
-     * Client đã gọi complete, đang trong quá trình verify storage và copy object sang resumes/.
-     */
+    /** Client completed the direct upload; storage confirm is being processed. */
     FINALIZING,
 
-    /**
-     * File upload hợp lệ, object đã được copy sang resumes/ và Resume entity đã được tạo.
-     */
+    /** The storage service confirmed the object and the Resume record was created. */
     COMPLETED,
 
     /**

@@ -12,17 +12,15 @@ import com.nlu.applicationProcess.domain.repository.ResumeRepository;
 import com.nlu.applicationProcess.domain.repository.ResumeUploadSessionRepository;
 import com.nlu.applicationProcess.infrastructure.redis.ResumeUploadLockService;
 import com.nlu.identity.domain.model.User;
-import com.nlu.shared.application.CloudStorageService;
-import com.nlu.shared.application.S3PresignedUrlService;
+import com.nlu.shared.application.FileServiceClient;
 import com.nlu.shared.domain.exception.*;
-import com.nlu.shared.domain.model.PresignedUploadUrlResponse;
-import com.nlu.shared.domain.model.StorageObjectMetadata;
 import com.nlu.shared.infrastructure.config.ResumeUploadProperties;
 import com.nlu.shared.utils.MessageUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
@@ -42,8 +40,7 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
 
     private final ResumeUploadSessionRepository sessionRepository;
     private final ResumeRepository resumeRepository;
-    private final S3PresignedUrlService s3PresignedUrlService;
-    private final CloudStorageService cloudStorageService;
+    private final FileServiceClient fileServiceClient;
     private final ResumeUploadFinalizer resumeUploadFinalizer;
     private final ResumeUploadLockService lockService;
     private final ResumeUploadProperties properties;
@@ -106,8 +103,11 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
 
             // Create new upload session
             UUID uploadId = UUID.randomUUID();
-            String tempKey = properties.getTempPrefix() + "/resumes/" + currentUser.getId() + "/" + uploadId;
-            String permanentKey = properties.getPermanentPrefix() + "/" + currentUser.getId() + "/" + uploadId;
+            var remotePresign = fileServiceClient.presign(sanitizedFileName, normalizedContentType, request.size());
+            validatePresignResponse(remotePresign.tempKey(), remotePresign.uploadUrl());
+            String tempKey = remotePresign.tempKey();
+            String permanentKey = tempKey.substring("temp/".length());
+            LocalDateTime uploadUrlExpiresAt = LocalDateTime.now().plusSeconds(remotePresign.expiresIn());
 
             LocalDateTime now = LocalDateTime.now();
             LocalDateTime sessionExpiresAt = now.plusMinutes(properties.getSessionExpirationMinutes());
@@ -122,6 +122,8 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
                     .declaredSize(request.size())
                     .tempKey(tempKey)
                     .permanentKey(permanentKey)
+                    .uploadUrl(remotePresign.uploadUrl())
+                    .uploadUrlExpiresAt(uploadUrlExpiresAt)
                     .status(ResumeUploadSessionStatus.PENDING_UPLOAD)
                     .resumeId(null)
                     .cleanupAttempts(0)
@@ -144,19 +146,12 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
                 return handleExistingSession(racedSession, fingerprint);
             }
 
-            // Generate presigned PUT URL
-            PresignedUploadUrlResponse presignedResponse = s3PresignedUrlService.generateUploadUrl(
-                    tempKey,
-                    session.getDeclaredContentType(),
-                    uploadId,
-                    properties.getUrlExpirationMinutes());
-
             return new ResumeUploadInitiateResponse(
                     uploadId,
-                    presignedResponse.url(),
-                    presignedResponse.method(),
-                    presignedResponse.requiredHeaders(),
-                    presignedResponse.expiresAt());
+                    remotePresign.uploadUrl(),
+                    "PUT",
+                    Map.of("Content-Type", normalizedContentType),
+                    uploadUrlExpiresAt);
         } finally {
             if (acquiredLockOpt.isPresent()) {
                 lockService.releaseLock(currentUser.getId(), trimmedKey, lockToken);
@@ -182,18 +177,34 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
                 if (LocalDateTime.now().isAfter(existingSession.getExpiresAt())) {
                     throw new BadRequestException("Upload session has expired: " + existingSession.getId());
                 }
-                // Generate a fresh presigned upload URL for the same tempKey
-                PresignedUploadUrlResponse presignedResponse = s3PresignedUrlService.generateUploadUrl(
-                        existingSession.getTempKey(),
+                if (existingSession.getUploadUrl() != null
+                        && existingSession.getUploadUrlExpiresAt() != null
+                        && LocalDateTime.now().isBefore(existingSession.getUploadUrlExpiresAt().minusSeconds(15))) {
+                    return new ResumeUploadInitiateResponse(
+                            existingSession.getId(),
+                            existingSession.getUploadUrl(),
+                            "PUT",
+                            Map.of("Content-Type", existingSession.getDeclaredContentType()),
+                            existingSession.getUploadUrlExpiresAt());
+                }
+                // The file service generates a fresh temp key for each presign.
+                // Rotate the session key only while it is still awaiting upload.
+                var remotePresign = fileServiceClient.presign(
+                        existingSession.getOriginalFileName(),
                         existingSession.getDeclaredContentType(),
-                        existingSession.getId(),
-                        properties.getUrlExpirationMinutes());
+                        existingSession.getDeclaredSize());
+                validatePresignResponse(remotePresign.tempKey(), remotePresign.uploadUrl());
+                existingSession.setTempKey(remotePresign.tempKey());
+                existingSession.setPermanentKey(remotePresign.tempKey().substring("temp/".length()));
+                existingSession.setUploadUrl(remotePresign.uploadUrl());
+                existingSession.setUploadUrlExpiresAt(LocalDateTime.now().plusSeconds(remotePresign.expiresIn()));
+                sessionRepository.save(existingSession);
                 return new ResumeUploadInitiateResponse(
                         existingSession.getId(),
-                        presignedResponse.url(),
-                        presignedResponse.method(),
-                        presignedResponse.requiredHeaders(),
-                        presignedResponse.expiresAt());
+                        remotePresign.uploadUrl(),
+                        "PUT",
+                        Map.of("Content-Type", existingSession.getDeclaredContentType()),
+                        existingSession.getUploadUrlExpiresAt());
             }
             case FINALIZING -> {
                 throw new ConflictException(
@@ -251,99 +262,29 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
                     break;
                 }
                 Optional<ResumeUploadSession> pollOpt = sessionRepository.findById(uploadId);
-                if (pollOpt.isPresent() && pollOpt.get().getStatus() == ResumeUploadSessionStatus.COMPLETED) {
-                    Resume resume = resumeRepository.findById(pollOpt.get().getResumeId())
+                if (pollOpt.isEmpty()) {
+                    continue;
+                }
+                ResumeUploadSession polled = pollOpt.get();
+                if (polled.getStatus() == ResumeUploadSessionStatus.COMPLETED) {
+                    Resume resume = resumeRepository.findById(polled.getResumeId())
                             .orElseThrow(() -> new ResourceNotFoundException(
-                                    "Associated resume not found: " + pollOpt.get().getResumeId()));
-                    return new ResumeView(resume.getId(), resume.getFileName(), resume.getCreatedAt(),
-                            resume.getStatus());
+                                    "Associated resume not found: " + polled.getResumeId()));
+                    return new ResumeView(resume.getId(), resume.getFileName(), resume.getCreatedAt(), resume.getStatus());
+                }
+                if (polled.getStatus() == ResumeUploadSessionStatus.REJECTED) {
+                    throw new BadRequestException("Upload session was rejected: " + uploadId);
+                }
+                if (polled.getStatus() == ResumeUploadSessionStatus.EXPIRED) {
+                    throw new BadRequestException("Upload session has expired: " + uploadId);
                 }
             }
             throw new ConflictException("Upload finalization is in progress. Please retry shortly.");
         }
 
         String processingToken = claimResult.processingToken();
-        ResumeUploadSession session = claimResult.session();
-
-        // Storage verification & copy outside DB transaction
-        boolean alreadyCopied = false;
-        Optional<StorageObjectMetadata> permMetaOpt = cloudStorageService.headObject(session.getPermanentKey());
-        if (permMetaOpt.isPresent()) {
-            StorageObjectMetadata permMeta = permMetaOpt.get();
-            if (permMeta.contentLength() == session.getDeclaredSize() &&
-                    isMatchingContentType(permMeta.contentType(), session.getDeclaredContentType())) {
-                log.info("Permanent object already exists with valid metadata for uploadId: {}. Skipping copy.",
-                        uploadId);
-                alreadyCopied = true;
-            }
-        }
-
-        if (!alreadyCopied) {
-            // HEAD temp object
-            Optional<StorageObjectMetadata> tempMetaOpt = cloudStorageService.headObject(session.getTempKey());
-            if (tempMetaOpt.isEmpty()) {
-                log.warn("Temp object not found for upload session: {}, key: {}", uploadId, session.getTempKey());
-                resumeUploadFinalizer.markRejected(uploadId, processingToken, "TEMP_OBJECT_NOT_FOUND",
-                        "Uploaded file not found in storage", null, null, null);
-                throw new BadRequestException("Uploaded file not found in storage");
-            }
-
-            StorageObjectMetadata tempMeta = tempMetaOpt.get();
-
-            // Validate temp object metadata
-            boolean isValidMetadata = tempMeta.contentLength() > 0 &&
-                    tempMeta.contentLength() <= properties.getMaxFileSizeBytes() &&
-                    tempMeta.contentLength() == session.getDeclaredSize() &&
-                    ALLOWED_CONTENT_TYPES.contains(normalizeContentType(tempMeta.contentType())) &&
-                    isMatchingContentType(tempMeta.contentType(), session.getDeclaredContentType());
-
-            if (!isValidMetadata) {
-                log.warn(
-                        "Invalid metadata for temp object in session {}: size={}, declaredSize={}, type={}, declaredType={}",
-                        uploadId, tempMeta.contentLength(), session.getDeclaredSize(),
-                        tempMeta.contentType(), session.getDeclaredContentType());
-                String code = (tempMeta.contentLength() != session.getDeclaredSize())
-                        ? "METADATA_SIZE_MISMATCH"
-                        : "METADATA_CONTENT_TYPE_MISMATCH";
-                resumeUploadFinalizer.markRejected(uploadId, processingToken, code,
-                        "Uploaded file metadata does not match declared specifications",
-                        tempMeta.contentLength(), tempMeta.contentType(), tempMeta.etag());
-                deleteTempSilently(session.getTempKey());
-                throw new BadRequestException("Uploaded file metadata does not match declared specifications");
-            }
-
-            // Server-side copy from tempKey to permanentKey
-            cloudStorageService.copyObject(session.getTempKey(), session.getPermanentKey());
-
-            // HEAD permanent object to verify copy success and metadata
-            Optional<StorageObjectMetadata> verifiedPermMetaOpt = cloudStorageService
-                    .headObject(session.getPermanentKey());
-            boolean permValid = verifiedPermMetaOpt.isPresent() &&
-                    verifiedPermMetaOpt.get().contentLength() > 0 &&
-                    verifiedPermMetaOpt.get().contentLength() == session.getDeclaredSize() &&
-                    ALLOWED_CONTENT_TYPES.contains(normalizeContentType(verifiedPermMetaOpt.get().contentType())) &&
-                    isMatchingContentType(verifiedPermMetaOpt.get().contentType(), session.getDeclaredContentType());
-
-            if (!permValid) {
-                log.error("Permanent object verification failed after copy for session {}", uploadId);
-                deleteObjectSilently(session.getPermanentKey());
-                Long actualSize = verifiedPermMetaOpt.map(StorageObjectMetadata::contentLength).orElse(null);
-                String actualType = verifiedPermMetaOpt.map(StorageObjectMetadata::contentType).orElse(null);
-                String actualEtag = verifiedPermMetaOpt.map(StorageObjectMetadata::etag).orElse(null);
-                resumeUploadFinalizer.markRejected(uploadId, processingToken, "PERMANENT_VERIFICATION_FAILED",
-                        "Permanent object verification failed after copy", actualSize, actualType, actualEtag);
-                throw new StorageException("Permanent object verification failed after copy");
-            }
-        }
-
-        // Finalize upload in short DB transaction
-        Resume finalizedResume = resumeUploadFinalizer.finalizeUpload(
-                uploadId,
-                processingToken,
-                currentUser);
-
-        // Delete temp best-effort after transaction commits
-        deleteTempSilently(session.getTempKey());
+        confirmTempObject(uploadId, processingToken, claimResult.session());
+        Resume finalizedResume = resumeUploadFinalizer.finalizeUpload(uploadId, processingToken, currentUser);
 
         return new ResumeView(
                 finalizedResume.getId(),
@@ -352,16 +293,32 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
                 finalizedResume.getStatus());
     }
 
-    private void deleteTempSilently(String tempKey) {
-        deleteObjectSilently(tempKey);
-    }
-
-    private void deleteObjectSilently(String key) {
+    private void confirmTempObject(UUID uploadId, String processingToken, ResumeUploadSession session) {
         try {
-            cloudStorageService.deleteObject(key);
-            log.info("Object deleted: {}", key);
-        } catch (Exception e) {
-            log.warn("Failed to delete object best-effort: {}. Error: {}", key, e.getMessage());
+            var confirmed = fileServiceClient.confirm(session.getTempKey());
+            if (confirmed == null || confirmed.key() == null || !confirmed.key().equals(session.getPermanentKey())) {
+                resumeUploadFinalizer.releaseFinalizingClaim(uploadId, processingToken);
+                throw new StorageException("File service returned an unexpected permanent key");
+            }
+        } catch (HttpClientErrorException ex) {
+            String detail = ex.getMessage();
+            if (detail != null && detail.length() > 512) {
+                detail = detail.substring(0, 512);
+            }
+            resumeUploadFinalizer.markRejected(
+                    uploadId,
+                    processingToken,
+                    "TEMP_CONFIRM_REJECTED",
+                    detail != null ? detail : "Temp file rejected by storage service",
+                    null,
+                    null,
+                    null);
+            throw new BadRequestException("Uploaded file not found or rejected in temporary storage");
+        } catch (StorageException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            resumeUploadFinalizer.releaseFinalizingClaim(uploadId, processingToken);
+            throw new StorageException("Failed to confirm uploaded file in storage", ex);
         }
     }
 
@@ -455,5 +412,12 @@ public class ResumeUploadServiceImpl implements ResumeUploadService {
             return contentType.substring(0, semicolonIdx).trim().toLowerCase();
         }
         return contentType.trim().toLowerCase();
+    }
+
+    private void validatePresignResponse(String tempKey, String uploadUrl) {
+        if (tempKey == null || !tempKey.startsWith("temp/private/job-portal/candidate-cv/")
+                || uploadUrl == null || !uploadUrl.startsWith("https://")) {
+            throw new StorageException("File service returned an invalid candidate CV upload URL");
+        }
     }
 }

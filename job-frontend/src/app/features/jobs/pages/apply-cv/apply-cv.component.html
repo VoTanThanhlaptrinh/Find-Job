@@ -104,13 +104,20 @@
                   </p>
                 </label>
                 @if (isMode("upload") && selectedFile) {
-                  <p
-                    class="mt-3 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700"
-                  >
-                    {{ 'applyCv.selectedFile' | t }}:
-                    <span class="font-semibold">{{ selectedFile.name || ('applyCv.noFileSelected' | t) }}</span>
-                    ({{ selectedFileSizeLabel }})
-                  </p>
+                  @if (isUploadingCv) {
+                    <div class="mt-3 flex items-center gap-2 rounded-lg bg-blue-50 px-3 py-2 text-sm text-blue-700">
+                      <span class="material-symbols-outlined animate-spin text-base">progress_activity</span>
+                      <span>{{ 'applyCv.uploadingFile' | t }}</span>
+                    </div>
+                  } @else if (stagedUploadId !== null) {
+                    <p class="mt-3 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
+                      {{ 'applyCv.selectedFile' | t }}: <span class="font-semibold">{{ selectedFile.name }}</span> ({{ selectedFileSizeLabel }})
+                    </p>
+                  } @else {
+                    <p class="mt-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+                      {{ 'applyCv.stageFailed' | t }}
+                    </p>
+                  }
                 }
               </div>
             </label>
@@ -140,7 +147,10 @@
             </a>
             <button
               type="submit"
+              [disabled]="isSubmitting || isUploadingCv || (isMode('upload') && stagedUploadId === null)"
               class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
+              [class.cursor-not-allowed]="isSubmitting || isUploadingCv || (isMode('upload') && stagedUploadId === null)"
+              [class.opacity-50]="isSubmitting || isUploadingCv || (isMode('upload') && stagedUploadId === null)"
             >
               {{ 'applyCv.submit' | t }}
             </button>

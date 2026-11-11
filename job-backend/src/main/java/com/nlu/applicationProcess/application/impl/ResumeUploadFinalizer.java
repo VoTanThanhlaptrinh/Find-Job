@@ -50,7 +50,7 @@ public class ResumeUploadFinalizer {
             throw new ForbiddenException("You do not have permission to access this upload session.");
         }
 
-        // Check already COMPLETED
+        // Return the existing CV if already COMPLETED.
         if (session.getStatus() == ResumeUploadSessionStatus.COMPLETED) {
             log.info("Session {} is already COMPLETED. Returning existing resume id: {}", uploadId, session.getResumeId());
             return ClaimResult.alreadyCompleted(session.getResumeId());
@@ -95,9 +95,8 @@ public class ResumeUploadFinalizer {
     }
 
     /**
-     * Finalizes upload in a short database transaction.
-     * Reads permanentKey and originalFileName directly from the locked session,
-     * creates exactly one Resume entity, and transitions status to COMPLETED.
+     * Finalizes upload in a short database transaction after storage confirm succeeds.
+     * Creates exactly one Resume entity and transitions session status to COMPLETED.
      */
     @Transactional
     public Resume finalizeUpload(UUID uploadId, String processingToken, User currentUser) {
@@ -109,13 +108,10 @@ public class ResumeUploadFinalizer {
             throw new ForbiddenException("You do not have permission to access this upload session.");
         }
 
-        // Idempotency: if already COMPLETED, return the existing Resume
-        if (session.getStatus() == ResumeUploadSessionStatus.COMPLETED) {
-            log.info("Session {} is already COMPLETED. Returning existing resume id: {}", uploadId, session.getResumeId());
-            if (session.getResumeId() != null) {
-                return resumeRepository.findById(session.getResumeId())
-                        .orElseThrow(() -> new ResourceNotFoundException("Associated resume not found: " + session.getResumeId()));
-            }
+        // Idempotency: never create a second Resume for this upload session.
+        if (session.getResumeId() != null) {
+            return resumeRepository.findById(session.getResumeId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Associated resume not found: " + session.getResumeId()));
         }
 
         if (session.getStatus() == ResumeUploadSessionStatus.EXPIRED) {
@@ -147,7 +143,6 @@ public class ResumeUploadFinalizer {
 
         Resume savedResume = resumeRepository.save(resume);
 
-        // Update session to COMPLETED
         session.setResumeId(savedResume.getId());
         session.setStatus(ResumeUploadSessionStatus.COMPLETED);
         session.setProcessingToken(null);
@@ -200,6 +195,25 @@ public class ResumeUploadFinalizer {
         sessionRepository.save(session);
 
         log.info("Marked upload session {} as REJECTED. Code: {}, Detail: {}", uploadId, rejectionCode, rejectionDetail);
+    }
+
+    /**
+     * Releases a FINALIZING claim back to PENDING_UPLOAD after a transient external storage failure.
+     */
+    @Transactional
+    public void releaseFinalizingClaim(UUID uploadId, String processingToken) {
+        sessionRepository.findByIdForUpdate(uploadId).ifPresent(session -> {
+            if (session.getStatus() != ResumeUploadSessionStatus.FINALIZING) {
+                return;
+            }
+            if (processingToken == null || !Objects.equals(session.getProcessingToken(), processingToken)) {
+                return;
+            }
+            session.setStatus(ResumeUploadSessionStatus.PENDING_UPLOAD);
+            session.setProcessingToken(null);
+            session.setFinalizingStartedAt(null);
+            sessionRepository.save(session);
+        });
     }
 
     /**

@@ -50,6 +50,12 @@ public class ResumeUploadSession {
     @Column(name = "permanent_key", nullable = false, unique = true, length = 512)
     private String permanentKey;
 
+    @Column(name = "upload_url", columnDefinition = "text")
+    private String uploadUrl;
+
+    @Column(name = "upload_url_expires_at")
+    private LocalDateTime uploadUrlExpiresAt;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 32)
     private ResumeUploadSessionStatus status;

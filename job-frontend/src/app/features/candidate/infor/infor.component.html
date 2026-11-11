@@ -1,56 +1,116 @@
 <div
   class="candidate-shell flex h-screen w-full max-w-full overflow-hidden bg-slate-50 antialiased text-slate-900 font-sans pt-[84px]">
-  <!-- SideNavBar Component -->
-  <aside role="navigation"
-    class="candidate-sidebar h-full flex flex-col border-r border-[#E5E7EB] bg-white pt-6 pb-6 px-4 transition-[width] duration-200 ease-in-out relative z-30 shrink-0"
-    [ngClass]="isOpen ? 'w-[280px]' : 'w-20'">
-    <!-- Toggle Button on Border -->
-    <button (click)="toggleSidebar()"
+  @if (isMobileOpen) {
+    <button
       type="button"
-      class="absolute top-1/2 -translate-y-1/2 -right-[18px] flex h-[36px] w-[36px] min-h-[36px] min-w-[36px] items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#475467] hover:text-[#2563EB] hover:border-[#2563EB]/40 shadow-sm transition-all duration-200 focus:outline-none z-50 cursor-pointer"
-      [title]="isOpen ? 'Thu gọn' : 'Mở rộng'">
-      <span class="material-symbols-outlined text-[20px] transition-transform duration-200"
-        [class.rotate-180]="!isOpen">
+      class="candidate-backdrop"
+      [attr.aria-label]="'candidateWorkspace.closeMenu' | t"
+      (click)="closeMobileSidebar()">
+    </button>
+  }
+
+  <aside
+    id="candidate-sidebar"
+    class="candidate-sidebar relative z-30 flex h-full shrink-0 flex-col border-r border-slate-200 bg-white px-4 pb-5 pt-5 transition-[width,transform] duration-200 ease-out"
+    [class.is-expanded]="isOpen"
+    [class.is-collapsed]="!isOpen"
+    [class.mobile-open]="isMobileOpen"
+    [attr.aria-hidden]="!isMobileOpen && isMobileViewport ? 'true' : null"
+    [attr.inert]="!isMobileOpen && isMobileViewport ? '' : null">
+    <div class="candidate-brand flex min-h-[76px] items-center gap-3 rounded-2xl bg-slate-50 p-3">
+      <div
+        class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-700"
+        aria-hidden="true">
+        @if (candidateName()) {
+          <span class="text-lg font-bold">{{ candidateInitial() }}</span>
+        } @else {
+          <span class="material-symbols-outlined">person</span>
+        }
+      </div>
+      @if (isOpen || isMobileOpen) {
+        <div class="min-w-0">
+          <p class="truncate text-sm font-bold text-slate-900">
+            {{ candidateName() || ('candidateWorkspace.title' | t) }}
+          </p>
+          <p class="mt-0.5 truncate text-xs text-slate-500">
+            {{ candidateName() ? ('candidateWorkspace.candidateLabel' | t) : ('candidateWorkspace.subtitle' | t) }}
+          </p>
+        </div>
+      }
+    </div>
+
+    <button
+      class="sidebar-toggle absolute -right-[17px] top-1/2 z-50 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:border-blue-300 hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+      (click)="toggleSidebar()"
+      type="button"
+      [attr.aria-label]="(isOpen ? 'candidateWorkspace.collapse' : 'candidateWorkspace.expand') | t"
+      [attr.aria-expanded]="isOpen"
+      [title]="(isOpen ? 'candidateWorkspace.collapse' : 'candidateWorkspace.expand') | t">
+      <span class="material-symbols-outlined text-xl transition-transform duration-200" [class.rotate-180]="!isOpen">
         chevron_left
       </span>
     </button>
-    <!-- Navigation Tabs -->
-    <nav class="flex-1 flex flex-col gap-2 overflow-y-auto overflow-x-hidden">
-      @for (item of menuItems; track item.route) {
-      <a [routerLink]="item.route"
-        class="flex min-w-0 h-[52px] min-h-[52px] items-center rounded-[10px] text-[15px] font-medium transition-all duration-200 group cursor-pointer"
-        [ngClass]="[
-          isOpen ? 'justify-start px-4 gap-[14px]' : 'justify-center px-0 gap-0',
-          isActive(item.route, item.exact)
-            ? 'bg-[#2563EB] text-white shadow-sm' 
-            : 'text-[#475467] hover:bg-[#EFF6FF] hover:text-[#2563EB]'
-        ]" (click)="onMenuItemClick()">
-        <span class="sidebar-icon material-symbols-outlined text-[22px] w-[22px] h-[22px] flex items-center justify-center shrink-0">{{
-          item.icon
-        }}</span>
-        <span *ngIf="isOpen" class="min-w-0 truncate whitespace-nowrap">{{
-          item.nameKey | t
-        }}</span>
-      </a>
+
+    <nav class="mt-7 flex-1 space-y-6 overflow-x-hidden overflow-y-auto" [attr.aria-label]="'candidateWorkspace.navigation' | t">
+      @for (group of menuGroups; track group.labelKey) {
+        <section>
+          @if (isOpen || isMobileOpen) {
+            <p class="menu-group-label mb-2 px-3">
+              {{ group.labelKey | t }}
+            </p>
+          }
+          <div class="space-y-1">
+            @for (item of group.items; track item.route) {
+              <a
+                [routerLink]="item.route"
+                class="candidate-nav-link group flex h-12 min-w-0 items-center rounded-xl text-sm font-medium transition-colors"
+                [ngClass]="[
+                  (isOpen || isMobileOpen) ? 'justify-start gap-3 px-3' : 'justify-center px-0',
+                  isActive(item.route, item.exact)
+                    ? 'is-active bg-blue-50 text-blue-700'
+                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                ]"
+                [attr.aria-current]="isActive(item.route, item.exact) ? 'page' : null"
+                [attr.title]="(!isOpen && !isMobileOpen) ? (item.nameKey | t) : null"
+                (click)="onMenuItemClick()">
+                <span class="sidebar-icon material-symbols-outlined shrink-0">{{ item.icon }}</span>
+                @if (isOpen || isMobileOpen) {
+                  <span class="min-w-0 truncate">{{ item.nameKey | t }}</span>
+                }
+              </a>
+            }
+          </div>
+        </section>
       }
     </nav>
 
-    <!-- Footer Tab: Logout -->
-    <div class="mt-auto border-t border-[#E5E7EB] pt-3">
-      <a (click)="onLogout()"
-        class="flex min-w-0 h-[52px] min-h-[52px] items-center rounded-[10px] text-[15px] font-medium transition-all duration-200 text-[#475467] hover:bg-red-50 hover:text-red-600 group cursor-pointer"
-        [ngClass]="
-          isOpen ? 'justify-start px-4 gap-[14px]' : 'justify-center px-0 gap-0'
-        ">
-        <span class="sidebar-icon material-symbols-outlined text-[22px] w-[22px] h-[22px] flex items-center justify-center shrink-0">logout</span>
-        <span *ngIf="isOpen" class="min-w-0 truncate whitespace-nowrap">{{ 'header.logout' | t }}</span>
-      </a>
+    <div class="mt-4 border-t border-slate-200 pt-3">
+      <button
+        type="button"
+        class="candidate-nav-link flex h-12 w-full min-w-0 items-center rounded-xl text-sm font-medium text-slate-600 transition-colors hover:bg-red-50 hover:text-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
+        [ngClass]="(isOpen || isMobileOpen) ? 'justify-start gap-3 px-3' : 'justify-center px-0'"
+        [attr.title]="(!isOpen && !isMobileOpen) ? ('header.logout' | t) : null"
+        (click)="onLogout()">
+        <span class="sidebar-icon material-symbols-outlined shrink-0">logout</span>
+        @if (isOpen || isMobileOpen) {
+          <span class="truncate">{{ 'header.logout' | t }}</span>
+        }
+      </button>
     </div>
   </aside>
 
   <!-- Main Content Area -->
   <main class="candidate-main min-w-0 flex-1 w-full max-w-full h-full overflow-y-auto overflow-x-hidden p-4 md:p-6 lg:p-8">
-    <!-- MAIN ROUTER OUTLET PRESERVED -->
+    <button
+      type="button"
+      class="mobile-menu-button mb-4 inline-flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 shadow-sm"
+      [attr.aria-label]="'candidateWorkspace.openMenu' | t"
+      aria-controls="candidate-sidebar"
+      [attr.aria-expanded]="isMobileOpen"
+      (click)="toggleMobileSidebar()">
+      <span class="material-symbols-outlined">menu</span>
+      {{ 'candidateWorkspace.menu' | t }}
+    </button>
     <router-outlet></router-outlet>
   </main>
 </div>

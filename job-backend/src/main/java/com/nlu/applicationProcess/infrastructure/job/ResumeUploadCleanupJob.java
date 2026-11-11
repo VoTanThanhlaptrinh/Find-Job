@@ -8,6 +8,7 @@ import com.nlu.applicationProcess.domain.repository.ResumeUploadSessionRepositor
 import com.nlu.identity.domain.model.User;
 import com.nlu.identity.domain.repository.UserRepository;
 import com.nlu.shared.application.CloudStorageService;
+import com.nlu.shared.application.FileServiceClient;
 import com.nlu.shared.domain.model.StorageObjectMetadata;
 import com.nlu.applicationProcess.application.impl.ResumeUploadServiceImpl;
 import com.nlu.applicationProcess.domain.repository.ResumeRepository;
@@ -35,6 +36,7 @@ public class ResumeUploadCleanupJob {
     private final ResumeUploadSessionRepository sessionRepository;
     private final ResumeRepository resumeRepository;
     private final CloudStorageService cloudStorageService;
+    private final FileServiceClient fileServiceClient;
     private final ResumeUploadSessionCleaner sessionCleaner;
     private final ResumeUploadFinalizer finalizer;
     private final UserRepository userRepository;
@@ -77,7 +79,7 @@ public class ResumeUploadCleanupJob {
                     if (marked) {
                         // Delete temp object in storage outside transaction
                         try {
-                            cloudStorageService.deleteObject(session.getTempKey());
+                            deleteStorageKey(session.getTempKey());
                             log.info("Cleaned up temp storage object for session: {}", session.getId());
                             // Delete DB row ONLY if storage cleanup succeeded
                             sessionCleaner.deleteExpiredSession(session.getId());
@@ -111,7 +113,7 @@ public class ResumeUploadCleanupJob {
                     continue;
                 }
                 try {
-                    cloudStorageService.deleteObject(session.getTempKey());
+                    deleteStorageKey(session.getTempKey());
                     log.info("Successfully deleted temp storage on retry for session: {}", session.getId());
                     sessionCleaner.deleteExpiredSession(session.getId());
                 } catch (Exception storageEx) {
@@ -193,7 +195,9 @@ public class ResumeUploadCleanupJob {
 
             for (ResumeUploadSession session : stuckSessions) {
                 try {
-                    Optional<StorageObjectMetadata> permMetaOpt = cloudStorageService.headObject(session.getPermanentKey());
+                    Optional<StorageObjectMetadata> permMetaOpt = isFileServiceKey(session.getTempKey())
+                            ? Optional.empty()
+                            : cloudStorageService.headObject(session.getPermanentKey());
                     boolean permanentValid = permMetaOpt.isPresent() &&
                             permMetaOpt.get().contentLength() > 0 &&
                             permMetaOpt.get().contentLength() == session.getDeclaredSize() &&
@@ -227,11 +231,11 @@ public class ResumeUploadCleanupJob {
             return true;
         }
         try {
-            cloudStorageService.deleteObject(key);
+            deleteStorageKey(key);
             return true;
         } catch (Exception deleteEx) {
             try {
-                if (cloudStorageService.headObject(key).isEmpty()) {
+                if (!isFileServiceKey(key) && cloudStorageService.headObject(key).isEmpty()) {
                     return true;
                 }
             } catch (Exception headEx) {
@@ -247,9 +251,22 @@ public class ResumeUploadCleanupJob {
             return;
         }
         try {
-            cloudStorageService.deleteObject(key);
+            deleteStorageKey(key);
         } catch (Exception e) {
             log.warn("Silently ignored error deleting object: {}: {}", key, e.getMessage());
         }
+    }
+
+    private void deleteStorageKey(String key) {
+        if (isFileServiceKey(key)) {
+            fileServiceClient.delete(key);
+        } else {
+            cloudStorageService.deleteObject(key);
+        }
+    }
+
+    private boolean isFileServiceKey(String key) {
+        return key != null && (key.startsWith("temp/private/job-portal/candidate-cv/")
+                || key.startsWith("private/job-portal/candidate-cv/"));
     }
 }

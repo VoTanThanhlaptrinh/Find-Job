@@ -19,6 +19,7 @@ import com.nlu.applicationProcess.domain.model.ResumeStatus;
 import com.nlu.identity.domain.model.User;
 import com.nlu.applicationProcess.application.ResumeService;
 import com.nlu.shared.application.FileService;
+import com.nlu.shared.application.FileServiceClient;
 import com.nlu.shared.application.S3PresignedUrlService;
 import com.nlu.shared.application.SseEmitterService;
 import com.nlu.shared.domain.model.SseMessagePayload;
@@ -42,9 +43,11 @@ public class ResumeServiceImpl implements ResumeService {
     private final FileService fileService;
     private final ApplicationEventPublisher eventPublisher;
     private final S3PresignedUrlService s3PresignedUrlService;
+    private final FileServiceClient fileServiceClient;
     private final SseEmitterService sseEmitterService;
 
     private static final int DEFAULT_URL_EXPIRATION_MINUTES = 30;
+    private static final int FILE_SERVICE_URL_EXPIRATION_MINUTES = 15;
 
     private static final String MDC_USER_ID = "userId";
     private static final String MDC_CV_ID = "cvId";
@@ -89,7 +92,7 @@ public class ResumeServiceImpl implements ResumeService {
         String rawText = cv.getRawText();
         if (rawText == null || rawText.isBlank()) {
             try {
-                byte[] fileBytes = cloudStorageService.getObjectBytes(cv.getKeyCf());
+                byte[] fileBytes = getResumeBytes(cv);
                 rawText = fileService.extractTextFromFile(new ByteArrayInputStream(fileBytes));
                 if (rawText == null || rawText.isBlank()) {
                     rawText = fileService.extractTextFromFileOcr(fileBytes, cv.getFileName());
@@ -153,8 +156,11 @@ public class ResumeServiceImpl implements ResumeService {
     public ResumeUrlDTO getResumeViewUrl(long id, User user) {
         Resume cv = findResumeAndAssertOwner(id, user, "resume.view.forbidden");
         try {
-            String url = s3PresignedUrlService.generateViewUrl(cv.getKeyCf(), DEFAULT_URL_EXPIRATION_MINUTES);
-            return new ResumeUrlDTO(cv.getId(), cv.getFileName(), url, DEFAULT_URL_EXPIRATION_MINUTES);
+            String url = isFileServiceKey(cv.getKeyCf())
+                    ? fileServiceClient.readUrl(cv.getKeyCf(), null)
+                    : s3PresignedUrlService.generateViewUrl(cv.getKeyCf(), DEFAULT_URL_EXPIRATION_MINUTES);
+            return new ResumeUrlDTO(cv.getId(), cv.getFileName(), url,
+                    isFileServiceKey(cv.getKeyCf()) ? FILE_SERVICE_URL_EXPIRATION_MINUTES : DEFAULT_URL_EXPIRATION_MINUTES);
         } catch (Exception e) {
             log.warn("Failed to generate view URL for CV: {}, user: {}", id, user.getId());
             throw new RuntimeException(MessageUtils.getMessage("resume.url.generate_failed"));
@@ -166,8 +172,11 @@ public class ResumeServiceImpl implements ResumeService {
         Resume cv = findResumeAndAssertOwner(id, user, "resume.download.forbidden");
 
         try {
-            String url = s3PresignedUrlService.generateDownloadUrl(cv.getKeyCf(), cv.getFileName(), DEFAULT_URL_EXPIRATION_MINUTES);
-            return new ResumeUrlDTO(cv.getId(), cv.getFileName(), url, DEFAULT_URL_EXPIRATION_MINUTES);
+            String url = isFileServiceKey(cv.getKeyCf())
+                    ? fileServiceClient.readUrl(cv.getKeyCf(), cv.getFileName())
+                    : s3PresignedUrlService.generateDownloadUrl(cv.getKeyCf(), cv.getFileName(), DEFAULT_URL_EXPIRATION_MINUTES);
+            return new ResumeUrlDTO(cv.getId(), cv.getFileName(), url,
+                    isFileServiceKey(cv.getKeyCf()) ? FILE_SERVICE_URL_EXPIRATION_MINUTES : DEFAULT_URL_EXPIRATION_MINUTES);
         } catch (Exception e) {
             log.warn("Failed to generate download URL for CV: {}, user: {}", id, user.getId());
             throw new RuntimeException(MessageUtils.getMessage("resume.url.generate_failed"));
@@ -179,8 +188,11 @@ public class ResumeServiceImpl implements ResumeService {
         Resume cv = findResumeAndAssertHirerAccess(id, hirerUser, "resume.view.forbidden");
 
         try {
-            String url = s3PresignedUrlService.generateViewUrl(cv.getKeyCf(), DEFAULT_URL_EXPIRATION_MINUTES);
-            return new ResumeUrlDTO(cv.getId(), cv.getFileName(), url, DEFAULT_URL_EXPIRATION_MINUTES);
+            String url = isFileServiceKey(cv.getKeyCf())
+                    ? fileServiceClient.readUrl(cv.getKeyCf(), null)
+                    : s3PresignedUrlService.generateViewUrl(cv.getKeyCf(), DEFAULT_URL_EXPIRATION_MINUTES);
+            return new ResumeUrlDTO(cv.getId(), cv.getFileName(), url,
+                    isFileServiceKey(cv.getKeyCf()) ? FILE_SERVICE_URL_EXPIRATION_MINUTES : DEFAULT_URL_EXPIRATION_MINUTES);
         } catch (Exception e) {
             log.warn("Failed to generate hirer view URL for CV: {}", id);
             throw new RuntimeException(MessageUtils.getMessage("resume.url.generate_failed"), e);
@@ -192,8 +204,11 @@ public class ResumeServiceImpl implements ResumeService {
         Resume cv = findResumeAndAssertHirerAccess(id, hirerUser, "resume.download.forbidden");
 
         try {
-            String url = s3PresignedUrlService.generateDownloadUrl(cv.getKeyCf(), cv.getFileName(), DEFAULT_URL_EXPIRATION_MINUTES);
-            return new ResumeUrlDTO(cv.getId(), cv.getFileName(), url, DEFAULT_URL_EXPIRATION_MINUTES);
+            String url = isFileServiceKey(cv.getKeyCf())
+                    ? fileServiceClient.readUrl(cv.getKeyCf(), cv.getFileName())
+                    : s3PresignedUrlService.generateDownloadUrl(cv.getKeyCf(), cv.getFileName(), DEFAULT_URL_EXPIRATION_MINUTES);
+            return new ResumeUrlDTO(cv.getId(), cv.getFileName(), url,
+                    isFileServiceKey(cv.getKeyCf()) ? FILE_SERVICE_URL_EXPIRATION_MINUTES : DEFAULT_URL_EXPIRATION_MINUTES);
         } catch (Exception e) {
             log.warn("Failed to generate hirer download URL for CV: {}", id);
             throw new RuntimeException(MessageUtils.getMessage("resume.url.generate_failed"), e);
@@ -227,5 +242,17 @@ public class ResumeServiceImpl implements ResumeService {
     private Resume findResumeById(long id) {
         return resumeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(MessageUtils.getMessage("resume.not_found")));
+    }
+
+    private byte[] getResumeBytes(Resume resume) {
+        if (isFileServiceKey(resume.getKeyCf())) {
+            String readUrl = fileServiceClient.readUrl(resume.getKeyCf(), resume.getFileName());
+            return fileServiceClient.download(readUrl);
+        }
+        return cloudStorageService.getObjectBytes(resume.getKeyCf());
+    }
+
+    private boolean isFileServiceKey(String key) {
+        return key != null && key.startsWith("private/job-portal/candidate-cv/");
     }
 }

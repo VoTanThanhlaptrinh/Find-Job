@@ -213,7 +213,6 @@ class ResumeUploadFinalizerTest {
             assertEquals("resumes/42/" + uploadId, result.getKeyCf());
             assertEquals("my_resume.pdf", result.getFileName());
 
-            // Session must be updated to COMPLETED with resumeId
             assertEquals(ResumeUploadSessionStatus.COMPLETED, session.getStatus());
             assertEquals(1001L, session.getResumeId());
             assertNull(session.getProcessingToken());
@@ -490,6 +489,27 @@ class ResumeUploadFinalizerTest {
 
             assertTrue(ex.getMessage().contains("token"));
             verify(sessionRepository, never()).save(session);
+        }
+
+        @Test
+        @DisplayName("releaseFinalizingClaim trả FINALIZING về PENDING_UPLOAD khi token khớp")
+        void releaseFinalizingClaim_ResetsToPendingUpload() {
+            ResumeUploadSession session = ResumeUploadSession.builder()
+                    .id(uploadId)
+                    .userId(42L)
+                    .status(ResumeUploadSessionStatus.FINALIZING)
+                    .processingToken("valid-token")
+                    .finalizingStartedAt(LocalDateTime.now())
+                    .build();
+
+            when(sessionRepository.findByIdForUpdate(uploadId)).thenReturn(Optional.of(session));
+
+            resumeUploadFinalizer.releaseFinalizingClaim(uploadId, "valid-token");
+
+            assertEquals(ResumeUploadSessionStatus.PENDING_UPLOAD, session.getStatus());
+            assertNull(session.getProcessingToken());
+            assertNull(session.getFinalizingStartedAt());
+            verify(sessionRepository).save(session);
         }
     }
 }

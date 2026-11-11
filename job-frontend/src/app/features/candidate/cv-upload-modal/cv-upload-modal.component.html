@@ -49,8 +49,16 @@
         </div>
       </label>
 
-      <!-- File Preview (Visible when a file is selected) -->
-      @if (selectedFile) {
+      <!-- Compact loading while uploading file to cloud -->
+      @if (isUploadingToTemp) {
+      <div
+        class="flex items-center gap-3 rounded-xl border border-blue-100 bg-blue-50/70 px-4 py-3 text-sm text-blue-700"
+      >
+        <span class="material-symbols-outlined animate-spin text-xl">progress_activity</span>
+        <span class="font-medium">{{ 'cvUploadModal.uploadingFile' | t }}</span>
+      </div>
+      } @else if (selectedFile && stagedUploadId) {
+      <!-- File Preview (Visible once cloud upload finishes) -->
       <div
         class="bg-white border border-slate-200 rounded-xl p-4 flex items-center gap-4 transition-all hover:border-slate-300 animate-in fade-in slide-in-from-bottom-2 duration-300"
       >
@@ -133,7 +141,7 @@
       </button>
       <button
         type="button"
-        [disabled]="isSubmitting"
+        [disabled]="isSubmitting || isUploadingToTemp || !stagedUploadId"
         class="px-7 py-2.5 rounded-lg bg-blue-600 text-white font-bold text-sm shadow-sm shadow-blue-200 hover:bg-blue-700 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         (click)="onSubmit()"
       >

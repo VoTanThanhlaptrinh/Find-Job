@@ -1,6 +1,8 @@
-import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild, inject } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Subscription } from 'rxjs';
 import { I18nService } from '../../../core/i18n/i18n.service';
+import { ResumeService } from '../../../core/services/resume.service';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 
 @Component({
@@ -10,25 +12,33 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
   templateUrl: './cv-upload-modal.component.html',
   styleUrl: './cv-upload-modal.component.css'
 })
-export class CvUploadModalComponent implements OnChanges {
+export class CvUploadModalComponent implements OnChanges, OnDestroy {
   private readonly i18n = inject(I18nService);
-  
+  private readonly resumeService = inject(ResumeService);
+
   @ViewChild('cvUploadInput') cvUploadInput?: ElementRef<HTMLInputElement>;
   @Input() isOpen = false;
   @Output() closeRequested = new EventEmitter<void>();
-  @Output() submitRequested = new EventEmitter<{ file: File; enableAiAnalysis: boolean }>();
+  @Output() submitRequested = new EventEmitter<{ file: File; uploadId: string; enableAiAnalysis: boolean }>();
 
   selectedFile: File | null = null;
+  stagedUploadId: string | null = null;
+  isUploadingToTemp = false;
   errorMessage = '';
   enableAiAnalysis = false;
   isSubmitting = false;
-  readonly maxFileSize = 5 * 1024 * 1024;
+  private uploadSubscription?: Subscription;
+  readonly maxFileSize = 10 * 1024 * 1024;
   readonly acceptedExtensions = '.pdf,.doc,.docx';
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['isOpen'] && !this.isOpen) {
       this.resetSelection();
     }
+  }
+
+  ngOnDestroy(): void {
+    this.uploadSubscription?.unsubscribe();
   }
 
   onBackdropClick(): void {
@@ -42,6 +52,7 @@ export class CvUploadModalComponent implements OnChanges {
   onFileInputChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0] ?? null;
+    input.value = '';
     this.setSelectedFile(file);
   }
 
@@ -53,9 +64,21 @@ export class CvUploadModalComponent implements OnChanges {
       this.errorMessage = this.i18n.translate('cvUploadModal.selectFileHint');
       return;
     }
+    if (this.isUploadingToTemp) {
+      this.errorMessage = this.i18n.translate('cvUploadModal.tempUploadInProgress');
+      return;
+    }
+    if (!this.stagedUploadId) {
+      this.errorMessage = this.i18n.translate('cvUploadModal.tempUploadFailed');
+      return;
+    }
 
     this.isSubmitting = true;
-    this.submitRequested.emit({ file: this.selectedFile, enableAiAnalysis: this.enableAiAnalysis });
+    this.submitRequested.emit({
+      file: this.selectedFile,
+      uploadId: this.stagedUploadId,
+      enableAiAnalysis: this.enableAiAnalysis
+    });
   }
 
   onClose(event?: MouseEvent): void {
@@ -116,28 +139,51 @@ export class CvUploadModalComponent implements OnChanges {
 
   private setSelectedFile(file: File | null): void {
     if (!file) {
-      this.selectedFile = null;
-      this.errorMessage = '';
+      this.resetSelection();
       return;
     }
 
     const extension = this.getExtension(file.name);
-    const isAllowedExtension = this.acceptedExtensions.includes(extension);
-
-    if (!isAllowedExtension) {
-      this.selectedFile = null;
+    if (!this.acceptedExtensions.includes(extension)) {
+      this.resetSelection();
       this.errorMessage = this.i18n.translate('cvUploadModal.unsupportedFormat');
       return;
     }
 
     if (file.size > this.maxFileSize) {
-      this.selectedFile = null;
+      this.resetSelection();
       this.errorMessage = this.i18n.translate('cvUploadModal.fileTooLarge');
       return;
     }
 
+    if (this.selectedFile === file && (this.isUploadingToTemp || this.stagedUploadId !== null)) {
+      return;
+    }
+
+    this.uploadSubscription?.unsubscribe();
     this.selectedFile = file;
+    this.stagedUploadId = null;
     this.errorMessage = '';
+    this.isUploadingToTemp = true;
+
+    this.uploadSubscription = this.resumeService.stageCvToTemp(file).subscribe({
+      next: staged => {
+        if (this.selectedFile !== file) {
+          return;
+        }
+        this.stagedUploadId = staged.uploadId;
+        this.isUploadingToTemp = false;
+      },
+      error: err => {
+        if (this.selectedFile !== file) {
+          return;
+        }
+        this.selectedFile = null;
+        this.stagedUploadId = null;
+        this.isUploadingToTemp = false;
+        this.errorMessage = err?.error?.message || this.i18n.translate('cvUploadModal.tempUploadFailed');
+      }
+    });
   }
 
   private getExtension(fileName: string): string {
@@ -145,7 +191,10 @@ export class CvUploadModalComponent implements OnChanges {
   }
 
   private resetSelection(): void {
+    this.uploadSubscription?.unsubscribe();
     this.selectedFile = null;
+    this.stagedUploadId = null;
+    this.isUploadingToTemp = false;
     this.errorMessage = '';
     this.enableAiAnalysis = false;
     this.isSubmitting = false;

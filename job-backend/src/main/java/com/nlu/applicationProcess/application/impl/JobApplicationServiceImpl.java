@@ -114,7 +114,8 @@ public class JobApplicationServiceImpl implements JobApplicationService {
                 data = fileService.toByteArray(request.getCvFile().getInputStream());
                 rawText = fileService.extractTextFromFile(request.getCvFile().getInputStream());
 
-                // Optional: Add OCR fallback here if fileService supports it, similar to your createResume logic
+                // Optional: Add OCR fallback here if fileService supports it, similar to your
+                // createResume logic
                 if (rawText == null || rawText.isEmpty()) {
                     log.info("Standard text extraction empty, attempting OCR for user: {}", user.getId());
                     // rawText = fileService.extractTextFromFileOcr(request.getCvFile());
@@ -127,7 +128,8 @@ public class JobApplicationServiceImpl implements JobApplicationService {
 
             if (data.length == 0) {
                 log.warn("Empty file uploaded during resume creation for user: {}", user.getId());
-                throw new BadRequestException(MessageUtils.getMessage("message.error")); // Or a more specific "empty file" message
+                throw new BadRequestException(MessageUtils.getMessage("message.error")); // Or a more specific "empty
+                                                                                         // file" message
             }
 
             // 4. SYNCHRONOUS Cloud Upload
@@ -156,7 +158,8 @@ public class JobApplicationServiceImpl implements JobApplicationService {
             createAndSaveJobApplication(context.job(), resume, context.currentUser());
 
             // 6. Trigger Asynchronous AI Processing
-            eventPublisher.publishEvent(new ResumeAnalysisRequestedEvent(new ResumeParsingMessage(rawText, context.currentUser().getId(), resume.getId())));
+            eventPublisher.publishEvent(new ResumeAnalysisRequestedEvent(
+                    new ResumeParsingMessage(rawText, context.currentUser().getId(), resume.getId())));
 
             log.info("Application completed — user: {} applied to job: {} with new CV: {}. Dispatched AI processing.",
                     context.currentUser().getId(), request.getJobId(), resume.getId());
@@ -189,7 +192,8 @@ public class JobApplicationServiceImpl implements JobApplicationService {
     // --- Helper Methods ---
 
     /**
-     * Centralizes common validation for finding user, finding job, and checking duplicate applications.
+     * Centralizes common validation for finding user, finding job, and checking
+     * duplicate applications.
      */
     private ApplicationContext validateAndGetApplicationContext(String email, long jobId) {
         User currentUser = userRepository.findByEmail_Value(email)
@@ -221,5 +225,6 @@ public class JobApplicationServiceImpl implements JobApplicationService {
     }
 
     // Simple record to pass multiple validated entities back from the helper method
-    private record ApplicationContext(User currentUser, Job job) {}
+    private record ApplicationContext(User currentUser, Job job) {
+    }
 }

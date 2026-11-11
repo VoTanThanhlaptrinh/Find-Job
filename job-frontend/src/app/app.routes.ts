@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './features/home/pages/home/home.component';
-import { userLoginGuard } from './core/guards/user-login.guard';
+import { userLoginChildGuard, userLoginGuard } from './core/guards/user-login.guard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -52,6 +52,8 @@ export const routes: Routes = [
   // Lazy load - Dashboard của Candidate & Các trang con
   {
     path: 'infor',
+    canActivate: [userLoginGuard],
+    canActivateChild: [userLoginChildGuard],
     loadComponent: () => import('./features/candidate/infor/infor.component').then(c => c.InforComponent),
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'profile' },

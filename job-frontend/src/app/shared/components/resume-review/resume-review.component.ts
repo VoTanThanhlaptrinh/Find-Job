@@ -34,13 +34,14 @@ export class ResumeReviewComponent implements OnDestroy {
 
   constructor() {
     effect(() => {
-      if (this.isUploading() || this.isAnalyzing() || this.isParsing() || this.isVectorizing()) {
+      if (this.isBusy()) {
         this.startFakeProgress();
-      } else {
-        this.stopFakeProgress();
-        if (this.isUploaded() || this.isAnalyzed()) {
-          this.uploadProgress.set(100);
-        }
+        return;
+      }
+      this.stopFakeProgress();
+      const status = this.processStatus();
+      if (status === 'uploaded' || status === 'analyzed') {
+        this.uploadProgress.set(100);
       }
     });
   }
@@ -51,21 +52,25 @@ export class ResumeReviewComponent implements OnDestroy {
 
   private startFakeProgress(): void {
     if (this.progressInterval) return;
+    const progressCap: Record<string, number> = {
+      analyzing: 40,
+      parsing: 70,
+      vectorizing: 90,
+      uploading: 95
+    };
     this.uploadProgress.set(0);
     this.progressInterval = setInterval(() => {
+      const status = this.processStatus();
+      const cap = progressCap[status] ?? 95;
       this.uploadProgress.update(prev => {
-        if (this.isAnalyzing() && prev >= 40) return 40;
-        if (this.isParsing() && prev >= 70) return 70; // Cap at 70% during parsing
-        if (this.isVectorizing()) {
-           if (prev < 70) return 70; // Jump to 70
-           if (prev >= 90) return 90; // Cap at 90% during vectorizing
+        if (status === 'vectorizing' && prev < 70) {
+          return 70;
         }
-
+        if (prev >= cap) {
+          return cap;
+        }
         const increment = prev < 50 ? 10 : prev < 80 ? 5 : 2;
-        if (prev + increment >= 95) {
-          return 95;
-        }
-        return prev + increment;
+        return Math.min(prev + increment, cap);
       });
     }, 300);
   }
@@ -77,53 +82,30 @@ export class ResumeReviewComponent implements OnDestroy {
     }
   }
 
-  readonly isUploading = computed(() => {
+  private readonly activeProcess = computed(() => {
     const file = this.resumeService.uploadingFile$();
-    return file !== null && file.id === this.resume.id && file.status === 'uploading';
+    return file?.id === this.resume.id ? file : null;
   });
 
-  readonly isUploaded = computed(() => {
-    const file = this.resumeService.uploadingFile$();
-    return file !== null && file.id === this.resume.id && file.status === 'uploaded';
+  readonly processStatus = computed(() => {
+    const activeStatus = this.activeProcess()?.status;
+    if (activeStatus) {
+      return activeStatus;
+    }
+    return this.resume?.isAnalyzed ? 'analyzed' : 'idle';
   });
 
-  readonly isAnalyzing = computed(() => {
-    const file = this.resumeService.uploadingFile$();
-    return file !== null && file.id === this.resume.id && file.status === 'analyzing';
-  });
-
-  readonly isProcessing = computed(() => {
-    const file = this.resumeService.uploadingFile$();
-    return file !== null && file.id === this.resume.id && (file.status === 'analyzing' || file.status === 'parsing' || file.status === 'vectorizing');
-  });
-
-  readonly isAnalyzed = computed(() => {
-    const file = this.resumeService.uploadingFile$();
-    return this.resume?.isAnalyzed || (file !== null && file.id === this.resume.id && file.status === 'analyzed');
-  });
-
-  readonly isParsing = computed(() => {
-    const file = this.resumeService.uploadingFile$();
-    return file !== null && file.id === this.resume.id && file.status === 'parsing';
-  });
-
-  readonly isVectorizing = computed(() => {
-    const file = this.resumeService.uploadingFile$();
-    return file !== null && file.id === this.resume.id && file.status === 'vectorizing';
+  readonly isBusy = computed(() => {
+    const status = this.processStatus();
+    return status === 'uploading' || status === 'analyzing' || status === 'parsing' || status === 'vectorizing';
   });
 
   readonly isFailed = computed(() => {
-    const file = this.resumeService.uploadingFile$();
-    return file !== null && file.id === this.resume.id && (file.status === 'failed' || file.status === 'error');
+    const status = this.processStatus();
+    return status === 'failed' || status === 'error';
   });
 
-  readonly executionTime = computed(() => {
-    const file = this.resumeService.uploadingFile$();
-    if (file !== null && file.id === this.resume.id && file.executionTime !== undefined) {
-      return file.executionTime;
-    }
-    return null;
-  });
+  readonly executionTime = computed(() => this.activeProcess()?.executionTime ?? null);
 
   onAnalyzeResume(): void {
     this.resumeService.analyzeResume(this.resume.id);

@@ -42,7 +42,7 @@ export class AppComponent implements OnInit {
     this.layoutVisibilityService.checkUrlIsHidden(this.router.url);
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
-        if ((event.url.startsWith('/admin') || event.url.startsWith('/recruiter') || event.url.startsWith('/blog-creation')) && !this.authService.isAuthReady()) {
+        if ((event.url.startsWith('/admin') || event.url.startsWith('/recruiter') || event.url.startsWith('/blog-creation') || event.url.startsWith('/infor')) && !this.authService.isAuthReady()) {
           this.isResolvingAuth = true;
         }
       } else if (event instanceof NavigationEnd) {
