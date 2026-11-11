@@ -77,11 +77,16 @@ describe('CvUiComponent', () => {
 
     const putReq = httpMock.expectOne('https://r2.example.com/modal-temp');
     expect(putReq.request.method).toBe('PUT');
+    fixture.detectChanges();
+    expect(modalDebug.nativeElement.textContent).not.toContain('profile.pdf');
+
     putReq.flush({}, { status: 200, statusText: 'OK' });
+    fixture.detectChanges();
 
     httpMock.expectNone(req => req.url.endsWith('/complete'));
     expect(modal.stagedUploadId).toBe('modal-up-1');
     expect(modal.isUploadingToTemp).toBeFalse();
+    expect(modalDebug.nativeElement.textContent).toContain('profile.pdf');
 
     modal.onSubmit();
 

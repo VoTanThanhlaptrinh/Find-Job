@@ -31,6 +31,7 @@ import com.nlu.shared.utils.MessageUtils;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -66,6 +67,7 @@ public class AuthServiceImpl implements AuthService {
     @Value("${app.frontend-url}")
     private String url;
     private static final String MDC_USER_ID = "userId";
+    private static final long REFRESH_COOKIE_MAX_AGE_SECONDS = Duration.ofDays(7).getSeconds();
 
     @Value("${app.cookie.secure}")
     private boolean isSecure;
@@ -206,14 +208,7 @@ public class AuthServiceImpl implements AuthService {
             spamService.deleteIpSpamLogin(ip);
             String accessToken = jwtService.generateToken(user);
             String refreshToken = refreshTokenService.createRefreshToken(loginDTO.getUsername());
-            ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
-                    .httpOnly(true)
-                    .secure(isSecure)
-                    .path("/")
-                    .sameSite("Lax")
-                    .maxAge(Duration.ofDays(7).getSeconds())
-                    .build();
-            response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+            writeRefreshCookie(response, refreshToken, REFRESH_COOKIE_MAX_AGE_SECONDS);
 
             log.info("Login successful for user: {} with role: {}", user.getId(), expectedRole);
             return accessToken;
@@ -240,14 +235,7 @@ public class AuthServiceImpl implements AuthService {
                 validateAccountStatus(user);
                 String accessToken = jwtService.generateToken(user);
                 String refreshTokenVal = refreshTokenService.reGenerateRefreshToken(token);
-                ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshTokenVal)
-                        .httpOnly(true)
-                        .secure(isSecure)
-                        .path("/")
-                        .sameSite("Lax")
-                        .maxAge(Duration.ofDays(7).getSeconds())
-                        .build();
-                response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+                writeRefreshCookie(response, refreshTokenVal, REFRESH_COOKIE_MAX_AGE_SECONDS);
 
                 log.info("Token refreshed successfully");
                 return accessToken;
@@ -260,26 +248,37 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        writeRefreshCookie(response, "", 0);
         Cookie[] cookies = request.getCookies();
-        request.getSession().invalidate();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (!"refreshToken".equals(cookie.getName())) {
                     continue;
                 }
                 String token = cookie.getValue();
-                refreshTokenService.deleteRefreshToken(token);
-                Cookie refreshCookie = new Cookie("refreshToken", null);
-                refreshCookie.setPath("/");
-                refreshCookie.setHttpOnly(true);
-                refreshCookie.setSecure(request.isSecure());
-                refreshCookie.setMaxAge(0);
-                response.addCookie(refreshCookie);
+                if (StringUtils.hasText(token)) {
+                    refreshTokenService.deleteRefreshToken(token);
+                }
             }
         }
         response.setHeader("Authorization", "");
 
         log.info("User logged out — session and refresh token cleared");
+    }
+
+    private void writeRefreshCookie(HttpServletResponse response, String tokenValue, long maxAgeSeconds) {
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", tokenValue)
+                .httpOnly(true)
+                .secure(isSecure)
+                .path("/")
+                .sameSite("Lax")
+                .maxAge(maxAgeSeconds)
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
     @Override

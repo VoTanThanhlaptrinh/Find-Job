@@ -49,8 +49,16 @@
         </div>
       </label>
 
-      <!-- File Preview (Visible when a file is selected) -->
-      @if (selectedFile) {
+      <!-- Compact loading while uploading file to cloud -->
+      @if (isUploadingToTemp) {
+      <div
+        class="flex items-center gap-3 rounded-xl border border-blue-100 bg-blue-50/70 px-4 py-3 text-sm text-blue-700"
+      >
+        <span class="material-symbols-outlined animate-spin text-xl">progress_activity</span>
+        <span class="font-medium">{{ 'cvUploadModal.uploadingFile' | t }}</span>
+      </div>
+      } @else if (selectedFile && stagedUploadId) {
+      <!-- File Preview (Visible once cloud upload finishes) -->
       <div
         class="bg-white border border-slate-200 rounded-xl p-4 flex items-center gap-4 transition-all hover:border-slate-300 animate-in fade-in slide-in-from-bottom-2 duration-300"
       >
@@ -74,13 +82,7 @@
           <div class="flex items-center gap-2 mt-0.5">
             <span class="text-xs font-medium text-slate-500">{{ selectedFileSizeLabel }}</span>
             <span class="w-1 h-1 bg-slate-300 rounded-full"></span>
-            @if (isUploadingToTemp) {
-              <span class="text-xs font-medium text-blue-600 uppercase">{{ 'cvUploadModal.uploadingTempStatus' | t }}</span>
-            } @else if (stagedUploadId) {
-              <span class="text-xs font-medium text-green-600 uppercase">{{ 'cvUploadModal.readyStatus' | t }}</span>
-            } @else {
-              <span class="text-xs font-medium text-red-600 uppercase">{{ 'cvUploadModal.uploadFailedStatus' | t }}</span>
-            }
+            <span class="text-xs font-medium text-green-600 uppercase">{{ 'cvUploadModal.readyStatus' | t }}</span>
           </div>
         </div>
         <button

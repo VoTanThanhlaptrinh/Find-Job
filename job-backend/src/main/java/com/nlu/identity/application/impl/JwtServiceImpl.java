@@ -1,6 +1,9 @@
 package com.nlu.identity.application.impl;
 
 import java.time.Duration;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -70,7 +73,7 @@ public class JwtServiceImpl implements JwtService {
 		}
 		return username != null
 				&& username.equals(userDetails.getUsername())
-				&& claims.getExpiration().after(new Date());
+				&& isExpirationAfterNow(claims);
 	}
 
 	@Override
@@ -89,7 +92,7 @@ public class JwtServiceImpl implements JwtService {
 			return email != null
 					&& email.equals(subject)
 					&& "activate".equals(purpose)
-					&& claims.getExpiration().after(new Date());
+					&& isExpirationAfterNow(claims);
 		} catch (Exception e) {
 			return false;
 		}
@@ -102,8 +105,7 @@ public class JwtServiceImpl implements JwtService {
 
 	@Override
 	public boolean isTokenExpired(String token) {
-		// TODO Auto-generated method stub
-		return extractExpiration(token).before(new Date());
+		return !extractExpiration(token).isAfter(nowUtc());
 	}
 
 	@Override
@@ -131,13 +133,25 @@ public class JwtServiceImpl implements JwtService {
 		return extractAllClaims(token).get("familyId").toString();
 	}
 
-	private Date extractExpiration(String token) {
-		// TODO Auto-generated method stub
-		return extractClaims(token, Claims::getExpiration);
+	private OffsetDateTime extractExpiration(String token) {
+		Date expiration = extractClaims(token, Claims::getExpiration);
+		return expiration != null ? expiration.toInstant().atOffset(ZoneOffset.UTC) : OffsetDateTime.MIN;
+	}
+
+	private boolean isExpirationAfterNow(Claims claims) {
+		Date expiration = claims.getExpiration();
+		if (expiration == null) {
+			return false;
+		}
+		OffsetDateTime expirationTime = expiration.toInstant().atOffset(ZoneOffset.UTC);
+		return expirationTime.isAfter(nowUtc());
+	}
+
+	private OffsetDateTime nowUtc() {
+		return OffsetDateTime.now(ZoneOffset.UTC);
 	}
 
 	private Claims extractAllClaims(String token) {
-		// TODO Auto-generated method stub
 		return Jwts.parser().verifyWith(getSignInKey()).build().parseSignedClaims(token).getPayload();
 	}
 
@@ -145,11 +159,13 @@ public class JwtServiceImpl implements JwtService {
 		return buildToken(claims, username, expirationMillis);
 	}
 
-	private String buildToken(HashMap<String, Object> claims,  String username, long expirationMillis) {
+	private String buildToken(HashMap<String, Object> claims, String username, long expirationMillis) {
+		OffsetDateTime issuedAt = nowUtc();
+		OffsetDateTime expiresAt = issuedAt.plus(expirationMillis, ChronoUnit.MILLIS);
 		return Jwts.builder().claims(claims).subject(username)
-				.issuedAt(new Date(System.currentTimeMillis()))// set thời điểm tạo ra
+				.issuedAt(Date.from(issuedAt.toInstant()))
 				.id(UUID.randomUUID().toString())
-				.expiration(new Date(System.currentTimeMillis() + expirationMillis))
+				.expiration(Date.from(expiresAt.toInstant()))
 				.signWith(getSignInKey()).compact();
 	}
 

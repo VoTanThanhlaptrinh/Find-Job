@@ -6,6 +6,7 @@ import {
   finalize,
   Observable,
   of,
+  shareReplay,
   startWith,
   take,
   timeout,
@@ -34,6 +35,7 @@ export class AuthService {
   private readonly _authReady = signal(false);
   private pageAccessTrackingInitialized = false;
   private sseConnectTimeoutId: any = null;
+  private refreshRequest$: Observable<string> | null = null;
 
   username = signal('');
   public isLoginClicked = computed(() => this.loginClick());
@@ -125,42 +127,61 @@ export class AuthService {
     );
   }
 
-  refreshToken$(): Observable<any> {
-    const url = `${this.url}/auth/refreshToken`;
-    return this.http.get<any>(url, { withCredentials: true }).pipe(take(1));
-  }
+  refreshToken$(): Observable<string> {
+    if (this.refreshRequest$) {
+      return this.refreshRequest$;
+    }
 
-  refreshToken() {
     const refreshEndpoint = `${this.url}/auth/refreshToken`;
-
     this.logAuthDebug('Starting refresh token request', {
       currentUrl: this.router.url,
       refreshEndpoint,
     });
 
-    return this.http.get<any>(refreshEndpoint, { withCredentials: true }).pipe(
-      timeout(8000),
-      tap({
-        next: (res) => {
-          const token = typeof res?.data === 'string' ? res.data : '';
-          this.tokenService.setToken(token);
-          this.setLoggedIn(true);
-          this.logAuthDebug('Refresh token succeeded', {
-            currentUrl: this.router.url,
-            hasToken: !!token,
-            roles: this.tokenService.getTokenRoles(token),
-          });
-        },
-        error: (error) => {
-          this.setLoggedIn(false);
-          this.logAuthDebug('Refresh token failed', {
-            currentUrl: this.router.url,
-            redirectCandidate: this.resolveLoginRoute(this.router.url),
-            errorStatus: this.extractErrorStatus(error),
-            errorMessage: this.extractErrorMessage(error),
-          });
-        },
-      }),
+    this.refreshRequest$ = this.http
+      .get<any>(refreshEndpoint, { withCredentials: true })
+      .pipe(
+        take(1),
+        timeout(8000),
+        map((res) => {
+          const token = this.extractAccessToken(res);
+          if (!token) {
+            throw new Error('Refresh response did not include an access token');
+          }
+          return token;
+        }),
+        tap({
+          next: (token) => {
+            this.tokenService.setToken(token);
+            this.setLoggedIn(true);
+            this.logAuthDebug('Refresh token succeeded', {
+              currentUrl: this.router.url,
+              hasToken: true,
+              roles: this.tokenService.getTokenRoles(token),
+            });
+          },
+          error: (error) => {
+            this.tokenService.clearToken();
+            this.setLoggedIn(false);
+            this.logAuthDebug('Refresh token failed', {
+              currentUrl: this.router.url,
+              redirectCandidate: this.resolveLoginRoute(this.router.url),
+              errorStatus: this.extractErrorStatus(error),
+              errorMessage: this.extractErrorMessage(error),
+            });
+          },
+        }),
+        finalize(() => {
+          this.refreshRequest$ = null;
+        }),
+        shareReplay(1)
+      );
+
+    return this.refreshRequest$;
+  }
+
+  refreshToken(): Observable<string | null> {
+    return this.refreshToken$().pipe(
       catchError((error) => {
         console.error('Refresh token failed during app startup', error);
         return of(null);
@@ -175,6 +196,23 @@ export class AuthService {
         });
       })
     );
+  }
+
+  private extractAccessToken(response: unknown): string {
+    if (typeof response === 'string') {
+      return response;
+    }
+
+    if (
+      response &&
+      typeof response === 'object' &&
+      'data' in response &&
+      typeof (response as { data?: unknown }).data === 'string'
+    ) {
+      return (response as { data: string }).data;
+    }
+
+    return '';
   }
 
   markAuthReady(): void {

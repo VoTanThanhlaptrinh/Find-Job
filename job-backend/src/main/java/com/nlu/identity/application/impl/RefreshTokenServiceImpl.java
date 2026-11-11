@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import com.nlu.identity.application.JwtFamilyService;
 import com.nlu.identity.application.JwtService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -39,6 +41,9 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
 	@Override
 	public boolean isValid(String token) {
+		if (token == null || token.isBlank()) {
+			return false;
+		}
 		// Success path — silent. Only log failures.
 		try {
 			String jti = jwtService.extractJTI(token);
@@ -57,10 +62,21 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
 	@Override
 	public void deleteRefreshToken(String token) {
+		if (token == null || token.isBlank()) {
+			throw new IllegalArgumentException("Refresh token must not be blank");
+		}
 		try {
 			String familyId = jwtService.extractFamily(token);
 			jwtFamilyService.deleteFamily(familyId);
 			// No INFO — logout success is already logged by AuthServiceImpl.
+		} catch (ExpiredJwtException e) {
+			Claims claims = e.getClaims();
+			Object familyId = claims != null ? claims.get("familyId") : null;
+			if (familyId == null) {
+				log.warn("Refresh token revocation failed — expired token missing familyId");
+				throw new RuntimeException("Expired refresh token missing familyId", e);
+			}
+			jwtFamilyService.deleteFamily(familyId.toString());
 		} catch (Exception e) {
 			log.warn("Refresh token revocation failed — could not extract family");
 			throw new RuntimeException(e);

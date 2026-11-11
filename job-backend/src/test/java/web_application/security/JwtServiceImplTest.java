@@ -18,6 +18,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
@@ -63,5 +65,41 @@ class JwtServiceImplTest {
 
         assertThat(actualTtlMillis).isBetween(refreshTtlMillis - 5_000, refreshTtlMillis + 5_000);
         verify(jwtFamilyService).saveFamilyJti(jwtService.extractFamily(token), jwtService.extractJTI(token));
+    }
+
+    @Test
+    void generateTokenUsesOffsetDateTimeUtcWindow() {
+        UserDetails user = new User(
+                "candidate@test.com",
+                "password",
+                List.of(new SimpleGrantedAuthority("ROLE_USER"))
+        );
+        OffsetDateTime before = OffsetDateTime.now(ZoneOffset.UTC).minusSeconds(2);
+
+        String token = jwtService.generateToken(user);
+
+        Date issuedAt = jwtService.extractClaims(token, Claims::getIssuedAt);
+        Date expiration = jwtService.extractClaims(token, Claims::getExpiration);
+        OffsetDateTime issuedUtc = issuedAt.toInstant().atOffset(ZoneOffset.UTC);
+        OffsetDateTime expiresUtc = expiration.toInstant().atOffset(ZoneOffset.UTC);
+
+        assertThat(issuedUtc).isAfterOrEqualTo(before);
+        assertThat(Duration.between(issuedUtc, expiresUtc)).isEqualTo(Duration.ofMillis(600_000L));
+        assertThat(jwtService.isTokenValid(token, user)).isTrue();
+        assertThat(jwtService.isTokenExpired(token)).isFalse();
+    }
+
+    @Test
+    void activationTokenIsValidForPurposeAndRejectedAsAccessToken() {
+        UserDetails user = new User(
+                "candidate@test.com",
+                "password",
+                List.of(new SimpleGrantedAuthority("ROLE_USER"))
+        );
+
+        String activationToken = jwtService.generateActivationToken("candidate@test.com");
+
+        assertThat(jwtService.isActivationTokenValid(activationToken, "candidate@test.com")).isTrue();
+        assertThat(jwtService.isTokenValid(activationToken, user)).isFalse();
     }
 }

@@ -178,6 +178,7 @@ export class CvUploadModalComponent implements OnChanges, OnDestroy {
         if (this.selectedFile !== file) {
           return;
         }
+        this.selectedFile = null;
         this.stagedUploadId = null;
         this.isUploadingToTemp = false;
         this.errorMessage = err?.error?.message || this.i18n.translate('cvUploadModal.tempUploadFailed');
