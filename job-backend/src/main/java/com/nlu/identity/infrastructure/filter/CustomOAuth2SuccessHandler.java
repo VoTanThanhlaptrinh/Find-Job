@@ -37,6 +37,8 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
     private boolean isSecure;
     @Value("${app.frontend-url}")
     private String frontendUrl;
+    @Value("${application.service.impl.timeLimit}")
+    private long refreshTokenTtlSeconds;
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         OAuth2AuthenticationToken authenticationToken = (OAuth2AuthenticationToken) authentication;
@@ -70,7 +72,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
                 .secure(isSecure)
                 .path("/")
                 .sameSite("Lax")
-                .maxAge(Duration.ofDays(7)) // Thiết lập 7 ngày
+                .maxAge(Duration.ofSeconds(refreshTokenTtlSeconds))
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());  // cài cookie
         response.setContentType("text/html");

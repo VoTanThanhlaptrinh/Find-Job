@@ -45,7 +45,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -67,7 +66,9 @@ public class AuthServiceImpl implements AuthService {
     @Value("${app.frontend-url}")
     private String url;
     private static final String MDC_USER_ID = "userId";
-    private static final long REFRESH_COOKIE_MAX_AGE_SECONDS = Duration.ofDays(7).getSeconds();
+
+    @Value("${application.service.impl.timeLimit}")
+    private long refreshTokenTtlSeconds;
 
     @Value("${app.cookie.secure}")
     private boolean isSecure;
@@ -208,7 +209,7 @@ public class AuthServiceImpl implements AuthService {
             spamService.deleteIpSpamLogin(ip);
             String accessToken = jwtService.generateToken(user);
             String refreshToken = refreshTokenService.createRefreshToken(loginDTO.getUsername());
-            writeRefreshCookie(response, refreshToken, REFRESH_COOKIE_MAX_AGE_SECONDS);
+            writeRefreshCookie(response, refreshToken, refreshTokenTtlSeconds);
 
             log.info("Login successful for user: {} with role: {}", user.getId(), expectedRole);
             return accessToken;
@@ -235,7 +236,7 @@ public class AuthServiceImpl implements AuthService {
                 validateAccountStatus(user);
                 String accessToken = jwtService.generateToken(user);
                 String refreshTokenVal = refreshTokenService.reGenerateRefreshToken(token);
-                writeRefreshCookie(response, refreshTokenVal, REFRESH_COOKIE_MAX_AGE_SECONDS);
+                writeRefreshCookie(response, refreshTokenVal, refreshTokenTtlSeconds);
 
                 log.info("Token refreshed successfully");
                 return accessToken;

@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.nlu.identity.application.JwtFamilyService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -13,13 +14,14 @@ import org.springframework.stereotype.Service;
 public class JwtFamilyServiceImpl implements JwtFamilyService {
     private static final String KEY_PREFIX = "auth:family:";
     private static final String USER_FAMILIES_PREFIX = "auth:user-families:";
-    private static final Duration TTL = Duration.ofDays(7);
 
     private final RedisTemplate<String, Object> redisTemplate;
+    @Value("${application.service.impl.timeLimit}")
+    private long refreshTokenTtlSeconds;
 
     @Override
     public void saveFamilyJti(String familyId, String jti) {
-        redisTemplate.opsForValue().set(buildKey(familyId), jti, TTL);
+        redisTemplate.opsForValue().set(buildKey(familyId), jti, getTtl());
     }
 
     @Override
@@ -40,7 +42,11 @@ public class JwtFamilyServiceImpl implements JwtFamilyService {
         }
         String userKey = buildUserFamiliesKey(username);
         redisTemplate.opsForSet().add(userKey, familyId);
-        redisTemplate.expire(userKey, TTL);
+        redisTemplate.expire(userKey, getTtl());
+    }
+
+    private Duration getTtl() {
+        return Duration.ofSeconds(refreshTokenTtlSeconds);
     }
 
     @Override

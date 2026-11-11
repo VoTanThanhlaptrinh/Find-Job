@@ -46,6 +46,7 @@ class CustomOAuth2SuccessHandlerTest {
     @Test
     void oauthSuccessStoresDatabaseUserAuthoritiesInSecurityContext() throws IOException, ServletException {
         ReflectionTestUtils.setField(handler, "isSecure", false);
+        ReflectionTestUtils.setField(handler, "refreshTokenTtlSeconds", 604800L);
 
         User user = new User();
         user.setEmail(new EmailAddress("user@test.com"));

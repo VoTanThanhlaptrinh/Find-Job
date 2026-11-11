@@ -76,12 +76,14 @@ class AuthServiceImplRefreshTest {
         ReflectionTestUtils.setField(authService, "url", "http://localhost:4200");
         ReflectionTestUtils.setField(authService, "subjectVerify", "Verify");
         ReflectionTestUtils.setField(authService, "textVerify", "Link: %s");
+        ReflectionTestUtils.setField(authService, "refreshTokenTtlSeconds", 604800L);
     }
 
     @Test
-    void refreshToken_ValidCookie_RotatesAndWritesSevenDayResponseCookie() {
+    void refreshToken_ValidCookie_RotatesAndWritesConfiguredTtlResponseCookie() {
         User user = activeCandidate();
         MockHttpServletResponse response = new MockHttpServletResponse();
+        ReflectionTestUtils.setField(authService, "refreshTokenTtlSeconds", 1_209_600L);
         when(request.getCookies()).thenReturn(new Cookie[]{
                 new Cookie("JSESSIONID", "abc"),
                 new Cookie("refreshToken", "old-rt")
@@ -97,7 +99,7 @@ class AuthServiceImplRefreshTest {
         assertThat(accessToken).isEqualTo("new-access-token");
         String setCookie = response.getHeader(HttpHeaders.SET_COOKIE);
         assertThat(setCookie).contains("refreshToken=new-rt");
-        assertThat(setCookie).contains("Max-Age=604800");
+        assertThat(setCookie).contains("Max-Age=1209600");
         assertThat(setCookie).contains("HttpOnly");
         assertThat(setCookie).contains("Secure");
         assertThat(setCookie).contains("SameSite=Lax");
