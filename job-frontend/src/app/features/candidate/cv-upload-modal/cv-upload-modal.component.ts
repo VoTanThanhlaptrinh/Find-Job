@@ -22,7 +22,7 @@ export class CvUploadModalComponent implements OnChanges {
   errorMessage = '';
   enableAiAnalysis = false;
   isSubmitting = false;
-  readonly maxFileSize = 5 * 1024 * 1024;
+  readonly maxFileSize = 10 * 1024 * 1024;
   readonly acceptedExtensions = '.pdf,.doc,.docx';
 
   ngOnChanges(changes: SimpleChanges): void {

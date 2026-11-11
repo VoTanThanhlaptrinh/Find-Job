@@ -105,11 +105,21 @@
                 </label>
                 @if (isMode("upload") && selectedFile) {
                   <p
-                    class="mt-3 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700"
+                    class="mt-3 rounded-lg px-3 py-2 text-sm"
+                    [class.bg-blue-50]="isUploadingCv"
+                    [class.text-blue-700]="isUploadingCv"
+                    [class.bg-emerald-50]="!isUploadingCv && uploadedResumeId !== null"
+                    [class.text-emerald-700]="!isUploadingCv && uploadedResumeId !== null"
+                    [class.bg-red-50]="!isUploadingCv && uploadedResumeId === null"
+                    [class.text-red-700]="!isUploadingCv && uploadedResumeId === null"
                   >
-                    {{ 'applyCv.selectedFile' | t }}:
-                    <span class="font-semibold">{{ selectedFile.name || ('applyCv.noFileSelected' | t) }}</span>
-                    ({{ selectedFileSizeLabel }})
+                    @if (isUploadingCv) {
+                      Đang tải CV lên: <span class="font-semibold">{{ selectedFile.name }}</span> ({{ selectedFileSizeLabel }})
+                    } @else if (uploadedResumeId !== null) {
+                      Đã tải CV lên: <span class="font-semibold">{{ selectedFile.name }}</span> ({{ selectedFileSizeLabel }})
+                    } @else {
+                      Tải CV thất bại. Vui lòng chọn lại file.
+                    }
                   </p>
                 }
               </div>
@@ -140,7 +150,10 @@
             </a>
             <button
               type="submit"
+              [disabled]="isUploadingCv || (isMode('upload') && uploadedResumeId === null)"
               class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
+              [class.cursor-not-allowed]="isUploadingCv || (isMode('upload') && uploadedResumeId === null)"
+              [class.opacity-50]="isUploadingCv || (isMode('upload') && uploadedResumeId === null)"
             >
               {{ 'applyCv.submit' | t }}
             </button>

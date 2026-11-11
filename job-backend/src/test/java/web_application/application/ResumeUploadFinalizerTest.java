@@ -182,7 +182,7 @@ class ResumeUploadFinalizerTest {
     class FinalizeUploadTests {
 
         @Test
-        @DisplayName("Finalizer tạo đúng một Resume với status UPLOADED và rawText null, cập nhật session COMPLETED")
+        @DisplayName("Finalizer tạo đúng một Resume pending confirm và cập nhật session CONFIRM_PENDING")
         void finalizeUpload_Success() {
             String token = UUID.randomUUID().toString();
             ResumeUploadSession session = ResumeUploadSession.builder()
@@ -213,8 +213,8 @@ class ResumeUploadFinalizerTest {
             assertEquals("resumes/42/" + uploadId, result.getKeyCf());
             assertEquals("my_resume.pdf", result.getFileName());
 
-            // Session must be updated to COMPLETED with resumeId
-            assertEquals(ResumeUploadSessionStatus.COMPLETED, session.getStatus());
+            // Confirm is asynchronous; the session remains pending until the worker succeeds.
+            assertEquals(ResumeUploadSessionStatus.CONFIRM_PENDING, session.getStatus());
             assertEquals(1001L, session.getResumeId());
             assertNull(session.getProcessingToken());
             verify(sessionRepository).save(session);

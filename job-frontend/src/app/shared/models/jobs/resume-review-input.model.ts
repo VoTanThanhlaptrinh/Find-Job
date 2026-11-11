@@ -4,4 +4,5 @@ export interface ResumeReviewInput {
   createDate: string;
   isAnalyzed: boolean;
   isNewlyUploaded?: boolean;
+  storageStatus?: 'PENDING_CONFIRM' | 'CONFIRMED' | 'CONFIRM_FAILED';
 }

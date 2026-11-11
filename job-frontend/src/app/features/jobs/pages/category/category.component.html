@@ -83,7 +83,7 @@
 
         <!-- Loading State: Skeletons -->
         @if (isLoadingJobs) {
-          <div class="flex flex-col gap-3 w-full">
+          <div class="flex w-full flex-col gap-3" aria-busy="true">
             @for (skeleton of [1, 2, 3, 4, 5]; track skeleton) {
               <app-skeleton-job-card></app-skeleton-job-card>
             }

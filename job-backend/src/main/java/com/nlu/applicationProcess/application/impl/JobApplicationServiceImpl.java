@@ -19,6 +19,7 @@ import com.nlu.applicationProcess.domain.event.ResumeAnalysisRequestedEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import com.nlu.applicationProcess.domain.model.JobApplication;
 import com.nlu.applicationProcess.domain.model.Resume;
+import com.nlu.applicationProcess.domain.model.ResumeStorageStatus;
 import com.nlu.recruitment.domain.model.Job;
 import com.nlu.identity.domain.model.User;
 import com.nlu.applicationProcess.application.JobApplicationService;
@@ -67,6 +68,10 @@ public class JobApplicationServiceImpl implements JobApplicationService {
             // 2. Specific Validation for Existing CV
             var resume = resumeRepository.findById(request.existingCvId())
                     .orElseThrow(() -> new ResourceNotFoundException(MessageUtils.getMessage("resume.not_found")));
+
+            if (resume.getStorageStatus() == ResumeStorageStatus.CONFIRM_FAILED) {
+                throw new BadRequestException("CV storage confirmation failed; this CV cannot be used for an application");
+            }
 
             if (resumeRepository.countOwnedByUser(request.existingCvId(), context.currentUser().getEmail()) == 0) {
                 log.warn("CV ownership violation — user: {} does not own CV: {}",

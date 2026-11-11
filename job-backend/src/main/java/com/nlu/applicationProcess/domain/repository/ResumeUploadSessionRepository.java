@@ -28,6 +28,10 @@ public interface ResumeUploadSessionRepository extends JpaRepository<ResumeUploa
 
     Optional<ResumeUploadSession> findByResumeId(Long resumeId);
 
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT s FROM ResumeUploadSession s WHERE s.resumeId = :resumeId")
+    Optional<ResumeUploadSession> findByResumeIdForUpdate(@Param("resumeId") Long resumeId);
+
     List<ResumeUploadSession> findByStatusAndExpiresAtBefore(
             ResumeUploadSessionStatus status,
             LocalDateTime expiresAt,
@@ -42,6 +46,22 @@ public interface ResumeUploadSessionRepository extends JpaRepository<ResumeUploa
 
     List<ResumeUploadSession> findByStatusAndCleanupCompletedAtIsNull(
             ResumeUploadSessionStatus status,
+            Pageable pageable
+    );
+
+    List<ResumeUploadSession> findByStatusOrderByUpdatedAtAsc(
+            ResumeUploadSessionStatus status,
+            Pageable pageable
+    );
+
+    @Query("""
+            SELECT s FROM ResumeUploadSession s
+            WHERE s.status = :status AND s.updatedAt < :updatedBefore
+            ORDER BY s.updatedAt ASC
+            """)
+    List<ResumeUploadSession> findStaleByStatus(
+            @Param("status") ResumeUploadSessionStatus status,
+            @Param("updatedBefore") LocalDateTime updatedBefore,
             Pageable pageable
     );
 }

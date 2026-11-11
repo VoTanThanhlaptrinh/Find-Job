@@ -1,12 +1,15 @@
 package com.nlu.shared.infrastructure.message;
 
 import com.nlu.applicationProcess.domain.event.ResumeAnalysisRequestedEvent;
+import com.nlu.applicationProcess.domain.event.ResumeConfirmRequestedEvent;
+import com.nlu.applicationProcess.api.dto.client.ResumeConfirmMessage;
 import com.nlu.recruitment.domain.event.JobAnalysisRequestedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
+import org.springframework.context.event.EventListener;
 
 /**
  * Bridge listening to internal Spring Application Events after transaction commit
@@ -33,5 +36,11 @@ public class RabbitMqEventBridge {
         log.info("Transaction committed. Forwarding ResumeAnalysisRequestedEvent to RabbitMQ for CV: {}",
                 event.message() != null ? event.message().cvId() : null);
         messageProducer.processAI(event.message());
+    }
+
+    @EventListener
+    public void handleResumeConfirmRequested(ResumeConfirmRequestedEvent event) {
+        log.info("Transaction committed. Forwarding resume confirm request for CV: {}", event.cvId());
+        messageProducer.confirmResume(new ResumeConfirmMessage(event.cvId()));
     }
 }

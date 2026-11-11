@@ -1,6 +1,6 @@
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
-import { map, Observable, take } from 'rxjs';
+import { finalize, map, Observable, switchMap, take, tap } from 'rxjs';
 import { UtilitiesService } from './utilities.service';
 import { ResumeReviewInput } from '../../shared/models/jobs/resume-review-input.model';
 import { ApiResponse } from '../../shared/models/api-response.model';
@@ -307,5 +307,52 @@ export class ResumeService {
 
     uploadResumePresigned(file: File, enableAiAnalysis: boolean = false) {
         this.postResume(file, enableAiAnalysis);
+    }
+
+    uploadCvForApplication(file: File): Observable<{ id: number; fileName: string; status: string }> {
+        const intentKey = this.getUploadIntentKey(file);
+        const idempotencyKey = this.getOrCreateIdempotencyKey(file);
+        const contentType = file.type || this.mimeTypeFor(file.name);
+        const initiatePayload: ResumeUploadInitiateRequest = {
+            fileName: file.name,
+            contentType,
+            size: file.size
+        };
+
+        return this.http.post<ApiResponse<ResumeUploadInitiateResponse>>(
+            `${this.url}/user/resume-uploads/initiate`,
+            initiatePayload,
+            { headers: { 'Idempotency-Key': idempotencyKey } }
+        ).pipe(
+            switchMap(initResponse => {
+                const upload = initResponse.data;
+                return this.http.put(upload.uploadUrl, file, {
+                    headers: upload.requiredHeaders || { 'Content-Type': contentType },
+                    context: new HttpContext().set(NO_AUTH, true)
+                }).pipe(map(() => upload.uploadId));
+            }),
+            switchMap(uploadId => this.http.post<ApiResponse<{ id: number; fileName: string; createDate: string; status: string }>>(
+                `${this.url}/user/resume-uploads/${uploadId}/complete`,
+                {}
+            ).pipe(map(response => response.data))),
+            tap(resume => {
+                this.clearUploadIntent(file);
+                this.resumes.update(list => [{
+                    id: resume.id,
+                    fileName: resume.fileName,
+                    createDate: resume.createDate,
+                    isAnalyzed: false
+                }, ...list.filter(item => item.id !== resume.id)]);
+            }),
+            finalize(() => this.inFlightIntents.delete(intentKey)),
+            take(1)
+        );
+    }
+
+    private mimeTypeFor(fileName: string): string {
+        const extension = fileName.split('.').pop()?.toLowerCase();
+        if (extension === 'doc') return 'application/msword';
+        if (extension === 'docx') return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+        return 'application/pdf';
     }
 }

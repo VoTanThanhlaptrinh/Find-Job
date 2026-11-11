@@ -50,9 +50,12 @@ public class ResumeUploadFinalizer {
             throw new ForbiddenException("You do not have permission to access this upload session.");
         }
 
-        // Check already COMPLETED
-        if (session.getStatus() == ResumeUploadSessionStatus.COMPLETED) {
-            log.info("Session {} is already COMPLETED. Returning existing resume id: {}", uploadId, session.getResumeId());
+        // Return the existing CV for any post-upload confirmation state.
+        if (session.getStatus() == ResumeUploadSessionStatus.CONFIRM_PENDING
+                || session.getStatus() == ResumeUploadSessionStatus.CONFIRMING
+                || session.getStatus() == ResumeUploadSessionStatus.CONFIRM_FAILED
+                || session.getStatus() == ResumeUploadSessionStatus.COMPLETED) {
+            log.info("Session {} already has a Resume. Returning existing resume id: {}", uploadId, session.getResumeId());
             return ClaimResult.alreadyCompleted(session.getResumeId());
         }
 
@@ -95,9 +98,8 @@ public class ResumeUploadFinalizer {
     }
 
     /**
-     * Finalizes upload in a short database transaction.
-     * Reads permanentKey and originalFileName directly from the locked session,
-     * creates exactly one Resume entity, and transitions status to COMPLETED.
+     * Creates the Resume entity and moves the upload session to CONFIRM_PENDING.
+     * The external file-service confirm operation is handled asynchronously by RabbitMQ.
      */
     @Transactional
     public Resume finalizeUpload(UUID uploadId, String processingToken, User currentUser) {
@@ -109,13 +111,10 @@ public class ResumeUploadFinalizer {
             throw new ForbiddenException("You do not have permission to access this upload session.");
         }
 
-        // Idempotency: if already COMPLETED, return the existing Resume
-        if (session.getStatus() == ResumeUploadSessionStatus.COMPLETED) {
-            log.info("Session {} is already COMPLETED. Returning existing resume id: {}", uploadId, session.getResumeId());
-            if (session.getResumeId() != null) {
-                return resumeRepository.findById(session.getResumeId())
-                        .orElseThrow(() -> new ResourceNotFoundException("Associated resume not found: " + session.getResumeId()));
-            }
+        // Idempotency: never create a second Resume for this upload session.
+        if (session.getResumeId() != null) {
+            return resumeRepository.findById(session.getResumeId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Associated resume not found: " + session.getResumeId()));
         }
 
         if (session.getStatus() == ResumeUploadSessionStatus.EXPIRED) {
@@ -144,12 +143,13 @@ public class ResumeUploadFinalizer {
         resume.setFileName(session.getOriginalFileName());
         resume.setRawText(null);
         resume.markUploaded();
+        resume.markStoragePending();
 
         Resume savedResume = resumeRepository.save(resume);
 
-        // Update session to COMPLETED
+        // The RabbitMQ worker transitions this to COMPLETED after file-service confirmation.
         session.setResumeId(savedResume.getId());
-        session.setStatus(ResumeUploadSessionStatus.COMPLETED);
+        session.setStatus(ResumeUploadSessionStatus.CONFIRM_PENDING);
         session.setProcessingToken(null);
         sessionRepository.save(session);
 

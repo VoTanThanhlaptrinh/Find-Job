@@ -5,7 +5,7 @@ import { ResumeService } from '../../../../core/services/resume.service';
 import { NotifyMessageService } from '../../../../core/services/notify-message.service';
 
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { take } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 import {
   ApplyCvRequest,
   ApplyCvResponse,
@@ -36,8 +36,11 @@ export class ApplyCvComponent implements OnInit {
   applyCvForm: ApplyCvFormGroup;
   jobId!: number;
   selectedFile: File | null = null;
+  uploadedResumeId: number | null = null;
+  isUploadingCv = false;
+  private uploadSubscription?: Subscription;
   isDragging = false;
-  readonly maxFileSize = 5 * 1024 * 1024;
+  readonly maxFileSize = 10 * 1024 * 1024;
   readonly acceptedExtensions = '.pdf,.doc,.docx';
   previousCvOptions: ResumeReviewInput[] = [];
 
@@ -144,6 +147,9 @@ export class ApplyCvComponent implements OnInit {
     this.updateExistingCvValidator(mode);
     if (mode === 'existing') {
       this.selectedFile = null;
+      this.uploadedResumeId = null;
+      this.uploadSubscription?.unsubscribe();
+      this.isUploadingCv = false;
     }
   }
 
@@ -169,11 +175,35 @@ export class ApplyCvComponent implements OnInit {
 
     if (!isAllowedExtension || !isAllowedSize) {
       this.selectedFile = null;
+      this.uploadedResumeId = null;
       return;
     }
 
+    if (this.selectedFile === file && (this.isUploadingCv || this.uploadedResumeId !== null)) {
+      return;
+    }
+
+    this.uploadSubscription?.unsubscribe();
     this.selectedFile = file;
+    this.uploadedResumeId = null;
     this.setCvMode('upload');
+    this.isUploadingCv = true;
+    this.uploadSubscription = this.resumeService.uploadCvForApplication(file).subscribe({
+      next: resume => {
+        if (this.selectedFile !== file) {
+          return;
+        }
+        this.uploadedResumeId = resume.id;
+        this.isUploadingCv = false;
+      },
+      error: error => {
+        if (this.selectedFile !== file) {
+          return;
+        }
+        this.isUploadingCv = false;
+        this.notifyService.error(error.error?.message || this.i18nService.translate('applyCv.errors.uploadFailed'));
+      }
+    });
   }
 
   get selectedFileSizeLabel(): string {
@@ -216,7 +246,16 @@ export class ApplyCvComponent implements OnInit {
       return;
     }
 
-    this.jobService.submitApplyCvUpload(payload as ApplyCvWithUploadRequest).subscribe({
+    const uploadPayload = payload as ApplyCvWithUploadRequest;
+    if (this.isUploadingCv || this.uploadedResumeId === null) {
+      this.notifyService.error(this.i18nService.translate('applyCv.errors.uploadFailed'));
+      return;
+    }
+    this.jobService.submitApplyCvExisting({
+        jobId: uploadPayload.jobId,
+        existingCvId: this.uploadedResumeId,
+        coverLetter: uploadPayload.coverLetter
+      }).pipe(take(1)).subscribe({
       next: (response: ApplyCvResponse) => {
         this.notifyService.success(response.message || this.i18nService.translate('applyCv.notifications.success'));
         this.router.navigate(['/single', this.jobId]);

@@ -41,6 +41,29 @@ public class Resume extends BaseEntity {
 	@Column(name = "resume_status", nullable = false)
 	private ResumeStatus status = ResumeStatus.UPLOADED;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "storage_status")
+	private ResumeStorageStatus storageStatus = ResumeStorageStatus.CONFIRMED;
+
+	@Column(name = "storage_error", length = 512)
+	private String storageError;
+
+	public void markStoragePending() {
+		this.storageStatus = ResumeStorageStatus.PENDING_CONFIRM;
+		this.storageError = null;
+	}
+
+	public void markStorageConfirmed(String permanentKey) {
+		setKeyCf(permanentKey);
+		this.storageStatus = ResumeStorageStatus.CONFIRMED;
+		this.storageError = null;
+	}
+
+	public void markStorageConfirmFailed(String error) {
+		this.storageStatus = ResumeStorageStatus.CONFIRM_FAILED;
+		this.storageError = error == null ? "File service confirm failed" : error.substring(0, Math.min(error.length(), 512));
+	}
+
 	public void markUploaded() {
 		this.status = ResumeStatus.UPLOADED;
 	}

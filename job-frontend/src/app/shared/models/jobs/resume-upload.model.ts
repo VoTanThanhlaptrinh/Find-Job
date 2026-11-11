@@ -7,7 +7,8 @@ export interface ResumeUploadInitiateRequest {
 export interface ResumeUploadInitiateResponse {
   uploadId: string;
   uploadUrl: string;
-  httpMethod: string;
+  method?: string;
+  httpMethod?: string;
   requiredHeaders: Record<string, string>;
   expiresAt: string;
 }

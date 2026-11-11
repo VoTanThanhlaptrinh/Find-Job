@@ -120,10 +120,15 @@ app:
   cookie:
     secure: false
   frontend-url: ${FRONTEND_URL:http://localhost:4200}
+  file-service:
+    base-url: ${UPLOAD_SERVICE_BASE_URL:https://upload-service-gamma.vercel.app}
+    api-key: ${UPLOAD_SERVICE_API_KEY:}
+    connect-timeout-ms: ${UPLOAD_SERVICE_CONNECT_TIMEOUT_MS:5000}
+    read-timeout-ms: ${UPLOAD_SERVICE_READ_TIMEOUT_MS:10000}
   resume-upload:
     url-expiration-minutes: 10
     session-expiration-minutes: 30
-    max-file-size-bytes: 5242880
+    max-file-size-bytes: 10485760
     temp-prefix: temp
     permanent-prefix: resumes
     cleanup-interval-ms: 300000
