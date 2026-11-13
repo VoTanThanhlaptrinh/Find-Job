@@ -33,7 +33,9 @@ public class ApiConstants {
             "/api/blogs",
             "/api/blogs/**",
             "/api/addresses",
-            "/api/addresses/**"
+            "/api/addresses/**",
+            "/api/payments",
+            "/api/payments/**"
     };
 
     // 4. Các API yêu cầu quyền HIRER

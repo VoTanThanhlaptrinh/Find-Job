@@ -1,6 +1,7 @@
 package com.nlu.admin.application.impl;
 
 import com.nlu.identity.application.JwtFamilyService;
+import com.nlu.identity.application.UserDetailsCacheService;
 import com.nlu.identity.domain.model.User;
 import com.nlu.identity.domain.repository.UserRepository;
 import com.nlu.recruitment.domain.repository.RecruitmentRepository;
@@ -14,6 +15,7 @@ import com.nlu.shared.domain.exception.ResourceNotFoundException;
 import com.nlu.recruitment.domain.model.Recruitment;
 import com.nlu.admin.application.AdminEmployerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +32,12 @@ public class AdminEmployerServiceImpl implements AdminEmployerService {
     private final JwtFamilyService jwtFamilyService;
     private final RecruitmentQuery recruitmentQuery;
     private final AdminPaginationMapper paginationMapper;
+    private UserDetailsCacheService userDetailsCacheService;
+
+    @Autowired(required = false)
+    void setUserDetailsCacheService(UserDetailsCacheService userDetailsCacheService) {
+        this.userDetailsCacheService = userDetailsCacheService;
+    }
 
     @Override
     public EmployerMetricsResponse getEmployerMetrics() {
@@ -83,14 +91,22 @@ public class AdminEmployerServiceImpl implements AdminEmployerService {
                 user.setAccountLocked(true);
                 userRepository.save(user);
                 jwtFamilyService.revokeAllUserFamilies(user.getEmail());
+                evictUserDetailsCache(user.getEmail());
             }
         } else if ("activate".equalsIgnoreCase(request.getAction()) || "restore".equalsIgnoreCase(request.getAction())) {
             recruitment.setRecordStatus(com.nlu.shared.domain.model.EntityStatus.ACTIVE);
             if (user != null) {
                 user.setAccountLocked(false);
                 userRepository.save(user);
+                evictUserDetailsCache(user.getEmail());
             }
         }
         recruitmentRepository.save(recruitment);
+    }
+
+    private void evictUserDetailsCache(String email) {
+        if (userDetailsCacheService != null) {
+            userDetailsCacheService.evictByEmail(email);
+        }
     }
 }

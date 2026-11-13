@@ -9,10 +9,12 @@ import com.nlu.applicationProcess.domain.model.ResumeStatus;
 import com.nlu.applicationProcess.domain.repository.ResumeRepository;
 import com.nlu.shared.application.SseEmitterService;
 import com.nlu.shared.domain.model.SseMessagePayload;
+import com.nlu.shared.infrastructure.cache.HotCacheService;
 import com.nlu.shared.infrastructure.config.RabbitMQConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +29,12 @@ public class ResumeParsingConsumer {
     private final VectorizationClient vectorizationClient;
     private final SseEmitterService sseEmitterService;
     private final ResumeRepository resumeRepository;
+    private HotCacheService hotCacheService;
+
+    @Autowired(required = false)
+    void setHotCacheService(HotCacheService hotCacheService) {
+        this.hotCacheService = hotCacheService;
+    }
 
     @RabbitListener(queues = RabbitMQConfig.PARSING_QUEUE_V2)
     public void parsingRawText(@Payload ResumeParsingMessage message) {
@@ -71,6 +79,7 @@ public class ResumeParsingConsumer {
             // Chỉ gọi markReady() sau khi parsing và vectorization đều thành công
             cv.markReady();
             resumeRepository.save(cv);
+            evictResumeCaches(message.userId(), message.cvId());
 
             sendSseSafe(message.userId(), message.cvId(), "analyzed", "Resume analysis complete", vectorizeTime);
 
@@ -81,6 +90,7 @@ public class ResumeParsingConsumer {
             try {
                 cv.markAnalysisFailed();
                 resumeRepository.save(cv);
+                evictResumeCaches(message.userId(), message.cvId());
             } catch (Exception dbEx) {
                 log.error("Failed to mark resume {} as ANALYSIS_FAILED in database", message.cvId(), dbEx);
             }
@@ -109,5 +119,15 @@ public class ResumeParsingConsumer {
         } catch (Exception sseEx) {
             log.warn("Failed to send SSE event ({}) for cv: {}", status, cvId, sseEx);
         }
+    }
+
+    private void evictResumeCaches(long userId, long cvId) {
+        if (hotCacheService == null) {
+            return;
+        }
+        hotCacheService.evictUserRuleEntries("user_resumes_list", userId, null);
+        hotCacheService.evictUserRuleEntries("user_resumes_analyzed", userId, null);
+        hotCacheService.evictUserRuleEntries("user_resume_detail", userId, "[id=" + cvId + "]");
+        hotCacheService.evictUserRuleEntries("user_job_match", userId, "[cvId=" + cvId + "]");
     }
 }

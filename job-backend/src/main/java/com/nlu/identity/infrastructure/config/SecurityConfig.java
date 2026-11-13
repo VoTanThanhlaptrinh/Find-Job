@@ -30,9 +30,14 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.nlu.identity.infrastructure.filter.JwtFilter;
 import com.nlu.identity.infrastructure.filter.RateLimitFilter;
+import com.nlu.shared.infrastructure.cache.HotCacheConstants;
+import com.nlu.shared.infrastructure.cache.ProtectedHotGetCacheFilter;
+import com.nlu.shared.infrastructure.cache.PublicHotGetCacheFilter;
 import com.nlu.shared.infrastructure.filter.RequestLoggingFilter;
+import com.nlu.shared.infrastructure.idempotency.IdempotencyFilter;
 import com.nlu.identity.infrastructure.filter.VerifyRecoveryFilter;
 import com.nlu.identity.application.impl.UserRepositoryDetailsService;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
 
 import lombok.RequiredArgsConstructor;
 
@@ -45,6 +50,9 @@ public class SecurityConfig {
     private final JwtFilter jwtAuthFilter;
     private final RateLimitFilter rateLimitFilter;
     private final RequestLoggingFilter requestLoggingFilter;
+    private final IdempotencyFilter idempotencyFilter;
+    private final PublicHotGetCacheFilter publicHotGetCacheFilter;
+    private final ProtectedHotGetCacheFilter protectedHotGetCacheFilter;
     private final UserRepositoryDetailsService userDetailsService;
     private final VerifyRecoveryFilter verifyRecoveryFilter;
     private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
@@ -71,8 +79,11 @@ public class SecurityConfig {
                         .anyRequest().denyAll())
                 .addFilterBefore(requestLoggingFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(publicHotGetCacheFilter, RateLimitFilter.class)
+                .addFilterAfter(jwtAuthFilter, PublicHotGetCacheFilter.class)
+                .addFilterAfter(idempotencyFilter, JwtFilter.class)
                 .addFilterBefore(verifyRecoveryFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(protectedHotGetCacheFilter, AuthorizationFilter.class)
                 .oauth2Login(o -> o
                         .successHandler(customOAuth2SuccessHandler))
                 .exceptionHandling(exceptions -> exceptions
@@ -99,7 +110,7 @@ public class SecurityConfig {
         config.setAllowedHeaders(List.of("Content-Type", "Authorization", "X-Correlation-ID", "Cache-Control",
                 "Accept", "idempotency-key"));
         config.setExposedHeaders(List.of("Set-Cookie", "X-Correlation-ID", "X-RateLimit-Limit", "X-RateLimit-Remaining",
-                "X-RateLimit-Reset", "Retry-After"));
+                "X-RateLimit-Reset", "Retry-After", "X-Idempotent-Replayed", HotCacheConstants.HEADER_CACHE_STATUS));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);

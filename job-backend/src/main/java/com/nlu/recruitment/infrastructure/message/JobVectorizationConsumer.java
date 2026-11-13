@@ -5,10 +5,12 @@ import com.nlu.recruitment.domain.repository.JobRepository;
 import com.nlu.shared.api.message.dto.ApiMessage;
 import com.nlu.shared.application.SseEmitterService;
 import com.nlu.shared.domain.model.SseMessagePayload;
+import com.nlu.shared.infrastructure.cache.HotCacheService;
 import com.nlu.shared.infrastructure.config.RabbitMQConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +22,12 @@ public class JobVectorizationConsumer {
     private final VectorizationClient vectorizationClient;
     private final JobRepository jobRepository;
     private final SseEmitterService sseEmitterService;
+    private HotCacheService hotCacheService;
+
+    @Autowired(required = false)
+    void setHotCacheService(HotCacheService hotCacheService) {
+        this.hotCacheService = hotCacheService;
+    }
 
     @RabbitListener(queues = RabbitMQConfig.API_QUEUE_V2)
     public void processApiService(@Payload ApiMessage message) {
@@ -36,6 +44,7 @@ public class JobVectorizationConsumer {
                     jobRepository.save(job);
                 });
             }
+            evictJobVectorizationCaches(userId);
 
             // SSE event thông báo hoàn tất
             if (userId != null && jobId != null) {
@@ -66,5 +75,15 @@ public class JobVectorizationConsumer {
             }
             throw new RuntimeException("Job vectorization failed for job: " + jobId, e);
         }
+    }
+
+    private void evictJobVectorizationCaches(Long userId) {
+        if (hotCacheService == null) {
+            return;
+        }
+        if (userId != null) {
+            hotCacheService.evictUserRuleEntries("hirer_jobs_posted", userId, null);
+        }
+        hotCacheService.evictRule("user_job_match");
     }
 }

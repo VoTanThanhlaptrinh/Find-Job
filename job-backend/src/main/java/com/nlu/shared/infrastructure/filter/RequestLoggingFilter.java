@@ -77,6 +77,7 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
+        long filterStartNs = System.nanoTime();
         // ── 1. Trace ID: propagate or generate ──────────────────────────────
         String traceId = request.getHeader(CORRELATION_HEADER);
         if (traceId == null || traceId.isBlank()) {
@@ -102,6 +103,8 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
                         : null;
 
         long startTime = System.currentTimeMillis();
+        long javaSetupMs = 0;
+        long chainMs = 0;
 
         HttpServletResponse effectiveResponse = (wrappedResponse != null) ? wrappedResponse : response;
 
@@ -128,8 +131,12 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
                         wrappedRequest.getQueryString()));
             }
 
+            javaSetupMs = (System.nanoTime() - filterStartNs) / 1_000_000L;
+
             // ── 7. Continue the filter chain ────────────────────────────────
+            long chainStartNs = System.nanoTime();
             filterChain.doFilter(wrappedRequest, effectiveResponse);
+            chainMs = (System.nanoTime() - chainStartNs) / 1_000_000L;
 
         } finally {
             // ── 8. ALWAYS clear MDC (Làm ĐẦU TIÊN để chống thread pool leak) ──
@@ -143,7 +150,9 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
             }
 
             // ── 9. Log request body (chỉ chạy với API đồng bộ) ───────────────
+            long logBodyStartNs = System.nanoTime();
             logRequestBody(wrappedRequest);
+            long logBodyMs = (System.nanoTime() - logBodyStartNs) / 1_000_000L;
 
             // ── 10. Log response summary ─────────────────────────────────────
             long duration = System.currentTimeMillis() - startTime;
@@ -161,9 +170,17 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
             }
 
             // ── 11. Copy cached body back to the actual response ────────────
+            long copyBodyMs = 0;
             if (wrappedResponse != null) {
+                long copyStartNs = System.nanoTime();
                 wrappedResponse.copyBodyToResponse();
+                copyBodyMs = (System.nanoTime() - copyStartNs) / 1_000_000L;
             }
+
+            long totalMs = (System.nanoTime() - filterStartNs) / 1_000_000L;
+            log.info("[PERF][Filter:RequestLogging] {} {} status={} | total={}ms (javaSetup={}ms, filterChain={}ms, javaLogBody={}ms, javaCopyResponse={}ms)",
+                    wrappedRequest.getMethod(), wrappedRequest.getRequestURI(), status,
+                    totalMs, javaSetupMs, chainMs, logBodyMs, copyBodyMs);
         }
     }
 

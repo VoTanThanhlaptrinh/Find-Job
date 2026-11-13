@@ -9,11 +9,13 @@ import com.nlu.admin.api.dto.user.UserResponseDTO;
 import com.nlu.shared.domain.exception.BadRequestException;
 import com.nlu.shared.domain.exception.ResourceNotFoundException;
 import com.nlu.identity.application.JwtFamilyService;
+import com.nlu.identity.application.UserDetailsCacheService;
 import com.nlu.identity.domain.model.User;
 import com.nlu.admin.application.UserCrudService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,6 +28,12 @@ public class UserCrudServiceImpl implements UserCrudService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtFamilyService jwtFamilyService;
+    private UserDetailsCacheService userDetailsCacheService;
+
+    @Autowired(required = false)
+    void setUserDetailsCacheService(UserDetailsCacheService userDetailsCacheService) {
+        this.userDetailsCacheService = userDetailsCacheService;
+    }
 
     private static final String MDC_USER_ID = "userId";
 
@@ -73,6 +81,10 @@ public class UserCrudServiceImpl implements UserCrudService {
             applyDtoToUser(user, userDTO, false);
             userRepository.save(user);
 
+            if (userDetailsCacheService != null) {
+                userDetailsCacheService.evictByEmail(previousEmail);
+                userDetailsCacheService.evictByEmail(user.getEmail());
+            }
             if (!user.isAccountNonLocked() || !user.isEnabled() || !user.isActive() || userDTO.getPassword() != null) {
                 jwtFamilyService.revokeAllUserFamilies(previousEmail);
                 jwtFamilyService.revokeAllUserFamilies(user.getEmail());
@@ -97,6 +109,9 @@ public class UserCrudServiceImpl implements UserCrudService {
             user.setEnabled(false);
             userRepository.save(user);
             jwtFamilyService.revokeAllUserFamilies(user.getEmail());
+            if (userDetailsCacheService != null) {
+                userDetailsCacheService.evictByEmail(user.getEmail());
+            }
 
             log.info("User soft-deleted — user: {}", id);
         } finally {

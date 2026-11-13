@@ -1,11 +1,8 @@
 package com.nlu.recruitment.api;
 
-import java.util.List;
-
 import com.nlu.shared.domain.model.ApiResponse;
 
 import com.nlu.recruitment.api.dto.JobCardView;
-import com.nlu.recruitment.api.dto.JobMatchView;
 import com.nlu.recruitment.api.dto.JobDetailView;
 import com.nlu.recruitment.api.dto.JobFilterDto;
 import com.nlu.recruitment.application.JobQueryService;
@@ -32,20 +29,23 @@ public class PublicJobController {
 
     @GetMapping("/newest")
     public ResponseEntity<ApiResponse<Page<JobCardView>>> getListJobNewest(
-            @RequestParam(defaultValue = "0") int page, 
+            @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         Page<JobCardView> data = jobQueryService.getNewestJobs(page, size);
-        return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("message.success"), data, HttpStatus.OK.value()));
+        return ResponseEntity
+                .ok(new ApiResponse<>(MessageUtils.getMessage("message.success"), data, HttpStatus.OK.value()));
     }
 
     @GetMapping("/count")
     public ResponseEntity<ApiResponse<Integer>> getAmount() {
         Integer data = jobQueryService.countJobs();
-        return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("message.success"), data, HttpStatus.OK.value()));
+        return ResponseEntity
+                .ok(new ApiResponse<>(MessageUtils.getMessage("message.success"), data, HttpStatus.OK.value()));
     }
 
     @PostMapping("/filter")
-    public ResponseEntity<ApiResponse<Page<JobCardView>>> filterWithAddressTimeSalary(@RequestBody JobFilterDto jobFilterDTO) {
+    public ResponseEntity<ApiResponse<Page<JobCardView>>> filterWithAddressTimeSalary(
+            @RequestBody JobFilterDto jobFilterDTO) {
         Page<JobCardView> data = jobQueryService.findJobsBySalaryAddressAndEmploymentTypes(
                 jobFilterDTO.getPageIndex(),
                 jobFilterDTO.getPageSize(),
@@ -55,18 +55,21 @@ public class PublicJobController {
                 jobFilterDTO.getTimes(),
                 jobFilterDTO.getTitle(),
                 jobFilterDTO.getCategoryIds());
-        return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("message.success"), data, HttpStatus.OK.value()));
+        return ResponseEntity
+                .ok(new ApiResponse<>(MessageUtils.getMessage("message.success"), data, HttpStatus.OK.value()));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<JobDetailView>> getJobDetail(@PathVariable Long id) {
         JobDetailView data = jobService.getJobDetailById(id);
-        return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("message.success"), data, HttpStatus.OK.value()));
+        return ResponseEntity
+                .ok(new ApiResponse<>(MessageUtils.getMessage("message.success"), data, HttpStatus.OK.value()));
     }
 
     @GetMapping("/{id}/exists")
     public ResponseEntity<ApiResponse<Boolean>> checkApplyJob(@PathVariable Long id) {
         Boolean data = jobService.checkExistJob(id);
-        return ResponseEntity.ok(new ApiResponse<>(MessageUtils.getMessage("message.success"), data, HttpStatus.OK.value()));
+        return ResponseEntity
+                .ok(new ApiResponse<>(MessageUtils.getMessage("message.success"), data, HttpStatus.OK.value()));
     }
 }

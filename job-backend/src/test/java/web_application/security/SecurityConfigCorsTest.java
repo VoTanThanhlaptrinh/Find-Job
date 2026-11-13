@@ -6,7 +6,10 @@ import com.nlu.identity.infrastructure.filter.CustomOAuth2SuccessHandler;
 import com.nlu.identity.infrastructure.filter.JwtFilter;
 import com.nlu.identity.infrastructure.filter.RateLimitFilter;
 import com.nlu.identity.infrastructure.filter.VerifyRecoveryFilter;
+import com.nlu.shared.infrastructure.cache.ProtectedHotGetCacheFilter;
+import com.nlu.shared.infrastructure.cache.PublicHotGetCacheFilter;
 import com.nlu.shared.infrastructure.filter.RequestLoggingFilter;
+import com.nlu.shared.infrastructure.idempotency.IdempotencyFilter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -27,6 +30,9 @@ class SecurityConfigCorsTest {
                 mock(JwtFilter.class),
                 mock(RateLimitFilter.class),
                 mock(RequestLoggingFilter.class),
+                mock(IdempotencyFilter.class),
+                mock(PublicHotGetCacheFilter.class),
+                mock(ProtectedHotGetCacheFilter.class),
                 mock(UserRepositoryDetailsService.class),
                 mock(VerifyRecoveryFilter.class),
                 mock(CustomOAuth2SuccessHandler.class)

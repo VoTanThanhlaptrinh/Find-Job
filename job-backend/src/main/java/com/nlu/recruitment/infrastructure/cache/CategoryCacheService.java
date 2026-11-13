@@ -7,6 +7,7 @@ import com.nlu.recruitment.api.dto.AddressJobCount;
 import com.nlu.recruitment.api.dto.JobCardView;
 import com.nlu.shared.domain.model.EntityStatus;
 import com.nlu.recruitment.application.JobQueryService;
+import com.nlu.shared.infrastructure.cache.HotCacheInvalidatedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -42,6 +43,16 @@ public class CategoryCacheService {
     public void warmUpCache() {
         preload("home:init", this::refreshHomeInitCache);
         preload("home:category", this::refreshCategoryCache);
+    }
+
+    @EventListener
+    public void onHotCacheInvalidated(HotCacheInvalidatedEvent event) {
+        if ("home_init".equals(event.ruleId())) {
+            redisTemplate.delete(HOME_INIT_KEY);
+        }
+        if ("address_count".equals(event.ruleId())) {
+            redisTemplate.delete(CATEGORY_KEY);
+        }
     }
 
     public List<JobCardView> getHomeInitData() {

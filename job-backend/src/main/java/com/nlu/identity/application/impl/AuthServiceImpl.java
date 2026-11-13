@@ -23,6 +23,8 @@ import com.nlu.identity.application.AuthService;
 import com.nlu.identity.application.JwtFamilyService;
 import com.nlu.identity.application.JwtService;
 import com.nlu.identity.application.RefreshTokenService;
+import com.nlu.identity.application.UserDetailsCacheService;
+import com.nlu.shared.infrastructure.cache.HotCacheService;
 import com.nlu.shared.application.ReferenceService;
 import com.nlu.shared.application.SpamService;
 import com.nlu.shared.application.VerificationService;
@@ -35,6 +37,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -63,6 +66,18 @@ public class AuthServiceImpl implements AuthService {
     private final SpamService spamService;
     private final JwtService jwtService;
     private final RegistrationFormMapper mapper;
+    private UserDetailsCacheService userDetailsCacheService;
+    private HotCacheService hotCacheService;
+
+    @Autowired(required = false)
+    void setUserDetailsCacheService(UserDetailsCacheService userDetailsCacheService) {
+        this.userDetailsCacheService = userDetailsCacheService;
+    }
+
+    @Autowired(required = false)
+    void setHotCacheService(HotCacheService hotCacheService) {
+        this.hotCacheService = hotCacheService;
+    }
     @Value("${app.frontend-url}")
     private String url;
     private static final String MDC_USER_ID = "userId";
@@ -157,6 +172,12 @@ public class AuthServiceImpl implements AuthService {
             }
             user.setActive(true);
             userRepository.save(user);
+            if (userDetailsCacheService != null) {
+                userDetailsCacheService.evictByEmail(user.getEmail());
+            }
+            if (hotCacheService != null) {
+                hotCacheService.evictRule("admin_users_page");
+            }
             log.info("Account activated successfully for user: {}", user.getId());
         } finally {
             MDC.remove(MDC_USER_ID);
@@ -182,14 +203,21 @@ public class AuthServiceImpl implements AuthService {
             HttpServletRequest request,
             HttpServletResponse response,
             String expectedRole) {
+        long startNs = System.nanoTime();
         String ip = IpUtils.getClientIp(request);
-        if (spamService.checkIpSpamLogin(ip)) {
+
+        long spamCheckStartNs = System.nanoTime();
+        boolean isSpam = spamService.checkIpSpamLogin(ip);
+        long redisSpamCheckMs = (System.nanoTime() - spamCheckStartNs) / 1_000_000L;
+        if (isSpam) {
             log.warn("Login rate-limited for IP: {}", ip);
             throw new AppException(spamService.getMessageLoginSpam(ip), HttpStatus.TOO_MANY_REQUESTS);
         }
 
+        long dbStartNs = System.nanoTime();
         User user = userRepository.findByEmail_Value(loginDTO.getUsername())
                 .orElseThrow(() -> new ResourceNotFoundException("auth.email.not_found"));
+        long dbFindUserMs = (System.nanoTime() - dbStartNs) / 1_000_000L;
 
         try {
             MDC.put(MDC_USER_ID, String.valueOf(user.getId()));
@@ -198,7 +226,10 @@ public class AuthServiceImpl implements AuthService {
 
             validateAccountRole(user, expectedRole);
 
-            if (!encoder.matches(loginDTO.getPassword(), user.getPassword())) {
+            long bcryptStartNs = System.nanoTime();
+            boolean passwordMatched = encoder.matches(loginDTO.getPassword(), user.getPassword());
+            long javaBcryptMs = (System.nanoTime() - bcryptStartNs) / 1_000_000L;
+            if (!passwordMatched) {
                 spamService.addIpSpamLogin(ip);
                 log.warn("Login failed — wrong password for user: {}", user.getId());
                 throw new BadRequestException("auth.login.wrong_password");
@@ -206,12 +237,24 @@ public class AuthServiceImpl implements AuthService {
 
             validateAccountStatus(user);
 
+            long delSpamStartNs = System.nanoTime();
             spamService.deleteIpSpamLogin(ip);
+            long redisDeleteSpamMs = (System.nanoTime() - delSpamStartNs) / 1_000_000L;
+
+            long accessJwtStartNs = System.nanoTime();
             String accessToken = jwtService.generateToken(user);
+            long javaAccessJwtMs = (System.nanoTime() - accessJwtStartNs) / 1_000_000L;
+
+            long refreshTokenStartNs = System.nanoTime();
             String refreshToken = refreshTokenService.createRefreshToken(loginDTO.getUsername());
+            long redisRefreshTokenMs = (System.nanoTime() - refreshTokenStartNs) / 1_000_000L;
+
             writeRefreshCookie(response, refreshToken, refreshTokenTtlSeconds);
 
+            long totalMs = (System.nanoTime() - startNs) / 1_000_000L;
             log.info("Login successful for user: {} with role: {}", user.getId(), expectedRole);
+            log.info("[PERF][Service:DB+Redis+Java][AuthService] loginByRole userId={} | total={}ms (redisSpamCheck={}ms, dbFindUser={}ms, javaBcrypt={}ms, redisDeleteSpam={}ms, javaAccessJwt={}ms, redisRefreshToken={}ms)",
+                    user.getId(), totalMs, redisSpamCheckMs, dbFindUserMs, javaBcryptMs, redisDeleteSpamMs, javaAccessJwtMs, redisRefreshTokenMs);
             return accessToken;
         } finally {
             MDC.remove(MDC_USER_ID);
@@ -359,6 +402,9 @@ public class AuthServiceImpl implements AuthService {
             user.setPassword(new Password(encoder.encode(resetDTO.getNewPass())));
             userRepository.save(user);
             jwtFamilyService.revokeAllUserFamilies(user.getEmail());
+            if (userDetailsCacheService != null) {
+                userDetailsCacheService.evictByEmail(user.getEmail());
+            }
             verifyService.delete("ref-email:" + email);
             verifyService.delete("random:" + resetDTO.getRandom());
             verifyService.delete(resetDTO.getRandom());
