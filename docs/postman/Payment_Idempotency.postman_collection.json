@@ -1,0 +1,769 @@
+{
+  "info": {
+    "_postman_id": "c7b8e1f0-4a9b-4f88-9c31-7e5a2b8d4c10",
+    "name": "Payment & Redis Idempotency API Test Suite",
+    "description": "Bộ kịch bản kiểm thử tự động cho IdempotencyFilter (Redis) và module Payment (/api/payments). Import vào Postman và chạy bằng Collection Runner theo thứ tự từ TC-00 đến TC-09.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "username",
+      "value": "user@example.com",
+      "type": "string"
+    },
+    {
+      "key": "password",
+      "value": "Password123!",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "activeIdempotencyKey",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "retryableIdempotencyKey",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "overlongIdempotencyKey",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "firstPaymentId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "firstTransactionCode",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "concurrentIdempotencyKey",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "TC-00: Auth Login (Lấy JWT Access Token)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('TC-00: Đăng nhập thành công (200 OK)', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "const json = pm.response.json();",
+              "pm.test('TC-00: Response chứa JWT accessToken trong trường data', function () {",
+              "    pm.expect(json).to.have.property('data');",
+              "    pm.expect(json.data).to.be.a('string').and.not.be.empty;",
+              "    pm.collectionVariables.set('accessToken', json.data);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/user/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "user",
+            "login"
+          ]
+        },
+        "description": "Đăng nhập tài khoản user (hoặc sửa path thành /api/auth/hirer/login nếu dùng tài khoản hirer) để lưu JWT vào biến collection `accessToken`."
+      }
+    },
+    {
+      "name": "TC-01: Thiếu header Idempotency-Key (400 Bad Request)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('TC-01: Trả về 400 Bad Request khi thiếu Idempotency-Key', function () {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "",
+              "const json = pm.response.json();",
+              "pm.test('TC-01: ApiResponse báo lỗi thiếu header Idempotency-Key', function () {",
+              "    pm.expect(json.status).to.eql(400);",
+              "    pm.expect(json.message).to.include('Idempotency-Key');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"amount\": 499000.00,\n  \"currency\": \"VND\",\n  \"paymentMethod\": \"VNPAY\",\n  \"description\": \"Test missing Idempotency-Key header\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/payments",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "payments"
+          ]
+        },
+        "description": "Kiểm tra Filter chặn request thiếu header `Idempotency-Key` ngay trước khi vào PaymentController."
+      }
+    },
+    {
+      "name": "TC-02: Header Idempotency-Key chỉ chứa khoảng trắng (400 Bad Request)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('TC-02: Trả về 400 Bad Request khi Idempotency-Key rỗng/khoảng trắng', function () {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "",
+              "const json = pm.response.json();",
+              "pm.test('TC-02: Trạng thái lỗi trong body là 400', function () {",
+              "    pm.expect(json.status).to.eql(400);",
+              "    pm.expect(json.message).to.include('Idempotency-Key');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "    "
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"amount\": 499000.00,\n  \"currency\": \"VND\",\n  \"paymentMethod\": \"VNPAY\",\n  \"description\": \"Test blank Idempotency-Key header\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/payments",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "payments"
+          ]
+        }
+      }
+    },
+    {
+      "name": "TC-03: Idempotency-Key vượt quá 128 ký tự (400 Bad Request)",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.collectionVariables.set('overlongIdempotencyKey', 'k'.repeat(130));"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('TC-03: Trả về 400 Bad Request khi key dài hơn 128 ký tự', function () {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "",
+              "const json = pm.response.json();",
+              "pm.test('TC-03: Thông báo giới hạn 128 ký tự', function () {",
+              "    pm.expect(json.status).to.eql(400);",
+              "    pm.expect(json.message).to.include('128');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "{{overlongIdempotencyKey}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"amount\": 499000.00,\n  \"currency\": \"VND\",\n  \"paymentMethod\": \"VNPAY\",\n  \"description\": \"Test overlong Idempotency-Key header\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/payments",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "payments"
+          ]
+        }
+      }
+    },
+    {
+      "name": "TC-04: Tạo Payment hợp lệ lần 1 (201 Created, X-Idempotent-Replayed: false)",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const newKey = pm.variables.replaceIn('{{$guid}}');",
+              "pm.collectionVariables.set('activeIdempotencyKey', newKey);"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('TC-04: Lần gọi đầu tạo Payment thành công (201 Created)', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "pm.test('TC-04: Header X-Idempotent-Replayed phải là false', function () {",
+              "    pm.response.to.have.header('X-Idempotent-Replayed');",
+              "    pm.expect(pm.response.headers.get('X-Idempotent-Replayed')).to.eql('false');",
+              "});",
+              "",
+              "const json = pm.response.json();",
+              "pm.test('TC-04: Lưu lại paymentId và transactionCode để đối chiếu khi replay', function () {",
+              "    pm.expect(json.data).to.be.an('object');",
+              "    pm.expect(json.data.id).to.be.a('number');",
+              "    pm.expect(json.data.transactionCode).to.match(/^PAY-/);",
+              "    pm.expect(json.data.status).to.eql('COMPLETED');",
+              "    pm.collectionVariables.set('firstPaymentId', String(json.data.id));",
+              "    pm.collectionVariables.set('firstTransactionCode', json.data.transactionCode);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "{{activeIdempotencyKey}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"amount\": 499000.00,\n  \"currency\": \"VND\",\n  \"paymentMethod\": \"MOMO\",\n  \"description\": \"Goi Pro 1 thang\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/payments",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "payments"
+          ]
+        }
+      }
+    },
+    {
+      "name": "TC-05: Gửi lại cùng Idempotency-Key & cùng Body (201 Created, Replay từ Redis)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('TC-05: Replay vẫn trả về 201 Created', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "pm.test('TC-05: Header X-Idempotent-Replayed phải là true', function () {",
+              "    pm.response.to.have.header('X-Idempotent-Replayed');",
+              "    pm.expect(pm.response.headers.get('X-Idempotent-Replayed')).to.eql('true');",
+              "});",
+              "",
+              "const json = pm.response.json();",
+              "pm.test('TC-05: Trả về chính xác id và transactionCode của lần 1 (không tạo bản ghi mới)', function () {",
+              "    pm.expect(String(json.data.id)).to.eql(pm.collectionVariables.get('firstPaymentId'));",
+              "    pm.expect(json.data.transactionCode).to.eql(pm.collectionVariables.get('firstTransactionCode'));",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "{{activeIdempotencyKey}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"amount\": 499000.00,\n  \"currency\": \"VND\",\n  \"paymentMethod\": \"MOMO\",\n  \"description\": \"Goi Pro 1 thang\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/payments",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "payments"
+          ]
+        }
+      }
+    },
+    {
+      "name": "TC-06: Trùng Idempotency-Key nhưng đổi amount (409 Conflict)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('TC-06: Trả về 409 Conflict khi tái sử dụng key với payload khác', function () {",
+              "    pm.response.to.have.status(409);",
+              "});",
+              "",
+              "const json = pm.response.json();",
+              "pm.test('TC-06: Thông báo sai khác payload', function () {",
+              "    pm.expect(json.status).to.eql(409);",
+              "    pm.expect(json.message).to.include('different request payload');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "{{activeIdempotencyKey}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"amount\": 999000.00,\n  \"currency\": \"VND\",\n  \"paymentMethod\": \"MOMO\",\n  \"description\": \"Goi Pro 1 thang\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/payments",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "payments"
+          ]
+        }
+      }
+    },
+    {
+      "name": "TC-07A: Lỗi validation (400) phải giải phóng khóa trên Redis",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const retryKey = pm.variables.replaceIn('{{$guid}}');",
+              "pm.collectionVariables.set('retryableIdempotencyKey', retryKey);"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('TC-07A: Amount âm bị chặn với 400 Bad Request', function () {",
+              "    pm.response.to.have.status(400);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "{{retryableIdempotencyKey}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"amount\": -100.00,\n  \"currency\": \"VND\",\n  \"paymentMethod\": \"BANK_TRANSFER\",\n  \"description\": \"Invalid negative amount\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/payments",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "payments"
+          ]
+        }
+      }
+    },
+    {
+      "name": "TC-07B: Retry cùng key sau khi sửa lỗi validation (201 Created)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('TC-07B: Key đã được giải phóng sau lỗi 400 nên retry thành công (201)', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "pm.test('TC-07B: Đây là lần thành công đầu tiên nên X-Idempotent-Replayed là false', function () {",
+              "    pm.expect(pm.response.headers.get('X-Idempotent-Replayed')).to.eql('false');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "{{retryableIdempotencyKey}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"amount\": 250000.00,\n  \"currency\": \"VND\",\n  \"paymentMethod\": \"BANK_TRANSFER\",\n  \"description\": \"Valid retry after 400\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/payments",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "payments"
+          ]
+        }
+      }
+    },
+    {
+      "name": "TC-08: GET /api/payments/{id} không cần Idempotency-Key (200 OK)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('TC-08: GET chi tiết payment không bị bắt buộc Idempotency-Key (200 OK)', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "const json = pm.response.json();",
+              "pm.test('TC-08: Dữ liệu từ DB khớp với transactionCode của TC-04', function () {",
+              "    pm.expect(String(json.data.id)).to.eql(pm.collectionVariables.get('firstPaymentId'));",
+              "    pm.expect(json.data.transactionCode).to.eql(pm.collectionVariables.get('firstTransactionCode'));",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/payments/{{firstPaymentId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "payments",
+            "{{firstPaymentId}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "TC-09: GET /api/payments/me xác nhận không có bản ghi trùng trong DB",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('TC-09: GET /api/payments/me trả về 200 OK', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "const json = pm.response.json();",
+              "const targetCode = pm.collectionVariables.get('firstTransactionCode');",
+              "pm.test('TC-09: Chỉ tồn tại duy nhất 1 bản ghi cho chuỗi TC-04/TC-05/TC-06', function () {",
+              "    const matched = json.data.filter(item => item.transactionCode === targetCode);",
+              "    pm.expect(matched.length).to.eql(1);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/payments/me",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "payments",
+            "me"
+          ]
+        }
+      }
+    },
+    {
+      "name": "TC-10A: Concurrent Request 1 - Gửi trước (Giữ khóa 10s -> 201 Created)",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const key = pm.variables.replaceIn('{{$guid}}').trim();",
+              "pm.collectionVariables.set('concurrentIdempotencyKey', key);"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('TC-10A: Request đầu tiên thành công (201 Created)', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "pm.test('TC-10A: Header X-Idempotent-Replayed là false', function () {",
+              "    pm.expect(pm.response.headers.get('X-Idempotent-Replayed')).to.eql('false');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "{{concurrentIdempotencyKey}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"amount\": 750000.00,\n  \"currency\": \"VND\",\n  \"paymentMethod\": \"VNPAY\",\n  \"description\": \"Test concurrent IN_PROGRESS\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/payments",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "payments"
+          ]
+        },
+        "description": "Dùng để test 2 request đồng thời (mở cùng TC-10B ở 2 tab). Bấm Send ở TC-10A trước (Pre-request tự sinh UUID mới vào `concurrentIdempotencyKey`), trong vòng 10 giây chuyển sang tab TC-10B bấm Send."
+      }
+    },
+    {
+      "name": "TC-10B: Concurrent Request 2 - Gửi song song trong 10s (409 Conflict)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('TC-10B: Request song song bị chặn với 409 Conflict', function () {",
+              "    pm.response.to.have.status(409);",
+              "});",
+              "",
+              "const json = pm.response.json();",
+              "pm.test('TC-10B: Thông báo đang xử lý (IN_PROGRESS)', function () {",
+              "    pm.expect(json.status).to.eql(409);",
+              "    pm.expect(json.message).to.include('currently in progress');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "{{concurrentIdempotencyKey}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"amount\": 750000.00,\n  \"currency\": \"VND\",\n  \"paymentMethod\": \"VNPAY\",\n  \"description\": \"Test concurrent IN_PROGRESS\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/payments",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "payments"
+          ]
+        },
+        "description": "Gửi ngay trong vòng 10 giây sau khi bấm Send ở TC-10A để kiểm chứng trạng thái IN_PROGRESS trả về 409 Conflict."
+      }
+    }
+  ]
+}
+

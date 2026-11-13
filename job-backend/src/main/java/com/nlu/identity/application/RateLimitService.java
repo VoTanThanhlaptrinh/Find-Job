@@ -15,6 +15,15 @@ public interface RateLimitService {
     boolean isAllowed(String clientId, int limit);
 
     /**
+     * Atomically consume 1 request slot in the current window and return remaining requests.
+     *
+     * @param clientId The unique identifier for the client
+     * @param limit    The maximum number of requests allowed in the time window
+     * @return Remaining requests (>= 0) if allowed, or -1 if rate limit exceeded
+     */
+    int consumeAndGetRemaining(String clientId, int limit);
+
+    /**
      * Check if the client is currently blocked (in penalty period).
      * 
      * @param clientId The unique identifier for the client

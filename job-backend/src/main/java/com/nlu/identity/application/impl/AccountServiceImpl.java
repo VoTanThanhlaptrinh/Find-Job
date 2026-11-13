@@ -11,10 +11,12 @@ import com.nlu.shared.infrastructure.message.MessageProducer;
 import com.nlu.identity.domain.model.User;
 import com.nlu.identity.application.AccountService;
 import com.nlu.identity.application.JwtFamilyService;
+import com.nlu.identity.application.UserDetailsCacheService;
 import com.nlu.shared.application.VerificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,6 +34,12 @@ public class AccountServiceImpl implements AccountService {
     private final MessageProducer mailProducer;
     private final UserMapper userMapper;
     private final JwtFamilyService jwtFamilyService;
+    private UserDetailsCacheService userDetailsCacheService;
+
+    @Autowired(required = false)
+    void setUserDetailsCacheService(UserDetailsCacheService userDetailsCacheService) {
+        this.userDetailsCacheService = userDetailsCacheService;
+    }
 
     @Value("${app.frontend-url}")
     private String url;
@@ -54,15 +62,17 @@ public class AccountServiceImpl implements AccountService {
             MDC.put(MDC_USER_ID, String.valueOf(user.getId()));
 
             log.info("Password change requested for user: {}", user.getId());
+            User persisted = userRepository.findById(user.getId()).orElse(user);
 
-            if (!encoder.matches(oldPassword, user.getPassword())) {
+            if (!encoder.matches(oldPassword, persisted.getPassword())) {
                 log.warn("Password change failed — current password mismatch for user: {}", user.getId());
                 throw new BadRequestException("auth.password.current_mismatch");
             }
 
-            user.setPassword(new Password(encoder.encode(newPassword)));
-            userRepository.save(user);
-            jwtFamilyService.revokeAllUserFamilies(user.getEmail());
+            persisted.setPassword(new Password(encoder.encode(newPassword)));
+            userRepository.save(persisted);
+            jwtFamilyService.revokeAllUserFamilies(persisted.getEmail());
+            evictUserDetailsCache(persisted.getEmail());
 
             log.info("Password changed successfully for user: {}", user.getId());
         } finally {
@@ -76,9 +86,11 @@ public class AccountServiceImpl implements AccountService {
             MDC.put(MDC_USER_ID, String.valueOf(user.getId()));
 
             log.info("Profile update requested for user: {}", user.getId());
+            User persisted = userRepository.findById(user.getId()).orElse(user);
 
-            userMapper.updateUser(userInfo, user);
-            userRepository.save(user);
+            userMapper.updateUser(userInfo, persisted);
+            userRepository.save(persisted);
+            evictUserDetailsCache(persisted.getEmail());
 
             log.info("Profile updated successfully for user: {}", user.getId());
         } finally {
@@ -90,24 +102,25 @@ public class AccountServiceImpl implements AccountService {
     public boolean checkOauth2(User user) {
         try {
             MDC.put(MDC_USER_ID, String.valueOf(user.getId()));
+            User persisted = userRepository.findById(user.getId()).orElse(user);
 
-            if (user.isOauth2Enabled() && (user.getPassword() == null || user.getPassword().isEmpty())) {
+            if (persisted.isOauth2Enabled() && (persisted.getPassword() == null || persisted.getPassword().isEmpty())) {
                 log.info("OAuth2 user detected without password — initiating password setup for user: {}",
-                        user.getId());
+                        persisted.getId());
 
                 String random = UUID.randomUUID().toString();
                 String link = String.format("%s/reset-pass/%s", url, random);
 
-                String text = String.format(textOauth, user.getEmail(), link);
-                MailMessage mailMessage = new MailMessage(user.getEmail(), subjectOauth, text);
-                verifyService.add("random:" + random, user.getEmail(), 60 * 60);
-                verifyService.add(random, user.getEmail(), 60 * 60);
+                String text = String.format(textOauth, persisted.getEmail(), link);
+                MailMessage mailMessage = new MailMessage(persisted.getEmail(), subjectOauth, text);
+                verifyService.add("random:" + random, persisted.getEmail(), 60 * 60);
+                verifyService.add(random, persisted.getEmail(), 60 * 60);
 
                 try {
                     mailProducer.sendMail(mailMessage);
-                    log.info("OAuth2 password setup email dispatched for user: {}", user.getId());
+                    log.info("OAuth2 password setup email dispatched for user: {}", persisted.getId());
                 } catch (Exception e) {
-                    log.warn("Failed to send OAuth2 password setup email for user: {}", user.getId());
+                    log.warn("Failed to send OAuth2 password setup email for user: {}", persisted.getId());
                     throw new AppException("auth.email.send_failed", HttpStatus.INTERNAL_SERVER_ERROR);
                 }
                 return false;
@@ -115,6 +128,12 @@ public class AccountServiceImpl implements AccountService {
             return true;
         } finally {
             MDC.remove(MDC_USER_ID);
+        }
+    }
+
+    private void evictUserDetailsCache(String email) {
+        if (userDetailsCacheService != null) {
+            userDetailsCacheService.evictByEmail(email);
         }
     }
 }

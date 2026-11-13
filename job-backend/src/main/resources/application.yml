@@ -133,5 +133,539 @@ app:
     permanent-prefix: resumes
     cleanup-interval-ms: 300000
     cleanup-batch-size: 50
+  idempotency:
+    enabled: true
+    header-name: Idempotency-Key
+    lock-ttl-seconds: 60
+    completed-ttl-seconds: 86400
+    endpoints:
+      - "POST /api/payments"
+      - "POST /api/payments/**"
+  user-details-cache:
+    enabled: true
+    ttl-seconds: 300
+  hot-cache:
+    enabled: true
+    default-threshold: 5
+    default-window-seconds: 60
+    max-body-bytes: 65536
+    gzip-threshold-bytes: 2048
+    lock-ttl-seconds: 5
+    single-flight-wait-ms: 50
+    single-flight-max-wait-retries: 3
+    max-page: 10
+    max-size: 50
+    excluded-patterns:
+      - "GET /api/auth/activation-links/**"
+      - "GET /api/auth/activate/**"
+      - "GET /api/auth/refreshToken"
+      - "GET /api/auth/logout"
+      - "GET /api/auth/password/code/**"
+      - "GET /api/auth/password/check-random/**"
+      - "GET /api/auth/google/url"
+      - "GET /api/account/oauth2"
+      - "GET /api/account/roles/**"
+      - "GET /api/sse/**"
+      - "GET /api/user/resumes/*/view"
+      - "GET /api/user/resumes/*/download"
+      - "GET /api/hirer/resumes/*/view"
+      - "GET /api/hirer/resumes/*/download"
+      - "GET /api/home"
+      - "GET /api/admin/employers/export"
+      - "GET /actuator/**"
+    rules:
+      # ─── Nhóm A: PUBLIC & Master Data (Fast-path trước JwtFilter) ───
+      - id: public_categories
+        pattern: "GET /api/v1/categories"
+        scope: PUBLIC
+        threshold: 3
+        window-seconds: 300
+        ttl-seconds: 3600
+        max-entries: 4
+        invalidate-on:
+          - "POST /api/admin/categories"
+          - "PUT /api/admin/categories/{id}"
+          - "DELETE /api/admin/categories/{id}"
+      - id: home_init
+        pattern: "GET /api/home/init"
+        scope: PUBLIC
+        threshold: 5
+        window-seconds: 60
+        ttl-seconds: 600
+        max-entries: 4
+        invalidate-on:
+          - "POST /api/hirer/jobs"
+          - "PUT /api/hirer/jobs/{id}"
+          - "DELETE /api/hirer/jobs/{id}"
+          - "POST /api/admin/jobs"
+          - "PATCH /api/admin/jobs/{id}/status"
+          - "POST /api/admin/jobs/bulk-action"
+          - "PATCH /api/admin/employers/{id}/status"
+      - id: address_count
+        pattern: "GET /api/addresses/address-count"
+        scope: PUBLIC
+        threshold: 5
+        window-seconds: 60
+        ttl-seconds: 600
+        max-entries: 4
+        invalidate-on:
+          - "POST /api/hirer/jobs"
+          - "PUT /api/hirer/jobs/{id}"
+          - "DELETE /api/hirer/jobs/{id}"
+          - "POST /api/admin/jobs"
+          - "PATCH /api/admin/jobs/{id}/status"
+          - "POST /api/admin/jobs/bulk-action"
+          - "POST /api/addresses"
+          - "PUT /api/addresses/{id}"
+          - "DELETE /api/addresses/{id}"
+      - id: public_jobs_newest
+        pattern: "GET /api/jobs/newest"
+        scope: PUBLIC
+        threshold: 5
+        window-seconds: 60
+        ttl-seconds: 180
+        max-entries: 30
+        invalidate-on:
+          - "POST /api/hirer/jobs"
+          - "PUT /api/hirer/jobs/{id}"
+          - "DELETE /api/hirer/jobs/{id}"
+          - "POST /api/admin/jobs"
+          - "PATCH /api/admin/jobs/{id}/status"
+          - "POST /api/admin/jobs/bulk-action"
+          - "PATCH /api/admin/employers/{id}/status"
+      - id: public_jobs_count
+        pattern: "GET /api/jobs/count"
+        scope: PUBLIC
+        threshold: 5
+        window-seconds: 60
+        ttl-seconds: 180
+        max-entries: 2
+        invalidate-on:
+          - "POST /api/hirer/jobs"
+          - "DELETE /api/hirer/jobs/{id}"
+          - "POST /api/admin/jobs"
+          - "PATCH /api/admin/jobs/{id}/status"
+          - "POST /api/admin/jobs/bulk-action"
+          - "PATCH /api/admin/employers/{id}/status"
+      - id: public_job_exists
+        pattern: "GET /api/jobs/{id}/exists"
+        scope: PUBLIC
+        threshold: 5
+        window-seconds: 120
+        ttl-seconds: 300
+        max-entries: 500
+        invalidate-on:
+          - "POST /api/hirer/jobs"
+          - "DELETE /api/hirer/jobs/{id}"
+          - "POST /api/admin/jobs"
+          - "PATCH /api/admin/jobs/{id}/status"
+          - "POST /api/admin/jobs/bulk-action"
+      - id: public_job_detail
+        pattern: "GET /api/jobs/{id}"
+        scope: PUBLIC
+        threshold: 5
+        window-seconds: 300
+        ttl-seconds: 600
+        max-entries: 500
+        invalidate-on:
+          - "PUT /api/hirer/jobs/{id}"
+          - "DELETE /api/hirer/jobs/{id}"
+          - "PATCH /api/admin/jobs/{id}/status"
+          - "POST /api/admin/jobs/bulk-action"
+          - "PUT /api/addresses/*"
+          - "PUT /api/admin/categories/*"
+      - id: user_blogs_me
+        pattern: "GET /api/blogs/me"
+        scope: USER
+        threshold: 5
+        window-seconds: 60
+        ttl-seconds: 180
+        max-entries: 100
+        invalidate-on:
+          - "POST /api/blogs"
+          - "PUT /api/blogs/{id}"
+          - "DELETE /api/blogs/{id}"
+          - "POST /api/blogs/likes [all]"
+          - "POST /api/blogs/likes/remove [all]"
+      - id: public_blog_comments
+        pattern: "GET /api/blogs/comments/{pageIndex}/{pageSize}"
+        scope: PUBLIC
+        threshold: 5
+        window-seconds: 60
+        ttl-seconds: 120
+        max-entries: 30
+        invalidate-on:
+          - "POST /api/blogs/comments"
+      - id: public_blogs_list
+        pattern: "GET /api/blogs"
+        scope: PUBLIC
+        threshold: 5
+        window-seconds: 60
+        ttl-seconds: 300
+        max-entries: 50
+        invalidate-on:
+          - "POST /api/blogs"
+          - "PUT /api/blogs/{id}"
+          - "DELETE /api/blogs/{id}"
+          - "POST /api/blogs/likes"
+          - "POST /api/blogs/likes/remove"
+      - id: public_blog_detail
+        pattern: "GET /api/blogs/{blogId}"
+        scope: PUBLIC
+        threshold: 5
+        window-seconds: 300
+        ttl-seconds: 900
+        max-entries: 200
+        invalidate-on:
+          - "PUT /api/blogs/{blogId}"
+          - "DELETE /api/blogs/{blogId}"
+          - "POST /api/blogs/likes"
+          - "POST /api/blogs/likes/remove"
+      - id: public_language
+        pattern: "GET /api/language"
+        scope: PUBLIC
+        threshold: 5
+        window-seconds: 300
+        ttl-seconds: 86400
+        max-entries: 2
+
+      # ─── Nhóm B: Admin Shared Scope (Sau AuthorizationFilter) ───
+      - id: admin_dashboard_summary
+        pattern: "GET /api/admin/dashboard/summary"
+        scope: ROLE
+        threshold: 5
+        window-seconds: 60
+        ttl-seconds: 60
+        max-entries: 2
+        invalidate-on:
+          - "POST /api/auth/hirer/register"
+          - "POST /api/admin/job-seekers"
+          - "POST /api/hirer/jobs"
+          - "DELETE /api/hirer/jobs/{id}"
+          - "POST /api/admin/jobs"
+          - "PATCH /api/admin/jobs/{id}/status"
+          - "POST /api/admin/jobs/bulk-action"
+      - id: admin_dashboard_revenue_trend
+        pattern: "GET /api/admin/dashboard/revenue-trend"
+        scope: ROLE
+        threshold: 5
+        window-seconds: 60
+        ttl-seconds: 300
+        max-entries: 6
+        invalidate-on:
+          - "POST /api/payments"
+      - id: admin_dashboard_job_distribution
+        pattern: "GET /api/admin/dashboard/job-distribution"
+        scope: ROLE
+        threshold: 5
+        window-seconds: 60
+        ttl-seconds: 60
+        max-entries: 2
+        invalidate-on:
+          - "POST /api/hirer/jobs"
+          - "DELETE /api/hirer/jobs/{id}"
+          - "POST /api/admin/jobs"
+          - "PATCH /api/admin/jobs/{id}/status"
+          - "POST /api/admin/jobs/bulk-action"
+      - id: admin_jobs_pending
+        pattern: "GET /api/admin/jobs/pending"
+        scope: ROLE
+        threshold: 5
+        window-seconds: 60
+        ttl-seconds: 60
+        max-entries: 10
+        invalidate-on:
+          - "POST /api/admin/jobs"
+          - "PATCH /api/admin/jobs/{id}/status"
+          - "POST /api/admin/jobs/bulk-action"
+      - id: admin_jobs_metrics
+        pattern: "GET /api/admin/jobs/metrics"
+        scope: ROLE
+        threshold: 5
+        window-seconds: 60
+        ttl-seconds: 60
+        max-entries: 2
+        invalidate-on:
+          - "POST /api/hirer/jobs"
+          - "DELETE /api/hirer/jobs/{id}"
+          - "POST /api/admin/jobs"
+          - "PATCH /api/admin/jobs/{id}/status"
+          - "POST /api/admin/jobs/bulk-action"
+          - "POST /api/user/applications/**"
+      - id: admin_jobs_list
+        pattern: "GET /api/admin/jobs"
+        scope: ROLE
+        threshold: 5
+        window-seconds: 60
+        ttl-seconds: 60
+        max-entries: 30
+        invalidate-on:
+          - "POST /api/hirer/jobs"
+          - "PUT /api/hirer/jobs/{id}"
+          - "DELETE /api/hirer/jobs/{id}"
+          - "POST /api/admin/jobs"
+          - "PATCH /api/admin/jobs/{id}/status"
+          - "POST /api/admin/jobs/bulk-action"
+          - "POST /api/user/applications/**"
+      - id: admin_employers_metrics
+        pattern: "GET /api/admin/employers/metrics"
+        scope: ROLE
+        threshold: 5
+        window-seconds: 60
+        ttl-seconds: 120
+        max-entries: 2
+        invalidate-on:
+          - "POST /api/auth/hirer/register"
+          - "PATCH /api/admin/employers/{id}/status"
+      - id: admin_employers_list
+        pattern: "GET /api/admin/employers"
+        scope: ROLE
+        threshold: 5
+        window-seconds: 60
+        ttl-seconds: 90
+        max-entries: 30
+        invalidate-on:
+          - "POST /api/auth/hirer/register"
+          - "PATCH /api/admin/employers/{id}/status"
+          - "POST /api/hirer/jobs"
+          - "DELETE /api/hirer/jobs/{id}"
+      - id: admin_employer_detail
+        pattern: "GET /api/admin/employers/{id}"
+        scope: ROLE
+        threshold: 5
+        window-seconds: 120
+        ttl-seconds: 180
+        max-entries: 50
+        invalidate-on:
+          - "PATCH /api/admin/employers/{id}/status"
+          - "PUT /api/account/profile"
+          - "PUT /api/admin/users/*"
+          - "POST /api/hirer/jobs"
+          - "DELETE /api/hirer/jobs/{id}"
+      - id: admin_job_seekers_metrics
+        pattern: "GET /api/admin/job-seekers/metrics"
+        scope: ROLE
+        threshold: 5
+        window-seconds: 60
+        ttl-seconds: 120
+        max-entries: 2
+        invalidate-on:
+          - "POST /api/auth/user/register"
+          - "POST /api/admin/job-seekers"
+      - id: admin_job_seekers_region
+        pattern: "GET /api/admin/job-seekers/region-distribution"
+        scope: ROLE
+        threshold: 5
+        window-seconds: 120
+        ttl-seconds: 300
+        max-entries: 2
+        invalidate-on:
+          - "POST /api/admin/job-seekers"
+      - id: admin_job_seekers_list
+        pattern: "GET /api/admin/job-seekers"
+        scope: ROLE
+        threshold: 5
+        window-seconds: 60
+        ttl-seconds: 90
+        max-entries: 30
+        invalidate-on:
+          - "POST /api/auth/user/register"
+          - "POST /api/admin/job-seekers"
+      - id: admin_billing_tiers
+        pattern: "GET /api/admin/billing/tiers"
+        scope: ROLE
+        threshold: 5
+        window-seconds: 300
+        ttl-seconds: 600
+        max-entries: 2
+        invalidate-on:
+          - "PATCH /api/admin/billing/tiers/{id}"
+      - id: admin_billing_summary
+        pattern: "GET /api/admin/billing/summary"
+        scope: ROLE
+        threshold: 5
+        window-seconds: 60
+        ttl-seconds: 120
+        max-entries: 2
+        invalidate-on:
+          - "POST /api/payments"
+      - id: admin_billing_transactions
+        pattern: "GET /api/admin/billing/transactions"
+        scope: ROLE
+        threshold: 5
+        window-seconds: 60
+        ttl-seconds: 60
+        max-entries: 20
+        invalidate-on:
+          - "POST /api/payments"
+      - id: admin_users_page
+        pattern: "GET /api/admin/users/page"
+        scope: ROLE
+        threshold: 5
+        window-seconds: 60
+        ttl-seconds: 60
+        max-entries: 20
+        invalidate-on:
+          - "POST /api/admin/users"
+          - "PUT /api/admin/users/{id}"
+          - "DELETE /api/admin/users/{id}"
+          - "POST /api/auth/user/register"
+          - "POST /api/auth/hirer/register"
+          - "PUT /api/account/profile"
+          - "PATCH /api/admin/employers/{id}/status"
+
+      # ─── Nhóm C: User-Scoped (Sau AuthorizationFilter, khóa theo userId) ───
+      - id: user_job_match
+        pattern: "GET /api/user/jobs/match/{cvId}"
+        scope: USER
+        threshold: 3
+        window-seconds: 120
+        ttl-seconds: 600
+        max-entries: 300
+        invalidate-on:
+          - "DELETE /api/user/resumes/{cvId}"
+          - "POST /api/user/resumes/{cvId}/analyze"
+          - "POST /api/hirer/jobs [all]"
+          - "DELETE /api/hirer/jobs/{id} [all]"
+          - "POST /api/hirer/jobs/{id}/analyze [all]"
+      - id: hirer_jobs_posted_count
+        pattern: "GET /api/hirer/jobs/posted/count"
+        scope: USER
+        threshold: 5
+        window-seconds: 60
+        ttl-seconds: 120
+        max-entries: 150
+        invalidate-on:
+          - "POST /api/hirer/jobs"
+          - "DELETE /api/hirer/jobs/{id}"
+          - "POST /api/admin/jobs [all]"
+          - "PATCH /api/admin/jobs/{id}/status [all]"
+          - "POST /api/admin/jobs/bulk-action [all]"
+      - id: hirer_jobs_posted
+        pattern: "GET /api/hirer/jobs/posted"
+        scope: USER
+        threshold: 5
+        window-seconds: 60
+        ttl-seconds: 120
+        max-entries: 150
+        invalidate-on:
+          - "POST /api/hirer/jobs"
+          - "PUT /api/hirer/jobs/{id}"
+          - "DELETE /api/hirer/jobs/{id}"
+          - "POST /api/hirer/jobs/{id}/analyze"
+          - "POST /api/user/applications/** [all]"
+          - "POST /api/admin/jobs [all]"
+          - "PATCH /api/admin/jobs/{id}/status [all]"
+          - "POST /api/admin/jobs/bulk-action [all]"
+      - id: hirer_job_candidates
+        pattern: "GET /api/hirer/applications/jobs/{jobId}/candidates/{pageIndex}/{pageSize}"
+        scope: USER
+        threshold: 5
+        window-seconds: 60
+        ttl-seconds: 60
+        max-entries: 100
+        invalidate-on:
+          - "POST /api/user/applications/** [all]"
+      - id: user_applied_jobs
+        pattern: "GET /api/user/applied"
+        scope: USER
+        threshold: 5
+        window-seconds: 60
+        ttl-seconds: 120
+        max-entries: 150
+        invalidate-on:
+          - "POST /api/user/applications/**"
+          - "PUT /api/hirer/jobs/{id} [all]"
+          - "DELETE /api/hirer/jobs/{id} [all]"
+      - id: user_application_status
+        pattern: "GET /api/user/applications/{jobId}/status"
+        scope: USER
+        threshold: 5
+        window-seconds: 60
+        ttl-seconds: 120
+        max-entries: 300
+        invalidate-on:
+          - "POST /api/user/applications/**"
+      - id: user_resumes_analyzed
+        pattern: "GET /api/user/resumes/analyzed"
+        scope: USER
+        threshold: 5
+        window-seconds: 60
+        ttl-seconds: 120
+        max-entries: 150
+        invalidate-on:
+          - "POST /api/user/resume-uploads/*/complete"
+          - "POST /api/user/applications/submit-upload"
+          - "DELETE /api/user/resumes/{id}"
+          - "POST /api/user/resumes/{id}/analyze"
+      - id: user_resumes_list
+        pattern: "GET /api/user/resumes"
+        scope: USER
+        threshold: 5
+        window-seconds: 60
+        ttl-seconds: 120
+        max-entries: 150
+        invalidate-on:
+          - "POST /api/user/resume-uploads/*/complete"
+          - "POST /api/user/applications/submit-upload"
+          - "DELETE /api/user/resumes/{id}"
+          - "POST /api/user/resumes/{id}/analyze"
+      - id: user_resume_detail
+        pattern: "GET /api/user/resumes/{id}"
+        scope: USER
+        threshold: 5
+        window-seconds: 60
+        ttl-seconds: 120
+        max-entries: 150
+        invalidate-on:
+          - "DELETE /api/user/resumes/{id}"
+          - "POST /api/user/resumes/{id}/analyze"
+      - id: user_addresses
+        pattern: "GET /api/addresses"
+        scope: USER
+        threshold: 5
+        window-seconds: 60
+        ttl-seconds: 300
+        max-entries: 100
+        invalidate-on:
+          - "POST /api/addresses"
+          - "PUT /api/addresses/{id}"
+          - "DELETE /api/addresses/{id}"
+      - id: user_payments_me
+        pattern: "GET /api/payments/me"
+        scope: USER
+        threshold: 5
+        window-seconds: 60
+        ttl-seconds: 180
+        max-entries: 100
+        invalidate-on:
+          - "POST /api/payments"
+      - id: user_payment_detail
+        pattern: "GET /api/payments/{id}"
+        scope: USER
+        threshold: 5
+        window-seconds: 120
+        ttl-seconds: 600
+        max-entries: 200
+      - id: user_account_profile
+        pattern: "GET /api/account/profile"
+        scope: USER
+        threshold: 5
+        window-seconds: 60
+        ttl-seconds: 300
+        max-entries: 200
+        invalidate-on:
+          - "PUT /api/account/profile"
+          - "PUT /api/admin/users/* [all]"
+      - id: admin_current_user
+        pattern: "GET /api/admin/users"
+        scope: USER
+        threshold: 5
+        window-seconds: 60
+        ttl-seconds: 300
+        max-entries: 20
+        invalidate-on:
+          - "PUT /api/account/profile"
+          - "PUT /api/admin/users/* [all]"
 
 
