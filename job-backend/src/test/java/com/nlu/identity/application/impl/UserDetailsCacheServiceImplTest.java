@@ -81,8 +81,7 @@ class UserDetailsCacheServiceImplTest {
                 cacheByteRedisTemplate,
                 delegateUserDetailsService,
                 properties,
-                objectMapper
-        );
+                objectMapper);
     }
 
     @AfterEach
@@ -143,8 +142,8 @@ class UserDetailsCacheServiceImplTest {
         UserDetailsCacheService cacheMock = mock(UserDetailsCacheService.class);
 
         User cachedUser = buildDomainUser(99L, "jwt@example.com", "ROLE_ADMIN");
-        when(jwtService.extractEmail("valid.jwt.token")).thenReturn("jwt@example.com");
-        when(jwtService.isTokenValid("valid.jwt.token", "jwt@example.com")).thenReturn(true);
+        when(jwtService.extractUsername("valid.jwt.token")).thenReturn("jwt@example.com");
+        when(jwtService.isTokenValid("valid.jwt.token", cachedUser)).thenReturn(true);
         when(cacheMock.loadUserByUsername("jwt@example.com")).thenReturn(cachedUser);
 
         JwtFilter filter = new JwtFilter(jwtService, fallbackUds, cacheMock);
@@ -182,7 +181,6 @@ class UserDetailsCacheServiceImplTest {
                 true,
                 false,
                 List.of(),
-                List.of()
-        );
+                List.of());
     }
 }
