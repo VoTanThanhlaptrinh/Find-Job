@@ -1,14 +1,18 @@
 package com.nlu.identity.infrastructure.config;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.stream.Stream;
 
 import com.nlu.identity.domain.vo.ApiConstants;
 import com.nlu.identity.infrastructure.filter.CustomOAuth2SuccessHandler;
 import jakarta.servlet.DispatcherType;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -27,6 +31,7 @@ import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import com.nlu.identity.infrastructure.filter.JwtFilter;
 import com.nlu.identity.infrastructure.filter.RateLimitFilter;
@@ -59,6 +64,12 @@ public class SecurityConfig {
 
     @Value("${app.frontend-url}")
     private String frontendUrl;
+
+    @Value("${app.cors.allowed-origins:}")
+    private String corsAllowedOrigins = "";
+
+    @Value("${app.cors.allowed-origin-patterns:}")
+    private String corsAllowedOriginPatterns = "";
 
     @Bean
     SecurityFilterChain restChain(HttpSecurity http) throws Exception {
@@ -98,23 +109,62 @@ public class SecurityConfig {
     UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        List<String> allowedOrigins = Arrays.stream(frontendUrl.split(","))
-                .map(String::trim)
-                .map(origin -> origin.replaceAll("/+$", ""))
-                .filter(origin -> !origin.isEmpty())
+        List<String> allowedOrigins = Stream.concat(
+                        parseOrigins(frontendUrl).stream(),
+                        parseOrigins(corsAllowedOrigins).stream())
+                .distinct()
                 .toList();
 
-        config.setAllowedOrigins(allowedOrigins.isEmpty() ? List.of(frontendUrl) : allowedOrigins);
+        List<String> allowedOriginPatterns = parseOrigins(corsAllowedOriginPatterns);
+
+        if (!allowedOrigins.isEmpty()) {
+            config.setAllowedOrigins(allowedOrigins);
+        } else if (allowedOriginPatterns.isEmpty() && frontendUrl != null) {
+            config.setAllowedOrigins(List.of(frontendUrl));
+        }
+        if (!allowedOriginPatterns.isEmpty()) {
+            config.setAllowedOriginPatterns(allowedOriginPatterns);
+        }
+
         config.setAllowCredentials(true);
         config.setAllowedMethods(List.of("GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"));
-        config.setAllowedHeaders(List.of("Content-Type", "Authorization", "X-Correlation-ID", "Cache-Control",
-                "Accept", "idempotency-key"));
+        config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("Set-Cookie", "X-Correlation-ID", "X-RateLimit-Limit", "X-RateLimit-Remaining",
                 "X-RateLimit-Reset", "Retry-After", "X-Idempotent-Replayed", HotCacheConstants.HEADER_CACHE_STATUS));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
+    }
+
+    @Bean
+    FilterRegistrationBean<CorsFilter> corsFilterRegistration(UrlBasedCorsConfigurationSource corsConfigurationSource) {
+        CorsFilter corsFilter = new CorsFilter(corsConfigurationSource) {
+            @Override
+            protected boolean shouldNotFilterErrorDispatch() {
+                return false;
+            }
+
+            @Override
+            protected boolean shouldNotFilterAsyncDispatch() {
+                return false;
+            }
+        };
+        FilterRegistrationBean<CorsFilter> registration = new FilterRegistrationBean<>(corsFilter);
+        registration.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        registration.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST, DispatcherType.ERROR, DispatcherType.ASYNC));
+        return registration;
+    }
+
+    private List<String> parseOrigins(String rawOrigins) {
+        if (rawOrigins == null || rawOrigins.isBlank()) {
+            return List.of();
+        }
+        return Arrays.stream(rawOrigins.split(","))
+                .map(String::trim)
+                .map(origin -> origin.replaceAll("/+$", ""))
+                .filter(origin -> !origin.isEmpty())
+                .toList();
     }
 
     @Bean

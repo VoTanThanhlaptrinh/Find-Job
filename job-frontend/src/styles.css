@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 @import "ngx-toastr/toastr";
 @import "@angular/cdk/overlay-prebuilt.css";
 @import "prismjs/themes/prism-tomorrow.min.css";
