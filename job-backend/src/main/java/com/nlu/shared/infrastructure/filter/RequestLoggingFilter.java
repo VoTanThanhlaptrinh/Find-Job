@@ -47,7 +47,7 @@ import java.util.UUID;
  * prevent leaking state across pooled threads (e.g. Tomcat NIO).
  */
 @Component
-@Order(Ordered.HIGHEST_PRECEDENCE)
+@Order(Ordered.HIGHEST_PRECEDENCE + 1)
 @Slf4j
 public class RequestLoggingFilter extends OncePerRequestFilter {
 
