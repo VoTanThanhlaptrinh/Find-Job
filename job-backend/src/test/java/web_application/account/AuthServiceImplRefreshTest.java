@@ -15,7 +15,7 @@ import com.nlu.shared.application.SpamService;
 import com.nlu.shared.application.VerificationService;
 import com.nlu.shared.domain.exception.BadRequestException;
 import com.nlu.shared.domain.exception.ResourceNotFoundException;
-import com.nlu.shared.infrastructure.message.MessageProducer;
+import com.nlu.shared.application.MailService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -53,7 +53,7 @@ class AuthServiceImplRefreshTest {
     @Mock
     private VerificationService verifyService;
     @Mock
-    private MessageProducer messageProducer;
+    private MailService mailService;
     @Mock
     private RefreshTokenService refreshTokenService;
     @Mock

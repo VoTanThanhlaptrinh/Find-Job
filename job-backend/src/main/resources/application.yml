@@ -15,19 +15,6 @@ spring:
       hibernate:
         format_sql: false
 
-  mail:
-    host: smtp.gmail.com
-    port: 465
-    default-encoding: UTF-8
-    username: ${GMAIL_USERNAME}
-    password: ${GMAIL_APP_PASSWORD}
-    properties:
-      mail:
-        smtp:
-          auth: true
-          ssl:
-            enable: true
-
   security:
     oauth2:
       client:
@@ -125,6 +112,11 @@ app:
     api-key: ${UPLOAD_SERVICE_API_KEY:}
     connect-timeout-ms: ${UPLOAD_SERVICE_CONNECT_TIMEOUT_MS:5000}
     read-timeout-ms: ${UPLOAD_SERVICE_READ_TIMEOUT_MS:10000}
+  mail-service:
+    base-url: ${MAIL_SERVICE_BASE_URL:https://mail-service-tau.vercel.app/}
+    api-key: ${MAIL_SERVICE_API_KEY:}
+    connect-timeout-ms: ${MAIL_SERVICE_CONNECT_TIMEOUT_MS:5000}
+    read-timeout-ms: ${MAIL_SERVICE_READ_TIMEOUT_MS:10000}
   resume-upload:
     url-expiration-minutes: 10
     session-expiration-minutes: 30

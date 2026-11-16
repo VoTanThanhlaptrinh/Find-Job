@@ -9,14 +9,13 @@ import com.nlu.identity.api.dto.ForgotPassDTO;
 import com.nlu.identity.api.dto.LoginDTO;
 import com.nlu.identity.api.dto.RegistrationForm;
 import com.nlu.identity.api.dto.ResetDTO;
-import com.nlu.shared.api.message.dto.MailMessage;
+import com.nlu.shared.application.MailService;
 import com.nlu.shared.domain.exception.AppException;
 import com.nlu.shared.domain.exception.BadRequestException;
 import com.nlu.shared.domain.exception.ForbiddenException;
 import com.nlu.shared.domain.exception.ResourceNotFoundException;
 import com.nlu.shared.domain.exception.UnauthorizedException;
 import com.nlu.identity.mapper.RegistrationFormMapper;
-import com.nlu.shared.infrastructure.message.MessageProducer;
 import com.nlu.recruitment.domain.model.Recruitment;
 import com.nlu.identity.domain.model.User;
 import com.nlu.identity.application.AuthService;
@@ -60,7 +59,7 @@ public class AuthServiceImpl implements AuthService {
     private final RecruitmentRepository recruitmentRepository;
     private final ReferenceService refService;
     private final VerificationService verifyService;
-    private final MessageProducer messageProducer;
+    private final MailService mailService;
     private final RefreshTokenService refreshTokenService;
     private final JwtFamilyService jwtFamilyService;
     private final SpamService spamService;
@@ -139,10 +138,9 @@ public class AuthServiceImpl implements AuthService {
 
             String link = createLink(user);
             String text = String.format(textVerify, link);
-            MailMessage mailMessage = new MailMessage(email, subjectVerify, text);
 
             try {
-                messageProducer.sendMail(mailMessage);
+                mailService.sendMessage(email, subjectVerify, text);
                 log.info("Activation email dispatched for user: {}", user.getId());
             } catch (Exception e) {
                 log.warn("Failed to send activation email for user: {}", user.getId());
@@ -346,8 +344,7 @@ public class AuthServiceImpl implements AuthService {
             String refCode = refService.getRef(6).toUpperCase();
             String subject = MessageUtils.getMessage("auth.forgot_password.subject");
             String body = MessageUtils.getMessage("auth.forgot_password.body", refCode);
-            MailMessage mailMessage = new MailMessage(email, subject, body);
-            messageProducer.sendMail(mailMessage);
+            mailService.sendMessage(email, subject, body);
 
             verifyService.add("ref-email:" + email, refCode, 60 * 5);
 

@@ -3,11 +3,10 @@ package com.nlu.identity.application.impl;
 import com.nlu.identity.domain.repository.UserRepository;
 import com.nlu.identity.domain.vo.Password;
 import com.nlu.identity.mapper.UserMapper;
-import com.nlu.shared.api.message.dto.MailMessage;
+import com.nlu.shared.application.MailService;
 import com.nlu.identity.api.dto.UserInfo;
 import com.nlu.shared.domain.exception.AppException;
 import com.nlu.shared.domain.exception.BadRequestException;
-import com.nlu.shared.infrastructure.message.MessageProducer;
 import com.nlu.identity.domain.model.User;
 import com.nlu.identity.application.AccountService;
 import com.nlu.identity.application.JwtFamilyService;
@@ -31,7 +30,7 @@ public class AccountServiceImpl implements AccountService {
     private final PasswordEncoder encoder;
     private final UserRepository userRepository;
     private final VerificationService verifyService;
-    private final MessageProducer mailProducer;
+    private final MailService mailService;
     private final UserMapper userMapper;
     private final JwtFamilyService jwtFamilyService;
     private UserDetailsCacheService userDetailsCacheService;
@@ -112,12 +111,11 @@ public class AccountServiceImpl implements AccountService {
                 String link = String.format("%s/reset-pass/%s", url, random);
 
                 String text = String.format(textOauth, persisted.getEmail(), link);
-                MailMessage mailMessage = new MailMessage(persisted.getEmail(), subjectOauth, text);
                 verifyService.add("random:" + random, persisted.getEmail(), 60 * 60);
                 verifyService.add(random, persisted.getEmail(), 60 * 60);
 
                 try {
-                    mailProducer.sendMail(mailMessage);
+                    mailService.sendMessage(persisted.getEmail(), subjectOauth, text);
                     log.info("OAuth2 password setup email dispatched for user: {}", persisted.getId());
                 } catch (Exception e) {
                     log.warn("Failed to send OAuth2 password setup email for user: {}", persisted.getId());

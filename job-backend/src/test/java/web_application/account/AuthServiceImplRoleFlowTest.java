@@ -12,7 +12,7 @@ import com.nlu.identity.domain.repository.UserRepository;
 import com.nlu.identity.api.dto.LoginDTO;
 import com.nlu.shared.domain.exception.BadRequestException;
 import com.nlu.shared.domain.exception.ForbiddenException;
-import com.nlu.shared.infrastructure.message.MessageProducer;
+import com.nlu.shared.application.MailService;
 import com.nlu.identity.domain.model.User;
 import com.nlu.identity.application.impl.AuthServiceImpl;
 import com.nlu.identity.application.JwtService;
@@ -63,7 +63,7 @@ class AuthServiceImplRoleFlowTest {
     private VerificationService verifyService;
 
     @Mock
-    private MessageProducer messageProducer;
+    private MailService mailService;
 
     @Mock
     private RefreshTokenService refreshTokenService;
@@ -117,7 +117,7 @@ class AuthServiceImplRoleFlowTest {
         assertEquals(RoleConstants.ROLE_HIRER, userCaptor.getValue().getRole());
         verify(recruitmentRepository).save(any(Recruitment.class));
         verify(jwtService).generateActivationToken("hirer@test.com");
-        verify(messageProducer).sendMail(any());
+        verify(mailService).sendMessage(any(), any(), any());
         assertEquals("hirer@test.com", username);
     }
 
